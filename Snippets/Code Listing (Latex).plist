@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>content</key>
+	<string>\\begin{lstlisting}[caption=${1:cap},label=lst:${2:lab},float=htbp]
+
+\\end{lstlisting}
+</string>
+	<key>name</key>
+	<string>Code Listing (Latex)</string>
+	<key>tabTrigger</key>
+	<string>Lst</string>
+	<key>uuid</key>
+	<string>F99B8D2A-71F6-11D9-AFB5-000D93B6E43C</string>
+</dict>
+</plist>

@@ -3,16 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\begin{figure}
-
-	\\includegraphics[width=${2:12cm}]{${3:file}}
-
+	<string>\\begin{figure}[${1:htbp}]
+    \\begin{center}
+	\\includegraphics[height=${2:3in}]{${3:file}}
+     \\end{center}
 	\\caption{${4:légende}}
-	\\label{${1:étiquette}}
+	\\label{fig:${5:étiquette}}
 \\end{figure}</string>
 	<key>name</key>
 	<string>Figure (Latex)</string>
-	<key>trigger</key>
+	<key>tabTrigger</key>
 	<string>Fig</string>
 	<key>uuid</key>
 	<string>BC8B9A5E-5F16-11D9-B9C3-000D93589AF6</string>
