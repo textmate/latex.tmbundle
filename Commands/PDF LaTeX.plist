@@ -21,6 +21,7 @@ tmp=`mktemp /tmp/pdflatex_XXX`
 [ -z "$TM_LATEX_MASTER" ] &amp;&amp;
   export TM_LATEX_MASTER=$TM_FILEPATH
 
+cd `dirname $TM_LATEX_MASTER`
 pdflatex -interaction=nonstopmode -file-line-error \
   -halt-on-error -output-directory /tmp \
   -jobname `basename ${tmp}` `basename "$TM_LATEX_MASTER"` \
