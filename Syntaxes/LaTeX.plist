@@ -45,7 +45,7 @@
 			<key>foregroundColor</key>
 			<string>#00AA00</string>
 			<key>name</key>
-			<string>strings.latex.equation-$$</string>
+			<string>strings.latex.equation.displaymath.$</string>
 		</dict>
 		<dict>
 			<key>foregroundColor</key>
@@ -77,17 +77,27 @@
 			<key>foregroundColor</key>
 			<string>#005C00</string>
 			<key>name</key>
-			<string>strings.latex.equation-$</string>
+			<string>strings.latex.equation.linemath.$</string>
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>\\(\(|\[)</string>
+			<string>\\\(</string>
 			<key>end</key>
-			<string>\\(\)|\])</string>
+			<string>\\\)</string>
 			<key>foregroundColor</key>
 			<string>#006600</string>
 			<key>name</key>
-			<string>strings.latex.equation-braces</string>
+			<string>strings.latex.equation.linemath</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>\\\[</string>
+			<key>end</key>
+			<string>\\\]</string>
+			<key>foregroundColor</key>
+			<string>#006600</string>
+			<key>name</key>
+			<string>strings.latex.equation.displaymath</string>
 		</dict>
 		<dict>
 			<key>fontStyle</key>
