@@ -1,7 +1,7 @@
 LaTeX and BibTeX Syntax Highlighting
 By Eric Hsu, Normand Mousseau, Gaetan Le Guelvouit, Andrew Ellis
 
-(1-4-05) This bundle has a tortured and confused history. Basically, a lot of people did parallel edits and it sort of got merged, kind of. Anyway, this is the latest version I have, which is the one included in TM 1.0.2. I fixed a bug with /( /) not being recognized as math mode, and added some commands, most notably a pdflatex command. 
+(1-4-05) This bundle has a tortured and confused history. Basically, a lot of people did parallel edits and it sort of got merged, kind of. Anyway, this is the latest version I have, which is the one included in TM 1.0.2. I fixed a bug with /( /) not being recognized as math mode, and added some commands, most notably a pdflatex command. TeXniscope is a great little previewer (thanks Jeroen van der Ham) at <http://docenti.ing.unipi.it/~d9615/homepage/texniscope.html>
 
 --
 Here are the old tangled notes from the old Wiki. 
