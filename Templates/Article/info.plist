@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>command</key>
+	<string>if test \! -e "$TM_NEW_FILE"; then
+   TM_YEAR=`date +%Y` \
+   TM_DATE=`date +%Y-%m-%d` \
+   TM_USERNAME=`niutil -readprop / /users/\$USER realname` \
+   perl -pe 's/\$\{([^}]*)\}/$ENV{$1}/g' \
+      &lt; article_in.tex &gt; "$TM_NEW_FILE"
+fi</string>
+	<key>extension</key>
+	<string>tex</string>
+	<key>name</key>
+	<string>Article</string>
+	<key>uuid</key>
+	<string>F9AAD9D4-71F7-11D9-914E-000D93B6E43C</string>
+</dict>
+</plist>
