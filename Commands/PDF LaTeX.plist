@@ -26,7 +26,7 @@ fi
 pdflatex -interaction=nonstopmode -file-line-error \
   -halt-on-error -output-directory /tmp \
   -jobname `basename ${tmp}` "$TM_LATEX_MASTER" \
-| perl -pe 's/^(\/.*?):(\d+):\s*(.*)$/&lt;a href="txmt:\/\/open?url=file:\/\/$1&amp;line=$2"&gt;$3&lt;\/a&gt;/'
+| perl -pe '$| = 1; s/^(\/.*?):(\d+):\s*(.*)$/&lt;a href="txmt:\/\/open?url=file:\/\/$1&amp;line=$2"&gt;$3&lt;\/a&gt;/'
 
 [ -f ${tmp}.pdf ] &amp;&amp; echo '&lt;/pre&gt;&lt;meta http-equiv="Refresh" content="0;URL=file:///'${tmp}'.pdf"&gt;'
 
