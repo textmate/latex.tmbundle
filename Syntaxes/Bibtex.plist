@@ -47,7 +47,7 @@
 			<key>match</key>
 			<string>^\@[a-zA-Z]+</string>
 			<key>name</key>
-			<string>Entries</string>
+			<string>keywords.bibtex.entries</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -57,7 +57,7 @@
 			<key>foregroundColor</key>
 			<string>#00AA00</string>
 			<key>name</key>
-			<string>Inline equation</string>
+			<string>strings.bibtex.equation.linemath.$</string>
 		</dict>
 		<dict>
 			<key>fontStyle</key>
@@ -69,7 +69,7 @@
 			<key>match</key>
 			<string>(^|[^\\])%.*$</string>
 			<key>name</key>
-			<string>Comments</string>
+			<string>comments.line.bibtex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -83,7 +83,7 @@
 			<key>foregroundColor</key>
 			<string>#6600CC</string>
 			<key>name</key>
-			<string>Citations</string>
+			<string>keywords.bibtex.citations</string>
 		</dict>
 		<dict>
 			<key>fontStyle</key>
@@ -95,7 +95,7 @@
 			<key>match</key>
 			<string>\\\w*</string>
 			<key>name</key>
-			<string>Tags</string>
+			<string>keywords.functions.bibtex</string>
 		</dict>
 		<dict>
 			<key>fontStyle</key>
@@ -107,7 +107,7 @@
 			<key>match</key>
 			<string>[a-zA-Z]+\s*\=</string>
 			<key>name</key>
-			<string>Items</string>
+			<string>keywords.bibtex.keys</string>
 		</dict>
 	</array>
 	<key>smartTypingPairs</key>
