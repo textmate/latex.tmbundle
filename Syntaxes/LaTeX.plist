@@ -57,7 +57,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>\\(((sub)*section)|(chapter)|(paragraph)|(part))(\*?)\{</string>
+			<string>\\(((sub)*section)|(chapter)|(paragraph)|(part))(\*?)(\[.*\])?\{</string>
 			<key>end</key>
 			<string>\}</string>
 			<key>fontStyle</key>
@@ -67,7 +67,7 @@
 			<key>foregroundColor</key>
 			<string>#0000FF</string>
 			<key>name</key>
-			<string>Sections</string>
+			<string>Sections with Options</string>
 		</dict>
 		<dict>
 			<key>begin</key>
