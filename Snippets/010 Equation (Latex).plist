@@ -10,5 +10,7 @@
 	<string>Equation (Latex)</string>
 	<key>trigger</key>
 	<string>Eeq</string>
+	<key>uuid</key>
+	<string>BC8B966D-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>
 </plist>

@@ -4,8 +4,6 @@
 <dict>
 	<key>beforeRunningCommand</key>
 	<string>saveActiveFile</string>
-	<key>bundlePath</key>
-	<string>/Users/erichsu/Library/Application Support/TextMate/Bundles/Custom.tmbundle</string>
 	<key>captureFormatString</key>
 	<string>$1: $2</string>
 	<key>capturePattern</key>
@@ -26,5 +24,7 @@ echo $TM_FILEPATH | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs ope
 	<string>LaTeX and TeXniscope</string>
 	<key>output</key>
 	<string>separateWindow</string>
+	<key>uuid</key>
+	<string>DA0A5CC6-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>
 </plist>
