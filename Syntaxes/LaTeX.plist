@@ -58,6 +58,14 @@
 			<string>keywords.latex.braces</string>
 		</dict>
 		<dict>
+			<key>foregroundColor</key>
+			<string>#0000CC</string>
+			<key>match</key>
+			<string>\\\\</string>
+			<key>name</key>
+			<string>keywords.latex.newline</string>
+		</dict>		
+		<dict>
 			<key>begin</key>
 			<string>\\(((sub)*section)|(chapter)|(paragraph)|(part))(\*?)(\[.*\])?\{</string>
 			<key>end</key>
@@ -70,6 +78,86 @@
 			<string>#0000FF</string>
 			<key>name</key>
 			<string>keywords.functions.latex.sections</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+            <string>\\textit\{</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>fontStyle</key>
+			<array>
+				<string>italic</string>
+			</array>
+			<key>foregroundColor</key>
+			<string>#000000</string>
+			<key>elementForegroundColor</key>
+			<string>#9700CC</string>
+			<key>elementFontStyle</key>
+			<array>
+				<string>plain</string>
+			</array>			
+			<key>name</key>
+			<string>keywords.functions.latex.textit</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+            <string>\\textbf\{</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>fontStyle</key>
+			<array>
+				<string>bold</string>
+			</array>
+			<key>elementForegroundColor</key>
+			<string>#9700cc</string>
+			<key>elementFontStyle</key>
+			<array>
+				<string>plain</string>
+			</array>			
+			<key>foregroundColor</key>
+			<string>#000000</string>
+			<key>name</key>
+			<string>keywords.functions.latex.textbf</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+            <string>\\texttt\{</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>fontStyle</key>
+			<array>
+				<string>underline</string>
+			</array>
+			<key>foregroundColor</key>
+			<string>#000000</string>
+			<key>elementForegroundColor</key>
+			<string>#9700CC</string>
+			<key>elementFontStyle</key>
+			<array>
+				<string>plain</string>
+			</array>			
+			<key>name</key>
+			<string>keywords.functions.latex.texttt</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+            <string>[`]+</string>
+			<key>end</key>
+			<string>[']+</string>
+			<key>foregroundColor</key>
+			<string>#005C00</string>
+			<key>name</key>
+			<string>keywords.functions.latex.textbf</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+            <string>"</string>
+			<key>end</key>
+			<string>"</string>
+			<key>foregroundColor</key>
+			<string>#FF0000</string>
+			<key>name</key>
+			<string>keywords.functions.latex.textbf</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -129,7 +217,7 @@
 		</dict>
 		<dict>
 			<key>foregroundColor</key>
-			<string>#681C79</string>
+			<string>#9700CC</string>
 			<key>match</key>
 			<string>\\\w*</string>
 			<key>name</key>
@@ -153,6 +241,14 @@
 		<array>
 			<string>"</string>
 			<string>"</string>
+		</array>
+		<array>
+			<string>$</string>
+			<string>$</string>
+		</array>
+		<array>
+			<string>`</string>
+			<string>'</string>
 		</array>
 	</array>
 </dict>
