@@ -9,10 +9,16 @@
 	<key>capturePattern</key>
 	<string>(\d+|LaTeX Warning): (.*?)$</string>
 	<key>command</key>
-	<string>/usr/local/teTeX/bin/powerpc-apple-darwin-current/pdflatex -interaction=nonstopmode -file-line-error-style "$TM_FILEPATH" |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
+	<string># if TM_LATEX_MASTER not set use TM_FILEPATH
+if test "${TM_LATEX_MASTER-set}" = set; then
+   TM_LATEX_MASTER=${TM_FILEPATH};
+   export TM_LATEX_MASTER;
+fi
+
+/usr/local/teTeX/bin/powerpc-apple-darwin-current/pdflatex -interaction=nonstopmode -file-line-error-style "$TM_LATEX_MASTER" |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
 echo
 echo "Previewing..."
-echo $TM_FILEPATH | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open</string>
+echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open</string>
 	<key>input</key>
 	<string>none</string>
 	<key>lineCaptureRegister</key>
