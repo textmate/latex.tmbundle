@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveActiveFile</string>
+	<key>bundlePath</key>
+	<string>/Users/erichsu/Library/Application Support/TextMate/Bundles/Custom.tmbundle</string>
+	<key>captureFormatString</key>
+	<string>$1: $2</string>
+	<key>capturePattern</key>
+	<string>(\d+|LaTeX Warning): (.*?)$</string>
+	<key>command</key>
+	<string>/usr/local/teTeX/bin/powerpc-apple-darwin-current/pdflatex -interaction=nonstopmode -file-line-error-style "$TM_FILEPATH" |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
+echo
+echo "Previewing..."
+echo $TM_FILEPATH | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open -a TeXniscope
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^~@l</string>
+	<key>lineCaptureRegister</key>
+	<string>1</string>
+	<key>name</key>
+	<string>LaTeX and TeXniscope</string>
+	<key>output</key>
+	<string>separateWindow</string>
+</dict>
+</plist>
