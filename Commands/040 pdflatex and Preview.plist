@@ -9,13 +9,12 @@
 	<key>capturePattern</key>
 	<string>(\d+|LaTeX Warning): (.*?)$</string>
 	<key>command</key>
-	<string># if TM_LATEX_MASTER not set use TM_FILEPATH
-if test "${TM_LATEX_MASTER-set}" = set; then
-   TM_LATEX_MASTER=${TM_FILEPATH};
-   export TM_LATEX_MASTER;
-fi
+	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
+[ -z "$TM_LATEX_MASTER" ] &amp;&amp;
+  export TM_LATEX_MASTER="$TM_FILEPATH"
 
-/usr/local/teTeX/bin/powerpc-apple-darwin-current/pdflatex -interaction=nonstopmode -file-line-error-style "$TM_LATEX_MASTER" |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
+cd `dirname "$TM_LATEX_MASTER"`
+pdflatex -interaction=nonstopmode -file-line-error-style `basename "$TM_LATEX_MASTER"` |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
 echo
 echo "Previewing..."
 echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open</string>

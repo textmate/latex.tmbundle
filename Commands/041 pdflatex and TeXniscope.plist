@@ -9,7 +9,8 @@
 	<key>capturePattern</key>
 	<string>(\d+|LaTeX Warning): (.*?)$</string>
 	<key>command</key>
-	<string>/usr/local/teTeX/bin/powerpc-apple-darwin-current/pdflatex -interaction=nonstopmode -file-line-error-style "$TM_FILEPATH" |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
+	<string>cd `dirname "$TM_FILEPATH"`
+/usr/local/teTeX/bin/powerpc-apple-darwin-current/pdflatex -interaction=nonstopmode -file-line-error-style `basename "$TM_FILEPATH"` |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
 echo
 echo "Previewing..."
 echo $TM_FILEPATH | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open -a TeXniscope

@@ -15,19 +15,20 @@ a:hover { color: #000; text-decoration: underline; }
 &lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
 EOF
 
-tmp=`mktemp /tmp/pdflatex_XXX`
+tmp=`mktemp /tmp/pdflatex_XXXXXXXX`
 
-# if TM_LATEX_MASTER not set use TM_FILEPATH
+# If TM_LATEX_MASTER not set use TM_FILEPATH
 [ -z "$TM_LATEX_MASTER" ] &amp;&amp;
-  export TM_LATEX_MASTER=$TM_FILEPATH
+  export TM_LATEX_MASTER="$TM_FILEPATH"
 
-cd `dirname $TM_LATEX_MASTER`
+cd `dirname "$TM_LATEX_MASTER"`
 pdflatex -interaction=nonstopmode -file-line-error \
   -halt-on-error -output-directory /tmp \
   -jobname `basename ${tmp}` `basename "$TM_LATEX_MASTER"` \
   | perl -pe '$| = 1; s/^(\/.*?):(\d+):\s*(.*)$/&lt;a href="txmt:\/\/open?url=file:\/\/$1&amp;line=$2"&gt;$3&lt;\/a&gt;/'
 
-[ -f ${tmp}.pdf ] &amp;&amp; echo '&lt;/pre&gt;&lt;meta http-equiv="Refresh" content="0;URL=file:///'${tmp}'.pdf"&gt;'
+# If PDF file exists and not empty, display it.
+[ -s ${tmp}.pdf ] &amp;&amp; echo '&lt;/pre&gt;&lt;meta http-equiv="Refresh" content="0;URL=file:///'${tmp}'.pdf"&gt;'
 
 { sleep 30; rm ${tmp} ${tmp}.*; } &lt;/dev/null &gt;/dev/null 2&gt;&amp;1 &amp;
 </string>
