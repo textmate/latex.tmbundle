@@ -51,7 +51,7 @@
 			<key>foregroundColor</key>
 			<string>#07209D</string>
 			<key>match</key>
-			<string>[\[\]\{\}</string>
+			<string>[\[\]\{\}]</string>
 			<key>name</key>
 			<string>Brackets</string>
 		</dict>
