@@ -45,7 +45,7 @@
 			<key>foregroundColor</key>
 			<string>#00AA00</string>
 			<key>name</key>
-			<string>Non-numbered equation</string>
+			<string>strings.latex.equation-$$</string>
 		</dict>
 		<dict>
 			<key>foregroundColor</key>
@@ -53,7 +53,7 @@
 			<key>match</key>
 			<string>[\[\]\{\}]</string>
 			<key>name</key>
-			<string>Brackets</string>
+			<string>keywords.latex.braces</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -67,7 +67,7 @@
 			<key>foregroundColor</key>
 			<string>#0000FF</string>
 			<key>name</key>
-			<string>Sections with Options</string>
+			<string>keywords.functions.latex.sections</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -77,7 +77,7 @@
 			<key>foregroundColor</key>
 			<string>#005C00</string>
 			<key>name</key>
-			<string>Inline equation</string>
+			<string>strings.latex.equation-$</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -87,7 +87,7 @@
 			<key>foregroundColor</key>
 			<string>#006600</string>
 			<key>name</key>
-			<string>Inline alt equation</string>
+			<string>strings.latex.equation-braces</string>
 		</dict>
 		<dict>
 			<key>fontStyle</key>
@@ -99,7 +99,7 @@
 			<key>match</key>
 			<string>(^|[^\\])%.*$</string>
 			<key>name</key>
-			<string>Comments</string>
+			<string>comments.line.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -113,7 +113,7 @@
 			<key>foregroundColor</key>
 			<string>#6600CC</string>
 			<key>name</key>
-			<string>Citations</string>
+			<string>keywords.functions.latex.citations</string>
 		</dict>
 		<dict>
 			<key>foregroundColor</key>
@@ -121,7 +121,7 @@
 			<key>match</key>
 			<string>\\\w*</string>
 			<key>name</key>
-			<string>Tags</string>
+			<string>keywords.functions.latex</string>
 		</dict>
 	</array>
 	<key>smartTypingPairs</key>
