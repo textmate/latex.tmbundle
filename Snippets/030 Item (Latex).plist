@@ -3,10 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\item ${1:item}</string>
+	<string>\\item ${1:item}$0</string>
 	<key>name</key>
 	<string>Item (Latex)</string>
-	<key>trigger</key>
+	<key>tabTrigger</key>
 	<string>It</string>
 	<key>uuid</key>
 	<string>BC8B976A-5F16-11D9-B9C3-000D93589AF6</string>

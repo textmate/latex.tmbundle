@@ -4,7 +4,7 @@
 <dict>
 	<key>content</key>
 	<string>\\begin{lstlisting}[caption=${1:cap},label=lst:${2:lab},float=htbp]
-
+$0
 \\end{lstlisting}
 </string>
 	<key>name</key>

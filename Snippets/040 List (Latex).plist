@@ -5,12 +5,13 @@
 	<key>content</key>
 	<string>\\begin{itemize}
 
-	\\item ${1:premier item}
-
+    \\item ${1:premier item}
+    $0
+    
 \\end{itemize}</string>
 	<key>name</key>
 	<string>List (Latex)</string>
-	<key>trigger</key>
+	<key>tabTrigger</key>
 	<string>List</string>
 	<key>uuid</key>
 	<string>BC8B97E6-5F16-11D9-B9C3-000D93589AF6</string>
