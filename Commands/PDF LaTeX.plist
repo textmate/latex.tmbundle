@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveActiveFile</string>
+	<key>command</key>
+	<string>cat &lt;&lt;EOF
+&lt;html&gt;&lt;head&gt;
+&lt;style&gt;
+* {
+   color: #998;
+}
+a {
+   color: #000;
+   text-decoration: none;
+}
+a:hover {
+   color: #000;
+   text-decoration: underline;
+}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
+EOF
+
+tmp=`mktemp /tmp/pdflatex_XXX`
+
+pdflatex -interaction=nonstopmode -file-line-error \
+  -halt-on-error -output-directory /tmp \
+  -jobname `basename ${tmp}` "${TM_FILEPATH}" \
+| perl -pe 's/^(\/.*?):(\d+):\s*(.*)$/&lt;a href="txmt:\/\/open?url=file:\/\/$1&amp;line=$2" onClick="window.close()"&gt;$3&lt;\/a&gt;/'
+
+[ -f ${tmp}.pdf ] &amp;&amp; echo '&lt;/pre&gt;&lt;meta http-equiv="Refresh" content="0;URL=file:///'${tmp}'.pdf"&gt;'
+{ sleep 30; rm ${tmp} ${tmp}.*; } &lt;/dev/null &gt;/dev/null 2&gt;&amp;1 &amp;
+</string>
+	<key>input</key>
+	<string>document</string>
+	<key>keyEquivalent</key>
+	<string></string>
+	<key>name</key>
+	<string>PDF LaTeX</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>2966CE09-732E-11D9-AE5C-000D93589AF6</string>
+</dict>
+</plist>
