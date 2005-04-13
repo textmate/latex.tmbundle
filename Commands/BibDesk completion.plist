@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>res=`osascript &lt;&lt;EOF
+	tell application "Bibdesk" to set candidates to search for "$TM_CURRENT_WORD" with for completion
+	tell application "System Events"
+		activate
+		choose from list candidates
+	end tell
+EOF`
+osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
+
+echo -n ${res:${#TM_CURRENT_WORD}}
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>~</string>
+	<key>name</key>
+	<string>BibDesk completion</string>
+	<key>output</key>
+	<string>insertAsSnippet</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>F80F9C22-ABB8-11D9-957A-000D93589AF6</string>
+</dict>
+</plist>
