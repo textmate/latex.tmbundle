@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
+[ -z "$TM_LATEX_MASTER" ] &amp;&amp;
+   export TM_LATEX_MASTER="$TM_FILEPATH"
+export Tspath=${TM_TSCOPE:=/Applications}
+echo $Tspath
+"$Tspath"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" `echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs` ; open -a TeXniscope</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^~@o</string>
+	<key>name</key>
+	<string>Find in TeXniscope</string>
+	<key>output</key>
+	<string>discard</string>
+	<key>uuid</key>
+	<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
+</dict>
+</plist>
