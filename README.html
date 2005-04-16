@@ -1,72 +1,240 @@
-<h1>A short guide to the mysteries of the LaTeX Bundle</h1>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
 
-<h2>Intro</h2>
-<p>The LaTeX Bundle has a long history, it was one of the earliest contributed bundles in the TextMate family.  Many people have contributed to this bundle over the short life of TextMate.  Those people are documented in the credits section based on the now defunct history file and what can be gleaned from the subversion logs and mailing list.  Since there are several ways to use the LaTeX bundle and several different distributions of TeX out there for the Mac now seems like as good a time as any to document some of the prerequisites and options.</p>
+<html>
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Mac OS X (vers 1st September 2004), see www.w3.org">
 
-<p>First, you need a working version of LaTeX.  Some of the commands in the bundle assume that you are using the latest version that you can get using the i-installer package.  You should install the 2005 install package from Gerben's i-Directory.</p>
+  <title>A Short Guide to the TextMate LaTeX Bundle</title>
+</head>
 
-<p>Several of the commands also assume that you have some kind of pdf previewer. There are four options:</p>
-<nl>
-<li>The HTML output window of TextMate using the PDF Browser Plugin</li>
-<li>The TeXShop Application</li>
-<li>The TeXniscope previewer</li>
-</nl>
+<body>
+  <h1>A Short Guide to the Mysteries of the LaTeX Bundle</h1>
 
-The LaTeX bundle also works pretty well with bibtex.  In particular the Bibdesk application for managing bibliography files works well with TextMate.
+  <h2>Intro</h2>
 
-<p>You can find all of the above on Version Tracker and the like.</p>
+  <p>The LaTeX Bundle has a long history, it was one of the
+  earliest contributed bundles in the TextMate family. Many people
+  have contributed to this bundle over the short life of TextMate.
+  Those people are documented in the credits section based on the
+  now defunct history file and what can be gleaned from the
+  subversion logs and mailing list. Since there are several ways to
+  use the LaTeX bundle and several different distributions of TeX
+  out there for the Mac now seems like as good a time as any to
+  document some of the prerequisites and options.</p>
 
-<p>The rest of this document is broken into six sections.  There is a section for each of the following:  Commands, Macros, Snippets, Templates, Environment Variables, and Credits. Happy LaTeXing</p>
+  <p>First, you need a working version of LaTeX. Some of the
+  commands in the bundle assume that you are using the latest
+  version that you can get using the i-installer package. You
+  should use the 2005 install package from Gerben's
+  i-Directory.</p>
 
-<h2>Commands</h2>
-<ul>
-    <li>PDF LaTeX:  typeset the current project to a temporary directory and display in the TextMate HTML output window</li>
-    <li>LaTeX Comment</li>
-    <li>LaTeX Uncomment:  I think these two may be obsoleted by the UnComment bundle</li>
-    <li>Launch TexShop</li>
-    <li>LaTeX and Preview Typeset the current project and display pdf using the system default pdf preview program, typically Apples Preview.app.</li>
-    <li>LaTeX and TeXniscope: Typeset the current project in the project directory and disply using TeXniscope.  If you are a TeXniscope user you can set configure TextMate to be your external editor in the prefs panel for TeXniscope.  You should set the Editor to open, and the editor options should be as follows: "txmt://open?url=file://%file&amp;line=%line" Also if you are using TeXniscope you can make use of the pdfsync package.  \usepackage{pdfsync} in you LaTeX document.  This allows you to quickly navigate back and forth between the source and the preview window.  Command-clicking in the preview window brings you to the correct line in your source file.</li>
-    <li>Find in TeXniscope:  Again, if you are using the pdfsync package this command will bring you to the preview window where the current line of source is displayed.</li>
-    <li>BibDesk completion:  Searches in open bibliography files for the current word and replaces the current word with the appropriate cite key.</li>
-</ul>
-<h2>Macros</h2>
-<ul>
-    <li>Generic Completion:  This macro actually consists of a bunch of perl scripts that get run to do completion on bib entries, cross-refs and commands.  It is context sensative and makes its best guess based on context as to what you are trying to accomplish.</li>
+  <p>Several of the commands also assume that you have some kind of
+  pdf previewer. There are four options:</p>
+
+  <ol>
+    <li>The HTML output window of TextMate using the PDF Browser
+    Plugin</li>
+
+    <li>The TeXShop Application</li>
+
+    <li>The TeXniscope previewer</li>
+
+    <li>Apple's built in previewer</li>
+  </ol>
+
+  <p>Some of the previewers, TeXniscope and TeXShop work with the
+  pdfsync package. The pdf sync package is a great because it
+  allows you to easily hop back and forth between TextMate and the
+  pdf version of your document</p>
+
+  <p>The LaTeX bundle also works well with bibtex. In particular
+  the Bibdesk application for managing bibliography files works
+  well with TextMate.</p>
+
+  <p>Spell Checking: The system spell check service works find with
+  LaTeX but is a bit annoying since it will mark all the various
+  LaTeX commands as misspelled. However, you can install CocoAspell
+  which works as another system dictionary and is able to filter
+  out LaTeX commands.</p>
+
+  <p>You can find all of the above on Version Tracker and the
+  like.</p>
+
+  <p>The rest of this document is broken into six sections. There
+  is a section for each of the following: Commands, Macros,
+  Snippets, Templates, Environment Variables, and Credits. Happy
+  LaTeXing</p>
+
+  <h2>Commands</h2>
+
+  <dl>
+    <dt><strong>PDF LaTeX:</strong> [F3]</dt>
+
+    <dd>typeset the current project to a temporary directory and
+    display in the TextMate HTML output window</dd>
+
+    <dt><strong>LaTeX Comment:</strong> [^/]</dt>
+
+    <dt><strong>LaTeX Uncomment:</strong> [^?]</dt>
+
+    <dd>I think these two may be obsoleted by the UnComment
+    bundle</dd>
+
+    <dt><strong>Launch TexShop:</strong> [cmd-sh-t]</dt>
+
+    <dd>TeXShop is an excellent front end to LaTeX on the mac.
+    TeXShop has its own built in editor but you can configure it to
+    use an external editor. When you do this, TeXShop serves as a
+    typesetting and previewing environment.</dd>
+
+    <dt><strong>LaTeX Tidy:</strong> [opt-cmd-sh-l]</dt>
+
+    <dd>Reformats your LaTeX code to be neat and tidy.</dd>
+
+    <dt><strong>LaTeX and Preview:</strong> []</dt>
+
+    <dd>Typeset the current project and display pdf using the
+    system default pdf preview program, typically Apples
+    Preview.app.</dd>
+
+    <dt><strong>LaTeX and TeXniscope:</strong> [^-opt-cmd-l]</dt>
+
+    <dd>
+      Typeset the current project in the project directory and
+      disply using TeXniscope. If you are a TeXniscope user you can
+      configure TextMate to be your external editor in the prefs
+      panel for TeXniscope. You should set the options as
+      follows:<br>
+      <pre>
+    Editor: open
+    Editor options: "txmt://open?url=file://%file&amp;line=%line" 
     
-</ul>
-<h2>Snippets</h2>
-The LaTeX bundle has many nice snippets that correspond to many of the commonly used LaTeX environments.  This is by no means complete, but users are encouraged to contribute additional useful snippets back to the bundle.  The Tab trigger for each is in brackets.
-<ul>
+</pre>If you are using TeXniscope you can make use of the pdfsync
+package. \usepackage{pdfsync} in you LaTeX document. This allows
+you to quickly navigate back and forth between the source and the
+preview window. Command-clicking in the preview window brings you
+to the correct line in your source file.
+    </dd>
+
+    <dt><strong>Find in TeXniscope:</strong> [^-opt-cmd-o]</dt>
+
+    <dd>Again, if you are using the pdfsync package this command
+    will bring you to the preview window where the current line of
+    source is displayed.</dd>
+
+    <dt><strong>BibDesk completion:</strong> [opt-esc]</dt>
+
+    <dd>Searches in open bibliography files for the current word
+    and replaces the current word with the appropriate cite
+    key.</dd>
+  </dl>
+
+  <h2>Macros</h2>
+
+  <dl>
+    <dt><strong>Generic Completion:</strong> [^-cmd-space]</dt>
+
+    <dd>This macro actually consists of a bunch of perl scripts
+    that get run to do completion on bib entries, cross-refs and
+    commands. It is context sensative and makes its best guess
+    based on context as to what you are trying to accomplish.</dd>
+  </dl>
+
+  <h2>Snippets</h2>The LaTeX bundle has many nice snippets that
+  correspond to many of the commonly used LaTeX environments. This
+  is by no means complete, but users are encouraged to contribute
+  additional useful snippets back to the bundle. The Tab trigger
+  for each is in brackets.
+
+  <ul>
     <li>Equation [Eeq]</li>
+
     <li>Equation array [Eea]</li>
+
     <li>Table [Table]</li>
+
     <li>Tabular [Tabular]</li>
+
     <li>Figure [Fig]</li>
+
     <li>Verbatim [Verb]</li>
+
     <li>Ref [ref]</li>
+
     <li>List (Itemize) [List]</li>
+
     <li>Item [It]</li>
+
     <li>Description [Desc]</li>
-    <li>Item - Descrition  [itd]</li>
+
+    <li>Item - Descrition [itd]</li>
+
     <li>Enumerate [Enum]</li>
+
     <li>Code listing (lstlisting) [lst]</li>
+
     <li>Code listing inline (lstinline) [li]</li>
-</ul>
+  </ul>
 
-<h2>Templates</h2>
-The only template so far sets up a single file article document.
+  <h2>Templates</h2>
 
-<h2>Environment Variables</h2>
+  <dl>
+    <dt>Article</dt>
 
-<ul>
-    <li>TM_LATEX_MASTER</li>
-    <li>TM_TSCOPE</li>
-</ul>
+    <dd>Sets up a single file article document. Includes lots of
+    nice packages for graphics, math, code listings, table of
+    contents, etc.</dd>
+  </dl>
 
-<h2>Related Commands</h2>
-The Defaults bundle contains a set of commands called Special Items xxx.  The Special Items commands help you navigate quickly through the sections subsections, etc of a LaTeX file.
+  <h2>Environment Variables</h2>
 
-<h2>Credits</h2>
+  <ul>
+    <li>TM_LATEX_MASTER: If set this variable contains the filename
+    of a LaTeX file that includes other LaTeX files to create a
+    larger work. If not set, this variable defaults to
+    TM_FILEPATH</li>
 
-<h2>TODO</h2>
-Once the new Syntax and Scope system is in place it would be good to rethink some of the keyboard shortcuts.
+    <li>TM_TSCOPE: If set this variable contains the path to the
+    TeXniscope application. If not set it defaults to
+    /Applications</li>
+  </ul>
+
+  <h2>Related Commands</h2>
+
+  <dl>
+    <dt>Defaults</dt>
+
+    <dd>The Defaults Bundle contains a set of commands called
+    Special Items xxx. The Special Items commands help you navigate
+    quickly through the sections subsections, etc of a LaTeX
+    file.</dd>
+
+    <dt>Uncomment [cmd-']</dt>
+
+    <dd>The Uncomment bundle toggles line comments for a single
+    line or selected lines of text. It supports LaTeX and many
+    other environments</dd>
+  </dl>
+
+  <h2>Credits</h2>There were at least two or possibly three
+  versions of a LaTeX bundle floating around in the early days of
+  TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and
+  Andrew Ellis At some point, January 2005, Eric Hsu pulled
+  together the threads into one package. From then on there have
+  been contributions by Sune Foldager, Brad Miller, Alan Odgaard,
+  and Jeroen van der Ham. The Generic Completion package was
+  written by Marcin.
+
+  <h2>TODO</h2>
+
+  <ul>
+    <li>Once the new Syntax and Scope system is in place it would
+    be good to rethink some of the keyboard shortcuts.</li>
+
+    <li>Add an environment variable to make it easier to switch the
+    commands between pdflatex, context, xelatex, and any other
+    *tex.</li>
+  </ul>
+</body>
+</html>
