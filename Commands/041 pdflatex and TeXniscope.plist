@@ -5,26 +5,28 @@
 	<key>beforeRunningCommand</key>
 	<string>saveActiveFile</string>
 	<key>captureFormatString</key>
-	<string>$1: $2</string>
+	<string>$1: $2: $3</string>
 	<key>capturePattern</key>
-	<string>(\d+|LaTeX Warning): (.*?)$</string>
+	<string>^==&gt;(.*?\.tex):(\d+):(.*)</string>
 	<key>command</key>
 	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
 [ -z "$TM_LATEX_MASTER" ] &amp;&amp;
   export TM_LATEX_MASTER="$TM_FILEPATH"
   
 cd `dirname "$TM_LATEX_MASTER"`
-"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style `basename "$TM_LATEX_MASTER"` |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
+"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style `basename "$TM_LATEX_MASTER"` |  "$TM_BUNDLE_PATH"/latexErrWarn.py
 echo
 echo "Previewing..."
 echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open -a TeXniscope
 </string>
+	<key>fileCaptureRegister</key>
+	<string>1</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
 	<string>^~@l</string>
 	<key>lineCaptureRegister</key>
-	<string>1</string>
+	<string>2</string>
 	<key>name</key>
 	<string>LaTeX and TeXniscope</string>
 	<key>output</key>
