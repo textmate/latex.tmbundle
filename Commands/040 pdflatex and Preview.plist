@@ -14,7 +14,7 @@
   export TM_LATEX_MASTER="$TM_FILEPATH"
 
 cd `dirname "$TM_LATEX_MASTER"`
-pdflatex -interaction=nonstopmode -file-line-error-style `basename "$TM_LATEX_MASTER"` |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
+"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style `basename "$TM_LATEX_MASTER"` |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
 echo
 echo "Previewing..."
 echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open</string>
