@@ -6,13 +6,15 @@
 	<string>saveActiveFile</string>
 	<key>command</key>
 	<string># this requires pdflatex Web2C 7.5.3
+# for preview you also need the PDF Browser Plugin
 
-cat &lt;&lt;EOF
-&lt;html&gt;&lt;head&gt;&lt;style&gt;
-*       { color: #998; }
-a       { color: #000; text-decoration: none; }
-a:hover { color: #000; text-decoration: underline; }
-&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
+cat &lt;&lt;"EOF"
+   &lt;html&gt;&lt;head&gt;&lt;style&gt;
+   *       { color: #998; }
+   strong  { color: #000; }
+   a       { color: #000; text-decoration: none; }
+   a:hover { color: #000; text-decoration: underline; }
+   &lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
 EOF
 
 tmp=`mktemp /tmp/pdflatex_XXXXXXXX`
@@ -21,16 +23,26 @@ tmp=`mktemp /tmp/pdflatex_XXXXXXXX`
 [ -z "$TM_LATEX_MASTER" ] &amp;&amp;
   export TM_LATEX_MASTER="$TM_FILEPATH"
 
-cd `dirname "$TM_LATEX_MASTER"`
+cd "`dirname "$TM_LATEX_MASTER"`"
 "${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error \
   -halt-on-error -output-directory /tmp \
-  -jobname `basename ${tmp}` `basename "$TM_LATEX_MASTER"` \
-  | perl -pe '$| = 1; s/^(\/.*?):(\d+):\s*(.*)$/&lt;a href="txmt:\/\/open?url=file:\/\/$1&amp;line=$2"&gt;$3&lt;\/a&gt;/'
+  -jobname "`basename ${tmp}`" "`basename "$TM_LATEX_MASTER"`" \
+  | perl -pe '$| = 1; s|^(\.?/.*?):(\d+):\s*(.*)$|&lt;a href="txmt://open?url=file://'"`dirname "$TM_LATEX_MASTER"`"'/$1&amp;line=$2"&gt;$3&lt;/a&gt;|'
 
-# If PDF file exists and not empty, display it.
-[ -s ${tmp}.pdf ] &amp;&amp; echo '&lt;/pre&gt;&lt;meta http-equiv="Refresh" content="0;URL=file:///'${tmp}'.pdf"&gt;'
+echo "&lt;/pre&gt;"
 
-{ sleep 30; rm ${tmp} ${tmp}.*; } &lt;/dev/null &gt;/dev/null 2&gt;&amp;1 &amp;
+# If PDF file is non-empty and apache is running, redirect.
+if [ -s ${tmp}.pdf ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
+   cp "$tmp.pdf" ~/Sites/web_kit_workaround.pdf
+   chmod 666 ~/Sites/web_kit_workaround.pdf
+   echo "&lt;script&gt;window.location='http://localhost/~$USER/web_kit_workaround.pdf'&lt;/script&gt;"
+elif [ -s ${tmp}.pdf ]; then
+   echo "&lt;strong&gt;Error: Apache not running (we can no longer redirect to file://localhost/...)&lt;/strong&gt;"
+else
+   echo "&lt;strong&gt;Error: PDF file not written to disk&lt;/strong&gt;"
+fi
+
+{ sleep 30; rm ${tmp} ${tmp}.*; } &amp;&gt;/dev/null &amp;
 </string>
 	<key>input</key>
 	<string>document</string>
