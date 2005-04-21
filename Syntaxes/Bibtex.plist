@@ -1,135 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>uuid</key>
-	<string>47F30BA1-6B1D-11D9-9A60-000D93589AF6</string>
-	<key>backgroundColor</key>
-	<string>#ffffff</string>
-	<key>fileTypes</key>
-	<array>
-		<string>bib</string>
-	</array>
-	<key>foldingStartMarker</key>
-	<string>\@[a-zA-Z]+\{.+,</string>
-	<key>foldingStopMarker</key>
-	<string>\}</string>
-	<key>foregroundColor</key>
-	<string>#333333</string>
-	<key>highlightPairs</key>
-	<array>
-		<array>
-			<string>(</string>
-			<string>)</string>
-		</array>
-		<array>
-			<string>[</string>
-			<string>]</string>
-		</array>
-		<array>
-			<string>{</string>
-			<string>}</string>
-		</array>
-		<array>
-			<string>"</string>
-			<string>"</string>
-		</array>
-	</array>
-	<key>name</key>
-	<string>Bibtex</string>
-	<key>patterns</key>
-	<array>
-		<dict>
-			<key>fontStyle</key>
-			<array>
-				<string>underline</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#0000CC</string>
-			<key>match</key>
-			<string>^\@[a-zA-Z]+</string>
-			<key>name</key>
-			<string>keywords.bibtex.entries</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>(^|[^\\])\$</string>
-			<key>end</key>
-			<string>\$</string>
-			<key>foregroundColor</key>
-			<string>#00AA00</string>
-			<key>name</key>
-			<string>strings.bibtex.equation.linemath.$</string>
-		</dict>
-		<dict>
-			<key>fontStyle</key>
-			<array>
-				<string>italic</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#999999</string>
-			<key>match</key>
-			<string>(^|[^\\])%.*$</string>
-			<key>name</key>
-			<string>comments.line.bibtex</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>\\cite[np]*\{</string>
-			<key>end</key>
-			<string>\}</string>
-			<key>fontStyle</key>
-			<array>
-				<string>underline</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#6600CC</string>
-			<key>name</key>
-			<string>keywords.bibtex.citations</string>
-		</dict>
-		<dict>
-			<key>fontStyle</key>
-			<array>
-				<string>bold</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#000AEE</string>
-			<key>match</key>
-			<string>\\\w*</string>
-			<key>name</key>
-			<string>keywords.functions.bibtex</string>
-		</dict>
-		<dict>
-			<key>fontStyle</key>
-			<array>
-				<string>italic</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#00AA00</string>
-			<key>match</key>
-			<string>[a-zA-Z]+\s*\=</string>
-			<key>name</key>
-			<string>keywords.bibtex.keys</string>
-		</dict>
-	</array>
-	<key>smartTypingPairs</key>
-	<array>
-		<array>
-			<string>(</string>
-			<string>)</string>
-		</array>
-		<array>
-			<string>[</string>
-			<string>]</string>
-		</array>
-		<array>
-			<string>{</string>
-			<string>}</string>
-		</array>
-		<array>
-			<string>"</string>
-			<string>"</string>
-		</array>
-	</array>
-</dict>
-</plist>
+{
+    backgroundColor = "#ffffff"; 
+    fileTypes = (bib); 
+    foldingStartMarker = "\\@[a-zA-Z]+\\{.+,"; 
+    foldingStopMarker = "\\}"; 
+    foregroundColor = "#333333"; 
+    highlightPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
+    name = Bibtex; 
+    scopeName = "source.bibtex";
+    patterns = (
+        {
+            fontStyle = (underline); 
+            foregroundColor = "#0000CC"; 
+            match = "^\\@[a-zA-Z]+"; 
+            name = "keywords.bibtex.entries"; 
+        }, 
+        {
+            begin = "(^|[^\\\\])\\$"; 
+            end = "\\$"; 
+            foregroundColor = "#00AA00"; 
+            name = "strings.bibtex.equation.linemath.$"; 
+        }, 
+        {
+            fontStyle = (italic); 
+            foregroundColor = "#999999"; 
+            match = "(^|[^\\\\])%.*$"; 
+            name = "comments.line.bibtex"; 
+        }, 
+        {
+            begin = "\\\\cite[np]*\\{"; 
+            end = "\\}"; 
+            fontStyle = (underline); 
+            foregroundColor = "#6600CC"; 
+            name = "keywords.bibtex.citations"; 
+        }, 
+        {
+            fontStyle = (bold); 
+            foregroundColor = "#000AEE"; 
+            match = "\\\\\\w*"; 
+            name = "keywords.functions.bibtex"; 
+        }, 
+        {
+            fontStyle = (italic); 
+            foregroundColor = "#00AA00"; 
+            match = "[a-zA-Z]+\\s*\\="; 
+            name = "keywords.bibtex.keys"; 
+        }
+    ); 
+    smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
+    uuid = "47F30BA1-6B1D-11D9-9A60-000D93589AF6"; 
+}

@@ -1,255 +1,112 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>uuid</key>
-	<string>3BEEA00C-6B1D-11D9-B8AD-000D93589AF6</string>
-	<key>backgroundColor</key>
-	<string>#ffffff</string>
-	<key>fileTypes</key>
-	<array>
-		<string>tex</string>
-	</array>
-	<key>foldingStartMarker</key>
-	<string>\\begin\{.*\}</string>
-	<key>foldingStopMarker</key>
-	<string>\\end\{.*\}</string>
-	<key>foregroundColor</key>
-	<string>#333333</string>
-	<key>highlightPairs</key>
-	<array>
-		<array>
-			<string>(</string>
-			<string>)</string>
-		</array>
-		<array>
-			<string>[</string>
-			<string>]</string>
-		</array>
-		<array>
-			<string>{</string>
-			<string>}</string>
-		</array>
-		<array>
-			<string>"</string>
-			<string>"</string>
-		</array>
-	</array>
-	<key>name</key>
-	<string>Latex</string>
-	<key>patterns</key>
-	<array>
-		<dict>
-			<key>begin</key>
-			<string>\$\$</string>
-			<key>end</key>
-			<string>\$\$</string>
-			<key>foregroundColor</key>
-			<string>#00AA00</string>
-			<key>name</key>
-			<string>strings.latex.equation.displaymath.$</string>
-		</dict>
-		<dict>
-			<key>foregroundColor</key>
-			<string>#07209D</string>
-			<key>match</key>
-			<string>[\[\]\{\}]</string>
-			<key>name</key>
-			<string>keywords.latex.braces</string>
-		</dict>
-		<dict>
-			<key>foregroundColor</key>
-			<string>#0000CC</string>
-			<key>match</key>
-			<string>\\\\</string>
-			<key>name</key>
-			<string>keywords.latex.newline</string>
-		</dict>		
-		<dict>
-			<key>begin</key>
-			<string>\\(((sub)*section)|(chapter)|(paragraph)|(part))(\*?)(\[.*\])?\{</string>
-			<key>end</key>
-			<string>\}</string>
-			<key>fontStyle</key>
-			<array>
-				<string>bold</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#0000FF</string>
-			<key>name</key>
-			<string>keywords.functions.latex.sections</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-            <string>\\textit\{</string>
-			<key>end</key>
-			<string>\}</string>
-			<key>fontStyle</key>
-			<array>
-				<string>italic</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#000000</string>
-			<key>elementForegroundColor</key>
-			<string>#9700CC</string>
-			<key>elementFontStyle</key>
-			<array>
-				<string>plain</string>
-			</array>			
-			<key>name</key>
-			<string>keywords.functions.latex.textit</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-            <string>\\textbf\{</string>
-			<key>end</key>
-			<string>\}</string>
-			<key>fontStyle</key>
-			<array>
-				<string>bold</string>
-			</array>
-			<key>elementForegroundColor</key>
-			<string>#9700cc</string>
-			<key>elementFontStyle</key>
-			<array>
-				<string>plain</string>
-			</array>			
-			<key>foregroundColor</key>
-			<string>#000000</string>
-			<key>name</key>
-			<string>keywords.functions.latex.textbf</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-            <string>\\texttt\{</string>
-			<key>end</key>
-			<string>\}</string>
-			<key>fontStyle</key>
-			<array>
-				<string>underline</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#000000</string>
-			<key>elementForegroundColor</key>
-			<string>#9700CC</string>
-			<key>elementFontStyle</key>
-			<array>
-				<string>plain</string>
-			</array>			
-			<key>name</key>
-			<string>keywords.functions.latex.texttt</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-            <string>[`]+</string>
-			<key>end</key>
-			<string>[']+</string>
-			<key>foregroundColor</key>
-			<string>#005C00</string>
-			<key>name</key>
-			<string>keywords.functions.latex.textbf</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-            <string>"</string>
-			<key>end</key>
-			<string>"</string>
-			<key>foregroundColor</key>
-			<string>#FF0000</string>
-			<key>name</key>
-			<string>keywords.functions.latex.textbf</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>(^|[^\\])\$</string>
-			<key>end</key>
-			<string>\$</string>
-			<key>foregroundColor</key>
-			<string>#005C00</string>
-			<key>name</key>
-			<string>strings.latex.equation.linemath.$</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>\\\(</string>
-			<key>end</key>
-			<string>\\\)</string>
-			<key>foregroundColor</key>
-			<string>#006600</string>
-			<key>name</key>
-			<string>strings.latex.equation.linemath</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>\\\[</string>
-			<key>end</key>
-			<string>\\\]</string>
-			<key>foregroundColor</key>
-			<string>#006600</string>
-			<key>name</key>
-			<string>strings.latex.equation.displaymath</string>
-		</dict>
-		<dict>
-			<key>fontStyle</key>
-			<array>
-				<string>italic</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#5C5C5C</string>
-			<key>match</key>
-			<string>(^|[^\\])%.*$</string>
-			<key>name</key>
-			<string>comments.line.latex</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>\\cite[tp]*\{</string>
-			<key>end</key>
-			<string>\}</string>
-			<key>fontStyle</key>
-			<array>
-				<string>underline</string>
-			</array>
-			<key>foregroundColor</key>
-			<string>#6600CC</string>
-			<key>name</key>
-			<string>keywords.functions.latex.citations</string>
-		</dict>
-		<dict>
-			<key>foregroundColor</key>
-			<string>#9700CC</string>
-			<key>match</key>
-			<string>\\\w*</string>
-			<key>name</key>
-			<string>keywords.functions.latex</string>
-		</dict>
-	</array>
-	<key>smartTypingPairs</key>
-	<array>
-		<array>
-			<string>(</string>
-			<string>)</string>
-		</array>
-		<array>
-			<string>[</string>
-			<string>]</string>
-		</array>
-		<array>
-			<string>{</string>
-			<string>}</string>
-		</array>
-		<array>
-			<string>"</string>
-			<string>"</string>
-		</array>
-		<array>
-			<string>$</string>
-			<string>$</string>
-		</array>
-		<array>
-			<string>`</string>
-			<string>'</string>
-		</array>
-	</array>
-</dict>
-</plist>
+{
+    backgroundColor = "#ffffff"; 
+    fileTypes = (tex); 
+    foldingStartMarker = "\\\\begin\\{.*\\}"; 
+    foldingStopMarker = "\\\\end\\{.*\\}"; 
+    foregroundColor = "#333333"; 
+    highlightPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
+    name = Latex; 
+    scopeName = "text.latex";
+    patterns = (
+        {
+            begin = "\\$\\$"; 
+            end = "\\$\\$"; 
+            foregroundColor = "#00AA00"; 
+            name = "strings.latex.equation.displaymath.$"; 
+        }, 
+        {
+            foregroundColor = "#07209D"; 
+            match = "[\\[\\]\\{\\}]"; 
+            name = "keywords.latex.braces"; 
+        }, 
+        {
+            foregroundColor = "#0000CC"; 
+            match = "\\\\\\\\"; 
+            name = "keywords.latex.newline"; 
+        }, 
+        {
+            begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
+            end = "\\}"; 
+            fontStyle = (bold); 
+            foregroundColor = "#0000FF"; 
+            name = "keywords.functions.latex.sections"; 
+        }, 
+        {
+            begin = "\\\\textit\\{"; 
+            elementFontStyle = (plain); 
+            elementForegroundColor = "#9700CC"; 
+            end = "\\}"; 
+            fontStyle = (italic); 
+            foregroundColor = "#000000"; 
+            name = "keywords.functions.latex.textit"; 
+        }, 
+        {
+            begin = "\\\\textbf\\{"; 
+            elementFontStyle = (plain); 
+            elementForegroundColor = "#9700cc"; 
+            end = "\\}"; 
+            fontStyle = (bold); 
+            foregroundColor = "#000000"; 
+            name = "keywords.functions.latex.textbf"; 
+        }, 
+        {
+            begin = "\\\\texttt\\{"; 
+            elementFontStyle = (plain); 
+            elementForegroundColor = "#9700CC"; 
+            end = "\\}"; 
+            fontStyle = (underline); 
+            foregroundColor = "#000000"; 
+            name = "keywords.functions.latex.texttt"; 
+        }, 
+        {
+            begin = "[`]+"; 
+            end = "[']+"; 
+            foregroundColor = "#005C00"; 
+            name = "keywords.functions.latex.textbf"; 
+        }, 
+        {
+            begin = "\""; 
+            end = "\""; 
+            foregroundColor = "#FF0000"; 
+            name = "keywords.functions.latex.textbf"; 
+        }, 
+        {
+            begin = "(^|[^\\\\])\\$"; 
+            end = "\\$"; 
+            foregroundColor = "#005C00"; 
+            name = "strings.latex.equation.linemath.$"; 
+        }, 
+        {
+            begin = "\\\\\\("; 
+            end = "\\\\\\)"; 
+            foregroundColor = "#006600"; 
+            name = "strings.latex.equation.linemath"; 
+        }, 
+        {
+            begin = "\\\\\\["; 
+            end = "\\\\\\]"; 
+            foregroundColor = "#006600"; 
+            name = "strings.latex.equation.displaymath"; 
+        }, 
+        {
+            fontStyle = (italic); 
+            foregroundColor = "#5C5C5C"; 
+            match = "(^|[^\\\\])%.*$"; 
+            name = "comments.line.latex"; 
+        }, 
+        {
+            begin = "\\\\cite[tp]*\\{"; 
+            end = "\\}"; 
+            fontStyle = (underline); 
+            foregroundColor = "#6600CC"; 
+            name = "keywords.functions.latex.citations"; 
+        }, 
+        {
+            foregroundColor = "#9700CC"; 
+            match = "\\\\\\w*"; 
+            name = "keywords.functions.latex"; 
+        }
+    ); 
+    smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\""), ("$", "$"), ("`", "'")); 
+    uuid = "3BEEA00C-6B1D-11D9-B8AD-000D93589AF6"; 
+}
