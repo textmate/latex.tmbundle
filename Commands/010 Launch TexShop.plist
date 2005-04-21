@@ -11,7 +11,7 @@
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
-	<string>@T</string>
+	<string>^T</string>
 	<key>name</key>
 	<string>Launch TexShop</string>
 	<key>output</key>
