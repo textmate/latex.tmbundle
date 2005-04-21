@@ -29,7 +29,7 @@
             end = "\\}"; 
             fontStyle = (bold); 
             foregroundColor = "#0000FF"; 
-            name = "keywords.functions.latex.sections"; 
+            name = "keywords.classes.latex.sections"; 
         }, 
         {
             begin = "\\\\textit\\{"; 
@@ -62,13 +62,13 @@
             begin = "[`]+"; 
             end = "[']+"; 
             foregroundColor = "#005C00"; 
-            name = "keywords.functions.latex.textbf"; 
+            name = "strings.functions.latex.textbf"; 
         }, 
         {
             begin = "\""; 
             end = "\""; 
             foregroundColor = "#FF0000"; 
-            name = "keywords.functions.latex.textbf"; 
+            name = "strings.functions.latex.textbf"; 
         }, 
         {
             begin = "(^|[^\\\\])\\$"; 
