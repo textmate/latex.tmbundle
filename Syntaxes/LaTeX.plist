@@ -1,5 +1,6 @@
 {
     fileTypes = (tex); 
+	firstLineMatch = "^\\\\documentclass.*";
     foldingStartMarker = "\\\\begin\\{.*\\}"; 
     foldingStopMarker = "\\\\end\\{.*\\}"; 
     highlightPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
@@ -9,25 +10,48 @@
         {
             begin = "\\$\\$"; 
             end = "\\$\\$"; 
-            name = "string.markup.latex.equation.displaymath.$"; 
+            name = "string.latex.equation.displaymath.$"; 
         }, 
         {
             match = "[\\[\\]\\{\\}]"; 
-            name = "keyword.markup.latex.braces"; 
+            name = "keyword.latex.braces"; 
         }, 
         {
             match = "\\\\\\\\"; 
-            name = "keyword.markup.latex.newline"; 
+            name = "keyword.latex.newline"; 
         }, 
         {
             begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
             end = "\\}"; 
             name = "keyword.function.section.latex"; 
-        }, 
-        { 
-            name = "declaration.markup.environments.latex";
-            match = "\\<(itemize|enumerate|description|lstlisting|figure|table|tabular|verbatim|equation)\\>";
         },
+        {
+            begin = "(\\\\begin\\{)lstlisting(\\})"; 
+            end = "(\\\\end\\{)lstlisting(\\})"; 
+            captures = {
+              1 = { name = "keyword.function.environment"; };
+              2 = { name = "keyword.function.environment"; };
+              3 = { name = "keyword.function.environment"; };
+              4 = { name = "keyword.function.environment"; };                                          
+            };
+            patterns = ({ include = "Python"; });
+        },          
+        {   
+            match = "(\\\\begin\\{)(.*?)(\\})"; 
+            captures = {
+              1 = { name = "keyword.function.environment.latex"; };                
+              2 = { name = "function-argument.environment.latex"; };
+              3 = { name = "keyword.function.environment.latex"; };                              
+            };             
+        },
+        {
+            match = "(\\\\end\\{)(.*?)(\\})";
+            captures = {
+              1 = { name = "keyword.function.environment.latex"; };                
+              2 = { name = "function-argument.environment.latex"; };
+              3 = { name = "keyword.function.environment.latex"; };                              
+            };             
+        }, 
         {   
             name = "keyword.function.latex.textit";
             begin = "\\\\textit\\{"; 
@@ -60,14 +84,6 @@
                     name = "function-argument.tt";
                 },
             );
-        }, 
-        {
-            begin = "(\\\\begin)\\{lstlisting\\}"; 
-            end = "(\\\\end)\\{lstlisting\\}"; 
-            captures = {
-              1 = { name = "keyword.markup.inline"; };
-            };
-            patterns = ({ include = "Python"; });
         }, 
 
         {
@@ -118,16 +134,28 @@
         {
             begin = "\\\\cite[tp]*\\{"; 
             end = "\\}"; 
-            name = "keyword.markup.inline.latex.citations"; 
+            name = "keyword.function.latex.cite"; 
+            patterns = (
+                {
+                    match = "[a-zA-Z]+";
+                    name = "function-argument.cite";
+                },
+            );
         }, 
         {
-            begin = "\\\\ref\\{"; 
+            begin = "\\\\(ref|label)\\{"; 
             end = "\\}"; 
             name = "keyword.function.latex.ref"; 
+            patterns = (
+                {
+                    match = "[a-zA-Z,:0-9]+";
+                    name = "function-argument.ref";
+                },
+            );
         }, 
         {
-            match = "\\\\\\w*"; 
-            name = "keyword.markup.latex.general"; 
+            match = "\\\\[a-zA-Z]+\\w*"; 
+            name = "keyword.latex.general"; 
         },
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\""), ("$", "$"), ("`", "'")); 
