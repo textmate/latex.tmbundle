@@ -22,50 +22,42 @@
         {
             begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
             end = "\\}"; 
-            name = "keyword.markup.sections.latex"; 
+            name = "keyword.function.section.latex"; 
         }, 
         { 
-            name = "keyword.markup.environments.latex";
+            name = "declaration.markup.environments.latex";
             match = "\\<(itemize|enumerate|description|lstlisting|figure|table|tabular|verbatim|equation)\\>";
         },
-
-        {
-            begin = "(\\\\textit\\){"; 
+        {   
+            name = "keyword.function.latex.textit";
+            begin = "\\\\textit\\{"; 
             end = "\\}"; 
-            captures = {
-              1 = {name = "keyword.markup.inline.it"; };
-            };
             patterns = (
                 {
                     match = "[a-zA-Z]+";
-                    name = "keyword.markup.latex.textit";
+                    name = "function-argument.it";
                 },
             );
         }, 
         {
-            begin = "(\\\\textbf)\\{"; 
+            name = "keyword.function.latex.textbf";
+            begin = "\\\\textbf\\{"; 
             end = "\\}"; 
-            captures = {
-              1 = { name = "keyword.markup.inline.bf"; };
-                            
-            };
             patterns = (
                 {
                     match = "[a-zA-Z]+";
-                    name = "keyword.markup.latex.textbf";
+                    name = "function-argument.bf";
                 },
             );
         }, 
         {
-            begin = "(\\\\texttt\\){"; 
+            name = "keyword.function.latex.texttt";
+            begin = "\\\\texttt\\{"; 
             end = "\\}"; 
-            captures = {
-              1 = { name = "keyword.markup.inline.tt"; };
-            };
             patterns = (
                 {
                     match = "[a-zA-Z]+";
-                    name = "keyword.markup.latex.texttt";
+                    name = "function-argument.tt";
                 },
             );
         }, 
@@ -77,6 +69,22 @@
             };
             patterns = ({ include = "Python"; });
         }, 
+
+        {
+            name = "keyword.function.latex.general";
+            begin = "(\\\\\\w+\\){"; 
+            end = "\\}?"; 
+            captures = {
+              1 = { name = "keyword.function.latex.general"; };
+            };
+            patterns = (
+                {
+                    match = "[a-zA-Z]+";
+                    name = "function-argument";
+                },
+            );
+        }, 
+
         {
             begin = "[`]+"; 
             end = "[']+"; 
@@ -85,7 +93,7 @@
         {
             begin = "\""; 
             end = "\""; 
-            name = "invalid.strings.latex"; 
+            name = "invalid.string.latex"; 
         }, 
         {
             begin = "(^|[^\\\\])\\$"; 
@@ -115,7 +123,7 @@
         {
             begin = "\\\\ref\\{"; 
             end = "\\}"; 
-            name = "keyword.markup.inline.latex.ref"; 
+            name = "keyword.function.latex.ref"; 
         }, 
         {
             match = "\\\\\\w*"; 
