@@ -1,9 +1,7 @@
 {
-    backgroundColor = "#ffffff"; 
     fileTypes = (tex); 
     foldingStartMarker = "\\\\begin\\{.*\\}"; 
     foldingStopMarker = "\\\\end\\{.*\\}"; 
-    foregroundColor = "#333333"; 
     highlightPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
     name = Latex; 
     scopeName = "text.latex";
@@ -11,101 +9,118 @@
         {
             begin = "\\$\\$"; 
             end = "\\$\\$"; 
-            foregroundColor = "#00AA00"; 
-            name = "strings.latex.equation.displaymath.$"; 
+            name = "strings.markup.latex.equation.displaymath.$"; 
         }, 
         {
-            foregroundColor = "#07209D"; 
             match = "[\\[\\]\\{\\}]"; 
-            name = "keywords.latex.braces"; 
+            name = "keywords.markup.latex.braces"; 
         }, 
         {
-            foregroundColor = "#0000CC"; 
             match = "\\\\\\\\"; 
-            name = "keywords.latex.newline"; 
+            name = "keywords.markup.latex.newline"; 
         }, 
         {
             begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
             end = "\\}"; 
-            fontStyle = (bold); 
-            foregroundColor = "#0000FF"; 
-            name = "keywords.classes.latex.sections"; 
+            name = "keywords.markup.sections.latex"; 
+        }, 
+        { 
+            name = "keywords.markup.environments.latex";
+            match = "\\<(itemize|enumerate|description|lstlisting|figure|table|tabular|verbatim|equation)\\>";
+        },
+
+        {
+            begin = "(\\\\textit\\){"; 
+            end = "\\}"; 
+            captures = {
+              1 = {name = "keywords.markup.inline.it"; };
+            };
+            patterns = (
+                {
+                    match = "[a-zA-Z]+";
+                    name = "keywords.markup.latex.textit";
+                },
+            );
         }, 
         {
-            begin = "\\\\textit\\{"; 
-            elementFontStyle = (plain); 
-            elementForegroundColor = "#9700CC"; 
+            begin = "(\\\\textbf)\\{"; 
             end = "\\}"; 
-            fontStyle = (italic); 
-            foregroundColor = "#000000"; 
-            name = "keywords.functions.latex.textit"; 
+            captures = {
+              1 = { name = "keywords.markup.inline.bf"; };
+                            
+            };
+            patterns = (
+                {
+                    match = "[a-zA-Z]+";
+                    name = "keywords.markup.latex.textbf";
+                },
+            );
         }, 
         {
-            begin = "\\\\textbf\\{"; 
-            elementFontStyle = (plain); 
-            elementForegroundColor = "#9700cc"; 
+            begin = "(\\\\texttt\\){"; 
             end = "\\}"; 
-            fontStyle = (bold); 
-            foregroundColor = "#000000"; 
-            name = "keywords.functions.latex.textbf"; 
+            captures = {
+              1 = { name = "keywords.markup.inline.tt"; };
+            };
+            patterns = (
+                {
+                    match = "[a-zA-Z]+";
+                    name = "keywords.markup.latex.texttt";
+                },
+            );
         }, 
         {
-            begin = "\\\\texttt\\{"; 
-            elementFontStyle = (plain); 
-            elementForegroundColor = "#9700CC"; 
-            end = "\\}"; 
-            fontStyle = (underline); 
-            foregroundColor = "#000000"; 
-            name = "keywords.functions.latex.texttt"; 
+            begin = "(\\\\begin)\\{lstlisting\\}"; 
+            end = "(\\\\end)\\{lstlisting\\}"; 
+            captures = {
+              1 = { name = "keywords.markup.inline"; };
+            };
+            patterns = ({ include = "Python"; });
         }, 
         {
             begin = "[`]+"; 
             end = "[']+"; 
-            foregroundColor = "#005C00"; 
-            name = "strings.functions.latex.textbf"; 
+            name = "strings.single.latex"; 
         }, 
         {
             begin = "\""; 
             end = "\""; 
-            foregroundColor = "#FF0000"; 
-            name = "strings.functions.latex.textbf"; 
+            name = "invalid.strings.latex"; 
         }, 
         {
             begin = "(^|[^\\\\])\\$"; 
             end = "\\$"; 
-            foregroundColor = "#005C00"; 
             name = "strings.latex.equation.linemath.$"; 
         }, 
         {
             begin = "\\\\\\("; 
             end = "\\\\\\)"; 
-            foregroundColor = "#006600"; 
             name = "strings.latex.equation.linemath"; 
         }, 
         {
             begin = "\\\\\\["; 
             end = "\\\\\\]"; 
-            foregroundColor = "#006600"; 
+
             name = "strings.latex.equation.displaymath"; 
         }, 
         {
-            fontStyle = (italic); 
-            foregroundColor = "#5C5C5C"; 
             match = "(^|[^\\\\])%.*$"; 
             name = "comments.line.latex"; 
         }, 
         {
             begin = "\\\\cite[tp]*\\{"; 
             end = "\\}"; 
-            fontStyle = (underline); 
-            foregroundColor = "#6600CC"; 
-            name = "keywords.functions.latex.citations"; 
+            name = "keywords.markup.inline.latex.citations"; 
         }, 
         {
-            foregroundColor = "#9700CC"; 
+            begin = "\\\\ref\\{"; 
+            end = "\\}"; 
+            name = "keywords.markup.inline.latex.ref"; 
+        }, 
+        {
             match = "\\\\\\w*"; 
-            name = "keywords.functions.latex"; 
-        }
+            name = "keywords.markup.latex.general"; 
+        },
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\""), ("$", "$"), ("`", "'")); 
     uuid = "3BEEA00C-6B1D-11D9-B8AD-000D93589AF6"; 
