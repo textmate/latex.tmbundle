@@ -12,38 +12,38 @@
             fontStyle = (underline); 
             foregroundColor = "#0000CC"; 
             match = "^\\@[a-zA-Z]+"; 
-            name = "keywords.bibtex.entries"; 
+            name = "keyword.bibtex.entries"; 
         }, 
         {
             begin = "(^|[^\\\\])\\$"; 
             end = "\\$"; 
             foregroundColor = "#00AA00"; 
-            name = "strings.bibtex.equation.linemath.$"; 
+            name = "string.bibtex.equation.linemath.$"; 
         }, 
         {
             fontStyle = (italic); 
             foregroundColor = "#999999"; 
             match = "(^|[^\\\\])%.*$"; 
-            name = "comments.line.bibtex"; 
+            name = "comment.line.bibtex"; 
         }, 
         {
             begin = "\\\\cite[np]*\\{"; 
             end = "\\}"; 
             fontStyle = (underline); 
             foregroundColor = "#6600CC"; 
-            name = "keywords.bibtex.citations"; 
+            name = "keyword.bibtex.citations"; 
         }, 
         {
             fontStyle = (bold); 
             foregroundColor = "#000AEE"; 
             match = "\\\\\\w*"; 
-            name = "keywords.functions.bibtex"; 
+            name = "keyword.function.bibtex"; 
         }, 
         {
             fontStyle = (italic); 
             foregroundColor = "#00AA00"; 
             match = "[a-zA-Z]+\\s*\\="; 
-            name = "keywords.bibtex.keys"; 
+            name = "keyword.bibtex.keys"; 
         }
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 

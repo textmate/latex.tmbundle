@@ -9,23 +9,23 @@
         {
             begin = "\\$\\$"; 
             end = "\\$\\$"; 
-            name = "strings.markup.latex.equation.displaymath.$"; 
+            name = "string.markup.latex.equation.displaymath.$"; 
         }, 
         {
             match = "[\\[\\]\\{\\}]"; 
-            name = "keywords.markup.latex.braces"; 
+            name = "keyword.markup.latex.braces"; 
         }, 
         {
             match = "\\\\\\\\"; 
-            name = "keywords.markup.latex.newline"; 
+            name = "keyword.markup.latex.newline"; 
         }, 
         {
             begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
             end = "\\}"; 
-            name = "keywords.markup.sections.latex"; 
+            name = "keyword.markup.sections.latex"; 
         }, 
         { 
-            name = "keywords.markup.environments.latex";
+            name = "keyword.markup.environments.latex";
             match = "\\<(itemize|enumerate|description|lstlisting|figure|table|tabular|verbatim|equation)\\>";
         },
 
@@ -33,12 +33,12 @@
             begin = "(\\\\textit\\){"; 
             end = "\\}"; 
             captures = {
-              1 = {name = "keywords.markup.inline.it"; };
+              1 = {name = "keyword.markup.inline.it"; };
             };
             patterns = (
                 {
                     match = "[a-zA-Z]+";
-                    name = "keywords.markup.latex.textit";
+                    name = "keyword.markup.latex.textit";
                 },
             );
         }, 
@@ -46,13 +46,13 @@
             begin = "(\\\\textbf)\\{"; 
             end = "\\}"; 
             captures = {
-              1 = { name = "keywords.markup.inline.bf"; };
+              1 = { name = "keyword.markup.inline.bf"; };
                             
             };
             patterns = (
                 {
                     match = "[a-zA-Z]+";
-                    name = "keywords.markup.latex.textbf";
+                    name = "keyword.markup.latex.textbf";
                 },
             );
         }, 
@@ -60,12 +60,12 @@
             begin = "(\\\\texttt\\){"; 
             end = "\\}"; 
             captures = {
-              1 = { name = "keywords.markup.inline.tt"; };
+              1 = { name = "keyword.markup.inline.tt"; };
             };
             patterns = (
                 {
                     match = "[a-zA-Z]+";
-                    name = "keywords.markup.latex.texttt";
+                    name = "keyword.markup.latex.texttt";
                 },
             );
         }, 
@@ -73,14 +73,14 @@
             begin = "(\\\\begin)\\{lstlisting\\}"; 
             end = "(\\\\end)\\{lstlisting\\}"; 
             captures = {
-              1 = { name = "keywords.markup.inline"; };
+              1 = { name = "keyword.markup.inline"; };
             };
             patterns = ({ include = "Python"; });
         }, 
         {
             begin = "[`]+"; 
             end = "[']+"; 
-            name = "strings.single.latex"; 
+            name = "string.single.latex"; 
         }, 
         {
             begin = "\""; 
@@ -90,36 +90,36 @@
         {
             begin = "(^|[^\\\\])\\$"; 
             end = "\\$"; 
-            name = "strings.latex.equation.linemath.$"; 
+            name = "string.latex.equation.linemath.$"; 
         }, 
         {
             begin = "\\\\\\("; 
             end = "\\\\\\)"; 
-            name = "strings.latex.equation.linemath"; 
+            name = "string.latex.equation.linemath"; 
         }, 
         {
             begin = "\\\\\\["; 
             end = "\\\\\\]"; 
 
-            name = "strings.latex.equation.displaymath"; 
+            name = "string.latex.equation.displaymath"; 
         }, 
         {
             match = "(^|[^\\\\])%.*$"; 
-            name = "comments.line.latex"; 
+            name = "comment.line.latex"; 
         }, 
         {
             begin = "\\\\cite[tp]*\\{"; 
             end = "\\}"; 
-            name = "keywords.markup.inline.latex.citations"; 
+            name = "keyword.markup.inline.latex.citations"; 
         }, 
         {
             begin = "\\\\ref\\{"; 
             end = "\\}"; 
-            name = "keywords.markup.inline.latex.ref"; 
+            name = "keyword.markup.inline.latex.ref"; 
         }, 
         {
             match = "\\\\\\w*"; 
-            name = "keywords.markup.latex.general"; 
+            name = "keyword.markup.latex.general"; 
         },
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\""), ("$", "$"), ("`", "'")); 
