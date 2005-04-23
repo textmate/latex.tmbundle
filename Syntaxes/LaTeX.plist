@@ -26,18 +26,25 @@
             name = "keyword.function.section.latex"; 
             patterns = ( { match = "[^}]+"; name = "function-name"; } );
         },
+        // Put the lstlisting match before the more general environment listing.
+        // Someday it would be nice to make this rule general enough to figure out
+        // which language is inside the lstlisting environment rather than my own personal
+        // use for python. --Brad
         {
-            begin = "(\\\\begin\\{)lstlisting(\\})"; 
+            begin = "(\\\\begin\\{)lstlisting(\\})(\\[(.*)\\])?"; 
             end = "(\\\\end\\{)lstlisting(\\})"; 
             captures = {
               1 = { name = "keyword.function.environment"; };
               2 = { name = "keyword.function.environment"; };
+              //3 = { name = "function-argument.latex.optional"; };              
               3 = { name = "keyword.function.environment"; };
               4 = { name = "keyword.function.environment"; };
             };
             name = "source.python";
             patterns = ({ include = "source.python"; });
         },          
+        // ideally these next two could be re-written as real begin end pairs 
+        // so that one could do interesting things to the body of an environment.
         {   
             match = "(\\\\begin\\{)(.*?)(\\})"; 
             captures = {
@@ -58,6 +65,9 @@
             // we put the keyword in a capture and name this capture, 
             // so that disabling spell checking for “keyword” won't be
             // inherited by the argument to \textit{...}
+            
+            // Put specific matches for particular LaTeX keyword.functions before the 
+            // last two more general functions
             begin = "(\\\\textit\\{)";end = "(\\})";
             captures = { 1 = { name = "keyword.function.latex.textit"; }; }; 
             patterns = ( { match = "\\w+"; name = "function-argument.it"; } );
@@ -72,7 +82,22 @@
             captures = { 1 = { name = "keyword.function.latex.texttt"; }; }; 
             patterns = ( { match = "\\w+"; name = "function-argument.tt"; } );
         }, 
-
+        {
+            begin = "(\\\\cite[tp]*\\{)"; end = "(\\})"; 
+            captures = { 1 = { name = "keyword.function.latex.cite"; }; }; 
+            patterns = ( { match = "\\w+"; name = "function-argument.cite"; } );
+        }, 
+        {
+            begin = "\\\\(ref|label)\\{"; end = "\\}"; 
+            name = "keyword.function.latex.ref"; 
+            patterns = (
+                {
+                    match = "[a-zA-Z,:0-9]+";
+                    name = "function-argument.ref";
+                },
+            );
+        }, 
+        // These next two are catch-all matches that will match almost any latex function
         {
             // first match “\foo{arg}”
             begin = "(\\\\[A-Za-z]\\w*\\{)"; end = "(\\})"; 
@@ -113,25 +138,6 @@
             match = "(^|[^\\\\])%.*$"; 
             name = "comment.line.latex"; 
         }, 
-        {
-            begin = "(\\\\cite[tp]*\\{)"; end = "(\\})"; 
-            captures = { 1 = { name = "keyword.function.latex.cite"; }; }; 
-            patterns = ( { match = "\\w+"; name = "function-argument.cite"; } );
-        }, 
-        {
-            begin = "\\\\(ref|label)\\{"; end = "\\}"; 
-            name = "keyword.function.latex.ref"; 
-            patterns = (
-                {
-                    match = "[a-zA-Z,:0-9]+";
-                    name = "function-argument.ref";
-                },
-            );
-        }, 
-        {
-            match = "\\\\[a-zA-Z]+\\w*"; 
-            name = "keyword.latex.general"; 
-        },
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\""), ("$", "$"), ("`", "'")); 
     uuid = "3BEEA00C-6B1D-11D9-B8AD-000D93589AF6"; 
