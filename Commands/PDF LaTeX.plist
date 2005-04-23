@@ -34,8 +34,8 @@ echo "&lt;/pre&gt;"
 # If PDF file is non-empty and apache is running, redirect.
 if [ -s ${tmp}.pdf ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
 echo 
-   FILE_LOC="${TM_PDFTEX_FILE_LOCATION:-~/Sites}/web_kit_workaround.pdf"
-   WEB_LOC="${TM_PDFTEX_WEB_LOCATION:-http://localhost/~$USER}/web_kit_workaround.pdf"
+   FILE_LOC="${PDFTEX_FILE_LOCATION:-~/Sites}/web_kit_workaround.pdf"
+   WEB_LOC="${PDFTEX_WEB_LOCATION:-http://localhost/~$USER}/web_kit_workaround.pdf"
    cp "$tmp.pdf" "${FILE_LOC}"
    chmod 666 "${FILE_LOC}"
    echo "&lt;script&gt;window.location='${WEB_LOC}'&lt;/script&gt;"

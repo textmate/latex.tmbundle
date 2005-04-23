@@ -72,7 +72,7 @@
     <dt><strong>PDF LaTeX:</strong> [F3]</dt>
 
     <dd>typeset the current project to a temporary directory and
-    display in the TextMate HTML output window</dd>
+    display in the TextMate HTML output window (requires PDF Browser Plugin or Tiger (?) to display the resulting PDF)</dd>
 
     <dt><strong>LaTeX Comment:</strong> [^/]</dt>
 
@@ -212,6 +212,11 @@ to the correct line in your source file.
 
     <li>TM_TEX: If set this variable contains the path to the tex
     program to use. It defaults to pdflatex</li>
+
+    <li>PDFTEX_FILE_LOCATION: The PDF LaTeX command currently needs to go through http to display the PDF inline. This is done by copying the file to a place where apache can find it and redirecting to that file using http://localhost/. It defaults to ~/Sites</li>
+
+    <li>PDFTEX_WEB_LOCATION: This is how the generated PDF should be accessed (see PDFTEX_FILE_LOCATION). It defaults to http://localhost/~$USER</li>
+
   </ul>
 
   <h2>Related Commands</h2>
