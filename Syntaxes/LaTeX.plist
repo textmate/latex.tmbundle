@@ -31,8 +31,6 @@
             captures = {
               1 = { name = "keyword.function.environment"; };
               2 = { name = "keyword.function.environment"; };
-              3 = { name = "keyword.function.environment"; };
-              4 = { name = "keyword.function.environment"; };                                          
             };
             patterns = ({ include = "Python"; });
         },          
@@ -53,62 +51,42 @@
             };             
         }, 
         {   
-            name = "keyword.function.latex.textit";
-            begin = "\\\\textit\\{"; 
-            end = "\\}"; 
-            patterns = (
-                {
-                    match = "[a-zA-Z]+";
-                    name = "function-argument.it";
-                },
-            );
+            // we put the keyword in a capture and name this capture, 
+            // so that disabling spell checking for “keyword” won't be
+            // inherited by the argument to \textit{...}
+            begin = "(\\\\textit\\{)";end = "(\\})";
+            captures = { 1 = { name = "keyword.function.latex.textit"; }; }; 
+            patterns = ( { match = "\\w+"; name = "function-argument.it"; } );
         }, 
         {
-            name = "keyword.function.latex.textbf";
-            begin = "\\\\textbf\\{"; 
-            end = "\\}"; 
-            patterns = (
-                {
-                    match = "[a-zA-Z]+";
-                    name = "function-argument.bf";
-                },
-            );
+            begin = "(\\\\textbf\\{)"; end = "(\\})"; 
+            captures = { 1 = { name = "keyword.function.latex.textbf"; }; }; 
+            patterns = ( { match = "\\w+"; name = "function-argument.bf"; } );
         }, 
         {
-            name = "keyword.function.latex.texttt";
-            begin = "\\\\texttt\\{"; 
-            end = "\\}"; 
-            patterns = (
-                {
-                    match = "[a-zA-Z]+";
-                    name = "function-argument.tt";
-                },
-            );
+            begin = "(\\\\texttt\\{)"; end = "(\\})"; 
+            captures = { 1 = { name = "keyword.function.latex.texttt"; }; }; 
+            patterns = ( { match = "\\w+"; name = "function-argument.tt"; } );
         }, 
 
         {
+            // first match “\foo{arg}”
+            begin = "(\\\\\\w+\\{)"; end = "(\\})"; 
+            captures = { 1 = { name = "keyword.function.latex.general"; }; };
+            patterns = ( { match = "[a-zA-Z]+"; name = "function-argument"; } );
+        }, 
+        {
+            // then match just “\foo”
+            match = "\\\\\\w+";
             name = "keyword.function.latex.general";
-            begin = "(\\\\\\w+\\){"; 
-            end = "\\}?"; 
-            captures = {
-              1 = { name = "keyword.function.latex.general"; };
-            };
-            patterns = (
-                {
-                    match = "[a-zA-Z]+";
-                    name = "function-argument";
-                },
-            );
         }, 
 
         {
-            begin = "[`]+"; 
-            end = "[']+"; 
+            begin = "[`]+"; end = "[']+"; 
             name = "string.single.latex"; 
         }, 
         {
-            begin = "\""; 
-            end = "\""; 
+            begin = "\""; end = "\""; 
             name = "invalid.string.latex"; 
         }, 
         {
@@ -132,19 +110,12 @@
             name = "comment.line.latex"; 
         }, 
         {
-            begin = "\\\\cite[tp]*\\{"; 
-            end = "\\}"; 
-            name = "keyword.function.latex.cite"; 
-            patterns = (
-                {
-                    match = "[a-zA-Z]+";
-                    name = "function-argument.cite";
-                },
-            );
+            begin = "(\\\\cite[tp]*\\{)"; end = "(\\})"; 
+            captures = { 1 = { name = "keyword.function.latex.cite"; }; }; 
+            patterns = ( { match = "\\w+"; name = "function-argument.cite"; } );
         }, 
         {
-            begin = "\\\\(ref|label)\\{"; 
-            end = "\\}"; 
+            begin = "\\\\(ref|label)\\{"; end = "\\}"; 
             name = "keyword.function.latex.ref"; 
             patterns = (
                 {
