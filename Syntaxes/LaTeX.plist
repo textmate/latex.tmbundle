@@ -35,7 +35,8 @@
               3 = { name = "keyword.function.environment"; };
               4 = { name = "keyword.function.environment"; };
             };
-            patterns = ({ include = "Python"; });
+            name = "source.python";
+            patterns = ({ include = "source.python"; });
         },          
         {   
             match = "(\\\\begin\\{)(.*?)(\\})"; 
