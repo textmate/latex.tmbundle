@@ -32,6 +32,8 @@
             captures = {
               1 = { name = "keyword.function.environment"; };
               2 = { name = "keyword.function.environment"; };
+              3 = { name = "keyword.function.environment"; };
+              4 = { name = "keyword.function.environment"; };
             };
             patterns = ({ include = "Python"; });
         },          
