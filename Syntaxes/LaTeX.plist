@@ -74,13 +74,13 @@
 
         {
             // first match “\foo{arg}”
-            begin = "(\\\\\\w+\\{)"; end = "(\\})"; 
+            begin = "(\\\\[A-Za-z]\\w*\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.general"; }; };
             patterns = ( { match = "[a-zA-Z]+"; name = "function-argument"; } );
         }, 
         {
             // then match just “\foo”
-            match = "\\\\\\w+";
+            match = "\\\\[A-Za-z]\\w*";
             name = "keyword.function.latex.general";
         }, 
 
