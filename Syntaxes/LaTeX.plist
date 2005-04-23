@@ -24,6 +24,7 @@
             begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
             end = "\\}"; 
             name = "keyword.function.section.latex"; 
+            patterns = ( { match = "[^}]+"; name = "function-name"; } );
         },
         {
             begin = "(\\\\begin\\{)lstlisting(\\})"; 
