@@ -16,6 +16,8 @@
 	<string>Launch TexShop</string>
 	<key>output</key>
 	<string>discard</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>DA0A5A42-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>

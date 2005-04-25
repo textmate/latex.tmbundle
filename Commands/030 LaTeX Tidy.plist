@@ -14,6 +14,8 @@
 	<string>LaTeX Tidy</string>
 	<key>output</key>
 	<string>replaceDocument</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>DF9F9DF7-5F85-11D9-97D0-000D9332809C</string>
 </dict>

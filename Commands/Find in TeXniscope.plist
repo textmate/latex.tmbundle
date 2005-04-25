@@ -19,6 +19,8 @@ echo $Tspath
 	<string>Find in TeXniscope</string>
 	<key>output</key>
 	<string>discard</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
 </dict>

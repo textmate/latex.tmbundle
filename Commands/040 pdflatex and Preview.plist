@@ -26,6 +26,8 @@ echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs
 	<string>LaTeX and Preview</string>
 	<key>output</key>
 	<string>separateWindow</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>DA0A5C1F-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>

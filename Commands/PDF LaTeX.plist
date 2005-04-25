@@ -55,6 +55,8 @@ fi
 	<string>PDF LaTeX</string>
 	<key>output</key>
 	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>2966CE09-732E-11D9-AE5C-000D93589AF6</string>
 </dict>
