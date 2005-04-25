@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>"`printenv TM_SELECTED_TEXT`$1"</string>
+	<string>"</string>
 	<key>keyEquivalent</key>
 	<string>"</string>
 	<key>name</key>
-	<string>Normal "quotes"</string>
+	<string>Escaped (\") quote</string>
 	<key>scope</key>
-	<string>text.latex source</string>
+	<string>text.latex dummy.escape</string>
 	<key>uuid</key>
-	<string>638CE5D7-B3F8-11D9-A9B7-000D93589AF6</string>
+	<string>91216D18-B537-11D9-8646-000D93589AF6</string>
 </dict>
 </plist>

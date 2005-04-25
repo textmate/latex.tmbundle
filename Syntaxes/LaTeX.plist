@@ -132,9 +132,16 @@
             name = "string.latex.equation.displaymath"; 
         }, 
         {
+            // we catch escape followed by ws or end-of-line
+            // so that we can change the behavior of the " key back
+            // to normal quote instead of ``quote''.
+            match = "\\\\(\\s|$)";
+            name = "dummy.escape";
+        }, 
+        {
             // this is a catch-all for \<symbol> so
             // that e.g. \" doesn't start an (invalid) string
-            match = "\\\\[^A-Za-z]";
+            match = "\\\\[^A-Za-z\n]";
             name = "constant.character"; // not sure if this is the proper classification
         }, 
         {

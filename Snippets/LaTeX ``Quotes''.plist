@@ -7,7 +7,7 @@
 	<key>keyEquivalent</key>
 	<string>"</string>
 	<key>name</key>
-	<string>LaTeX ``Quotes''</string>
+	<string>LaTeX ``quotes''</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>
