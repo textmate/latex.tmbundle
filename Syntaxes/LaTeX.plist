@@ -97,7 +97,8 @@
                 },
             );
         }, 
-        // These next two are catch-all matches that will match almost any latex function
+        // These next two are catch-all matches that
+        // will match almost any latex function
         {
             // first match “\foo{arg}”
             begin = "(\\\\[A-Za-z]\\w*\\{)"; end = "(\\})"; 
@@ -115,10 +116,6 @@
             name = "string.single.latex"; 
         }, 
         {
-            begin = "\""; end = "\""; 
-            name = "invalid.string.latex"; 
-        }, 
-        {
             begin = "(^|[^\\\\])\\$"; 
             end = "\\$"; 
             name = "string.latex.equation.linemath.$"; 
@@ -133,6 +130,16 @@
             end = "\\\\\\]"; 
 
             name = "string.latex.equation.displaymath"; 
+        }, 
+        {
+            // this is a catch-all for \<symbol> so
+            // that e.g. \" doesn't start an (invalid) string
+            match = "\\\\[^A-Za-z]";
+            name = "constant.character"; // not sure if this is the proper classification
+        }, 
+        {
+            begin = "\""; end = "\""; 
+            name = "invalid.string.latex"; 
         }, 
         {
             match = "(^|[^\\\\])%.*$"; 
