@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>command</key>
+	<string>if test \! -e "$TM_NEW_FILE"; then
+   TM_YEAR=`date +%Y` \
+   TM_DATE=`date +%Y-%m-%d` \
+   TM_USERNAME=`niutil -readprop / /users/\$USER realname` \
+   AUTHOR_ADDR=$(RA="defaults read AddressBookMe"; cat &lt;&lt;EOA
+`$RA FirstName` `$RA LastName`
+\\\\ `$RA StreetAddr1`
+\\\\ `$RA StreetAddr2`
+\\\\ `$RA ZipPostal` `$RA City`
+\\\\ `$RA Email`
+\\\\ http://www.xxx.yyy/mysite.html
+EOA) \
+   perl -pe 's/\$\{([^}]*)\}/$ENV{$1}/g' \
+      &lt; template_exam.tex &gt; "$TM_NEW_FILE"
+fi</string>
+	<key>extension</key>
+	<string>tex</string>
+	<key>name</key>
+	<string>Exam</string>
+	<key>uuid</key>
+	<string>8FA81F66-B682-11D9-9C6E-000A95766570</string>
+</dict>
+</plist>
