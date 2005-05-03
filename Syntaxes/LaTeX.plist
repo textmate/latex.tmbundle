@@ -24,7 +24,7 @@
             begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
             end = "\\}"; 
             name = "keyword.function.section.latex"; 
-            patterns = ( { match = "[^}]+"; name = "function-name"; } );
+            patterns = ( { match = "[^}]+"; name = "entity.name.function"; } );
         },
         // Put the lstlisting match before the more general environment listing.
         // Someday it would be nice to make this rule general enough to figure out
@@ -36,7 +36,7 @@
             captures = {
               1 = { name = "keyword.function.environment"; };
               2 = { name = "keyword.function.environment"; };
-              //3 = { name = "function-argument.latex.optional"; };              
+              //3 = { name = "entity.parameter.variable.function.latex.optional"; };              
               3 = { name = "keyword.function.environment"; };
               4 = { name = "keyword.function.environment"; };
             };
@@ -49,7 +49,7 @@
             match = "(\\\\begin\\{)(.*?)(\\})"; 
             captures = {
               1 = { name = "keyword.function.environment.latex"; };                
-              2 = { name = "function-argument.environment.latex"; };
+              2 = { name = "entity.parameter.variable.function.environment.latex"; };
               3 = { name = "keyword.function.environment.latex"; };                              
             };             
         },
@@ -57,7 +57,7 @@
             match = "(\\\\end\\{)(.*?)(\\})";
             captures = {
               1 = { name = "keyword.function.environment.latex"; };                
-              2 = { name = "function-argument.environment.latex"; };
+              2 = { name = "entity.parameter.variable.function.environment.latex"; };
               3 = { name = "keyword.function.environment.latex"; };                              
             };             
         }, 
@@ -70,22 +70,22 @@
             // last two more general functions
             begin = "(\\\\textit\\{)";end = "(\\})";
             captures = { 1 = { name = "keyword.function.latex.textit"; }; }; 
-            patterns = ( { match = "\\w+"; name = "function-argument.it"; } );
+            patterns = ( { match = "\\w+"; name = "entity.parameter.variable.function.it"; } );
         }, 
         {
             begin = "(\\\\textbf\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.textbf"; }; }; 
-            patterns = ( { match = "\\w+"; name = "function-argument.bf"; } );
+            patterns = ( { match = "\\w+"; name = "entity.parameter.variable.function.bf"; } );
         }, 
         {
             begin = "(\\\\texttt\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.texttt"; }; }; 
-            patterns = ( { match = "\\w+"; name = "function-argument.tt"; } );
+            patterns = ( { match = "\\w+"; name = "entity.parameter.variable.function.tt"; } );
         }, 
         {
             begin = "(\\\\cite[tp]*\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.cite"; }; }; 
-            patterns = ( { match = "\\w+"; name = "function-argument.cite"; } );
+            patterns = ( { match = "\\w+"; name = "entity.parameter.variable.function.cite"; } );
         }, 
         {
             begin = "\\\\(ref|label)\\{"; end = "\\}"; 
@@ -93,7 +93,7 @@
             patterns = (
                 {
                     match = "[a-zA-Z,:0-9]+";
-                    name = "function-argument.ref";
+                    name = "entity.parameter.variable.function.ref";
                 },
             );
         }, 
@@ -103,7 +103,7 @@
             // first match “\foo{arg}”
             begin = "(\\\\[A-Za-z]\\w*\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.general"; }; };
-            patterns = ( { match = "[a-zA-Z]+"; name = "function-argument"; } );
+            patterns = ( { match = "[a-zA-Z]+"; name = "entity.parameter.variable.function"; } );
         }, 
         {
             // then match just “\foo”
