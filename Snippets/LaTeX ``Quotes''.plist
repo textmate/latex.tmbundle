@@ -5,7 +5,7 @@
 	<key>content</key>
 	<string>\`\``printenv TM_SELECTED_TEXT`$1''</string>
 	<key>keyEquivalent</key>
-	<string>"</string>
+	<string></string>
 	<key>name</key>
 	<string>LaTeX ``quotes''</string>
 	<key>scope</key>
