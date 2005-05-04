@@ -9,6 +9,8 @@ $0
 </string>
 	<key>name</key>
 	<string>Code Listing (Latex)</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>tabTrigger</key>
 	<string>Lst</string>
 	<key>uuid</key>

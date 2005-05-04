@@ -6,6 +6,8 @@
 	<string>\\item ${1:item}$0</string>
 	<key>name</key>
 	<string>Item (Latex)</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>tabTrigger</key>
 	<string>It</string>
 	<key>uuid</key>

@@ -10,6 +10,8 @@
 \\end{enumerate}</string>
 	<key>name</key>
 	<string>Enumerate (Latex)</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>tabTrigger</key>
 	<string>Enum</string>
 	<key>uuid</key>

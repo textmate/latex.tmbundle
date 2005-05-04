@@ -8,6 +8,8 @@
 \\end{verbatim}</string>
 	<key>name</key>
 	<string>Verbatim (Latex)</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>tabTrigger</key>
 	<string>Verb</string>
 	<key>uuid</key>

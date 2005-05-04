@@ -8,6 +8,8 @@
 	<string>^W</string>
 	<key>name</key>
 	<string>Change LaTeX Style of selection</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>7D3548FA-AE80-11D9-8B45-000D93B6E43C</string>
 </dict>

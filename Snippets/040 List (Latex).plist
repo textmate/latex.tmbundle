@@ -11,6 +11,8 @@
 \\end{itemize}</string>
 	<key>name</key>
 	<string>List (Latex)</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>tabTrigger</key>
 	<string>List</string>
 	<key>uuid</key>

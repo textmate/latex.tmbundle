@@ -12,6 +12,8 @@
 \\end{figure}</string>
 	<key>name</key>
 	<string>Figure (Latex)</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>tabTrigger</key>
 	<string>Fig</string>
 	<key>uuid</key>

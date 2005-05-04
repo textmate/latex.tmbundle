@@ -11,6 +11,8 @@ $0</string>
 	<string>^L</string>
 	<key>name</key>
 	<string>Lines to list environment</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>A7B97D14-AE83-11D9-8B45-000D93B6E43C</string>
 </dict>

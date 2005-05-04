@@ -35,6 +35,8 @@
 	<string>^@ </string>
 	<key>name</key>
 	<string>LaTeX: Generic Completion</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>1BD29AF6-6731-11D9-B29F-000A95810252</string>
 </dict>

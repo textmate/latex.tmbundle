@@ -6,6 +6,8 @@
 	<string>\\lstinline{${1:code}}</string>
 	<key>name</key>
 	<string>Code Listing inline (Latex)</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>tabTrigger</key>
 	<string>li</string>
 	<key>uuid</key>
