@@ -24,7 +24,7 @@
             begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
             end = "\\}"; 
             name = "keyword.function.section.latex"; 
-            patterns = ( { match = "[^}]+"; name = "entity.name.function"; } );
+            patterns = ( { match = "[^}]+"; name = "entity.parameter.function.section.latex"; } );
         },
         // Put the lstlisting match before the more general environment listing.
         // Someday it would be nice to make this rule general enough to figure out
