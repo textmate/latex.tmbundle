@@ -9,11 +9,11 @@
 
 \\end{description}</string>
 	<key>name</key>
-	<string>Description (Latex)</string>
+	<string>Description (desc)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>Desc</string>
+	<string>desc</string>
 	<key>uuid</key>
 	<string>BC8B9866-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>

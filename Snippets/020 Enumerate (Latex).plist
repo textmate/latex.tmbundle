@@ -9,11 +9,11 @@
     $0
 \\end{enumerate}</string>
 	<key>name</key>
-	<string>Enumerate (Latex)</string>
+	<string>Enumerate (enum)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>Enum</string>
+	<string>enum</string>
 	<key>uuid</key>
 	<string>BC8B96EE-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>

@@ -3,24 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\begin{table}
-	\\caption{${2:légende}}
-
-	\\begin{center}
-	\\begin{tabular}{${3:c}}
-	      ${4:élément}
-     \\end{tabular}
-	\\end{center}
-
-	\\label{${1:étiquette}}
-\\end{table}</string>
+	<string>{\\textit ${1:italic text...}}</string>
 	<key>name</key>
-	<string>Table (table)</string>
+	<string>\textit .. (ital)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>table</string>
+	<string>ital</string>
 	<key>uuid</key>
-	<string>BC8B9AD6-5F16-11D9-B9C3-000D93589AF6</string>
+	<string>E7FCA689-BE5A-11D9-8702-000A95766570</string>
 </dict>
 </plist>

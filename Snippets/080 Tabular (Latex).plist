@@ -7,11 +7,11 @@
 	${2:element}
 \\end{tabular}</string>
 	<key>name</key>
-	<string>Tabular (Latex)</string>
+	<string>Tabular (tabular)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>Tabular</string>
+	<string>tabular</string>
 	<key>uuid</key>
 	<string>BC8B99DF-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>

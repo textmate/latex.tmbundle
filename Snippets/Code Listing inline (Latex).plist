@@ -5,11 +5,11 @@
 	<key>content</key>
 	<string>\\lstinline{${1:code}}</string>
 	<key>name</key>
-	<string>Code Listing inline (Latex)</string>
+	<string>Code Listing inline (cli)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>li</string>
+	<string>cli</string>
 	<key>uuid</key>
 	<string>38C6B6F4-80FB-11D9-9CB2-000A95766570</string>
 </dict>

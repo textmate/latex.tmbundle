@@ -8,11 +8,11 @@ $0
 \\end{lstlisting}
 </string>
 	<key>name</key>
-	<string>Code Listing (Latex)</string>
+	<string>Code Listing (lst)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>Lst</string>
+	<string>lst</string>
 	<key>uuid</key>
 	<string>F99B8D2A-71F6-11D9-AFB5-000D93B6E43C</string>
 </dict>

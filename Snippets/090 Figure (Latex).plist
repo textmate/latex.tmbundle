@@ -11,11 +11,11 @@
 	\\label{fig:${5:étiquette}}
 \\end{figure}</string>
 	<key>name</key>
-	<string>Figure (Latex)</string>
+	<string>Figure (fig)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>Fig</string>
+	<string>fig</string>
 	<key>uuid</key>
 	<string>BC8B9A5E-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>
