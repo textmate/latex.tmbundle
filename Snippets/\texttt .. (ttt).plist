@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>{\\textit ${1:italic text...}}</string>
+	<string>{\\texttt ${1:tele-type text...}}</string>
 	<key>name</key>
-	<string>\texttt .. (ttt)</string>
+	<string>\texttt .. (tt)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>ttt</string>
+	<string>tt</string>
 	<key>uuid</key>
 	<string>74A5079E-BE5B-11D9-8702-000A95766570</string>
 </dict>

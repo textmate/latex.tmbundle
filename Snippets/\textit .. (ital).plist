@@ -5,11 +5,11 @@
 	<key>content</key>
 	<string>{\\textit ${1:italic text...}}</string>
 	<key>name</key>
-	<string>\textit .. (ital)</string>
+	<string>\textit .. (it)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>ital</string>
+	<string>it</string>
 	<key>uuid</key>
 	<string>E7FCA689-BE5A-11D9-8702-000A95766570</string>
 </dict>
