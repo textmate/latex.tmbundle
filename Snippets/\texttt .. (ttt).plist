@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>{\\texttt ${1:tele-type text...}}</string>
+	<string>\\texttt{${1:tele-type text...}}</string>
 	<key>name</key>
 	<string>\texttt .. (tt)</string>
 	<key>scope</key>

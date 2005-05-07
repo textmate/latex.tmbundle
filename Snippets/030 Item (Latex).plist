@@ -5,11 +5,11 @@
 	<key>content</key>
 	<string>\\item ${0:item}</string>
 	<key>name</key>
-	<string>\item (it)</string>
+	<string>\item (item)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>it</string>
+	<string>item</string>
 	<key>uuid</key>
 	<string>BC8B976A-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>{\\textit ${1:italic text...}}</string>
+	<string>\\textit{${1:italic text...}}</string>
 	<key>name</key>
 	<string>\textit .. (it)</string>
 	<key>scope</key>
