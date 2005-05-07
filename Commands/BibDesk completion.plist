@@ -19,7 +19,7 @@ res=`osascript &lt;&lt;EOF
 EOF`
 osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
 
-res=`perl -pe &lt;&lt;&lt;$res 's/^(\w+)/$1}/'`
+res=`perl -pe &lt;&lt;&lt;$res 's/^(.*?)(\s*)%/$1}$2%/'`
 if [[ -z $TM_SELECTED_TEXT ]]
    then echo -n ${res:${#TM_CURRENT_WORD}}
    else echo -n $res
