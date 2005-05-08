@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\${1:*}section{${2:section name}}
+	<string>\\section{${1:section name}}
 </string>
 	<key>name</key>
-	<string>\section .. (section)</string>
+	<string>\section .. (sec)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>section</string>
+	<string>sec</string>
 	<key>uuid</key>
 	<string>24282E70-BE2C-11D9-8F93-000D93589AF6</string>
 </dict>
