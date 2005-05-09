@@ -3,34 +3,34 @@
 	firstLineMatch = "^\\\\documentclass.*";
     foldingStartMarker = "\\\\begin\\{.*\\}"; 
     foldingStopMarker = "\\\\end\\{.*\\}"; 
-    highlightPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
     name = Latex; 
     scopeName = "text.latex";
+    keyEquivalent = "~^L";
     patterns = (
-        {
-            begin = "\\$\\$"; 
-            end = "\\$\\$"; 
-            name = "string.latex.equation.displaymath.$"; 
+        {   name = "string.latex.equation.displaymath.$"; 
+            begin = "\\$\\$"; end = "\\$\\$"; 
         }, 
-        {
+        {   name = "keyword.operator.latex.braces"; 
             match = "[\\[\\]\\{\\}]"; 
-            name = "keyword.latex.braces"; 
         }, 
-        {
+        {   name = "keyword.operator.latex.newline"; 
             match = "\\\\\\\\"; 
-            name = "keyword.latex.newline"; 
         }, 
-        {
-            begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; 
-            end = "\\}"; 
-            name = "keyword.function.section.latex"; 
-            patterns = ( { match = "[^}]+"; name = "entity.parameter.function.section.latex"; } );
+        {   name = "declaration.section.latex";
+            begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; end = "\\}"; 
+            captures = {
+                1 = { name = "keyword.function.section.latex"; };
+            };
+            patterns = (
+                { match = "\\{[^{}\\n]*(?R)?[^{}\\n]*\\}"; name = "entity.parameter.function.section.latex"; },
+                { match = "[^{}\\n]+"; name = "entity.parameter.function.section.latex"; }
+            );
         },
         // Put the lstlisting match before the more general environment listing.
         // Someday it would be nice to make this rule general enough to figure out
         // which language is inside the lstlisting environment rather than my own personal
         // use for python. --Brad
-        {
+        {   name = "source.python";
             begin = "(\\\\begin\\{)lstlisting(\\})(\\[(.*)\\])?"; 
             end = "(\\\\end\\{)lstlisting(\\})"; 
             captures = {
@@ -40,28 +40,27 @@
               3 = { name = "keyword.function.environment"; };
               4 = { name = "keyword.function.environment"; };
             };
-            name = "source.python";
             patterns = ({ include = "source.python"; });
         },          
         // ideally these next two could be re-written as real begin end pairs 
         // so that one could do interesting things to the body of an environment.
-        {   
+        {   name = "declaration.begin.latex";
             match = "(\\\\begin\\{)(.*?)(\\})"; 
             captures = {
               1 = { name = "keyword.function.environment.latex"; };                
-              2 = { name = "entity.parameter.variable.function.environment.latex"; };
+              2 = { name = "entity.parameter.function.variable.environment.latex"; };
               3 = { name = "keyword.function.environment.latex"; };                              
             };             
         },
-        {
+        {   name = "declaration.end.latex";
             match = "(\\\\end\\{)(.*?)(\\})";
             captures = {
               1 = { name = "keyword.function.environment.latex"; };                
-              2 = { name = "entity.parameter.variable.function.environment.latex"; };
+              2 = { name = "entity.parameter.function.variable.environment.latex"; };
               3 = { name = "keyword.function.environment.latex"; };                              
             };             
         }, 
-        {   
+        {   name = "declaration.textit.latex";
             // we put the keyword in a capture and name this capture, 
             // so that disabling spell checking for “keyword” won't be
             // inherited by the argument to \textit{...}
@@ -70,87 +69,78 @@
             // last two more general functions
             begin = "(\\\\textit\\{)";end = "(\\})";
             captures = { 1 = { name = "keyword.function.latex.textit"; }; }; 
-            patterns = ( { match = "\\w+"; name = "entity.parameter.variable.function.it"; } );
+            patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.it"; } );
         }, 
-        {
+        {   name = "declaration.textbf.latex";
             begin = "(\\\\textbf\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.textbf"; }; }; 
-            patterns = ( { match = "\\w+"; name = "entity.parameter.variable.function.bf"; } );
+            patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.bf"; } );
         }, 
-        {
+        {   name = "declaration.texttt.latex";
             begin = "(\\\\texttt\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.texttt"; }; }; 
-            patterns = ( { match = "\\w+"; name = "entity.parameter.variable.function.tt"; } );
+            patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.tt"; } );
         }, 
-        {
+        {   name = "declaration.cite.latex";
             begin = "(\\\\cite[tp]*\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.cite"; }; }; 
-            patterns = ( { match = "\\w+"; name = "entity.parameter.variable.function.cite"; } );
+            patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.cite"; } );
         }, 
-        {
+        {   name = "declaration.ref-or-label.latex";
             begin = "\\\\(ref|label)\\{"; end = "\\}"; 
-            name = "keyword.function.latex.ref"; 
+            captures = {
+                1 = { name = "keyword.function.ref-or-label.latex"; };
+            };
             patterns = (
                 {
                     match = "[a-zA-Z,:0-9]+";
-                    name = "entity.parameter.variable.function.ref";
+                    name = "entity.parameter.function.variable.ref";
                 },
             );
         }, 
         // These next two are catch-all matches that
         // will match almost any latex function
-        {
+        {   name = "declaration.function-with-arg.latex";
             // first match “\foo{arg}”
-            begin = "(\\\\[A-Za-z]\\w*\\{)"; end = "(\\})"; 
-            captures = { 1 = { name = "keyword.function.latex.general"; }; };
-            patterns = ( { match = "[a-zA-Z]+"; name = "entity.parameter.variable.function"; } );
+            begin = "(\\\\[A-Za-z]\\w*)\\{"; end = "\\}"; 
+            captures = { 1 = { name = "keyword.function.with-arg.latex.general"; }; };
+            patterns = (
+                { match = "\\{[^{}\\n]*(?R)?[^{}\\n]*\\}"; name = "entity.parameter.function.variable"; },
+                { match = "[^{}\\n]+"; name = "entity.parameter.function.variable"; }
+            );
         }, 
-        {
+        {   name = "keyword.function.latex.general";
             // then match just “\foo”
             match = "\\\\[A-Za-z]\\w*";
-            name = "keyword.function.latex.general";
         }, 
-
-        {
+        {   name = "string.single.latex"; 
             begin = "[`]+"; end = "[']+"; 
-            name = "string.single.latex"; 
         }, 
-        {
-            begin = "(^|[^\\\\])\\$"; 
-            end = "\\$"; 
-            name = "string.latex.equation.linemath.$"; 
+        {   name = "string.latex.equation.linemath.$"; 
+            begin = "(^|[^\\\\])\\$"; end = "\\$"; 
         }, 
-        {
-            begin = "\\\\\\("; 
-            end = "\\\\\\)"; 
-            name = "string.latex.equation.linemath"; 
+        {   name = "string.latex.equation.linemath"; 
+            begin = "\\\\\\("; end = "\\\\\\)"; 
         }, 
-        {
-            begin = "\\\\\\["; 
-            end = "\\\\\\]"; 
-
-            name = "string.latex.equation.displaymath"; 
+        {   name = "string.latex.equation.displaymath"; 
+            begin = "\\\\\\["; end = "\\\\\\]"; 
         }, 
-        {
+        {   name = "dummy.escape";
             // we catch escape followed by ws or end-of-line
             // so that we can change the behavior of the " key back
             // to normal quote instead of ``quote''.
             match = "\\\\(\\s|$)";
-            name = "dummy.escape";
         }, 
-        {
+        {   name = "constant.character"; // not sure if this is the proper classification
             // this is a catch-all for \<symbol> so
             // that e.g. \" doesn't start an (invalid) string
             match = "\\\\[^A-Za-z\n]";
-            name = "constant.character"; // not sure if this is the proper classification
         }, 
-        {
+        {   name = "invalid.string.latex"; 
             begin = "\""; end = "\""; 
-            name = "invalid.string.latex"; 
         }, 
-        {
+        {   name = "comment.line.latex"; 
             match = "(^|[^\\\\])%.*$"; 
-            name = "comment.line.latex"; 
         }, 
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\""), ("$", "$"), ("`", "'")); 
