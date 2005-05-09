@@ -17,7 +17,7 @@
             match = "\\\\\\\\"; 
         }, 
         {   name = "declaration.section.latex";
-            begin = "\\\\(((sub)*section)|(chapter)|(paragraph)|(part))(\\*?)(\\[.*\\])?\\{"; end = "\\}"; 
+            begin = "(\\\\(?:(?:sub)*section|chapter|paragraph|part))(\\*?)(\\[.*\\])?\\{"; end = "\\}"; 
             captures = {
                 1 = { name = "keyword.function.section.latex"; };
             };
@@ -69,27 +69,27 @@
             // last two more general functions
             begin = "(\\\\textit\\{)";end = "(\\})";
             captures = { 1 = { name = "keyword.function.latex.textit"; }; }; 
-            patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.it"; } );
+            patterns = ( { match = "\\w+"; name = "markup.italic.textit.latex"; } );
         }, 
         {   name = "declaration.textbf.latex";
             begin = "(\\\\textbf\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.textbf"; }; }; 
-            patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.bf"; } );
+            patterns = ( { match = "\\w+"; name = "markup.bold.textbf.latex"; } );
         }, 
         {   name = "declaration.texttt.latex";
             begin = "(\\\\texttt\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.texttt"; }; }; 
-            patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.tt"; } );
+            patterns = ( { match = "\\w+"; name = "markup.terminal.texttt.latex"; } );
         }, 
         {   name = "declaration.cite.latex";
             begin = "(\\\\cite[tp]*\\{)"; end = "(\\})"; 
-            captures = { 1 = { name = "keyword.function.latex.cite"; }; }; 
+            captures = { 1 = { name = "keyword.control.latex.cite"; }; }; 
             patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.cite"; } );
         }, 
         {   name = "declaration.ref-or-label.latex";
-            begin = "\\\\(ref|label)\\{"; end = "\\}"; 
+            begin = "(\\\\(?:ref|label)\\{)"; end = "(\\})"; 
             captures = {
-                1 = { name = "keyword.function.ref-or-label.latex"; };
+                1 = { name = "keyword.control.ref-or-label.latex"; };
             };
             patterns = (
                 {
