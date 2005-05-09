@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\footnote{${1:footnote text...}}
+	<string>footnote{${1:footnote text...}}
 </string>
 	<key>name</key>
 	<string>\footnote (foot)</string>
