@@ -9,7 +9,7 @@
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>cli</string>
+	<string>cite</string>
 	<key>uuid</key>
 	<string>D2B3654C-BE5B-11D9-8702-000A95766570</string>
 </dict>

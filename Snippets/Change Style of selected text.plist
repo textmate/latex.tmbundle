@@ -7,7 +7,7 @@
 	<key>keyEquivalent</key>
 	<string>^W</string>
 	<key>name</key>
-	<string>Change LaTeX Style of selection</string>
+	<string>Wrap selection in command</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>

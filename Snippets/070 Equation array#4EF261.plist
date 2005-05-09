@@ -7,11 +7,11 @@
 	${1:equation}
 \\end{eqnarray}</string>
 	<key>name</key>
-	<string>Equation array (eqarr)</string>
+	<string>Equation array (eqA)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>eqarr</string>
+	<string>eqA</string>
 	<key>uuid</key>
 	<string>BC8B995C-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>

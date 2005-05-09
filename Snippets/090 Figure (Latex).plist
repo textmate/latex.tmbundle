@@ -4,9 +4,9 @@
 <dict>
 	<key>content</key>
 	<string>\\begin{figure}[${1:htbp}]
-    \\begin{center}
-	\\includegraphics[height=${2:3in}]{${3:file}}
-     \\end{center}
+	\\begin{center}
+		\\includegraphics[height=${2:3in}]{${3:file}}
+	\\end{center}
 	\\caption{${4:légende}}
 	\\label{fig:${5:étiquette}}
 \\end{figure}</string>

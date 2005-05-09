@@ -5,7 +5,7 @@
 	<key>content</key>
 	<string>\\lstinline{${1:code}}</string>
 	<key>name</key>
-	<string>Code Listing inline (cli)</string>
+	<string>Code listing inline (cli)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>

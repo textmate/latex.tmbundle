@@ -6,7 +6,7 @@
 	<string>\\begin{${1:itemize}}
 `printenv TM_SELECTED_TEXT|"$TM_BUNDLE_PATH"/linesToList.py`
 \\end{${1:itemize}}
-$0</string>
+</string>
 	<key>keyEquivalent</key>
 	<string>^L</string>
 	<key>name</key>

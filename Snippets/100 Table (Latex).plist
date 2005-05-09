@@ -8,7 +8,7 @@
 
 	\\begin{center}
 	\\begin{tabular}{${3:c}}
-	      ${4:élément}
+		${4:élément}
      \\end{tabular}
 	\\end{center}
 

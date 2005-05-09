@@ -6,11 +6,11 @@
 	<string>\\footnote{${1:footnote text...}}
 </string>
 	<key>name</key>
-	<string>\footnote (\foot)</string>
+	<string>\footnote (foot)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>\foot</string>
+	<string>foot</string>
 	<key>uuid</key>
 	<string>970ED624-BF4F-11D9-B8CC-000A95C0F626</string>
 </dict>
