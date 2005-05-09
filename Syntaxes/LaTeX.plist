@@ -17,7 +17,7 @@
             match = "\\\\\\\\"; 
         }, 
         {   name = "declaration.section.latex";
-            begin = "(\\\\(?:(?:sub)*section|chapter|paragraph|part))(\\*?)(\\[.*\\])?\\{"; end = "\\}"; 
+            begin = "(\\\\(?:(?:sub)*section|chapter|paragraph|part))(\\*?)(\\[[^\\[]*?\\])??\\{"; end = "\\}"; 
             captures = {
                 1 = { name = "keyword.function.section.latex"; };
             };
