@@ -48,9 +48,9 @@ fi
 
 osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
 
-res=`perl -pe &lt;&lt;&lt;$res 's/^(.*?)(\s*)%/$1/'` # strip comment
-res="${res//\\\\/\\\\}"                     # \ -&gt; \\
-res="${res//$/\\$}"                         # $ -&gt; \$
+res=`perl -pe &lt;&lt;&lt;$res 's/^(.*?)(\s*)%.*/$1/'` # strip comment
+res="${res//\\\\/\\\\}"                       # \ -&gt; \\
+res="${res//$/\\$}"                           # $ -&gt; \$
 
 if [[ -z $TM_SELECTED_TEXT ]] &amp;&amp; [[ -n $phrase ]]
    then echo -n ${res:${#TM_CURRENT_WORD}}
