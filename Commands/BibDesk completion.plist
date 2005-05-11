@@ -6,9 +6,34 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>if [[ -z $TM_SELECTED_TEXT ]]
-   then phrase=$TM_CURRENT_WORD
+   then 
+# If the current word ends in {}, then offer
+# a list of all bibliography items. In that case, 
+# the variable $phrase is not being set.
+	if [[ ${TM_CURRENT_WORD:${#TM_CURRENT_WORD}-1} != "}" ]]
+		then phrase=$TM_CURRENT_WORD
+	fi
    else phrase=$TM_SELECTED_TEXT
 fi
+if [[ -z $phrase ]]
+	then 
+# Case where $phrase is not defined
+
+res=`osascript &lt;&lt;EOF
+tell application "Bibdesk"
+	set publist to get displayed publications of the first item of documents
+	set candidates to {}
+		repeat with anItem in publist
+		set candidates to candidates &amp; ((cite key of anItem) &amp; " % " &amp; (last name of author of anItem) &amp; ", " &amp; (title of anItem))
+		end repeat
+	end tell
+	tell application "System Events"
+		activate
+		choose from list candidates
+	end tell
+EOF`
+	else 
+# Case where $phrase is defined
 
 res=`osascript &lt;&lt;EOF
 	tell application "Bibdesk" to set candidates to search for "$phrase" with for completion
@@ -17,16 +42,21 @@ res=`osascript &lt;&lt;EOF
 		choose from list candidates
 	end tell
 EOF`
+fi
+
+# NEED TO ADD HANDLING OF PRESSING "Cancel"
+
 osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
 
 res=`perl -pe &lt;&lt;&lt;$res 's/^(.*?)(\s*)%/$1/'` # strip comment
 res="${res//\\\\/\\\\}"                     # \ -&gt; \\
 res="${res//$/\\$}"                         # $ -&gt; \$
 
-if [[ -z $TM_SELECTED_TEXT ]]
+if [[ -z $TM_SELECTED_TEXT ]] &amp;&amp; [[ -n $phrase ]]
    then echo -n ${res:${#TM_CURRENT_WORD}}
    else echo -n ${res}
-fi</string>
+fi
+</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
