@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>captureFormatString</key>
+	<string>$3</string>
+	<key>capturePattern</key>
+	<string>^([^:]*):([^:]*):(.*)$</string>
+	<key>command</key>
+	<string>list=`grep '\\label{.*}'|perl -pe 's/.*\\label\{(.*?)\}(.*)\n/"$1",/'`
+#list="${list//\\\\/\\\\}" 
+res=`osascript &lt;&lt;EOF
+	tell application "System Events"
+		activate
+		choose from list { ${list:0:${#list}-1} }
+	end tell
+EOF`
+osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
+awk &lt;&lt;&lt;$res '{ printf("%s", $1) }'</string>
+	<key>fileCaptureRegister</key>
+	<string>1</string>
+	<key>input</key>
+	<string>document</string>
+	<key>keyEquivalent</key>
+	<string></string>
+	<key>lineCaptureRegister</key>
+	<string>2</string>
+	<key>name</key>
+	<string>Show labels</string>
+	<key>output</key>
+	<string>afterSelectedText</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>9B80A79A-BF8D-11D9-9186-000A95C0F626</string>
+</dict>
+</plist>
