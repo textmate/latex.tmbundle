@@ -87,7 +87,7 @@
             patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.cite"; } );
         }, 
         {   name = "declaration.ref-or-label.latex";
-            begin = "(\\\\(?:ref|label)\\{)"; end = "(\\})"; 
+            begin = "(\\\\(?:ref|eqref|label)\\{)"; end = "(\\})"; 
             captures = {
                 1 = { name = "keyword.control.ref-or-label.latex"; };
             };
