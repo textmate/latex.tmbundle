@@ -3,9 +3,10 @@
 import sys
 import re
 from os.path import basename
+import os
 
 #in a multifile latex document the current document will come after a left paren
-newFilePat = re.compile('.*\((.*\.tex)')
+newFilePat = re.compile('.*\((\.\/.*\.tex)')
 warnPat = re.compile('LaTeX Warning.*?input line (\d+).$')
 errPat = re.compile('^([\.\/\w]+\.tex)(:\d+:.*)')
 
@@ -19,9 +20,11 @@ for line in sys.stdin:
     # to make it easy to pick out the line as an error line in TextMate.
     # Do the same thing for error messages.
     if w:
-        print "==>"+basename(currentFile)+":"+w.group(1)+":",line
+        print '<a href="txmt://open?url=file://'+os.environ.get('TM_DIRECTORY')+currentFile[1:]+"&line="+w.group(1)+'">'+line+"</a>"
     elif e:
-        print "==>"+basename(e.group(1))+e.group(2)
+        print '<a href="txmt://open?url=file://'+os.environ.get('TM_DIRECTORY')+e.group(1)[1:]+"&line="+e.group(2)+'">'+line+"</a>"        
     else:
         sys.stdout.write(line)
-    
+
+print '<a href="http://localhost/~'+os.environ.get('USER')+'/web_kit_workaround.pdf">Click Here to preview Typeset file</a>'
+

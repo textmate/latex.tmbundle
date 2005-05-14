@@ -17,35 +17,37 @@ cat &lt;&lt;"EOF"
    &lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
 EOF
 
-tmp=`mktemp /tmp/pdflatex_XXXXXXXX`
-
 # If TM_LATEX_MASTER not set use TM_FILEPATH
 [ -z "$TM_LATEX_MASTER" ] &amp;&amp;
   export TM_LATEX_MASTER="$TM_FILEPATH"
+export LATEX_OUTFILE=`basename -s.tex "$TM_LATEX_MASTER"`
 
 cd "`dirname "$TM_LATEX_MASTER"`"
-"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error \
-  -halt-on-error -output-directory /tmp \
-  -jobname "`basename ${tmp}`" "`basename "$TM_LATEX_MASTER"`" \
-  | perl -pe '$| = 1; s|^(\.?/.*?):(\d+):\s*(.*)$|&lt;a href="txmt://open?url=file://'"`dirname "$TM_LATEX_MASTER"`"'/$1&amp;line=$2"&gt;$3&lt;/a&gt;|'
+"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style \
+  -halt-on-error `basename "$TM_LATEX_MASTER"` \
+  | "$TM_BUNDLE_PATH"/latexErrWarnHtml.py
+  
 
 echo "&lt;/pre&gt;"
 
 # If PDF file is non-empty and apache is running, redirect.
-if [ -s ${tmp}.pdf ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
-echo 
+# Also need to check for errors/warnings to optionally wait before going on to pdfoutput
+
+if [ -s ${LATEX_OUTFILE}.pdf ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
    FILE_LOC="${PDFTEX_FILE_LOCATION:-~/Sites}/web_kit_workaround.pdf"
    WEB_LOC="${PDFTEX_WEB_LOCATION:-http://localhost/~$USER}/web_kit_workaround.pdf"
-   cp "$tmp.pdf" "${FILE_LOC}"
+   cp "$LATEX_OUTFILE.pdf" "${FILE_LOC}"
    chmod 666 "${FILE_LOC}"
-   echo "&lt;script&gt;window.location='${WEB_LOC}'&lt;/script&gt;"
+   if [ ${TM_LATEX_PAUSE:='yes'} == 'no' ]; then 
+       echo "&lt;script&gt;window.location='${WEB_LOC}'&lt;/script&gt;"
+   fi
 elif [ -s ${tmp}.pdf ]; then
    echo "&lt;strong&gt;Error: Apache not running (we can no longer redirect to file://localhost/...)&lt;/strong&gt;"
 else
    echo "&lt;strong&gt;Error: PDF file not written to disk&lt;/strong&gt;"
 fi
-
-{ sleep 30; rm ${tmp} ${tmp}.*; } &amp;&gt;/dev/null &amp;
+# TODO:  Need a better way to clean up the web_kit_workaround.pdf in ~/Sites
+#{ sleep 30; rm ${tmp} ${tmp}.*; } &amp;&gt;/dev/null &amp;
 </string>
 	<key>input</key>
 	<string>document</string>

@@ -24,7 +24,7 @@ echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
-	<string>^~@l</string>
+	<string>^L</string>
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
