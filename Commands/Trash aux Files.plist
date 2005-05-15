@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
+[ -z "$TM_LATEX_MASTER" ] &amp;&amp;
+  export TM_LATEX_MASTER="$TM_FILEPATH"
+export MASTER_BASENAME=`basename -s.tex "$TM_LATEX_MASTER"`
+cd "`dirname "$TM_LATEX_MASTER"`"
+rm -f "$MASTER_BASENAME".aux
+rm -f "$MASTER_BASENAME".pdfsync
+rm -f "$MASTER_BASENAME".mtc?
+rm -f "$MASTER_BASENAME".log
+rm -f "$MASTER_BASENAME".bbl
+rm -f "$MASTER_BASENAME".aux
+rm -f "$MASTER_BASENAME".toc
+rm -f "$MASTER_BASENAME".bmt
+rm -f ~/Sites/web_kit_workaround.pdf
+
+echo "Done Cleaning up"</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>name</key>
+	<string>Trash aux Files</string>
+	<key>output</key>
+	<string>showAsTooltip</string>
+	<key>uuid</key>
+	<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
+</dict>
+</plist>
