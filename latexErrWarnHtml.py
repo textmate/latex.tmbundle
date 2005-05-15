@@ -18,6 +18,11 @@ else:
 numWarns = 0
 numErrs = 0
 for line in sys.stdin:
+    # print out first line
+    if re.match('^This is',line):
+        print line[:-1]
+    if re.match('^Document Class',line):
+        print line[:-1]
     m = newFilePat.match(line)
     if m:
         currentFile = m.group(1)
@@ -25,6 +30,8 @@ for line in sys.stdin:
     inf = incPat.match(line)
     if inf:
         print "    Including: " + inf.group(1)
+    if re.match('^Output written',line):
+        print line[:-1]
     w = warnPat.match(line)
     e = errPat.match(line)
     # if we detect a warning message add the current file to the warning plus a tag
@@ -38,7 +45,7 @@ for line in sys.stdin:
         print '<a href="txmt://open?url=file://'+os.environ.get('TM_DIRECTORY')+e.group(1)[1:]+"&line="+e.group(2)+'">'+line+"</a>"        
     else:
         if verbose:
-            print line
+            print line[:-1]
 
 if numWarns > 0 or numErrs > 0:
     print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings."
@@ -47,5 +54,5 @@ if numWarns > 0 or numErrs > 0:
     else:
         sys.exit(1)
 else:
-    print "Success"        
+    print "Success"
     sys.exit(0)
