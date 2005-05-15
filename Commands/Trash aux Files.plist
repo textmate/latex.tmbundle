@@ -6,18 +6,21 @@
 	<string>nop</string>
 	<key>command</key>
 	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
-[ -z "$TM_LATEX_MASTER" ] &amp;&amp;
-  export TM_LATEX_MASTER="$TM_FILEPATH"
-export MASTER_BASENAME=`basename -s.tex "$TM_LATEX_MASTER"`
-cd "`dirname "$TM_LATEX_MASTER"`"
-rm -f "$MASTER_BASENAME".aux
-rm -f "$MASTER_BASENAME".pdfsync
-rm -f "$MASTER_BASENAME".mtc?
-rm -f "$MASTER_BASENAME".log
-rm -f "$MASTER_BASENAME".bbl
-rm -f "$MASTER_BASENAME".aux
-rm -f "$MASTER_BASENAME".toc
-rm -f "$MASTER_BASENAME".bmt
+[ -z "$TM_LATEX_MASTER" ] &amp;&amp; export TM_LATEX_MASTER="$TM_FILEPATH"
+
+# Switch to the right directory.
+cd "$TM_PROJECT_DIRECTORY"
+cd `dirname "$TM_LATEX_MASTER"`
+FILE=`basename -s.tex "$TM_LATEX_MASTER"`
+
+rm -f "$FILE".aux
+rm -f "$FILE".pdfsync
+rm -f "$FILE".mtc?
+rm -f "$FILE".log
+rm -f "$FILE".bbl
+rm -f "$FILE".aux
+rm -f "$FILE".toc
+rm -f "$FILE".bmt
 rm -f ~/Sites/web_kit_workaround.pdf
 
 echo "Done Cleaning up"</string>

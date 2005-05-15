@@ -8,6 +8,15 @@
 	<string># this requires pdflatex Web2C 7.5.3
 # for preview you also need the PDF Browser Plugin
 
+# If TM_LATEX_MASTER not set use TM_FILEPATH
+[ -z "$TM_LATEX_MASTER" ] &amp;&amp; export TM_LATEX_MASTER="$TM_FILEPATH"
+
+# Switch to the right directory.
+cd "$TM_PROJECT_DIRECTORY"
+cd `dirname "$TM_LATEX_MASTER"`
+FILE=`basename "$TM_LATEX_MASTER"`
+LATEX_OUTFILE=`basename -s.tex "$TM_LATEX_MASTER"`
+
 cat &lt;&lt;"EOF"
    &lt;html&gt;&lt;head&gt;&lt;style&gt;
    *       { color: #998; }
@@ -17,16 +26,8 @@ cat &lt;&lt;"EOF"
    &lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
 EOF
 
-# If TM_LATEX_MASTER not set use TM_FILEPATH
-[ -z "$TM_LATEX_MASTER" ] &amp;&amp;
-  export TM_LATEX_MASTER="$TM_FILEPATH"
-export LATEX_OUTFILE=`basename -s.tex "$TM_LATEX_MASTER"`
-
-cd "`dirname "$TM_LATEX_MASTER"`"
 "${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style \
-  -halt-on-error `basename "$TM_LATEX_MASTER"` \
-  | "$TM_BUNDLE_PATH"/latexErrWarnHtml.py
-  
+  -halt-on-error "$FILE" | "$TM_BUNDLE_PATH"/latexErrWarnHtml.py
 
 echo "&lt;/pre&gt;"
 

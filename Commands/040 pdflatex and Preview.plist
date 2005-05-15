@@ -10,14 +10,17 @@
 	<string>(\d+|LaTeX Warning): (.*?)$</string>
 	<key>command</key>
 	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
-[ -z "$TM_LATEX_MASTER" ] &amp;&amp;
-  export TM_LATEX_MASTER="$TM_FILEPATH"
+[ -z "$TM_LATEX_MASTER" ] &amp;&amp; export TM_LATEX_MASTER="$TM_FILEPATH"
 
+# Switch to the right directory.
+cd "$TM_PROJECT_DIRECTORY"
 cd `dirname "$TM_LATEX_MASTER"`
-"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style `basename "$TM_LATEX_MASTER"` |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
+FILE=`basename "$TM_LATEX_MASTER"`
+
+"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style "$FILE" |  perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
 echo
 echo "Previewing..."
-echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open</string>
+echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open</string>
 	<key>input</key>
 	<string>none</string>
 	<key>lineCaptureRegister</key>

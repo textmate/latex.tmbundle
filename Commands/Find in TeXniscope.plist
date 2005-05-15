@@ -6,11 +6,17 @@
 	<string>nop</string>
 	<key>command</key>
 	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
-[ -z "$TM_LATEX_MASTER" ] &amp;&amp;
-   export TM_LATEX_MASTER="$TM_FILEPATH"
+[ -z "$TM_LATEX_MASTER" ] &amp;&amp; export TM_LATEX_MASTER="$TM_FILEPATH"
+
+# Switch to the right directory.
+cd "$TM_PROJECT_DIRECTORY"
+cd `dirname "$TM_LATEX_MASTER"`
+FILE=`basename "$TM_LATEX_MASTER"`
+
 export Tspath=${TM_TSCOPE:=/Applications}
 echo $Tspath
-"$Tspath"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" `echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs` ; open -a TeXniscope</string>
+"$Tspath"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" `echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs` ; open -a TeXniscope
+</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
