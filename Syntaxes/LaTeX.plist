@@ -42,6 +42,10 @@
             };
             patterns = ({ include = "source.python"; });
         },          
+        {   name = "declaration.verbatim.latex";
+            begin = "^\\\\begin\\{verbatim\\}";
+            end = "^\\\\end\\{verbatim\\}";
+        },
         // ideally these next two could be re-written as real begin end pairs 
         // so that one could do interesting things to the body of an environment.
         {   name = "declaration.begin.latex";

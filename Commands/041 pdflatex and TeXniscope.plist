@@ -10,14 +10,17 @@
 	<string>^==&gt;(.*?\.tex):(\d+):(.*)</string>
 	<key>command</key>
 	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
-[ -z "$TM_LATEX_MASTER" ] &amp;&amp;
-  export TM_LATEX_MASTER="$TM_FILEPATH"
-  
+[ -z "$TM_LATEX_MASTER" ] &amp;&amp; export TM_LATEX_MASTER="$TM_FILEPATH"
+
+# Switch to the right directory.
+cd "$TM_PROJECT_DIRECTORY"
 cd `dirname "$TM_LATEX_MASTER"`
-"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style `basename "$TM_LATEX_MASTER"` |  "$TM_BUNDLE_PATH"/latexErrWarn.py
+FILE=`basename "$TM_LATEX_MASTER"`
+
+"${TM_TEX:=pdflatex}" -interaction=nonstopmode -file-line-error-style "$FILE" |  "$TM_BUNDLE_PATH"/latexErrWarn.py
 echo
 echo "Previewing..."
-echo $TM_LATEX_MASTER | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open -a TeXniscope
+echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs open -a TeXniscope
 </string>
 	<key>fileCaptureRegister</key>
 	<string>1</string>
