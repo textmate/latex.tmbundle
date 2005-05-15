@@ -11,7 +11,7 @@
 	<key>command</key>
 	<string># We default to Preview output, if nothing else selected.
 # Valid choices are: preview, texniscope.
-V=${TM_LATEX_VIEWER:=preview}
+V=${TM_LATEX_VIEWER:=html}
 
 # Set up some variables we need.
 TEX=${TM_TEX:=pdflatex}
@@ -25,17 +25,27 @@ BASE=`basename -s.tex "$M"`
 cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
 
-# Compile and view...
+# Prepare output window.
+cat &lt;&lt;"EOF"
+	&lt;html&gt;&lt;head&gt;&lt;style&gt;
+	*       { color: #998; }
+	strong  { color: #000; }
+	a       { color: #000; text-decoration: none; }
+	a:hover { color: #000; text-decoration: underline; }
+	&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
+EOF
+
+# Compile.
+"$TEX" $OPTIONS "$FILE" | "$TM_BUNDLE_PATH/latexErrWarnHtml.py"
+
+# View...
 case $V in
 
 html)
-	echo HTML view is not yet supported.
-	echo Please select either 'preview' or 'texniscope'.
+	echo "Done!"
 ;;
 
 preview)
-	"$TEX" $OPTIONS "$FILE" |
-		perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
 	echo
 	echo "Previewing..."
 	echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' |
@@ -43,7 +53,6 @@ preview)
 ;;
 
 texniscope)
-	"$TEX" $OPTIONS "$FILE" | "$TM_BUNDLE_PATH/latexErrWarn.py"
 	echo
 	echo "Previewing..."
 	echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' |
@@ -63,7 +72,7 @@ esac
 	<key>name</key>
 	<string>LaTeX and view</string>
 	<key>output</key>
-	<string>separateWindow</string>
+	<string>showAsHTML</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>
