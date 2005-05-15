@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>captureFormatString</key>
+	<string>$1: $2: $3</string>
+	<key>capturePattern</key>
+	<string>^==&gt;(.*?\.tex):(\d+):(.*)</string>
+	<key>command</key>
+	<string># We default to Preview output, if nothing else selected.
+# Valid choices are: preview, texniscope.
+V=${TM_LATEX_VIEWER:=preview}
+
+# Set up some variables we need.
+TEX=${TM_TEX:=pdflatex}
+OPTIONS=${TM_TEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style}
+M=${TM_LATEX_MASTER:=$TM_FILEPATH}
+DIR=`dirname "$M"`
+FILE=`basename "$M"`
+BASE=`basename -s.tex "$M"`
+
+# Switch to the right directory.
+cd "$TM_PROJECT_DIRECTORY"
+cd "$DIR"
+
+# Compile and view...
+case $V in
+
+html)
+	echo HTML view is not yet supported.
+	echo Please select either 'preview' or 'texniscope'.
+;;
+
+preview)
+	"$TEX" $OPTIONS "$FILE" |
+		perl -e 'while(&lt;&gt;){$f.=$_}$_=$f;s/([^\n])\n([^\n])/$1$2/g;print;'
+	echo
+	echo "Previewing..."
+	echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' |
+		xargs open
+;;
+
+texniscope)
+	"$TEX" $OPTIONS "$FILE" | "$TM_BUNDLE_PATH/latexErrWarn.py"
+	echo
+	echo "Previewing..."
+	echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' |
+		xargs open -a TeXniscope
+;;
+
+esac
+</string>
+	<key>fileCaptureRegister</key>
+	<string>1</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string></string>
+	<key>lineCaptureRegister</key>
+	<string>2</string>
+	<key>name</key>
+	<string>LaTeX and view</string>
+	<key>output</key>
+	<string>separateWindow</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
+</dict>
+</plist>
