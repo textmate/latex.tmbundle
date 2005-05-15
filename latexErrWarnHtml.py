@@ -9,7 +9,8 @@ import os
 newFilePat = re.compile('.*\((\.\/.*\.tex)')
 warnPat = re.compile('LaTeX Warning.*?input line (\d+).$')
 errPat = re.compile('^([\.\/\w]+\.tex)(:\d+:.*)')
-incPat = re.compile('.*\<(.*?)>');
+incPat = re.compile('.*\<use (.*?)\>');
+
 if sys.argv[0] == '-v':
     verbose = True
 else:
@@ -21,10 +22,9 @@ for line in sys.stdin:
     if m:
         currentFile = m.group(1)
         print "Typesetting: " + currentFile
-    i = incPat.match(line)
-    if i:
-        print "Including: " + i.group(1)
-
+    inf = incPat.match(line)
+    if inf:
+        print "    Including: " + inf.group(1)
     w = warnPat.match(line)
     e = errPat.match(line)
     # if we detect a warning message add the current file to the warning plus a tag
@@ -42,7 +42,10 @@ for line in sys.stdin:
 
 if numWarns > 0 or numErrs > 0:
     print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings."
-    sys.exit(1)
+    if numErrs > 0:
+        sys.exit(2)
+    else:
+        sys.exit(1)
 else:
     print "Success"        
     sys.exit(0)
