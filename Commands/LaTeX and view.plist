@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string># We default to HTML output, if nothing else selected.
 # Valid choices are: html, preview, texniscope.
-V=${TM_LATEX_VIEWER:=preview}
+V=${TM_LATEX_VIEWER:=html}
 
 # Set up some variables we need.
 TEX=${TM_TEX:=pdflatex}
@@ -26,11 +26,16 @@ cd "$DIR"
 # Prepare output window.
 cat &lt;&lt;"EOF"
 	&lt;html&gt;&lt;head&gt;&lt;style&gt;
-	*       { color: #998; }
+	* {
+		color: #998;
+		font-family: Lucida Grande, sans-serif;
+	}
+	h1      { font-size: 24pt; }
 	strong  { color: #000; }
 	a       { color: #000; text-decoration: none; }
 	a:hover { color: #000; text-decoration: underline; }
-	&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
+	&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+	&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;
 EOF
 
 # Function to generate JavaScript.
@@ -72,22 +77,23 @@ if (($RC &gt;= 2)); then exit; fi
 case $V in
 
 html)
-      if [ -s "${PDF}" ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
-         FILE_LOC="${PDFTEX_FILE_LOCATION:-~/Sites}/web_kit_workaround.pdf"
-         WEB_LOC="${PDFTEX_WEB_LOCATION:-http://localhost/~$USER}/web_kit_workaround.pdf"
-         cp "$PDF" "${FILE_LOC}"
-         chmod 666 "${FILE_LOC}"
-         if (($RC &gt;= 1)); then
-            echo "&lt;a href='${WEB_LOC}'&gt;Click Here to Preview&lt;/a&gt;"
-         else
-            echo "&lt;script&gt;window.location='${WEB_LOC}'&lt;/script&gt;"
-         fi
-      elif [ -s "${PDF}" ]; then
-         echo "&lt;strong&gt;Error: Apache not running (we can no longer redirect to file://localhost/...)&lt;/strong&gt;"
-      else
-         echo "&lt;strong&gt;Error: PDF file not written to disk&lt;/strong&gt;"
-      fi
-     { sleep 30; rm "${FILE_LOC}"; } &amp;&gt;/dev/null &amp;
+	if [ -s "${PDF}" ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
+		FILE_LOC="${PDFTEX_FILE_LOCATION:-~/Sites}/web_kit_workaround.pdf"
+		WEB_LOC="${PDFTEX_WEB_LOCATION:-http://localhost/~$USER}/web_kit_workaround.pdf"
+		cp "$PDF" "${FILE_LOC}"
+		chmod 666 "${FILE_LOC}"
+		if (($RC &gt; $EL)); then
+			echo "&lt;a href='${WEB_LOC}'&gt;Click Here to Preview&lt;/a&gt;"
+		else
+			javaScript "window.location='${WEB_LOC}'"
+		fi
+	elif [ -s "${PDF}" ]; then
+		echo "&lt;strong&gt;Error: Apache is not running"
+		echo "(we can no longer redirect to file://localhost/...)&lt;/strong&gt;"
+	else
+		echo "&lt;strong&gt;Error: PDF file not written to disk&lt;/strong&gt;"
+	fi
+	{ sleep 30; rm "${FILE_LOC}"; } &amp;&gt;/dev/null &amp;
 ;;
 
 preview)
