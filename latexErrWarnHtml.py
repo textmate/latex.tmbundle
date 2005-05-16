@@ -8,7 +8,7 @@ import os
 #in a multifile latex document the current document will come after a left paren
 newFilePat = re.compile('.*\((\.\/.*\.tex)')
 warnPat = re.compile('LaTeX Warning.*?input line (\d+).$')
-errPat = re.compile('^([\.\/\w]+\.tex)(:\d+:.*)')
+errPat = re.compile('^([\.\/\w]+\.tex):(\d+):.*')
 incPat = re.compile('.*\<use (.*?)\>');
 
 if sys.argv[0] == '-v':
