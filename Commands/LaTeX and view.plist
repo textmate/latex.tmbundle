@@ -72,8 +72,22 @@ if (($RC &gt;= 2)); then exit; fi
 case $V in
 
 html)
-	echo 'HTML view is not supported yet, but will be soon!'
-	#toFile "$CWD$FILE"
+      if [ -s "${PDF}" ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
+         FILE_LOC="${PDFTEX_FILE_LOCATION:-~/Sites}/web_kit_workaround.pdf"
+         WEB_LOC="${PDFTEX_WEB_LOCATION:-http://localhost/~$USER}/web_kit_workaround.pdf"
+         cp "$PDF" "${FILE_LOC}"
+         chmod 666 "${FILE_LOC}"
+         if (($RC &gt;= 1)); then
+            echo "&lt;a href='${WEB_LOC}'&gt;Click Here to Preview&lt;/a&gt;"
+         else
+            echo "&lt;script&gt;window.location='${WEB_LOC}'&lt;/script&gt;"
+         fi
+      elif [ -s "${PDF}" ]; then
+         echo "&lt;strong&gt;Error: Apache not running (we can no longer redirect to file://localhost/...)&lt;/strong&gt;"
+      else
+         echo "&lt;strong&gt;Error: PDF file not written to disk&lt;/strong&gt;"
+      fi
+     { sleep 30; rm "${FILE_LOC}"; } &amp;&gt;/dev/null &amp;
 ;;
 
 preview)
