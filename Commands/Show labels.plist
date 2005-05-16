@@ -9,8 +9,7 @@
 	<key>capturePattern</key>
 	<string>^([^:]*):([^:]*):(.*)$</string>
 	<key>command</key>
-	<string>list=`grep '\\label{.*}'|perl -pe 's/.*\\label\{(.*?)\}(.*)\n/"$1",/'`
-#list="${list//\\\\/\\\\}" 
+	<string>list=`grep '\\label{.*}'|perl -pe 's/.*\\label\{(.*?)\}(.*)\n/"$1 : $2",/'|sed 's|\\\\||g'`
 res=`osascript &lt;&lt;EOF
 	tell application "System Events"
 		activate
@@ -24,7 +23,7 @@ awk &lt;&lt;&lt;$res '{ printf("%s", $1) }'</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string></string>
+	<string>~</string>
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
@@ -32,7 +31,7 @@ awk &lt;&lt;&lt;$res '{ printf("%s", $1) }'</string>
 	<key>output</key>
 	<string>afterSelectedText</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>declaration.ref-or-label</string>
 	<key>uuid</key>
 	<string>9B80A79A-BF8D-11D9-9186-000A95C0F626</string>
 </dict>
