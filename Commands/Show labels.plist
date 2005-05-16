@@ -9,7 +9,8 @@
 	<key>capturePattern</key>
 	<string>^([^:]*):([^:]*):(.*)$</string>
 	<key>command</key>
-	<string>list=`grep '\\label{.*}'|perl -pe 's/.*\\label\{(.*?)\}(.*)\n/"$1 : $2",/'|sed 's|\\\\||g'`
+	<string>var=`echo $TM_CURRENT_WORD|grep -v '}'`
+list=`grep "\\label{$var.*}"|perl -pe 's/.*\\label\{(.*?)\}(.*)\n/"$1 : $2",/'|sed 's|\\\\||g'`
 res=`osascript &lt;&lt;EOF
 	tell application "System Events"
 		activate
@@ -17,7 +18,7 @@ res=`osascript &lt;&lt;EOF
 	end tell
 EOF`
 osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
-awk &lt;&lt;&lt;$res '{ printf("%s", $1) }'</string>
+awk &lt;&lt;&lt;${res#${var}} '{ printf("%s", $1) }'</string>
 	<key>fileCaptureRegister</key>
 	<string>1</string>
 	<key>input</key>
