@@ -7,11 +7,12 @@
 	<key>command</key>
 	<string># We default to HTML output, if nothing else selected.
 # Valid choices are: html, preview, texniscope.
-V=${TM_LATEX_VIEWER:=html}
+V=${TM_LATEX_VIEWER:=preview}
 
 # Set up some variables we need.
 TEX=${TM_TEX:=pdflatex}
 OPTIONS=${TM_TEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style}
+EL=${TM_TEX_ERRLVL:=0}
 M=${TM_LATEX_MASTER:=$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`
@@ -54,27 +55,35 @@ toURL() {
 
 # Function to redirect the HTML view to a local file.
 toFile() {
-	toURL "file:///$1"
+	toURL "file://$1"
 }
 
-# Compile. Bail out if there are errors.
-"$TEX" $OPTIONS "$FILE" | "$TM_BUNDLE_PATH/latexErrWarnHtml.py" #|| exit
+# Function to close window if the error level is low enough.
+close() {
+	if (($RC &lt;= $EL)); then closeWin; fi
+}
+
+# Compile. Bail out on errors.
+"$TEX" $OPTIONS "$FILE" | "$TM_BUNDLE_PATH/latexErrWarnHtml.py"
+RC=$?
+if (($RC &gt;= 2)); then exit; fi
 
 # View...
 case $V in
 
 html)
-	toFile "$CWD$FILE"
+	echo 'HTML view is not supported yet, but will be soon!'
+	#toFile "$CWD$FILE"
 ;;
 
 preview)
 	open "$PDF"
-	closeWin
+	close
 ;;
 
 texniscope)
 	open -a TeXniscope "$PDF"
-	closeWin
+	close
 ;;
 
 esac
