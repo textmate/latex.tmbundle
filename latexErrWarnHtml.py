@@ -17,6 +17,7 @@ else:
     verbose = False
 numWarns = 0
 numErrs = 0
+print '<pre>'
 for line in sys.stdin:
     # print out first line
     if re.match('^This is',line):
@@ -26,7 +27,7 @@ for line in sys.stdin:
     m = newFilePat.match(line)
     if m:
         currentFile = m.group(1)
-        print "Typesetting: " + currentFile
+        print "<h3>Typesetting: " + currentFile + "</h3>"
     inf = incPat.match(line)
     if inf:
         print "    Including: " + inf.group(1)
@@ -38,21 +39,23 @@ for line in sys.stdin:
     # to make it easy to pick out the line as an error line in TextMate.
     # Do the same thing for error messages.
     if w:
-        print '<a href="txmt://open?url=file://'+os.environ.get('TM_DIRECTORY')+currentFile[1:]+"&line="+w.group(1)+'">'+line+"</a>"
+        print '<a href="txmt://open?url=file://'+os.getcwd()+currentFile[1:]+"&line="+w.group(1)+'">'+line+"</a>"
         numWarns = numWarns+1
     elif e:
         numErrs = numErrs+1
-        print '<a href="txmt://open?url=file://'+os.environ.get('TM_DIRECTORY')+e.group(1)[1:]+"&line="+e.group(2)+'">'+line+"</a>"        
+        print '<a href="txmt://open?url=file://'+os.getcwd()+e.group(1)[1:]+"&line="+e.group(2)+'">'+line+"</a>"        
     else:
         if verbose:
             print line[:-1]
-
+eCode = 0
 if numWarns > 0 or numErrs > 0:
     print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings."
     if numErrs > 0:
-        sys.exit(2)
+        eCode = 2
     else:
-        sys.exit(1)
+        eCode = 1
 else:
     print "Success"
-    sys.exit(0)
+
+print '</pre>'
+sys.exit(eCode)
