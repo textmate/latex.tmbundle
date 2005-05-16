@@ -3,10 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>beforeRunningCommand</key>
-	<string>saveActiveFile</string>
+	<string>saveModifiedFiles</string>
 	<key>command</key>
-	<string># We default to HTML output, if nothing else selected.
-# Valid choices are: html, preview, texniscope.
+	<string># Get the viewer program. Any program (that works with open -a &lt;name&gt;) can be used,
+# except 'html' which is reserved to mean the internal HTML window. This is also the
+# default option.
 V=${TM_LATEX_VIEWER:=html}
 
 # Set up some variables we need.
@@ -74,9 +75,7 @@ RC=$?
 if (($RC &gt;= 2)); then exit; fi
 
 # View...
-case $V in
-
-html)
+if [ "$V" == html ]; then
 	if [ -s "${PDF}" ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
 		FILE_LOC="${PDFTEX_FILE_LOCATION:-~/Sites}/web_kit_workaround.pdf"
 		WEB_LOC="${PDFTEX_WEB_LOCATION:-http://localhost/~$USER}/web_kit_workaround.pdf"
@@ -94,19 +93,10 @@ html)
 		echo "&lt;strong&gt;Error: PDF file not written to disk&lt;/strong&gt;"
 	fi
 	{ sleep 30; rm "${FILE_LOC}"; } &amp;&gt;/dev/null &amp;
-;;
-
-preview)
-	open "$PDF"
+else
+	open -a "$V" "$PDF"
 	close
-;;
-
-texniscope)
-	open -a TeXniscope "$PDF"
-	close
-;;
-
-esac
+fi
 </string>
 	<key>input</key>
 	<string>none</string>
