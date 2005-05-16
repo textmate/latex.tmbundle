@@ -4,13 +4,9 @@
 <dict>
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
-	<key>captureFormatString</key>
-	<string>$1: $2: $3</string>
-	<key>capturePattern</key>
-	<string>^==&gt;(.*?\.tex):(\d+):(.*)</string>
 	<key>command</key>
-	<string># We default to Preview output, if nothing else selected.
-# Valid choices are: preview, texniscope.
+	<string># We default to HTML output, if nothing else selected.
+# Valid choices are: html, preview, texniscope.
 V=${TM_LATEX_VIEWER:=html}
 
 # Set up some variables we need.
@@ -19,7 +15,8 @@ OPTIONS=${TM_TEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style}
 M=${TM_LATEX_MASTER:=$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`
-BASE=`basename -s.tex "$M"`
+PDF="${FILE%.tex}.pdf"
+CWD="`pwd`/"
 
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"
@@ -35,40 +32,57 @@ cat &lt;&lt;"EOF"
 	&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;
 EOF
 
-# Compile.
-"$TEX" $OPTIONS "$FILE" | "$TM_BUNDLE_PATH/latexErrWarnHtml.py"
+# Function to generate JavaScript.
+javaScript() {
+	echo '&lt;script type="text/javascript"&gt;'$1';&lt;/script&gt;'
+}
+
+# Function to execute some JavaScript code, after a timeout. Defaults to 1 second.
+delayedExec() {
+	javaScript "setTimeout('$1', $2)"
+}
+
+# Function to make the HTML window close after a short delay.
+closeWin() {
+	delayedExec 'window.close();' 1000
+}
+
+# Function to redirect the HTML view to an URL.
+toURL() {
+	javaScript 'document.url="'$1'"'
+}
+
+# Function to redirect the HTML view to a local file.
+toFile() {
+	toURL "file:///$1"
+}
+
+# Compile. Bail out if there are errors.
+"$TEX" $OPTIONS "$FILE" | "$TM_BUNDLE_PATH/latexErrWarnHtml.py" #|| exit
 
 # View...
 case $V in
 
 html)
-	echo "Done!"
+	toFile "$CWD$FILE"
 ;;
 
 preview)
-	echo
-	echo "Previewing..."
-	echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' |
-		xargs open
+	open "$PDF"
+	closeWin
 ;;
 
 texniscope)
-	echo
-	echo "Previewing..."
-	echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' |
-		xargs open -a TeXniscope
+	open -a TeXniscope "$PDF"
+	closeWin
 ;;
 
 esac
 </string>
-	<key>fileCaptureRegister</key>
-	<string>1</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
 	<string></string>
-	<key>lineCaptureRegister</key>
-	<string>2</string>
 	<key>name</key>
 	<string>LaTeX and view</string>
 	<key>output</key>
