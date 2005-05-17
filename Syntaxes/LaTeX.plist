@@ -86,7 +86,7 @@
             patterns = ( { match = "\\w+"; name = "markup.terminal.texttt.latex"; } );
         }, 
         {   name = "declaration.cite.latex";
-            begin = "(\\\\cite[tp]*\\{)"; end = "(\\})"; 
+            begin = "(\\\\cite(al)?[tp]?\\*?(\\[[^\\]]*\\]){,2}\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.control.latex.cite"; }; }; 
             patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.cite"; } );
         }, 
