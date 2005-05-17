@@ -11,9 +11,9 @@
 V=${TM_LATEX_VIEWER:=html}
 
 # Set up some variables we need.
-TEX=${TM_TEX:=pdflatex}
-OPTIONS=${TM_TEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style}
-EL=${TM_TEX_ERRLVL:=0}
+TEX=${TM_LATEX_COMPILER:=pdflatex}
+OPTIONS=${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style}
+EL=${TM_LATEX_ERRLVL:=0}
 M=${TM_LATEX_MASTER:=$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`

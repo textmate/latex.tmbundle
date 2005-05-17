@@ -1,5 +1,23 @@
 LaTeX and BibTeX Syntax Highlighting
-By Eric Hsu, Normand Mousseau, Gaetan Le Guelvouit, Andrew Ellis
+By Eric Hsu, Normand Mousseau, Gaetan Le Guelvouit, Andrew Ellis,
+   Sune Foldager, Brad Miller.
+
+(2005-May-17) Things are a little more straightened out now. The main command for LaTeX is
+'LaTeX and view', bound to F3. Several things can be configured using TM_LATEX_ prefixed env-vars:
+
+MASTER      Relative path to the main LaTeX file to compile. Defaults to current file.
+VIEWER      Program to view the compiled document. Defaults to 'html' which uses the TM html window.
+COMPILER    Program to use for compiling the document. Defaults to pdflatex. Currently, the program
+            you put here, must produce PDF output.
+OPTIONS     Options to pass to the compiler defaults to: -interaction=nonstopmode
+            -file-line-error-style.
+ERRLVL      At what level do we assume an error occured. If the error level from the compiler is
+            higher than this, the compile status window will be retained. Supported levels are:
+            0: Ok (default).
+            1: Warnings.
+            2: Errors.
+
+--
 
 (1-4-05) This bundle has a tortured and confused history. Basically, a lot of people did parallel edits and it sort of got merged, kind of. Anyway, this is the latest version I have, which is the one included in TM 1.0.2. I fixed a bug with /( /) not being recognized as math mode, and added some commands, most notably a pdflatex command. TeXniscope is a great little previewer (thanks Jeroen van der Ham) at <http://docenti.ing.unipi.it/~d9615/homepage/texniscope.html>
 
