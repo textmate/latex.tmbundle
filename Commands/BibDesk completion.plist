@@ -7,10 +7,11 @@
 	<key>command</key>
 	<string>if [[ -z $TM_SELECTED_TEXT ]]
    then 
-# If the current word ends in {}, then offer
+# If the cursor is inside empty braces {}, then offer
 # a list of all bibliography items. In that case, 
 # the variable $phrase is not being set.
-	if [[ ${TM_CURRENT_WORD:${#TM_CURRENT_WORD}-1} != "}" ]]
+	prev_ch=${TM_CURRENT_LINE:$TM_COLUMN_NUMBER-2:1}
+	if [[ $prev_ch != '{' ]]
 		then phrase=$TM_CURRENT_WORD
 	fi
    else phrase=$TM_SELECTED_TEXT
