@@ -4,11 +4,18 @@ import sys
 import re
 from os.path import basename
 import os
+from struct import *
+
+def percent_escape(str):
+	return re.sub('[\x80-\xff /&]', lambda x: '%%%02X' % unpack('B', x.group(0))[0], str)
+
+def make_link(file, line):
+	return 'txmt://open?url=file:%2F%2F' + percent_escape(file) + '&line=' + line
 
 #in a multifile latex document the current document will come after a left paren
 newFilePat = re.compile('.*\((\.\/.*\.tex)')
 warnPat = re.compile('LaTeX Warning.*?input line (\d+).$')
-errPat = re.compile('^([\.\/\w]+\.tex):(\d+):.*')
+errPat = re.compile('^([\.\/\w\x7f-\xff]+\.tex):(\d+):.*')
 incPat = re.compile('.*\<use (.*?)\>');
 
 if sys.argv[0] == '-v':
@@ -39,11 +46,11 @@ for line in sys.stdin:
     # to make it easy to pick out the line as an error line in TextMate.
     # Do the same thing for error messages.
     if w:
-        print '<a href="txmt://open?url=file://'+os.getcwd()+currentFile[1:]+"&line="+w.group(1)+'">'+line+"</a>"
+        print '<a href="' + make_link(os.getcwd()+currentFile[1:], w.group(1)) + '">'+line+"</a>"
         numWarns = numWarns+1
     elif e:
         numErrs = numErrs+1
-        print '<a href="txmt://open?url=file://'+os.getcwd()+e.group(1)[1:]+"&line="+e.group(2)+'">'+line+"</a>"        
+        print '<a href="' + make_link(os.getcwd()+e.group(1)[1:], e.group(2)) + '">'+line+"</a>"        
     else:
         if verbose:
             print line[:-1]
