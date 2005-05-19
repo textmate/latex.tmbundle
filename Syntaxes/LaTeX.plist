@@ -106,16 +106,18 @@
         // will match almost any latex function
         {   name = "declaration.function-with-arg.latex";
             // first match “\foo{arg1}{arg2}{...}{argN}”
-            begin = "(\\\\[A-Za-z]\\w*)(?=\\{)"; end = "(?<=\\})"; 
+            begin = "(\\\\[A-Za-z]\\w*)(?=\\{|\\[)"; end = "(?<=\\]|\\})"; 
             captures = { 1 = { name = "keyword.function.with-arg.latex.general"; }; };
             patterns = (
                 { begin = "\\{"; end = "\\}"; patterns = (
                         { match = "[^}]+"; name = "entity.parameter.function.variable"; }
                     );
+                },
+                { begin = "\\["; end = "\\]"; patterns = (
+                        { match = "[^]]+"; name = "entity.parameter.function.variable"; }
+                    );
                 }
-/*              { match = "\\{[^{}\\n]*(?R)?[^{}\\n]*\\}"; name = "entity.parameter.function.variable"; },
-                { match = "[^{}\\n]+"; name = "entity.parameter.function.variable"; }
-*/            );
+            );
         }, 
         {   name = "keyword.function.latex.general";
             // then match just “\foo”
