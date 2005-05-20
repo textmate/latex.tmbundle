@@ -5,8 +5,8 @@
 	<key>content</key>
 	<string>\\begin{enumerate}
 
-	\\item ${1:premier item}
-	$0
+	\\item ${0:premier item}
+
 \\end{enumerate}</string>
 	<key>name</key>
 	<string>Enumerate (enum)</string>

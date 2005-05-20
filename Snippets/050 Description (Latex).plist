@@ -5,8 +5,8 @@
 	<key>content</key>
 	<string>\\begin{description}
 
-	\\item[${1:description}] ${2:item}
-	$0
+	\\item[${1:description}] ${0:item}
+    
 \\end{description}</string>
 	<key>name</key>
 	<string>Description (desc)</string>

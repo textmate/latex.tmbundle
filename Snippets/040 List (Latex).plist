@@ -5,8 +5,8 @@
 	<key>content</key>
 	<string>\\begin{itemize}
 
-	\\item ${1:premier item}
-	$0
+	\\item ${0:premier item}
+
 \\end{itemize}</string>
 	<key>name</key>
 	<string>Itemize (itemize)</string>
