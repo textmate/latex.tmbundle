@@ -5,7 +5,10 @@
 	<key>beforeRunningCommand</key>
 	<string>saveModifiedFiles</string>
 	<key>command</key>
-	<string># Get the viewer program. Any program (that works with open -a &lt;name&gt;) can be used,
+	<string># Source some support functions we need.
+. "${TM_SUPPORT_PATH}/lib/html.sh"
+
+# Get the viewer program. Any program (that works with open -a &lt;name&gt;) can be used,
 # except 'html' which is reserved to mean the internal HTML window. This is also the
 # default option.
 V=${TM_LATEX_VIEWER:=html}
@@ -39,34 +42,9 @@ cat &lt;&lt;"EOF"
 	&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;
 EOF
 
-# Function to generate JavaScript.
-javaScript() {
-	echo '&lt;script type="text/javascript"&gt;'$1';&lt;/script&gt;'
-}
-
-# Function to execute some JavaScript code, after a timeout. Defaults to 1 second.
-delayedExec() {
-	javaScript "setTimeout('$1', $2)"
-}
-
-# Function to make the HTML window close after a short delay.
-closeWin() {
-	delayedExec 'window.close();' 1000
-}
-
-# Function to redirect the HTML view to an URL.
-toURL() {
-	javaScript 'document.url="'$1'"'
-}
-
-# Function to redirect the HTML view to a local file.
-toFile() {
-	toURL "file://$1"
-}
-
 # Function to close window if the error level is low enough.
 close() {
-	if (($RC &lt;= $EL)); then closeWin; fi
+	if (($RC &lt;= $EL)); then closeWindow; fi
 }
 
 # Compile. Bail out on errors.
@@ -82,15 +60,14 @@ if [ "$V" == html ]; then
 		cp "$PDF" "${FILE_LOC}"
 		chmod 666 "${FILE_LOC}"
 		if (($RC &gt; $EL)); then
-			echo "&lt;a href='${WEB_LOC}'&gt;Click Here to Preview&lt;/a&gt;"
+			link '${WEB_LOC}' 'Click Here to Preview'
 		else
-			javaScript "window.location='${WEB_LOC}'"
+			redirect ${WEB_LOC}
 		fi
 	elif [ -s "${PDF}" ]; then
-		echo "&lt;strong&gt;Error: Apache is not running"
-		echo "(we can no longer redirect to file://localhost/...)&lt;/strong&gt;"
+		strong "Error: Apache is not running (we can no longer redirect to file://localhost/...)"
 	else
-		echo "&lt;strong&gt;Error: PDF file not written to disk&lt;/strong&gt;"
+		strong "Error: PDF file not written to disk"
 	fi
 	{ sleep 30; rm "${FILE_LOC}"; } &amp;&gt;/dev/null &amp;
 else

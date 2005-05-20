@@ -19,7 +19,7 @@
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
-	<string>wrap in \left-\right</string>
+	<string>Wrap in \left-\right</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
