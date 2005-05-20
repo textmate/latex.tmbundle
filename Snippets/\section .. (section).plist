@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\section{${1:section name}}
+	<string>\\section{${1:section name}}\\label{sec:${2:label}}
 </string>
 	<key>name</key>
 	<string>\section .. (sec)</string>

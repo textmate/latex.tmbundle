@@ -3,15 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\subsubsection{${1:subsubsection name}}\\label{ssub:${2:label}}
-</string>
+	<string>\\begin{equation*}
+	${1:equation}
+\\end{equation*}</string>
 	<key>name</key>
-	<string>\subsubsection .. (ssub)</string>
+	<string>Equation * (eq*)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>ssub</string>
+	<string>eq*</string>
 	<key>uuid</key>
-	<string>DF92968D-BF59-11D9-A668-000A95C0F626</string>
+	<string>81BA55B3-C8F5-11D9-AFB2-000A95C0F626</string>
 </dict>
 </plist>

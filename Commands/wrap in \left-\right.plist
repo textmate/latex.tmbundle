@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>captureFormatString</key>
+	<string>$3</string>
+	<key>capturePattern</key>
+	<string>^([^:]*):([^:]*):(.*)$</string>
+	<key>command</key>
+	<string>echo -n "`sed 's/\(.*\)\(.\)$/\\\\left\1\\\right\2/'`"</string>
+	<key>fileCaptureRegister</key>
+	<string>1</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^L</string>
+	<key>lineCaptureRegister</key>
+	<string>2</string>
+	<key>name</key>
+	<string>wrap in \left-\right</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>5FB4AC9E-C8FF-11D9-AFB2-000A95C0F626</string>
+</dict>
+</plist>
