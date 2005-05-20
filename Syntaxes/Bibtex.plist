@@ -21,12 +21,6 @@
             name = "string.bibtex.equation.linemath.$"; 
         }, 
         {
-            fontStyle = (italic); 
-            foregroundColor = "#999999"; 
-            match = "(^|[^\\\\])%.*$"; 
-            name = "comment.line.bibtex"; 
-        }, 
-        {
             begin = "\\\\cite[np]*\\{"; 
             end = "\\}"; 
             fontStyle = (underline); 
@@ -44,7 +38,17 @@
             foregroundColor = "#00AA00"; 
             match = "[a-zA-Z]+\\s*\\="; 
             name = "keyword.bibtex.keys"; 
-        }
+        },
+        {
+            name = "constant.character.bibtex";
+            match = "\\\\[^a-zA-Z\n]";
+        },
+        {
+            fontStyle = (italic); 
+            foregroundColor = "#999999"; 
+            match = "%.*$"; 
+            name = "comment.line.percentage.bibtex"; 
+        }, 
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
     uuid = "47F30BA1-6B1D-11D9-9A60-000D93589AF6"; 

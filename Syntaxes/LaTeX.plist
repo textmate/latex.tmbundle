@@ -149,8 +149,8 @@
         {   name = "invalid.string.latex"; 
             begin = "\""; end = "\""; 
         }, 
-        {   name = "comment.line.latex"; 
-            match = "(^|[^\\\\])%.*$"; 
+        {   name = "comment.line.percentage.latex"; 
+            match = "%.*$"; 
         }, 
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\""), ("$", "$"), ("`", "'")); 
