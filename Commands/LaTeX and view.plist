@@ -78,7 +78,7 @@ fi
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
-	<string></string>
+	<string>@b</string>
 	<key>name</key>
 	<string>LaTeX and view</string>
 	<key>output</key>
