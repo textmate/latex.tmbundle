@@ -60,7 +60,7 @@ if [ "$V" == html ]; then
 		cp "$PDF" "${FILE_LOC}"
 		chmod 666 "${FILE_LOC}"
 		if (($RC &gt; $EL)); then
-			link '${WEB_LOC}' 'Click Here to Preview'
+			link "${WEB_LOC}" 'Click Here to Preview'
 		else
 			redirect ${WEB_LOC}
 		fi
