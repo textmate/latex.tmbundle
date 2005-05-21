@@ -9,7 +9,8 @@
 	<key>capturePattern</key>
 	<string>^([^:]*):([^:]*):(.*)$</string>
 	<key>command</key>
-	<string>echo -n "`sed 's/\(.*\)\(.\)$/\\\\left\1\\\right\2/'`"</string>
+	<string># turns “(foo)” into “\left(foo\right)”
+perl -pe 's/(.*)(.)/\\left$1\\right$2/'</string>
 	<key>fileCaptureRegister</key>
 	<string>1</string>
 	<key>input</key>
