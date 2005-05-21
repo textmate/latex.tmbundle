@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>content</key>
+	<string>\\begin{corollary}\\label{cor:${1:label}}
+	${0:statement}
+\\end{corollary}</string>
+	<key>name</key>
+	<string>Corollary (cor)</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>tabTrigger</key>
+	<string>cor</string>
+	<key>uuid</key>
+	<string>F45001B5-C992-11D9-89C4-000A95C0F626</string>
+</dict>
+</plist>
