@@ -85,6 +85,10 @@
             captures = { 1 = { name = "keyword.function.latex.texttt"; }; }; 
             patterns = ( { match = "\\w+"; name = "markup.terminal.texttt.latex"; } );
         }, 
+        {   name = "declaration.item.latex";
+            match = "(\\\\item)(.*)$";
+            captures = { 1 = { name = "keyword.function.latex.item"; }; }; 
+        }, 
         {   name = "declaration.cite.latex";
             begin = "(\\\\cite(al)?[tp]?\\*?(\\[[^\\]]*\\]){,2}\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.control.latex.cite"; }; }; 
