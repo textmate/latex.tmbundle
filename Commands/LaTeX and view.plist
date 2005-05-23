@@ -28,21 +28,8 @@ cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
 
 # Prepare output window.
-cat &lt;&lt;EOF
-	&lt;html&gt;&lt;head&gt;&lt;style&gt;
-	* {
-		color: #998;
-		font-family: Lucida Grande, sans-serif;
-	}
-	h1      { font-size: 24pt; }
-	strong  { color: #000; }
-	a       { color: #000; text-decoration: none; }
-	a:hover { color: #000; text-decoration: underline; }
-	&lt;/style&gt;
-	&lt;title&gt;$FILE as PDF&lt;/title&gt;
-	&lt;/head&gt;&lt;body&gt;
-	&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;
-EOF
+htmlHeader "Compiling LaTeX (file $FILE)"
+echo '&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;'
 
 # Function to close window if the error level is low enough.
 close() {
@@ -71,6 +58,7 @@ if [ "$V" == html ]; then
 	else
 		strong "Error: PDF file not written to disk"
 	fi
+	htmlFooter
 	{ sleep 30; rm "${FILE_LOC}"; } &amp;&gt;/dev/null &amp;
 else
 	open -a "$V" "$PDF"
