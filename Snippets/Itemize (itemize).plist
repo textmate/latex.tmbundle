@@ -9,11 +9,11 @@
 
 \\end{itemize}</string>
 	<key>name</key>
-	<string>Itemize (itemize)</string>
+	<string>Itemize (item)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>itemize</string>
+	<string>item</string>
 	<key>uuid</key>
 	<string>BC8B97E6-5F16-11D9-B9C3-000D93589AF6</string>
 </dict>
