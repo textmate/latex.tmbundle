@@ -43,23 +43,17 @@ if (($RC &gt;= 2)); then exit; fi
 
 # View...
 if [ "$V" == html ]; then
-	if [ -s "${PDF}" ] &amp;&amp; [[ $(ps -xca|grep httpd) ]]; then
-		FILE_LOC="${PDFTEX_FILE_LOCATION:-~/Sites}/web_kit_workaround.pdf"
-		WEB_LOC="${PDFTEX_WEB_LOCATION:-http://localhost/~$USER}/web_kit_workaround.pdf"
-		cp "$PDF" "${FILE_LOC}"
-		chmod 666 "${FILE_LOC}"
+	if [ -s "${PDF}" ]; then
+		WEB_LOC="tm-file://${DIR}/${PDF}"
 		if (($RC &gt; $EL)); then
 			link "${WEB_LOC}" 'Click Here to Preview'
 		else
-			redirect ${WEB_LOC}
+			redirect "${WEB_LOC}"
 		fi
-	elif [ -s "${PDF}" ]; then
-		strong "Error: Apache is not running (we can no longer redirect to file://localhost/...)"
 	else
 		strong "Error: PDF file not written to disk"
 	fi
 	htmlFooter
-	{ sleep 30; rm "${FILE_LOC}"; } &amp;&gt;/dev/null &amp;
 else
 	open -a "$V" "$PDF"
 	close
