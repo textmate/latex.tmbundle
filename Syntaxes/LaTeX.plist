@@ -17,13 +17,12 @@
             match = "\\\\\\\\"; 
         }, 
         {   name = "declaration.section.latex";
-            begin = "(\\\\(?:(?:sub)*section|chapter|paragraph|part))(\\*?)(\\[[^\\[]*?\\])??\\{"; end = "\\}"; 
+            begin = "(\\\\(?:(?:sub)*section|chapter|paragraph|part))(\\*?)(\\[[^\\[]*?\\])??\\{"; end = "(\\})"; 
             captures = {
                 1 = { name = "keyword.function.section.latex"; };
             };
             patterns = (
-                { match = "\\{[^{}\\n]*(?R)?[^{}\\n]*\\}"; name = "entity.parameter.function.section.latex"; },
-                { match = "[^{}\\n]+"; name = "entity.parameter.function.section.latex"; }
+                { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "entity.parameter.function.section.latex"; },
             );
         },
         // Put the lstlisting match before the more general environment listing.
@@ -73,17 +72,17 @@
             // last two more general functions
             begin = "(\\\\textit\\{)";end = "(\\})";
             captures = { 1 = { name = "keyword.function.latex.textit"; }; }; 
-            patterns = ( { match = "\\w+"; name = "markup.italic.textit.latex"; } );
+            patterns = ( { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "markup.italic.textit.latex"; } );
         }, 
         {   name = "declaration.textbf.latex";
             begin = "(\\\\textbf\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.textbf"; }; }; 
-            patterns = ( { match = "\\w+"; name = "markup.bold.textbf.latex"; } );
+            patterns = ( { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "markup.bold.textbf.latex"; } );
         }, 
         {   name = "declaration.texttt.latex";
             begin = "(\\\\texttt\\{)"; end = "(\\})"; 
             captures = { 1 = { name = "keyword.function.latex.texttt"; }; }; 
-            patterns = ( { match = "\\w+"; name = "markup.terminal.texttt.latex"; } );
+            patterns = ( { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "markup.terminal.texttt.latex"; } );
         }, 
         {   name = "declaration.item.latex";
             match = "(\\\\item)(.*)$";
@@ -114,7 +113,7 @@
             captures = { 1 = { name = "keyword.function.with-arg.latex.general"; }; };
             patterns = (
                 { begin = "\\{"; end = "\\}"; patterns = (
-                        { match = "[^}]+"; name = "entity.parameter.function.variable"; }
+                        { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "entity.parameter.function.variable"; }
                     );
                 },
                 { begin = "\\["; end = "\\]"; patterns = (
