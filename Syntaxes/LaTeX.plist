@@ -149,13 +149,10 @@
             // that e.g. \" doesn't start an (invalid) string
             match = "\\\\[^A-Za-z\n]";
         }, 
-        {   name = "invalid.string.latex"; 
-            begin = "\""; end = "\""; 
-        }, 
         {   name = "comment.line.percentage.latex"; 
             match = "%.*$"; 
         }, 
     ); 
-    smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\""), ("$", "$"), ("`", "'")); 
+    smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("$", "$"), ("`", "'")); 
     uuid = "3BEEA00C-6B1D-11D9-B8AD-000D93589AF6"; 
 }
