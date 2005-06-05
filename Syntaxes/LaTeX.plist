@@ -1,158 +1,450 @@
-{
-    fileTypes = (tex); 
-	firstLineMatch = "^\\\\documentclass.*";
-    foldingStartMarker = "\\\\begin\\{.*\\}"; 
-    foldingStopMarker = "\\\\end\\{.*\\}"; 
-    name = Latex; 
-    scopeName = "text.latex";
-    keyEquivalent = "~^L";
-    patterns = (
-        {   name = "string.latex.equation.displaymath.$"; 
-            begin = "\\$\\$"; end = "\\$\\$"; 
-        }, 
-        {   name = "keyword.operator.latex.braces"; 
-            match = "[\\[\\]\\{\\}]"; 
-        }, 
-        {   name = "keyword.operator.latex.newline"; 
-            match = "\\\\\\\\"; 
-        }, 
-        {   name = "declaration.section.latex";
-            begin = "(\\\\(?:(?:sub)*section|chapter|paragraph|part))(\\*?)(\\[[^\\[]*?\\])??\\{"; end = "(\\})"; 
-            captures = {
-                1 = { name = "keyword.function.section.latex"; };
-            };
-            patterns = (
-                { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "entity.parameter.function.section.latex"; },
-            );
-        },
-        // Put the lstlisting match before the more general environment listing.
-        // Someday it would be nice to make this rule general enough to figure out
-        // which language is inside the lstlisting environment rather than my own personal
-        // use for python. --Brad
-        {   name = "source.python";
-            begin = "(\\\\begin\\{)lstlisting(\\})(\\[(.*)\\])?"; 
-            end = "(\\\\end\\{)lstlisting(\\})"; 
-            captures = {
-              1 = { name = "keyword.function.environment"; };
-              2 = { name = "keyword.function.environment"; };
-              //3 = { name = "entity.parameter.variable.function.latex.optional"; };              
-              3 = { name = "keyword.function.environment"; };
-              4 = { name = "keyword.function.environment"; };
-            };
-            patterns = ({ include = "source.python"; });
-        },          
-        {   name = "declaration.verbatim.latex";
-            begin = "^\\\\begin\\{verbatim\\}";
-            end = "^\\\\end\\{verbatim\\}";
-        },
-        // ideally these next two could be re-written as real begin end pairs 
-        // so that one could do interesting things to the body of an environment.
-        {   name = "declaration.begin.latex";
-            match = "(\\\\begin\\{)(.*?)(\\})"; 
-            captures = {
-              1 = { name = "keyword.function.environment.latex"; };                
-              2 = { name = "entity.parameter.function.variable.environment.latex"; };
-              3 = { name = "keyword.function.environment.latex"; };                              
-            };             
-        },
-        {   name = "declaration.end.latex";
-            match = "(\\\\end\\{)(.*?)(\\})";
-            captures = {
-              1 = { name = "keyword.function.environment.latex"; };                
-              2 = { name = "entity.parameter.function.variable.environment.latex"; };
-              3 = { name = "keyword.function.environment.latex"; };                              
-            };             
-        }, 
-        {   name = "declaration.textit.latex";
-            // we put the keyword in a capture and name this capture, 
-            // so that disabling spell checking for “keyword” won't be
-            // inherited by the argument to \textit{...}
-            
-            // Put specific matches for particular LaTeX keyword.functions before the 
-            // last two more general functions
-            begin = "(\\\\textit\\{)";end = "(\\})";
-            captures = { 1 = { name = "keyword.function.latex.textit"; }; }; 
-            patterns = ( { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "markup.italic.textit.latex"; } );
-        }, 
-        {   name = "declaration.textbf.latex";
-            begin = "(\\\\textbf\\{)"; end = "(\\})"; 
-            captures = { 1 = { name = "keyword.function.latex.textbf"; }; }; 
-            patterns = ( { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "markup.bold.textbf.latex"; } );
-        }, 
-        {   name = "declaration.texttt.latex";
-            begin = "(\\\\texttt\\{)"; end = "(\\})"; 
-            captures = { 1 = { name = "keyword.function.latex.texttt"; }; }; 
-            patterns = ( { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "markup.terminal.texttt.latex"; } );
-        }, 
-        {   name = "declaration.item.latex";
-            match = "(\\\\item)(.*)$";
-            captures = { 1 = { name = "keyword.function.latex.item"; }; }; 
-        }, 
-        {   name = "declaration.cite.latex";
-            begin = "(\\\\cite(al)?[tp]?\\*?(\\[[^\\]]*\\]){,2}\\{)"; end = "(\\})"; 
-            captures = { 1 = { name = "keyword.control.latex.cite"; }; }; 
-            patterns = ( { match = "\\w+"; name = "entity.parameter.function.variable.cite"; } );
-        }, 
-        {   name = "declaration.ref-or-label.latex";
-            begin = "(\\\\(?:ref|eqref|label)\\{)"; end = "(\\})"; 
-            captures = {
-                1 = { name = "keyword.control.ref-or-label.latex"; };
-            };
-            patterns = (
-                {
-                    match = "[a-zA-Z,:0-9]+";
-                    name = "entity.parameter.function.variable.ref";
-                },
-            );
-        }, 
-        // These next two are catch-all matches that
-        // will match almost any latex function
-        {   name = "declaration.function-with-arg.latex";
-            // first match “\foo{arg1}{arg2}{...}{argN}”
-            begin = "(\\\\[A-Za-z]\\w*)(?=\\{|\\[)"; end = "(?<=\\]|\\})"; 
-            captures = { 1 = { name = "keyword.function.with-arg.latex.general"; }; };
-            patterns = (
-                { begin = "\\{"; end = "\\}"; patterns = (
-                        { match = "([^{}]+|[^{}]*\\{\\g<1>*\\}[^{}]*)"; name = "entity.parameter.function.variable"; }
-                    );
-                },
-                { begin = "\\["; end = "\\]"; patterns = (
-                        { match = "[^]]+"; name = "entity.parameter.function.variable"; }
-                    );
-                }
-            );
-        }, 
-        {   name = "keyword.function.latex.general";
-            // then match just “\foo”
-            match = "\\\\[A-Za-z]\\w*";
-        }, 
-        {   name = "string.single.latex"; 
-            begin = "``"; end = "''"; 
-        }, 
-        {   name = "string.latex.equation.linemath.$"; 
-            begin = "(^|[^\\\\])\\$"; end = "\\$"; 
-        }, 
-        {   name = "string.latex.equation.linemath"; 
-            begin = "\\\\\\("; end = "\\\\\\)"; 
-        }, 
-        {   name = "string.latex.equation.displaymath"; 
-            begin = "\\\\\\["; end = "\\\\\\]"; 
-        }, 
-        {   name = "dummy.escape";
-            // we catch escape followed by ws or end-of-line
-            // so that we can change the behavior of the " key back
-            // to normal quote instead of ``quote''.
-            match = "\\\\(\\s|$)";
-        }, 
-        {   name = "constant.character"; // not sure if this is the proper classification
-            // this is a catch-all for \<symbol> so
-            // that e.g. \" doesn't start an (invalid) string
-            match = "\\\\[^A-Za-z\n]";
-        }, 
-        {   name = "comment.line.percentage.latex"; 
-            match = "%.*$"; 
-        }, 
-    ); 
-    smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("$", "$"), ("`", "'")); 
-    uuid = "3BEEA00C-6B1D-11D9-B8AD-000D93589AF6"; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>tex</string>
+	</array>
+	<key>firstLineMatch</key>
+	<string>^\\documentclass.*</string>
+	<key>foldingStartMarker</key>
+	<string>\\begin\{.*\}</string>
+	<key>foldingStopMarker</key>
+	<string>\\end\{.*\}</string>
+	<key>keyEquivalent</key>
+	<string>~^L</string>
+	<key>name</key>
+	<string>Latex</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>begin</key>
+			<string>\$\$</string>
+			<key>end</key>
+			<string>\$\$</string>
+			<key>name</key>
+			<string>string.latex.equation.displaymath.$</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>[\[\]\{\}]</string>
+			<key>name</key>
+			<string>keyword.operator.latex.braces</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\\\</string>
+			<key>name</key>
+			<string>keyword.operator.latex.newline</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\(?:(?:sub)*section|chapter|paragraph|part))(\*?)(\[[^\[]*?\])??\{</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.section.latex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>declaration.section.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+					<key>name</key>
+					<string>entity.parameter.function.section.latex</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\begin\{)lstlisting(\})(\[(.*)\])?</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Put the lstlisting match before the more general environment listing. Someday it would be nice to make this rule general enough to figure out which language is inside the lstlisting environment rather than my own personal use for python. --Brad</string>
+			<key>end</key>
+			<string>(\\end\{)lstlisting(\})</string>
+			<key>name</key>
+			<string>source.python</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.python</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>^\\begin\{verbatim\}</string>
+			<key>end</key>
+			<string>^\\end\{verbatim\}</string>
+			<key>name</key>
+			<string>declaration.verbatim.latex</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.parameter.function.variable.environment.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>ideally these next two could be re-written as real begin end pairs so that one could do interesting things to the body of an environment.</string>
+			<key>match</key>
+			<string>(\\begin\{)(.*?)(\})</string>
+			<key>name</key>
+			<string>declaration.begin.latex</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.parameter.function.variable.environment.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\\end\{)(.*?)(\})</string>
+			<key>name</key>
+			<string>declaration.end.latex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\textit\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.latex.textit</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>We put the keyword in a capture and name this capture, so that disabling spell checking for “keyword” won't be inherited by the argument to 	extit{...}.
+
+Put specific matches for particular LaTeX keyword.functions before the last two more general functions</string>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>declaration.textit.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+					<key>name</key>
+					<string>markup.italic.textit.latex</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\textbf\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.latex.textbf</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>declaration.textbf.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+					<key>name</key>
+					<string>markup.bold.textbf.latex</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\texttt\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.latex.texttt</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>declaration.texttt.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+					<key>name</key>
+					<string>markup.terminal.texttt.latex</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.latex.item</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\\item)(.*)$</string>
+			<key>name</key>
+			<string>declaration.item.latex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\cite(al)?[tp]?\*?(\[[^\]]*\]){,2}\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.latex.cite</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>declaration.cite.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\w+</string>
+					<key>name</key>
+					<string>entity.parameter.function.variable.cite</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\(?:ref|eqref|label)\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.ref-or-label.latex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>declaration.ref-or-label.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>[a-zA-Z,:0-9]+</string>
+					<key>name</key>
+					<string>entity.parameter.function.variable.ref</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\[A-Za-z]\w*)(?=\{|\[)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.with-arg.latex.general</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>These next two are catch-all matches that will match almost any latex function. First match “oo{arg1}{arg2}{...}{argN}”</string>
+			<key>end</key>
+			<string>(?&lt;=\]|\})</string>
+			<key>name</key>
+			<string>declaration.function-with-arg.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>\{</string>
+					<key>end</key>
+					<string>\}</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>match</key>
+							<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+							<key>name</key>
+							<string>entity.parameter.function.variable</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>\[</string>
+					<key>end</key>
+					<string>\]</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>match</key>
+							<string>[^]]+</string>
+							<key>name</key>
+							<string>entity.parameter.function.variable</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>then match just “oo”</string>
+			<key>match</key>
+			<string>\\[A-Za-z]\w*</string>
+			<key>name</key>
+			<string>keyword.function.latex.general</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>``</string>
+			<key>end</key>
+			<string>''</string>
+			<key>name</key>
+			<string>string.single.latex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(^|[^\\])\$</string>
+			<key>end</key>
+			<string>\$</string>
+			<key>name</key>
+			<string>string.latex.equation.linemath.$</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>\\\(</string>
+			<key>end</key>
+			<string>\\\)</string>
+			<key>name</key>
+			<string>string.latex.equation.linemath</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>\\\[</string>
+			<key>end</key>
+			<string>\\\]</string>
+			<key>name</key>
+			<string>string.latex.equation.displaymath</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>We catch escape followed by ws or end-of-line so that we can change the behavior of the " key back to normal quote instead of ``quote''.</string>
+			<key>match</key>
+			<string>\\(\s|$)</string>
+			<key>name</key>
+			<string>dummy.escape</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Not sure if this is the proper classification. This is a catch-all for \&lt;symbol&gt; so that e.g. \" doesn't start an (invalid) string</string>
+			<key>match</key>
+			<string>\\[^A-Za-z
+]</string>
+			<key>name</key>
+			<string>constant.character</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>%.*$</string>
+			<key>name</key>
+			<string>comment.line.percentage.latex</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>text.latex</string>
+	<key>smartTypingPairs</key>
+	<array>
+		<array>
+			<string>(</string>
+			<string>)</string>
+		</array>
+		<array>
+			<string>[</string>
+			<string>]</string>
+		</array>
+		<array>
+			<string>{</string>
+			<string>}</string>
+		</array>
+		<array>
+			<string>$</string>
+			<string>$</string>
+		</array>
+		<array>
+			<string>`</string>
+			<string>'</string>
+		</array>
+	</array>
+	<key>uuid</key>
+	<string>3BEEA00C-6B1D-11D9-B8AD-000D93589AF6</string>
+</dict>
+</plist>
