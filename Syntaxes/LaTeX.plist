@@ -15,7 +15,7 @@
 	<key>keyEquivalent</key>
 	<string>~^L</string>
 	<key>name</key>
-	<string>Latex</string>
+	<string>LaTeX</string>
 	<key>patterns</key>
 	<array>
 		<dict>
@@ -57,7 +57,7 @@
 			<array>
 				<dict>
 					<key>match</key>
-					<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+					<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
 					<key>name</key>
 					<string>entity.parameter.function.section.latex</string>
 				</dict>
@@ -184,7 +184,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>match</key>
-					<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+					<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
 					<key>name</key>
 					<string>markup.italic.textit.latex</string>
 				</dict>
@@ -209,7 +209,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>match</key>
-					<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+					<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
 					<key>name</key>
 					<string>markup.bold.textbf.latex</string>
 				</dict>
@@ -234,7 +234,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>match</key>
-					<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+					<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
 					<key>name</key>
 					<string>markup.terminal.texttt.latex</string>
 				</dict>
@@ -332,7 +332,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<array>
 						<dict>
 							<key>match</key>
-							<string>([^{}]+|[^{}]*\{\g&lt;1&gt;*\}[^{}]*)</string>
+							<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
 							<key>name</key>
 							<string>entity.parameter.function.variable</string>
 						</dict>
