@@ -182,6 +182,54 @@
 			<string>declaration.enddocument.latex</string>
 		</dict>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.parameter.function.variable.environment.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\\begin\{)(enumerate|itemize|description|list)(\})</string>
+			<key>name</key>
+			<string>declaration.beginlist.latex</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.parameter.function.variable.environment.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\\end\{)(enumerate|itemize|description|list)(\})</string>
+			<key>name</key>
+			<string>declaration.endlist.latex</string>
+		</dict>
+		<dict>
 			<key>begin</key>
 			<string>(\\begin\{)(.*?)(\})</string>
 			<key>captures</key>
