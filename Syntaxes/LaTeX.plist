@@ -151,11 +151,11 @@
 				</dict>
 			</dict>
 			<key>comment</key>
-			<string>ideally these next two could be re-written as real begin end pairs so that one could do interesting things to the body of an environment.</string>
+			<string>These two patterns match the egin{document} and end{document} commands, so that the environment matching pattern following them  will ignore those commands.</string>
 			<key>match</key>
-			<string>(\\begin\{)(.*?)(\})</string>
+			<string>(\\begin\{)(document)(\})</string>
 			<key>name</key>
-			<string>declaration.begin.latex</string>
+			<string>declaration.begindocument.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -177,9 +177,59 @@
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>(\\end\{)(.*?)(\})</string>
+			<string>(\\end\{)(document)(\})</string>
 			<key>name</key>
-			<string>declaration.end.latex</string>
+			<string>declaration.enddocument.latex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\begin\{)(.*?)(\})</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.parameter.function.variable.environment.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>entity.parameter.function.variable.environment.latex</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.environment.latex</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>As it is, this captures all begin-end blocks that are not egin{document}-end{document} blocks. It will further allow any text.latex pattern in the block to be matched.</string>
+			<key>end</key>
+			<string>(\\end\{)(\2)(\})</string>
+			<key>name</key>
+			<string>declaration.environment.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>text.latex</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
