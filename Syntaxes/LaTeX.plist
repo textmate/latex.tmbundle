@@ -77,7 +77,7 @@
 			<array>
 				<dict>
 					<key>match</key>
-					<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
+					<string>[^}]+</string>
 					<key>name</key>
 					<string>entity.parameter.function.section.latex</string>
 				</dict>
@@ -254,7 +254,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>match</key>
-					<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
+					<string>[^}]+</string>
 					<key>name</key>
 					<string>markup.italic.textit.latex</string>
 				</dict>
@@ -279,7 +279,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>match</key>
-					<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
+					<string>[^}]+</string>
 					<key>name</key>
 					<string>markup.bold.textbf.latex</string>
 				</dict>
@@ -304,7 +304,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>match</key>
-					<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
+					<string>[^}]+</string>
 					<key>name</key>
 					<string>markup.terminal.texttt.latex</string>
 				</dict>
@@ -402,7 +402,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<array>
 						<dict>
 							<key>match</key>
-							<string>([^{}]+|[^{}]*\{((?=.*\{.*\})\g&lt;1&gt;)*\}[^{}]*)</string>
+							<string>[^}]+</string>
 							<key>name</key>
 							<string>entity.parameter.function.variable</string>
 						</dict>
@@ -491,29 +491,6 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 	</array>
 	<key>scopeName</key>
 	<string>text.latex</string>
-	<key>smartTypingPairs</key>
-	<array>
-		<array>
-			<string>(</string>
-			<string>)</string>
-		</array>
-		<array>
-			<string>[</string>
-			<string>]</string>
-		</array>
-		<array>
-			<string>{</string>
-			<string>}</string>
-		</array>
-		<array>
-			<string>$</string>
-			<string>$</string>
-		</array>
-		<array>
-			<string>`</string>
-			<string>'</string>
-		</array>
-	</array>
 	<key>uuid</key>
 	<string>3BEEA00C-6B1D-11D9-B8AD-000D93589AF6</string>
 </dict>
