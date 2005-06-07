@@ -40,10 +40,30 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\(?:(?:sub)*section|chapter|paragraph|part))(\*?)(\[[^\[]*?\])??\{</string>
+			<string>(\\(?:(?:sub)*section|chapter|paragraph|part))(\*?)(?:(\[)[^\[]*?(\]))??(\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.section.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.section.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.section.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.function.section.latex</string>
+				</dict>
+				<key>5</key>
 				<dict>
 					<key>name</key>
 					<string>keyword.function.section.latex</string>
