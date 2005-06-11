@@ -1,53 +1,37 @@
 {
-    backgroundColor = "#ffffff"; 
     fileTypes = (bib); 
     foldingStartMarker = "\\@[a-zA-Z]+\\{.+,"; 
     foldingStopMarker = "\\}"; 
-    foregroundColor = "#333333"; 
     highlightPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
-    name = Bibtex; 
+    name = BibTeX; 
     scopeName = "source.bibtex";
     patterns = (
-        {
-            fontStyle = (underline); 
-            foregroundColor = "#0000CC"; 
+        {   name = "keyword.other.entries.bibtex"; 
             match = "^\\@[a-zA-Z]+"; 
-            name = "keyword.bibtex.entries"; 
         }, 
-        {
-            begin = "(^|[^\\\\])\\$"; 
-            end = "\\$"; 
-            foregroundColor = "#00AA00"; 
-            name = "string.bibtex.equation.linemath.$"; 
+        {   name = "string.other.math.line.bibtex"; 
+            begin = "(^|[^\\\\])\\$"; end = "\\$"; 
         }, 
-        {
-            begin = "\\\\cite[np]*\\{"; 
-            end = "\\}"; 
-            fontStyle = (underline); 
-            foregroundColor = "#6600CC"; 
-            name = "keyword.bibtex.citations"; 
+        {   name = "declaration.cite.bibtex"; 
+            begin = "(\\\\cite[np]*\\{)"; end = "(\\})"; 
+            captures = {
+                1 = { name = "keyword.control.cite.bibtex"; };
+            };
         }, 
-        {
-            fontStyle = (bold); 
-            foregroundColor = "#000AEE"; 
-            match = "\\\\\\w*"; 
-            name = "keyword.function.bibtex"; 
+        {   name = "support.function.bibtex"; 
+            match = "\\\\\\w+"; 
         }, 
-        {
-            fontStyle = (italic); 
-            foregroundColor = "#00AA00"; 
-            match = "[a-zA-Z]+\\s*\\="; 
-            name = "keyword.bibtex.keys"; 
+        {   name = "declaration.key-assignment.bibtex"; 
+            match = "([a-zA-Z]+)\\s*\\="; 
+            captures = {
+                1 = { name = "keyword.other.bibtex"; };
+            };
         },
-        {
-            name = "constant.character.bibtex";
+        {   name = "constant.character.bibtex";
             match = "\\\\[^a-zA-Z\n]";
         },
-        {
-            fontStyle = (italic); 
-            foregroundColor = "#999999"; 
+        {   name = "comment.line.percentage.bibtex"; 
             match = "%.*$"; 
-            name = "comment.line.percentage.bibtex"; 
         }, 
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
