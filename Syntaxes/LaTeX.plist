@@ -24,7 +24,7 @@
 			<key>end</key>
 			<string>\$\$</string>
 			<key>name</key>
-			<string>string.other.match.block.latex</string>
+			<string>string.other.math.block.latex</string>
 		</dict>
 		<dict>
 			<key>match</key>
@@ -247,7 +247,7 @@
 				</dict>
 			</dict>
 			<key>comment</key>
-			<string>Ideally these two commands should be changed to  a single begin-end match, once Allan has gotten recursion working.</string>
+			<string>Ideally these two commands should be changed to a single begin-end match, once Allan has gotten recursion working.</string>
 			<key>match</key>
 			<string>(\\begin\{)(.*?)(\})</string>
 			<key>name</key>
