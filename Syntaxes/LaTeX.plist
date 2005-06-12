@@ -352,7 +352,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<key>match</key>
 					<string>[^}]+</string>
 					<key>name</key>
-					<string>markup.terminal.texttt.latex</string>
+					<string>markup.other.raw.texttt.latex</string>
 				</dict>
 			</array>
 		</dict>
