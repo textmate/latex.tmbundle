@@ -185,7 +185,7 @@
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
@@ -195,7 +195,7 @@
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>
@@ -209,7 +209,7 @@
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
@@ -219,7 +219,7 @@
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>
@@ -233,7 +233,7 @@
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
@@ -243,7 +243,7 @@
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -259,7 +259,7 @@
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
@@ -269,7 +269,7 @@
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>
