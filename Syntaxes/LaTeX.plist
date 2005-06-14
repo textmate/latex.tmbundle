@@ -19,6 +19,10 @@
 	<key>patterns</key>
 	<array>
 		<dict>
+			<key>include</key>
+			<string>source.tex</string>
+		</dict>
+		<dict>
 			<key>begin</key>
 			<string>\$\$</string>
 			<key>end</key>
@@ -52,14 +56,14 @@
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
-			<string>declaration.section.latex</string>
+			<string>meta.section.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>match</key>
 					<string>[^}]+</string>
 					<key>name</key>
-					<string>variable.parameter.section.latex</string>
+					<string>entity.name.section</string>
 				</dict>
 			</array>
 		</dict>
@@ -127,7 +131,7 @@
 			<key>end</key>
 			<string>^\s*(\\end\{)(verbatim)(\})</string>
 			<key>name</key>
-			<string>declaration.verbatim.latex</string>
+			<string>meta.verbatim.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -153,7 +157,7 @@
 			<key>match</key>
 			<string>(\\begin\{)(document)(\})</string>
 			<key>name</key>
-			<string>declaration.begin-document.latex</string>
+			<string>meta.begin-document.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -177,7 +181,7 @@
 			<key>match</key>
 			<string>(\\end\{)(document)(\})</string>
 			<key>name</key>
-			<string>declaration.end-document.latex</string>
+			<string>meta.end-document.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -201,7 +205,7 @@
 			<key>match</key>
 			<string>(\\begin\{)(enumerate|itemize|description|list)(\})</string>
 			<key>name</key>
-			<string>declaration.begin-list.latex</string>
+			<string>meta.begin-list.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -225,7 +229,7 @@
 			<key>match</key>
 			<string>(\\end\{)(enumerate|itemize|description|list)(\})</string>
 			<key>name</key>
-			<string>declaration.end-list.latex</string>
+			<string>meta.end-list.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -251,7 +255,7 @@
 			<key>match</key>
 			<string>(\\begin\{)(.*?)(\})</string>
 			<key>name</key>
-			<string>declaration.begin.latex</string>
+			<string>meta.begin.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -275,7 +279,7 @@
 			<key>match</key>
 			<string>(\\end\{)(.*?)(\})</string>
 			<key>name</key>
-			<string>declaration.end.latex</string>
+			<string>meta.end.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -295,7 +299,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
-			<string>declaration.textit.latex</string>
+			<string>meta.textit.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -320,7 +324,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
-			<string>declaration.textbf.latex</string>
+			<string>meta.textbf.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -345,7 +349,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
-			<string>declaration.texttt.latex</string>
+			<string>meta.texttt.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -357,18 +361,10 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</array>
 		</dict>
 		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>support.constant.item.latex</string>
-				</dict>
-			</dict>
 			<key>match</key>
-			<string>(\\item)(.*)$</string>
+			<string>\\item</string>
 			<key>name</key>
-			<string>declaration.item.latex</string>
+			<string>support.constant.item.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -384,7 +380,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
-			<string>declaration.cite.latex</string>
+			<string>meta.cite.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -409,7 +405,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
-			<string>declaration.ref-or-label.latex</string>
+			<string>meta.ref-or-label.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -436,7 +432,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>end</key>
 			<string>(?&lt;=\]|\})</string>
 			<key>name</key>
-			<string>declaration.function.with-arg.latex</string>
+			<string>meta.function.with-arg.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -489,14 +485,6 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(^|[^\\])\$</string>
-			<key>end</key>
-			<string>\$</string>
-			<key>name</key>
-			<string>string.other.math.latex</string>
-		</dict>
-		<dict>
-			<key>begin</key>
 			<string>\\\(</string>
 			<key>end</key>
 			<string>\\\)</string>
@@ -519,12 +507,6 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 ]</string>
 			<key>name</key>
 			<string>constant.character.escape.latex</string>
-		</dict>
-		<dict>
-			<key>match</key>
-			<string>%.*$</string>
-			<key>name</key>
-			<string>comment.line.percentage.latex</string>
 		</dict>
 	</array>
 	<key>scopeName</key>

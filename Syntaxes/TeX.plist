@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>sty</string>
+		<string>cls</string>
+	</array>
+	<key>foldingStartMarker</key>
+	<string>/\*\*|\{\s*$</string>
+	<key>foldingStopMarker</key>
+	<string>\*\*/|^\s*\}</string>
+	<key>name</key>
+	<string>TeX</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>match</key>
+			<string>\\\b(if|ifcase|ifcat|ifdim|ifeof|iffalse|ifhbox|ifhmode|ifinner|ifmmode|ifnum|ifodd|ftrue|ifundefined|ifvbox|ifvmode|ifvoid|ifx|else|fi|frontmatter|mainmatter|backmatter)\b</string>
+			<key>name</key>
+			<string>keyword.control.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>%.*$</string>
+			<key>name</key>
+			<string>comment.line.percentage.latex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\\b(newcommand|renewcommand)\b</string>
+			<key>name</key>
+			<string>storage.type.function.tex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(^|[^\\])\$</string>
+			<key>end</key>
+			<string>\$</string>
+			<key>name</key>
+			<string>string.other.math.tex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\\\b(angle|angleC|approxeq|backepsilonF|backprime|backsim|backsimeq|barwedgeA|BbbkC|becauseA|beth|between|bigstar|blacklozenge|blacksquare|blacktriangledown|blacktriangleE|blacktriangleleftA|blacktriangleright|boxdot|boxminusC|boxplus|boxtimes|bumpeqC|BumpeqD|Cap|centerdot|circeq|circlearrowleft|circlearrowright|circledastE|circledcircD|circleddashF|circledS|complementB|Cup|curlyeqprec|curlyeqsucc|curlyvee|curlywedge|curvearrowleft|curvearrowright|dalethB|diagdownF|diagupE|digammaA|divideontimesE|doteqdotB|dotplus|doublebarwedgeB|downdownarrows|downharpoonleft|downharpoonright|eqcirc|eqsim|eqslantgtr|eqslantless|eth|fallingdotseqB|Finv|Game|geqqD|geqslantE|gggF|gimelA|gnapproxB|gneqD|gneqq|gnsim|gtrapprox|gtrdotD|gtreqless|gtreqqless|gtrlessF|gtrsim|gvertneqq|hbar|hbarE|hslashD|intercalC|intop|leftarrowtailB|leftleftarrows|leftrightarrowsC|leftrightharpoonsB|leftrightsquigarrow|leftthreetimes|leqq|leqslant|lessapproxF|lessdotC|lesseqgtr|lesseqqgtr|lessgtr|lesssimE|Lleftarrow|limits|lllE|lnapproxA|lneqC|lneqq|lnsim|looparrowleft|looparrowright|lozenge|LshE|ltimesE|lvertneqq|measuredangleD|mho|multimap|ncongD|nexists|ngeq|ngeqq|ngeqslantB|ngtr|nleftarrow|nLeftarrowA|nLeftrightarrowC|nleftrightarrowD|nleq|nleqq|nleqslantA|nless|nmidD|nparallelC|nprec|npreceqE|nrightarrow|nRightarrowB|nshortmidE|nshortparallelF|nsimC|nsubseteqA|nsubseteqq|nsucc|nsucceqF|nsupseteqB|nsupseteqq|ntriangleleft|ntrianglelefteq|ntriangleright|ntrianglerighteq|nVDash|nVdash|nvDash|nvdash|pitchfork|precapprox|preccurlyeq|precnapprox|precneqq|precnsim|precsimD|rightarrowtailA|rightleftarrowsD|rightleftharpoonsA|rightrightarrows|rightsquigarrow|rightthreetimes|risingdotseqA|Rrightarrow|RshF|rtimesF|shortmid|shortparallel|smallfrown|smallsetminus|smallsmile|sphericalangleE|sqsubset|sqsupset|square|Subset|subseteqqA|subsetneq|subsetneqq|succapprox|succcurlyeqC|succnapprox|succneqq|succnsim|succsim|Supset|supseteqqB|supsetneq|supsetneqq|therefore|thickapprox|thicksim|triangledownF|trianglelefteq|triangleqC|trianglerighteq|twoheadleftarrow|twoheadrightarrow|upharpoonleft|upharpoonright|upuparrows|varkappaB|varnothingF|varproptoF|varsubsetneq|varsubsetneqq|varsupsetneq|varsupsetneqq|vartriangleD|vartriangleleft|vartriangleright|VdashD|vDashF|veebar|VvdashE)\b</string>
+					<key>name</key>
+					<string>constant.language.tex</string>
+				</dict>
+			</array>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.tex</string>
+	<key>uuid</key>
+	<string>6BC8DE6F-9360-4C7E-AC3C-971385945346</string>
+</dict>
+</plist>

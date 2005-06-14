@@ -1,0 +1,83 @@
+\documentclass[letter]{article}
+
+% Welcome to the Latex torture test file.  Please add your ugliest latex syntax examples 
+% to the appropriate place in this file so we can make sure that Latex works consistently 
+% for all of us.
+
+%preamble type stuff here
+
+\newcommand{\uint}{\mathop{\mathchoice%
+  {\rlap{\smash{$\displaystyle\intop\limits^{\uintbar}$}}}%
+  {\rlap{\smash{$\textstyle\intop\limits^{\uintbar}$}}}%
+  {\rlap{\smash{$\scriptstyle\intop\limits^{\uintbar}$}}}%
+  {\rlap{\smash{$\scriptscriptstyle\intop\limits^{\uintbar}$}}}%
+  }\!\int}
+
+
+
+
+\begin{document}
+
+\maketitle
+
+%itemize environment
+\begin{itemize}
+    \item Item one
+    \item Item $2$
+    \item item three with \textbf{bold text}
+\end{itemize}
+
+%enumerate environment
+\begin{enumerate}
+    \item Item one
+    \item Item $2$
+    \item item three with \textit{italic text}
+\end{enumerate}
+
+%description environment
+\begin{description}
+    \item[Item one]  and some more.
+    \item[Item $2$] and $2+2 = 4$
+    \item[Item three] with \texttt{typewriter text}
+\end{description}
+
+\begin{inparaenum}
+  \item increase impurity concentration or $L_{z}$ (impurity species);
+  \item increase the recycling neutral concentration to increase $\Delta
+    Q_{\text{at}}$ and $\Delta M_{\text{at}}$; 
+  \item reduce the power flux
+    ($P_{\text{sep}} / A_{\text{sep}})$ transported across the separatrix
+    (e.g.  by increased radiation inside the separatrix, by reduced auxiliary
+    heating or by increased plasma surface area); and \item increase the
+    connection length $L_{\text{\abbr{SOL}}} = q_{95}\pi R$.
+\end{inparaenum}
+it can be shown from~(\ref{eq14-26}) that $\Delta M_{\text{at}} \sim$
+
+
+\begin{split}
+  \Delta_n &=\frac{D_\bot }{\left( {{\Gamma_\bot } / {n_{\text{\abbr{SOL}}} }} \right)}\\
+  \Delta_T &=\frac{\chi_\bot }{\left( {{Q_\bot } / {n_{\text{\abbr{SOL}}}
+          T_{\text{\abbr{SOL}}} }} \right)-3{D_\bot } / {\Delta_n }}
+\end{split}
+
+
+% the listing environment 
+\begin{lstlisting}[caption=The Vertex Class,label=lst:vertex,float=htbp]
+class Vertex:
+    def __init__(self,num):
+        self.id = num
+        self.adj = []
+        self.color = 'white'
+        self.dist = sys.maxint
+        self.pred = None
+        self.disc = 0
+        self.fin = 0
+        self.cost = {}
+        
+    def addNeighbor(self,nbr,cost=0):
+        self.adj.append(nbr)
+        self.cost[nbr] = cost
+\end{lstlisting}
+
+
+\end{document}
