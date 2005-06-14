@@ -364,7 +364,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>match</key>
 			<string>\\item</string>
 			<key>name</key>
-			<string>support.constant.item.latex</string>
+			<string>entity.name.tag.latex.item</string>
 		</dict>
 		<dict>
 			<key>begin</key>
