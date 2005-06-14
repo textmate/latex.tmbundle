@@ -1,11 +1,16 @@
 \documentclass[letter]{article}
 
+
 % Welcome to the Latex torture test file.  Please add your ugliest latex syntax examples 
 % to the appropriate place in this file so we can make sure that Latex works consistently 
 % for all of us.
 
+% To make this document more colorful you may want to turn on other:Latex Theme
+
 %preamble type stuff here
 
+
+% 6/14/05  many of the commands below are functions with arguments.  When recursion is in place these should work nicely.
 \newcommand{\uint}{\mathop{\mathchoice%
   {\rlap{\smash{$\displaystyle\intop\limits^{\uintbar}$}}}%
   {\rlap{\smash{$\textstyle\intop\limits^{\uintbar}$}}}%
@@ -14,11 +19,13 @@
   }\!\int}
 
 
-
-
+% Main document stuff here.
 \begin{document}
 
 \maketitle
+\chapter{Chapter One}
+
+\input{Chapter1.tex}
 
 %itemize environment
 \begin{itemize}
@@ -27,6 +34,7 @@
     \item item three with \textbf{bold text}
 \end{itemize}
 
+\section{Second one}
 %enumerate environment
 \begin{enumerate}
     \item Item one
@@ -34,12 +42,16 @@
     \item item three with \textit{italic text}
 \end{enumerate}
 
+\subsection{Subsection one}
+\subsubsection{SubSubsection one point one}
 %description environment
 \begin{description}
     \item[Item one]  and some more.
     \item[Item $2$] and $2+2 = 4$
     \item[Item three] with \texttt{typewriter text}
 \end{description}
+
+\paragraph{Paragraph One}
 
 \begin{inparaenum}
   \item increase impurity concentration or $L_{z}$ (impurity species);
