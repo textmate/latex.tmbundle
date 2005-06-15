@@ -46,6 +46,18 @@
 					<key>match</key>
 					<string>\\\b(angle|angleC|approxeq|backepsilonF|backprime|backsim|backsimeq|barwedgeA|BbbkC|becauseA|beth|between|bigstar|blacklozenge|blacksquare|blacktriangledown|blacktriangleE|blacktriangleleftA|blacktriangleright|boxdot|boxminusC|boxplus|boxtimes|bumpeqC|BumpeqD|Cap|centerdot|circeq|circlearrowleft|circlearrowright|circledastE|circledcircD|circleddashF|circledS|complementB|Cup|curlyeqprec|curlyeqsucc|curlyvee|curlywedge|curvearrowleft|curvearrowright|dalethB|diagdownF|diagupE|digammaA|divideontimesE|doteqdotB|dotplus|doublebarwedgeB|downdownarrows|downharpoonleft|downharpoonright|eqcirc|eqsim|eqslantgtr|eqslantless|eth|fallingdotseqB|Finv|Game|geqqD|geqslantE|gggF|gimelA|gnapproxB|gneqD|gneqq|gnsim|gtrapprox|gtrdotD|gtreqless|gtreqqless|gtrlessF|gtrsim|gvertneqq|hbar|hbarE|hslashD|intercalC|intop|leftarrowtailB|leftleftarrows|leftrightarrowsC|leftrightharpoonsB|leftrightsquigarrow|leftthreetimes|leqq|leqslant|lessapproxF|lessdotC|lesseqgtr|lesseqqgtr|lessgtr|lesssimE|Lleftarrow|limits|lllE|lnapproxA|lneqC|lneqq|lnsim|looparrowleft|looparrowright|lozenge|LshE|ltimesE|lvertneqq|measuredangleD|mho|multimap|ncongD|nexists|ngeq|ngeqq|ngeqslantB|ngtr|nleftarrow|nLeftarrowA|nLeftrightarrowC|nleftrightarrowD|nleq|nleqq|nleqslantA|nless|nmidD|nparallelC|nprec|npreceqE|nrightarrow|nRightarrowB|nshortmidE|nshortparallelF|nsimC|nsubseteqA|nsubseteqq|nsucc|nsucceqF|nsupseteqB|nsupseteqq|ntriangleleft|ntrianglelefteq|ntriangleright|ntrianglerighteq|nVDash|nVdash|nvDash|nvdash|pitchfork|precapprox|preccurlyeq|precnapprox|precneqq|precnsim|precsimD|rightarrowtailA|rightleftarrowsD|rightleftharpoonsA|rightrightarrows|rightsquigarrow|rightthreetimes|risingdotseqA|Rrightarrow|RshF|rtimesF|shortmid|shortparallel|smallfrown|smallsetminus|smallsmile|sphericalangleE|sqsubset|sqsupset|square|Subset|subseteqqA|subsetneq|subsetneqq|succapprox|succcurlyeqC|succnapprox|succneqq|succnsim|succsim|Supset|supseteqqB|supsetneq|supsetneqq|therefore|thickapprox|thicksim|triangledownF|trianglelefteq|triangleqC|trianglerighteq|twoheadleftarrow|twoheadrightarrow|upharpoonleft|upharpoonright|upuparrows|varkappaB|varnothingF|varproptoF|varsubsetneq|varsubsetneqq|varsupsetneq|varsupsetneqq|vartriangleD|vartriangleleft|vartriangleright|VdashD|vDashF|veebar|VvdashE)\b</string>
 					<key>name</key>
+					<string>constant.character.tex</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\\\b(sum|prod|coprod|int|oint|bigcap|bigcup|bigsqcup|bigvee|bigwedge|bigodot|bigotimes|bogoplus|biguplus)\b</string>
+					<key>name</key>
+					<string>constant.character.tex</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\\\b(arccos|arcsin|arctan|arg|cos|cosh|cot|coth|csc|deg|det|dim|exp|gcd|hom|inf|ker|lg|lim|liminf|limsup|ln|log|max|min|pr|sec|sin|sinh|sup|tan|tanh)\b</string>
+					<key>name</key>
 					<string>constant.language.tex</string>
 				</dict>
 			</array>

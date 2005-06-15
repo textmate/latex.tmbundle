@@ -53,8 +53,10 @@
 					<string>support.function.section.latex</string>
 				</dict>
 			</dict>
+			<key>comment</key>
+			<string>this works OK with all kinds of crazy stuff as long as section is one line</string>
 			<key>end</key>
-			<string>(\})</string>
+			<string>(\}$)</string>
 			<key>name</key>
 			<string>meta.section.latex</string>
 			<key>patterns</key>

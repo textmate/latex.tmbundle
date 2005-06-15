@@ -43,6 +43,8 @@
 \end{enumerate}
 
 \subsection{Subsection one}
+This is a paragraph with some math $ \sin{3.1415} * \cos{3.1415} \angle  $.  This is an ordinary sentence after the math.  This works just fine with math mode including a rule for a bunch of math symbols.
+
 \subsubsection{SubSubsection one point one}
 %description environment
 \begin{description}
@@ -72,6 +74,12 @@ it can be shown from~(\ref{eq14-26}) that $\Delta M_{\text{at}} \sim$
           T_{\text{\abbr{SOL}}} }} \right)-3{D_\bot } / {\Delta_n }}
 \end{split}
 
+% Make sure that the begin end patterns for section don't always match the first }
+% Do section commands ever span more than one line????  I'm guessing not in 99% of the cases.
+\section{$\mathcal{D}$-modules}
+
+% part is tricky because it is used in the exam style and is also used in reports.
+\part[4] $\sqrt[d]{n!}$
 
 % the listing environment 
 \begin{lstlisting}[caption=The Vertex Class,label=lst:vertex,float=htbp]
