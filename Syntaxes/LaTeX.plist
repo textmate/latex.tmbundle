@@ -186,6 +186,8 @@
 			<string>meta.end-document.latex</string>
 		</dict>
 		<dict>
+			<key>begin</key>
+			<string>(\\begin\{)(\w+)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -203,85 +205,33 @@
 					<key>name</key>
 					<string>support.function.be.latex</string>
 				</dict>
-			</dict>
-			<key>match</key>
-			<string>(\\begin\{)(enumerate|itemize|description|list)(\})</string>
-			<key>name</key>
-			<string>meta.begin-list.latex</string>
-		</dict>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
+				<key>4</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.be.latex</string>
 				</dict>
-				<key>2</key>
+				<key>5</key>
 				<dict>
 					<key>name</key>
 					<string>variable.parameter.latex</string>
 				</dict>
-				<key>3</key>
+				<key>6</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.be.latex</string>
 				</dict>
 			</dict>
-			<key>match</key>
-			<string>(\\end\{)(enumerate|itemize|description|list)(\})</string>
+			<key>end</key>
+			<string>(\\end\{)(\2)(\})</string>
 			<key>name</key>
-			<string>meta.end-list.latex</string>
-		</dict>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
+			<string>meta.environment.list.latex</string>
+			<key>patterns</key>
+			<array>
 				<dict>
-					<key>name</key>
-					<string>support.function.be.latex</string>
+					<key>include</key>
+					<string>text.latex</string>
 				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>variable.parameter.latex</string>
-				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>support.function.be.latex</string>
-				</dict>
-			</dict>
-			<key>comment</key>
-			<string>Ideally these two commands should be changed to a single begin-end match, once Allan has gotten recursion working.</string>
-			<key>match</key>
-			<string>(\\begin\{)(.*?)(\})</string>
-			<key>name</key>
-			<string>meta.begin.latex</string>
-		</dict>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>support.function.be.latex</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>variable.parameter.latex</string>
-				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>support.function.be.latex</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>(\\end\{)(.*?)(\})</string>
-			<key>name</key>
-			<string>meta.end.latex</string>
+			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
