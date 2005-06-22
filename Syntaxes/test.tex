@@ -11,13 +11,20 @@
 
 
 % 6/14/05  many of the commands below are functions with arguments.  When recursion is in place these should work nicely.
-\newcommand{\uint}{\mathop{\mathchoice%
-  {\rlap{\smash{$\displaystyle\intop\limits^{\uintbar}$}}}%
-  {\rlap{\smash{$\textstyle\intop\limits^{\uintbar}$}}}%
-  {\rlap{\smash{$\scriptstyle\intop\limits^{\uintbar}$}}}%
-  {\rlap{\smash{$\scriptscriptstyle\intop\limits^{\uintbar}$}}}%
-  }\!\int}
 
+\foo[f]{bar}{$10 + 20$} Here is a simple single function with several parameters
+
+
+\newcommand{\uint}{\mathop{\mathchoice%
+{\rlap{\smash{$\displaystyle\intop\limits^{\uintbar}$}}}%
+{\rlap{\smash{$\textstyle\intop\limits^{\uintbar}$}}}%
+{\rlap{\smash{$\scriptstyle\intop\limits^{\uintbar}$}}}%
+{\rlap{\smash{$\scriptscriptstyle\intop\limits^{\uintbar}$}}}%
+}\!\int}
+
+\smash{$foobar$}
+
+This is a dollar sign \$ in the tex code, it should not start math mode.
 
 % Main document stuff here.
 \begin{document}
@@ -41,6 +48,24 @@
     \item Item $2$
     \item item three with \textit{italic text}
 \end{enumerate}
+
+% the listing environment 
+\begin{lstlisting}[caption=The Vertex Class,label=lst:vertex,float=htbp]
+class Vertex:
+    def __init__(self,num):
+        self.id = num
+        self.adj = []
+        self.color = 'white'
+        self.dist = sys.maxint
+        self.pred = None
+        self.disc = 0
+        self.fin = 0
+        self.cost = {}
+
+    def addNeighbor(self,nbr,cost=0):
+        self.adj.append(nbr)
+        self.cost[nbr] = cost
+\end{lstlisting}
 
 \subsection{Subsection one}
 This is a paragraph with some math $ \sin{3.1415} * \cos{3.1415} \angle  $.  This is an ordinary sentence after the math.  This works just fine with math mode including a rule for a bunch of math symbols.
@@ -67,6 +92,23 @@ This is a paragraph with some math $ \sin{3.1415} * \cos{3.1415} \angle  $.  Thi
 \end{inparaenum}
 it can be shown from~(\ref{eq14-26}) that $\Delta M_{\text{at}} \sim$
 
+Here is a fun example where a multi argument tex function can contain a latex environment!  to get the nested begin ends colored correctly we could include text.latex instead of source.tex in the meta.function.with-arg.tex rule.  Not sure thats a good idea though....
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{
+    \label{fig:dija}
+    \begin{minipage}[b]{0.32\textwidth}
+        \centering \includegraphics[width=5.2cm]{Graphs/dijkstraa}
+      \end{minipage}}%%
+  \subfigure[]{
+    \label{fig:dijb}
+    \begin{minipage}[b]{0.32\textwidth}
+        \centering \includegraphics[width=5.2cm]{Graphs/dijkstrab}
+      \end{minipage}}%%
+  \label{fig:dijstep}
+  \caption{Tracing Dijkstra's Algorithm}
+\end{figure}
+
 
 \begin{split}
   \Delta_n &=\frac{D_\bot }{\left( {{\Gamma_\bot } / {n_{\text{\abbr{SOL}}} }} \right)}\\
@@ -79,25 +121,10 @@ it can be shown from~(\ref{eq14-26}) that $\Delta M_{\text{at}} \sim$
 \section{$\mathcal{D}$-modules}
 
 % part is tricky because it is used in the exam style and is also used in reports.
-\part[4] $\sqrt[d]{n!}$
+\part[4] $\sqrt[d]{n!}$  Hmmm, It would be nice to color math functions somehow....
 
-% the listing environment 
-\begin{lstlisting}[caption=The Vertex Class,label=lst:vertex,float=htbp]
-class Vertex:
-    def __init__(self,num):
-        self.id = num
-        self.adj = []
-        self.color = 'white'
-        self.dist = sys.maxint
-        self.pred = None
-        self.disc = 0
-        self.fin = 0
-        self.cost = {}
-        
-    def addNeighbor(self,nbr,cost=0):
-        self.adj.append(nbr)
-        self.cost[nbr] = cost
-\end{lstlisting}
+
+\foobar some ordinary text
 
 \begin{verbatim}
 	This is some verbatim text.

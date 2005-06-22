@@ -19,10 +19,6 @@
 	<key>patterns</key>
 	<array>
 		<dict>
-			<key>include</key>
-			<string>source.tex</string>
-		</dict>
-		<dict>
 			<key>begin</key>
 			<string>\$\$</string>
 			<key>end</key>
@@ -370,65 +366,6 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\[A-Za-z]\w*)(?=\{|\[)</string>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>support.function.with-arg.latex</string>
-				</dict>
-			</dict>
-			<key>comment</key>
-			<string>These next two are catch-all matches that will match almost any latex function. First match: \foo{arg1}{arg2}{...}{argN}</string>
-			<key>end</key>
-			<string>(?&lt;=\]|\})</string>
-			<key>name</key>
-			<string>meta.function.with-arg.latex</string>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>begin</key>
-					<string>\{</string>
-					<key>end</key>
-					<string>\}</string>
-					<key>patterns</key>
-					<array>
-						<dict>
-							<key>match</key>
-							<string>[^}]+</string>
-							<key>name</key>
-							<string>variable.parameter.function.latex</string>
-						</dict>
-					</array>
-				</dict>
-				<dict>
-					<key>begin</key>
-					<string>\[</string>
-					<key>end</key>
-					<string>\]</string>
-					<key>patterns</key>
-					<array>
-						<dict>
-							<key>match</key>
-							<string>[^]]+</string>
-							<key>name</key>
-							<string>variable.parameter.function.latex</string>
-						</dict>
-					</array>
-				</dict>
-			</array>
-		</dict>
-		<dict>
-			<key>comment</key>
-			<string>then match just: \foo</string>
-			<key>match</key>
-			<string>\\[A-Za-z]\w*</string>
-			<key>name</key>
-			<string>support.function.latex</string>
-		</dict>
-		<dict>
-			<key>begin</key>
 			<string>``</string>
 			<key>end</key>
 			<string>''</string>
@@ -459,6 +396,10 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 ]</string>
 			<key>name</key>
 			<string>constant.character.escape.latex</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>source.tex</string>
 		</dict>
 	</array>
 	<key>scopeName</key>

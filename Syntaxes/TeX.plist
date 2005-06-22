@@ -35,7 +35,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(^|[^\\])\$</string>
+			<string>\$</string>
 			<key>end</key>
 			<string>\$</string>
 			<key>name</key>
@@ -61,6 +61,59 @@
 					<string>constant.language.tex</string>
 				</dict>
 			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\[A-Za-z]\w*)(?=\{|\[)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.with-arg.latex</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>These next two are catch-all matches that will match almost any latex function. First match: \foo{arg1}</string>
+			<key>end</key>
+			<string>(?&lt;=\]|\})</string>
+			<key>name</key>
+			<string>meta.function.with-arg.tex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>\{</string>
+					<key>end</key>
+					<string>\}</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>source.tex</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>\[</string>
+					<key>end</key>
+					<string>\]</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>source.tex</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\[A-Za-z]\w*</string>
+			<key>name</key>
+			<string>keyword.tex.general</string>
 		</dict>
 	</array>
 	<key>scopeName</key>
