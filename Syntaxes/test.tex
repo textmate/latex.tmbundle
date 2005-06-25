@@ -26,6 +26,8 @@
 
 This is a dollar sign \$ in the tex code, it should not start math mode.
 
+This sentence contains some \verb!verbatim statements! in it.  It is also legal to have a sentence with \verb*|verbatim stuff|.  The * tells latex to make the spaces visible as squashed u characters like this \verb*~ ~.  Strangely the documentation says that \verb3this should work3 but  is getting matched by keyword.tex.general unless the three is followed by  a space (not too likely) In that case the \verb3 is runningaway but getting stopped by the end of line.
+
 % Main document stuff here.
 \begin{document}
 

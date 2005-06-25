@@ -383,6 +383,22 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
+			<string>(\\verb[\*]?)(\S)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.tag.latex.verb</string>
+				</dict>
+			</dict>
+			<key>contentName</key>
+			<string>markup.other.raw.latex</string>
+			<key>end</key>
+			<string>(\2|$)</string>
+		</dict>
+		<dict>
+			<key>begin</key>
 			<string>``</string>
 			<key>end</key>
 			<string>''</string>
