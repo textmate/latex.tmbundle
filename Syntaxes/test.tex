@@ -14,6 +14,7 @@
 
 \foo[f]{bar}{$10 + 20$} Here is a simple single function with several parameters
 
+LaTeX commands start with a \\ which must be followed by a single non-letter character, or one-or more letter characters.  LaTeX commands do not have numbers or underscores or any other non-letter character in them  so \this-is-not-a-legal-command.
 
 \newcommand{\uint}{\mathop{\mathchoice%
 {\rlap{\smash{$\displaystyle\intop\limits^{\uintbar}$}}}%
@@ -26,7 +27,7 @@
 
 This is a dollar sign \$ in the tex code, it should not start math mode.
 
-This sentence contains some \verb!verbatim statements! in it.  It is also legal to have a sentence with \verb*|verbatim stuff|.  The * tells latex to make the spaces visible as squashed u characters like this \verb*~ ~.  Strangely the documentation says that \verb3this should work3 but  is getting matched by keyword.tex.general unless the three is followed by  a space (not too likely) In that case the \verb3 is runningaway but getting stopped by the end of line.
+This sentence contains some \verb!verbatim statements! in it.  It is also legal to have a sentence with \verb*|verbatim stuff|.  The * tells latex to make the spaces visible as squashed u characters like this \verb*~ ~.  Strangely the documentation says that \verbbthis should workb but  is getting matched by keyword.tex.general unless the b is followed by  a space (not too likely) However in that case using letter as a delimiter is silly, just use a number \verb3which works fine 3.  \verb!constructs will also stop matching at the end of a line, even though it will cause a latex error.
 
 % Main document stuff here.
 \begin{document}

@@ -391,6 +391,16 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<key>name</key>
 					<string>entity.name.tag.latex.verb</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.tag.latex.verb</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.tag.latex.verb</string>
+				</dict>
 			</dict>
 			<key>contentName</key>
 			<string>markup.other.raw.latex</string>
