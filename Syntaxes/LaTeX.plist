@@ -309,10 +309,27 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</array>
 		</dict>
 		<dict>
-			<key>match</key>
-			<string>\\item</string>
+			<key>begin</key>
+			<string>(\\item)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.tag.latex.item</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>$</string>
 			<key>name</key>
-			<string>entity.name.tag.latex.item</string>
+			<string>meta.scope.item.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>$self</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -392,8 +409,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>comment</key>
 			<string>Not sure if this is the proper classification. This is a catch-all for \&lt;symbol&gt; so that e.g. \" doesn't start an (invalid) string</string>
 			<key>match</key>
-			<string>\\[^A-Za-z
-]</string>
+			<string>\\[^A-Za-z\n]</string>
 			<key>name</key>
 			<string>constant.character.escape.latex</string>
 		</dict>
