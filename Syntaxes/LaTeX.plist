@@ -382,8 +382,6 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</array>
 		</dict>
 		<dict>
-			<key>begin</key>
-			<string>(\\verb[\*]?)(\S)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -399,13 +397,16 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				<key>3</key>
 				<dict>
 					<key>name</key>
+					<string>markup.other.raw.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
 					<string>entity.name.tag.latex.verb</string>
 				</dict>
 			</dict>
-			<key>contentName</key>
-			<string>markup.other.raw.latex</string>
-			<key>end</key>
-			<string>(\2|$)</string>
+			<key>match</key>
+			<string>(\\verb[\*]?)(\S)(.*?)(\2|$)</string>
 		</dict>
 		<dict>
 			<key>begin</key>
