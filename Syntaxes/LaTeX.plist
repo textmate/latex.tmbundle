@@ -51,17 +51,17 @@
 			</dict>
 			<key>comment</key>
 			<string>this works OK with all kinds of crazy stuff as long as section is one line</string>
+			<key>contentName</key>
+			<string>entity.name.section</string>
 			<key>end</key>
-			<string>(\}$)</string>
+			<string>(\})</string>
 			<key>name</key>
 			<string>meta.section.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>match</key>
-					<string>[^}]+</string>
-					<key>name</key>
-					<string>entity.name.section</string>
+					<key>include</key>
+					<string>source.tex</string>
 				</dict>
 			</array>
 		</dict>
