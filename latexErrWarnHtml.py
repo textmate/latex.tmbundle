@@ -17,6 +17,7 @@ newFilePat = re.compile('.*\((\.\/.*\.tex)')
 warnPat = re.compile('LaTeX Warning.*?input line (\d+).$')
 errPat = re.compile('^([\.\/\w\x7f-\xff]+\.tex):(\d+):.*')
 incPat = re.compile('.*\<use (.*?)\>');
+miscWarnPat = re.compile('LaTeX Warning:.*')
 
 if sys.argv[0] == '-v':
     verbose = True
@@ -25,7 +26,8 @@ else:
 numWarns = 0
 numErrs = 0
 print '<pre>'
-for line in sys.stdin:
+line = sys.stdin.readline()
+while line:
     # print out first line
     if re.match('^This is',line):
         print line[:-1]
@@ -42,6 +44,8 @@ for line in sys.stdin:
         print line[:-1]
     w = warnPat.match(line)
     e = errPat.match(line)
+    me = miscWarnPat.match(line)
+    
     # if we detect a warning message add the current file to the warning plus a tag
     # to make it easy to pick out the line as an error line in TextMate.
     # Do the same thing for error messages.
@@ -50,10 +54,15 @@ for line in sys.stdin:
         numWarns = numWarns+1
     elif e:
         numErrs = numErrs+1
-        print '<a href="' + make_link(os.getcwd()+e.group(1)[1:], e.group(2)) + '">'+line+"</a>"        
+        nextLine = sys.stdin.readline()
+        print '<a href="' + make_link(os.getcwd()+e.group(1)[1:], e.group(2)) + '">'+line[:-1]+nextLine+"</a>"        
+    elif me:
+        numWarns = numWarns + 1
+        print line[:-1]
     else:
         if verbose:
             print line[:-1]
+    line = sys.stdin.readline()
 eCode = 0
 if numWarns > 0 or numErrs > 0:
     print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings."
