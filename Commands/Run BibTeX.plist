@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string># just to remind you of some useful environment variables
+# see Help / Shell Variables for the full list
+M=${TM_LATEX_MASTER:=$TM_FILEPATH}
+DIR=`dirname "$M"`
+FILE=`basename -s.tex "$M"`
+PDF="${FILE%.tex}.pdf"
+CWD="`pwd`/"
+
+# Switch to the right directory.
+cd "$TM_PROJECT_DIRECTORY"
+cd "$DIR"
+
+bibtex "$FILE"
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string></string>
+	<key>name</key>
+	<string>Run BibTeX</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>4C05FB6C-AA32-4217-8788-D840D49E82CD</string>
+</dict>
+</plist>
