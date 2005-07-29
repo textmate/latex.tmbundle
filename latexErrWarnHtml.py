@@ -42,6 +42,10 @@ while line:
         print "    Including: " + inf.group(1)
     if re.match('^Output written',line):
         print line[:-1]
+    if re.match('Run number',line):
+        numWarns = 0
+        numErrs = 0
+        
     w = warnPat.match(line)
     e = errPat.match(line)
     me = miscWarnPat.match(line)
