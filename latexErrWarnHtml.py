@@ -25,12 +25,7 @@ else:
     verbose = False
 numWarns = 0
 numErrs = 0
-print """
-<style type="text/css">
-div#warns {color: orange; }
-pre {font-size: medium;}
-</style>
-"""
+numRuns = 0
 print '<pre>'
 line = sys.stdin.readline()
 while line:
@@ -48,9 +43,14 @@ while line:
         print "    Including: " + inf.group(1)
     if re.match('^Output written',line):
         print line[:-1]
+    if re.match('Running makeindex',line):
+        print '<h3>' + line[:-1] + '</h3>'
+    if re.match('Running bibtex',line):
+        print '<h3>' + line[:-1] + '</h3>'
     if re.match('Run number',line):
         numWarns = 0
         numErrs = 0
+        numRuns = numRuns + 1
         
     w = warnPat.match(line)
     e = errPat.match(line)
@@ -60,22 +60,22 @@ while line:
     # to make it easy to pick out the line as an error line in TextMate.
     # Do the same thing for error messages.
     if w:
-        print '<a href="' + make_link(os.getcwd()+currentFile[1:], w.group(1)) + '">'+line+"</a>"
+        print '<a class="warning" href="' + make_link(os.getcwd()+currentFile[1:], w.group(1)) + '">'+line+"</a>"
         numWarns = numWarns+1
     elif e:
         numErrs = numErrs+1
         nextLine = sys.stdin.readline()
-        print '<a href="' + make_link(os.getcwd()+e.group(1)[1:], e.group(2)) + '">'+line[:-1]+nextLine+"</a>"        
+        print '<a class="error" href="' + make_link(os.getcwd()+e.group(1)[1:], e.group(2)) + '">'+line[:-1]+nextLine+"</a>"        
     elif me:
         numWarns = numWarns + 1
-        print '<div id="warns">' + line[:-1] + '</div>'
+        sys.stdout.write('<p class="warning">' + line[:-1] + '</p>')
     else:
         if verbose:
             print line[:-1]
     line = sys.stdin.readline()
 eCode = 0
 if numWarns > 0 or numErrs > 0:
-    print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings."
+    print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings in " + str(numRuns) + " runs"
     if numErrs > 0:
         eCode = 2
     else:
