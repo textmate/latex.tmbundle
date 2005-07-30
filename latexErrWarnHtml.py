@@ -25,6 +25,12 @@ else:
     verbose = False
 numWarns = 0
 numErrs = 0
+print """
+<style type="text/css">
+div#warns {color: orange; }
+pre {font-size: medium;}
+</style>
+"""
 print '<pre>'
 line = sys.stdin.readline()
 while line:
@@ -62,7 +68,7 @@ while line:
         print '<a href="' + make_link(os.getcwd()+e.group(1)[1:], e.group(2)) + '">'+line[:-1]+nextLine+"</a>"        
     elif me:
         numWarns = numWarns + 1
-        print line[:-1]
+        print '<div id="warns">' + line[:-1] + '</div>'
     else:
         if verbose:
             print line[:-1]
