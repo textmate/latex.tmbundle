@@ -15,14 +15,7 @@ V=${TM_LATEX_VIEWER:=html}
 
 # Set up some variables we need.
 TEX=${TM_LATEX_COMPILER:=pdflatex}
-if [ "$TEX" != latexmk.pl ]; then
-   OPTIONS=${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style}
-   MKRC=""
-else
-   MKRC="${TM_BUNDLE_PATH}"/latexmkrc
-   OPTIONS="-f -r "
-fi
-EL=${TM_LATEX_ERRLVL:=-1}
+EL=${TM_LATEX_ERRLVL:=1}
 M=${TM_LATEX_MASTER:=$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`
@@ -42,8 +35,15 @@ close() {
 	if (($RC &lt;= $EL)); then closeWindow; fi
 }
 
+run_tex () {
+if [ "$TEX" != latexmk.pl ]
+	then "$TEX" ${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style} "$1"
+	else "$TEX" -f -r "${TM_BUNDLE_PATH}/latexmkrc" "$1"
+fi
+}
+
 # Compile. Bail out on errors.
-"$TEX" $OPTIONS "$MKRC" "$FILE" 2&gt;&amp;1| "$TM_BUNDLE_PATH/latexErrWarnHtml.py"
+run_tex "$FILE" 2&gt;&amp;1| "$TM_BUNDLE_PATH/latexErrWarnHtml.py"
 RC=$?
 if (($RC &gt;= 2)); then exit; fi
 
