@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/ruby
 
-# Phase 1: Collect underpants.
+# Phase 2: .... ....
 
 # These should be arguments.
 begin_match	= /^\\begin\{(.+)\}/
@@ -27,17 +27,15 @@ while line&lt;num and s=gets
 	line += 1
 end
 
-# Insert correct closers.
-while e = stack.pop
-	puts closer.sub('%1', e)
-end
+# Insert correct closer.
+puts closer.sub('%1', e) if e = stack.pop
 </string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
 	<string>~@.</string>
 	<key>name</key>
-	<string>Insert environment closers</string>
+	<string>Insert environment closer</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
