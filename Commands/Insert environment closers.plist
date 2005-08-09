@@ -28,7 +28,9 @@ while line&lt;num and s=gets
 end
 
 # Insert correct closer.
-puts closer.sub('%1', e) if e = stack.pop
+if e = stack.pop
+	puts closer.sub('%1', e)
+end
 </string>
 	<key>input</key>
 	<string>document</string>
