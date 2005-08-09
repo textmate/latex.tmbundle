@@ -5,33 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/ruby
-
-# Phase 2: .... ....
-
-# These should be arguments.
-begin_match	= /^\\begin\{(.+)\}/
-end_match		= /^\\end\{(.+)\}/
-closer		= '\end{%1}'
-
-# Do the nesting thang.
-stack = []
-line = 1
-num = ENV['TM_LINE_NUMBER'].to_i
-while line&lt;num and s=gets
-	if s =~ begin_match
-		stack.push $1
-	elsif s =~ end_match and $1 == stack[-1]
-		stack.pop
-	end
-	line += 1
-end
-
-# Insert correct closer.
-if e = stack.pop
-	puts closer.sub('%1', e)
-end
-</string>
+	<string>ruby -- "$TM_SUPPORT_PATH/bin/checknest.rb" '^\\begin\{(.+)\}' '^\\end\{(.+)\}' '\end{$1}' -n$TM_LINE_NUMBER</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
