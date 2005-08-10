@@ -78,7 +78,7 @@ This is a paragraph with some math $ \sin{3.1415} * \cos{3.1415} \angle  $.  Thi
 \begin{description}
     \item[Item one]  and some more.
     \item[Item $2$] and $2+2 = 4$
-    \item[Item three] with \texttt{typewriter text}
+    \item[Item three] with \texttt{typewrsdfiter text}
 \end{description}
 
 \paragraph{Paragraph One}
@@ -94,6 +94,13 @@ This is a paragraph with some math $ \sin{3.1415} * \cos{3.1415} \angle  $.  Thi
     connection length $L_{\text{\abbr{SOL}}} = q_{95}\pi R$.
 \end{inparaenum}
 it can be shown from~(\ref{eq14-26}) that $\Delta M_{\text{at}} \sim$
+
+\section{String Test Cases}
+
+`foo' This is a correct `single quoted string.'  This is a correct ``double quoted string.''
+This is an invalid "string".  This is also 'invalid.'  but a word with an apostrophe isn't highlighted. 'ever.'  What if we escape the \"and make it look like a quote\"  or even \' another possible \'  We should also be able to escape a \` (backtick) so they don't fake out the quote rules.
+'foo' is also bad.
+"foo" is too.
 
 Here is a fun example where a multi argument tex function can contain a latex environment!  to get the nested begin ends colored correctly we could include text.latex instead of source.tex in the meta.function.with-arg.tex rule.  Not sure thats a good idea though....
 \begin{figure}[htbp]

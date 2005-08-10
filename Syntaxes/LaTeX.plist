@@ -410,11 +410,19 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
+			<string>`</string>
+			<key>end</key>
+			<string>'</string>
+			<key>name</key>
+			<string>string.quoted.single.latex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
 			<string>``</string>
 			<key>end</key>
 			<string>''</string>
 			<key>name</key>
-			<string>string.quoted.single.latex</string>
+			<string>string.quoted.double.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -439,6 +447,18 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>\\[^A-Za-z\n]</string>
 			<key>name</key>
 			<string>constant.character.escape.latex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>(^|\s+)'.*?'</string>
+			<key>name</key>
+			<string>invalid.string.quoted.single.latex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>(^|\s+)".*?"</string>
+			<key>name</key>
+			<string>invalid.string.quoted.double.latex</string>
 		</dict>
 		<dict>
 			<key>include</key>
