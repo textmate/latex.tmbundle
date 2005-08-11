@@ -26,6 +26,8 @@ else:
 numWarns = 0
 numErrs = 0
 numRuns = 0
+inbibidx = False
+
 print '<pre>'
 line = sys.stdin.readline()
 while line:
@@ -44,13 +46,29 @@ while line:
     if re.match('^Output written',line):
         print line[:-1]
     if re.match('Running makeindex',line):
+        print '<div class="mkindex">'        
         print '<h3>' + line[:-1] + '</h3>'
+        sys.stdin.readline()
+        inbibidx = True
+        
     if re.match('Running bibtex',line):
+        print '<div class="bibtex">'
         print '<h3>' + line[:-1] + '</h3>'
+        sys.stdin.readline()
+        inbibidx = True
+        
+    if re.match('---',line) and inbibidx:
+        print '</div>'
+        inbibidx = False
+
+    if re.match("Warning--I didn't find a database entry",line):
+        print line
+        
     if re.match('Run number',line):
         numWarns = 0
         numErrs = 0
         numRuns = numRuns + 1
+        print '<hr />'
         
     w = warnPat.match(line)
     e = errPat.match(line)
