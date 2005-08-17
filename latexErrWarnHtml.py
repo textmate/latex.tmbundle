@@ -50,6 +50,19 @@ while line:
         print '<h3>' + line[:-1] + '</h3>'
         sys.stdin.readline()
         inbibidx = True
+
+    if re.match('! Emergency stop',line):
+        print '<div class="error">'
+        print line
+        print 'See the log file for details'
+        print '</div>'
+        numErrs = numErrs + 1
+
+    ts = re.match('Transcript written on (.*).$',line)
+    if ts:
+        print '<div class="error">'
+        print '<a class="error" href="' + make_link(os.getcwd()+'/'+ts.group(1),'1') +  '">' + ts.group(1) + '</a>'
+        print '</div>'
         
     if re.match('Running bibtex',line):
         print '<div class="bibtex">'
