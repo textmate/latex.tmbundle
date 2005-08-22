@@ -51,7 +51,7 @@ while line:
         sys.stdin.readline()
         inbibidx = True
 
-    if re.match('! Emergency stop',line):
+    if re.match('(! Emergency stop|Error:)',line):
         print '<div class="error">'
         print line
         print 'See the log file for details'
@@ -78,6 +78,7 @@ while line:
         print line
         
     if re.match('Run number',line):
+        print '<hr />'
         numWarns = 0
         numErrs = 0
         numRuns = numRuns + 1
