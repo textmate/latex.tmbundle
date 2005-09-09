@@ -10,7 +10,7 @@
 
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"
-cd `dirname "$TM_LATEX_MASTER"`
+cd "`dirname "$TM_LATEX_MASTER"`"
 FILE=`basename -s.tex "$TM_LATEX_MASTER"`
 
 rm -f "$FILE".aux
@@ -24,6 +24,7 @@ rm -f "$FILE".bmt
 rm -f "$FILE".out
 rm -f "$FILE".nav
 rm -f "$FILE".snm
+rm -f "$FILE".vrb
 rm -f ~/Sites/web_kit_workaround.pdf
 
 echo "Done Cleaning up"</string>

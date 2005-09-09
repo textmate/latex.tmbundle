@@ -115,7 +115,7 @@
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\\end\{)frame(\})</string>
+			<string>(\\end\{)(frame)(\})</string>
 			<key>name</key>
 			<string>meta.frame.latex</string>
 			<key>patterns</key>

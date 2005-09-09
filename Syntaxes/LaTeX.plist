@@ -7,7 +7,7 @@
 		<string>tex</string>
 	</array>
 	<key>firstLineMatch</key>
-	<string>^\\documentclass</string>
+	<string>^\\documentclass(?!\{beamer\})</string>
 	<key>foldingStartMarker</key>
 	<string>\\begin\{.*\}</string>
 	<key>foldingStopMarker</key>
@@ -107,7 +107,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>^\s*(\\begin\{)(verbatim)(\})</string>
+			<string>(\\begin\{)(verbatim)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -127,7 +127,7 @@
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>^\s*(\\end\{)(verbatim)(\})</string>
+			<string>(\\end\{)(verbatim)(\})</string>
 			<key>name</key>
 			<string>meta.verbatim.latex</string>
 		</dict>
@@ -387,12 +387,12 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>entity.name.tag.latex.verb</string>
+					<string>keyword.general.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>entity.name.tag.latex.verb</string>
+					<string>support.delimiter.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
@@ -402,7 +402,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				<key>4</key>
 				<dict>
 					<key>name</key>
-					<string>entity.name.tag.latex.verb</string>
+					<string>support.delimiter.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>
