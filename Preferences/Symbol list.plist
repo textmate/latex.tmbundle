@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Symbol list</string>
 	<key>scope</key>
-	<string>text.latex entity.name.section</string>
+	<string>text.latex entity.name</string>
 	<key>settings</key>
 	<dict>
 		<key>showInSymbolList</key>

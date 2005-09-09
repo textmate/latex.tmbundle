@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>content</key>
+	<string>\begin{frame}\frametitle{$1}
+$0
+\end{frame}</string>
+	<key>name</key>
+	<string>Beamer Frames (frame)</string>
+	<key>scope</key>
+	<string>text.latex.beamer</string>
+	<key>tabTrigger</key>
+	<string>frame</string>
+	<key>uuid</key>
+	<string>2BC70E49-7B0F-4241-A678-700E72FD33FE</string>
+</dict>
+</plist>

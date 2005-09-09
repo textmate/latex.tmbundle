@@ -15,21 +15,28 @@ FILE=`basename -s.tex "$TM_LATEX_MASTER"`
 
 rm -f "$FILE".aux
 rm -f "$FILE".pdfsync
-rm -f "$FILE".mtc?
+rm -f "$FILE".mtc*
 rm -f "$FILE".log
 rm -f "$FILE".bbl
 rm -f "$FILE".aux
 rm -f "$FILE".toc
 rm -f "$FILE".bmt
+rm -f "$FILE".out
+rm -f "$FILE".nav
+rm -f "$FILE".snm
 rm -f ~/Sites/web_kit_workaround.pdf
 
 echo "Done Cleaning up"</string>
 	<key>input</key>
 	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^~</string>
 	<key>name</key>
 	<string>Trash aux Files</string>
 	<key>output</key>
 	<string>showAsTooltip</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
 </dict>

@@ -7,7 +7,7 @@
 		<string>tex</string>
 	</array>
 	<key>firstLineMatch</key>
-	<string>^\\documentclass.*</string>
+	<string>^\\documentclass</string>
 	<key>foldingStartMarker</key>
 	<string>\\begin\{.*\}</string>
 	<key>foldingStopMarker</key>
@@ -316,7 +316,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>entity.name.tag.latex.item</string>
+					<string>keyword.general.latex</string>
 				</dict>
 			</dict>
 			<key>end</key>
