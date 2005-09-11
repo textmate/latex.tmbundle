@@ -7,7 +7,7 @@
 		<string>tex</string>
 	</array>
 	<key>firstLineMatch</key>
-	<string>^\\documentclass(?!\{beamer\})</string>
+	<string>^\\documentclass(?!.*\{beamer\})</string>
 	<key>foldingStartMarker</key>
 	<string>\\begin\{.*\}</string>
 	<key>foldingStopMarker</key>

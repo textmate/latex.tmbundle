@@ -13,10 +13,6 @@
 	<key>patterns</key>
 	<array>
 		<dict>
-			<key>include</key>
-			<string>source.tex</string>
-		</dict>
-		<dict>
 			<key>begin</key>
 			<string>((\\(?:(?:sub)*section|chapter|paragraph|part))(\*?)(?:(\[)[^\[]*?(\]))??(\{))</string>
 			<key>captures</key>
@@ -139,6 +135,10 @@
 					<string>text.latex</string>
 				</dict>
 			</array>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>source.tex</string>
 		</dict>
 	</array>
 	<key>scopeName</key>
