@@ -61,6 +61,8 @@
 					<string>constant.language.tex</string>
 				</dict>
 			</array>
+			<key>swallow</key>
+			<string>\\\$</string>
 		</dict>
 		<dict>
 			<key>begin</key>
