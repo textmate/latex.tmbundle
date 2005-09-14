@@ -31,7 +31,7 @@ htmlHeader "Compiling LaTeX (file $FILE)"
 echo '&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;'
 
 # Check if we actually have a tex compiler
-if [[ ! -e "`which "$TEX"`" ]]; then
+if [[ ! -e "`type -p "$TEX"`" ]]; then
 	echo "&lt;h3 class="error"&gt;Couldn't find $TEX&lt;/h3&gt;"
 	echo "&lt;p&gt;You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt; variable to the full path of your LaTeX compiler (e.g. &lt;tt&gt;/opt/local/bin/pdflatex&lt;/tt&gt; or set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;pdflatex&lt;/tt&gt;.&lt;/p&gt;"
 	echo "&lt;p&gt;Locations searched:&lt;/p&gt;&lt;p&gt;&lt;pre&gt;${PATH//:/&lt;br&gt;}&lt;/pre&gt;&lt;/p&gt;"
@@ -52,8 +52,9 @@ fi
 }
 
 # Compile. Bail out on errors.
-run_tex "$FILE" 2&gt;&amp;1| "$TM_BUNDLE_PATH/latexErrWarnHtml.py"
+run_tex "$FILE" 2&gt;&amp;1| "$TM_BUNDLE_PATH/latexErrWarnHtml.py" -v
 RC=$?
+
 if (($RC &gt;= 2)); then exit; fi
 
 # View...
