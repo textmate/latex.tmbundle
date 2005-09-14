@@ -22,13 +22,6 @@ FILE=`basename "$M"`
 PDF="${FILE%.tex}.pdf"
 CWD="`pwd`/"
 
-# first check if we actually have a tex compiler
-if [[ ! -e `which "$TEX"` ]]; then
-	echo "&lt;h1&gt;Couldn't find $TEX&lt;/h1&gt;"
-	echo "&lt;p&gt;You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt; variable to the full path of your LaTeX compiler (e.g. &lt;tt&gt;/opt/local/bin/pdflatex&lt;/tt&gt; or set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;pdflatex&lt;/tt&gt;&lt;/p&gt;"
-	exit;
-fi
-
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
@@ -36,6 +29,15 @@ cd "$DIR"
 # Prepare output window.
 htmlHeader "Compiling LaTeX (file $FILE)"
 echo '&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;'
+
+# Check if we actually have a tex compiler
+if [[ ! -e "`which "$TEX"`" ]]; then
+	echo "&lt;h3 class="error"&gt;Couldn't find $TEX&lt;/h3&gt;"
+	echo "&lt;p&gt;You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt; variable to the full path of your LaTeX compiler (e.g. &lt;tt&gt;/opt/local/bin/pdflatex&lt;/tt&gt; or set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;pdflatex&lt;/tt&gt;.&lt;/p&gt;"
+	echo "&lt;p&gt;Locations searched:&lt;/p&gt;&lt;p&gt;&lt;pre&gt;${PATH//:/&lt;br&gt;}&lt;/pre&gt;&lt;/p&gt;"
+	echo "&lt;p&gt;&lt;em&gt;Contact your system administrator if you do not know what this means.&lt;/em&gt;&lt;/p&gt;"
+	exit;
+fi
 
 # Function to close window if the error level is low enough.
 close() {
