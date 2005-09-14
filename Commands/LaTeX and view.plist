@@ -22,6 +22,13 @@ FILE=`basename "$M"`
 PDF="${FILE%.tex}.pdf"
 CWD="`pwd`/"
 
+# first check if we actually have a tex compiler
+if [[ ! -e `which "$TEX"` ]]; then
+	echo "&lt;h1&gt;Couldn't find $TEX&lt;/h1&gt;"
+	echo "&lt;p&gt;You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt; variable to the full path of your LaTeX compiler (e.g. &lt;tt&gt;/opt/local/bin/pdflatex&lt;/tt&gt; or set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;pdflatex&lt;/tt&gt;&lt;/p&gt;"
+	exit;
+fi
+
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
