@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>ruby -- "$TM_SUPPORT_PATH/bin/checknest.rb" '^\\begin\{([^}]+)\}' '^\\end\{([^}]+)\}' '\end{$1}' -n$TM_LINE_NUMBER|perl -pe 's/[\$\`\\]/\\$&amp;/g'</string>
+	<string>ruby -- "$TM_SUPPORT_PATH/bin/checknest.rb" '^\\begin\{([^}]+)\}' '^\\end\{([^}]+)\}' '\end{$1}' -n$TM_LINE_NUMBER</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
@@ -13,7 +13,7 @@
 	<key>name</key>
 	<string>Insert environment closer</string>
 	<key>output</key>
-	<string>insertAsSnippet</string>
+	<string>afterSelectedText</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>
