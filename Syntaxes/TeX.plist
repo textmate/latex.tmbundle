@@ -65,6 +65,8 @@
 			<string>\\\$</string>
 		</dict>
 		<dict>
+			<key>applyEndPatternLast</key>
+			<string>1</string>
 			<key>begin</key>
 			<string>(\\[A-Za-z]+)(?=\{|\[)</string>
 			<key>captures</key>
