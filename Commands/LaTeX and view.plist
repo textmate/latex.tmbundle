@@ -66,7 +66,7 @@ if [ "$V" == html ]; then
 	htmlFooter
 else
 	open -a "$V" "$PDF"
-	close
+	if (($RC &lt;= $EL)); then close; fi
 fi
 </string>
 	<key>input</key>
