@@ -5,10 +5,10 @@
 	<key>content</key>
 	<string>\\begin{figure}[${1:htbp}]
 	\\begin{center}
-		\\includegraphics[height=${2:3in}]{${3:file}}
+		\\includegraphics[scale=${2:3in}]{${3:file}}
 	\\end{center}
-	\\caption{${4:légende}}
-	\\label{fig:${5:étiquette}}
+	\\caption{${4:caption}}
+	\\label{fig:${5:label}}
 \\end{figure}</string>
 	<key>name</key>
 	<string>Figure (fig)</string>
