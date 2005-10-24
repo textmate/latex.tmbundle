@@ -12,6 +12,6 @@ for i in lines:
     if len(i) > 1:
         m = descPat.match(i)
         if m:
-            print "    \\\\item",'[',m.group(1),']',m.group(2)
+            print "    \\item",'[',m.group(1),']',m.group(2)
         else:
-            print "    \\\\item ", i
+            print "    \\item ", i

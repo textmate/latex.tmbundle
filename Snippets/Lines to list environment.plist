@@ -4,7 +4,7 @@
 <dict>
 	<key>content</key>
 	<string>\\begin{${1:itemize}}
-`printenv TM_SELECTED_TEXT|"$TM_BUNDLE_PATH"/linesToList.py`
+`printenv TM_SELECTED_TEXT|linesToList.py`
 \\end{${1:itemize}}
 </string>
 	<key>keyEquivalent</key>

@@ -46,7 +46,7 @@ fi
 }
 
 # Compile. Bail out on errors.
-run_tex "$FILE" 2&gt;&amp;1| "$TM_BUNDLE_PATH/latexErrWarnHtml.py" -v
+run_tex "$FILE" 2&gt;&amp;1| latexErrWarnHtml.py -v
 RC=$?
 
 if (($RC &gt;= 2)); then exit; fi
