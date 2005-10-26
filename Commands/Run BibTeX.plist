@@ -17,7 +17,7 @@ CWD="`pwd`/"
 cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
 
-bibtex "$FILE"
+bibtex "$FILE"|pre
 </string>
 	<key>input</key>
 	<string>none</string>

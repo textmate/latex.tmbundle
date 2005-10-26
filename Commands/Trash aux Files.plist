@@ -25,6 +25,8 @@ rm -f "$FILE".out
 rm -f "$FILE".nav
 rm -f "$FILE".snm
 rm -f "$FILE".vrb
+rm -f "$FILE".blg
+rm -f "$FILE".aux.bak
 rm -f ~/Sites/web_kit_workaround.pdf
 
 echo "Done Cleaning up"</string>
