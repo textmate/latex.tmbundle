@@ -30,6 +30,8 @@ This is a dollar sign$\$$ in math code, it should not stop math mode.
 
 This sentence contains some \verb!verbatim statements! in it.  It is also legal to have a sentence with \verb*|verbatim stuff|.  The * tells latex to make the spaces visible as squashed u characters like this \verb*~ ~.  Strangely the documentation says that \verbbthis should workb but  is getting matched by keyword.tex.general unless the b is followed by  a space (not too likely) However in that case using letter as a delimiter is silly, just use a number \verb3which works fine 3.  \verb!constructs will also stop matching at the end of a line, even though it will cause a latex error.
 
+This is a non-math Latex Symbol \textdiv it should be scoped as constant.character.latex
+
 % Main document stuff here.
 \begin{document}
 
@@ -133,7 +135,7 @@ Here is a fun example where a multi argument tex function can contain a latex en
 
 % part is tricky because it is used in the exam style and is also used in reports.
 \part[4] $\sqrt[d]{n!}$  Hmmm, It would be nice to color math functions somehow....
-
+$\bigcup$
 
 \foobar some ordinary text
 

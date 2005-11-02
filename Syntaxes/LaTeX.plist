@@ -126,6 +126,8 @@
 					<string>support.function.latex</string>
 				</dict>
 			</dict>
+			<key>contentName</key>
+			<string>markup.other.raw.latex</string>
 			<key>end</key>
 			<string>(\\end\{)(verbatim)(\})</string>
 			<key>name</key>
@@ -459,6 +461,12 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>(?&lt;!\S)".*?"</string>
 			<key>name</key>
 			<string>invalid.string.quoted.double.latex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\\b(textquotestraightbase|textquotestraightdblbase|texttwelveudash|textthreequartersemdash|textleftarrow|textrightarrow|textblank|textdollar|textquotesingle|textasteriskcentered|textdblhyphen|textfractionsolidus|textzerooldstyle|textoneoldstyle|texttwooldstyle|textthreeoldstyle|textfouroldstyle|textfiveoldstyle|textsixoldstyle|textsevenoldstyle|texteightoldstyle|textnineoldstyle|textlangle|textminus|textrangle|textmho|textbigcircle|textohm|textlbrackdbl|textrbrackdbl|textuparrow|textdownarrow|textasciigrave|textborn|textdivorced|textdied|textleaf|textmarried|textmusicalnote|texttildelow|textdblhyphenchar|textasciibreve|textasciicaron|textgravedbl|textacutedbl|textdagger|textdaggerdbl|textbardbl|textperthousand|textbullet|textcelsius|textdollaroldstyle|textcentoldstyle|textflorin|textcolonmonetary|textwon|textnaira|textguarani|textpeso|textlira|textrecipe|textinterrobang|textinterrobangdown|textdong|texttrademark|textpertenthousand|textpilcrow|textbaht|textnumero|textdiscount|textestimated|textopenbullet|textservicemark|textlquill|textrquill|textcent|textsterling|textcurrency|textyen|textbrokenbar|textsection|textasciidieresis|textcopyright|textordfeminine|textcopyleft|textlnot|textcircledP|textregistered|textasciimacron|textdegree|textpm|texttwosuperior|textthreesuperior|textasciiacute|textmu|textparagraph|textperiodcentered|textreferencemark|textonesuperior|textordmasculine|textsurd|textonequarter|textonehalf|textthreequarters|texteuro|texttimes|textdiv)\b</string>
+			<key>name</key>
+			<string>constant.character.latex</string>
 		</dict>
 		<dict>
 			<key>include</key>
