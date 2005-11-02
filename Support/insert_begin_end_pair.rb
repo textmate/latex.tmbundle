@@ -3,8 +3,8 @@
 commands = /^cite|footnote|label|ref$/
 shortcuts = { "it" => "textit", "bf" => "textbf" }
 
-sel = ENV['TM_SELECTED_TEXT']
-if(sel.to_s.strip != '')
+sel = ENV['TM_SELECTED_TEXT'].to_s
+if(sel.strip != '')
 	name = sel.strip[/^\S+/]
   if(commands.match(name))
     print("\\#{name}{$1}")
