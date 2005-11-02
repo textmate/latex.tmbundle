@@ -3,16 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\begin{table}
-	\\caption{${2:légende}}
+	<string>\\begin{table}	
+
 
 	\\begin{center}
 	\\begin{tabular}{${3:c}}
-		${4:élément}
+		${4}
      \\end{tabular}
 	\\end{center}
 
-	\\label{${1:étiquette}}
+	\\caption{${1:caption}}
+	\\label{${2:label}}
 \\end{table}</string>
 	<key>name</key>
 	<string>Table (table)</string>
