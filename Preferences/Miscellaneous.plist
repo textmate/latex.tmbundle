@@ -8,6 +8,19 @@
 	<string>text.latex</string>
 	<key>settings</key>
 	<dict>
+		<key>completions</key>
+		<array>
+			<string>corolarry</string>
+			<string>definition</string>
+			<string>description</string>
+			<string>enumerate</string>
+			<string>equation</string>
+			<string>itemize</string>
+			<string>lemma</string>
+			<string>proof</string>
+			<string>proposition</string>
+			<string>verbatim</string>
+		</array>
 		<key>decreaseIndentPattern</key>
 		<string>^\s*\\end(\{.*\})?$</string>
 		<key>highlightPairs</key>
