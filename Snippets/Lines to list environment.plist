@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\begin{${1:itemize}}
-`printenv TM_SELECTED_TEXT|linesToList.py`
-\\end{${1:itemize}}
+	<string>\begin{${1:itemize}}
+${TM_SELECTED_TEXT/^((.*):\s*)?(.+)$/\n\t\item(?1: [ $2 ]) $3/g}
+\end{${1:itemize}}
 </string>
 	<key>keyEquivalent</key>
 	<string>^L</string>
 	<key>name</key>
-	<string>Lines to list environment</string>
+	<string>Lines to List Environment</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>
