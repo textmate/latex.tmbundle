@@ -74,7 +74,7 @@ fi
 	<key>keyEquivalent</key>
 	<string>@b</string>
 	<key>name</key>
-	<string>LaTeX and view</string>
+	<string>Typeset &amp; View (PDF)</string>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>
