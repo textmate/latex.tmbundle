@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\${1:textbf}{`printenv TM_SELECTED_TEXT|sed 's/\$/\\$/g'`}$0</string>
+	<string>\\${1:textbf}{$TM_SELECTED_TEXT}</string>
 	<key>keyEquivalent</key>
 	<string>^W</string>
 	<key>name</key>
-	<string>Wrap selection in command</string>
+	<string>Wrap Selection in Command</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>
