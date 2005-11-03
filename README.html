@@ -56,6 +56,8 @@
   LaTeX commands as misspelled. However, you can install CocoAspell
   which works as another system dictionary and is able to filter
   out LaTeX commands.</p>
+  
+  <p><em><strong>Note:</strong> since 1.1b12 (or around that time), spell checking should no longer be applied to LaTeX reserved keywords. There still is a problem with spell checking in math environments (because the constructs there aren't always marked up as an entity for which spell checking is disabled).</em></p>
 
   <p>You can find all of the above on Version Tracker and the
   like.</p>
@@ -75,10 +77,10 @@
           If you are a TeXniscope user you can
           configure TextMate to be your external editor in the prefs
           panel for TeXniscope. You should set the options as
-          follows:<br>
+          follows (assumes you have <tt>mate</tt> installed, see Help &#x2192; Terminal Usage… if you haven't):<br>
           <pre>
-        Editor: open
-        Editor options: "txmt://open?url=file://%file&amp;line=%line" 
+        Editor: mate
+        Editor options: %file -l %line
 
         </pre>
     If you are using TeXniscope you can make use of the pdfsync
@@ -122,7 +124,7 @@
 
   <dl>
       <dt><strong>Insert Begin/End Pair</strong>[^-&lt;]</dt>
-      <dd><This is one of the most useful LaTeX commands.  Not only can you quickly create any kind of  begin/end environment such as itemize, equation, verbatim, etc. But the command also completes many common latex formatting commands such as \textit{}, \textbf{}, \ref{}, etc. </dd>
+      <dd>This is one of the most useful LaTeX commands.  Not only can you quickly create any kind of  begin/end environment such as itemize, equation, verbatim, etc. But the command also completes many common latex formatting commands such as \textit{}, \textbf{}, \ref{}, etc. </dd>
       <dt><strong>Generic Completion:</strong> [^-cmd-space]</dt>
 
     <dd>This macro actually consists of a bunch of perl scripts
@@ -178,7 +180,6 @@
         <li>\footnote [foot]</li>
         <li>\cite [cite]</li>
         <li>\ref  [ref]</li>
-        <li>
     </ul>
     
   <h2>Completions</h2>
@@ -211,45 +212,40 @@
 
   <h2>Environment Variables</h2>
 
-  <ul>
-    <li>TM_LATEX_MASTER: If set this variable contains the filename
-    of a LaTeX file that includes other LaTeX files to create a
-    larger work. If not set, this variable defaults to
-    TM_FILEPATH</li>
+  <dl>
+    <dt>TM_LATEX_MASTER</dt>
+    <dd><p>If set this variable contains the filename of a LaTeX file that includes other LaTeX files to create a larger work. If not set, this variable defaults to TM_FILEPATH</p></dd>
 
-    <li>TM_TSCOPE: If set this variable contains the path to the
-    TeXniscope application. If not set it defaults to
-    /Applications</li>
+    <dt>TM_TSCOPE</dt>
+    <dd><p>If set this variable contains the path to the TeXniscope application. If not set it defaults to /Applications</p></dd>
 
-    <li>PDFTEX_FILE_LOCATION: The PDF LaTeX command currently needs to go through http to display the PDF inline. This is done by copying the file to a place where apache can find it and redirecting to that file using http://localhost/. It defaults to ~/Sites</li>
+    <dt>PDFTEX_FILE_LOCATION</dt>
+    <dd><p>The PDF LaTeX command currently needs to go through http to display the PDF inline. This is done by copying the file to a place where apache can find it and redirecting to that file using http://localhost/. It defaults to ~/Sites</p></dd>
 
-    <li>PDFTEX_WEB_LOCATION: This is how the generated PDF should be accessed (see PDFTEX_FILE_LOCATION). It defaults to http://localhost/~$USER</li>
+    <dt>PDFTEX_WEB_LOCATION</dt>
+    <dd><p>This is how the generated PDF should be accessed (see PDFTEX_FILE_LOCATION). It defaults to http://localhost/~$USER</p></dd>    
+
+    <dt>TM_LATEX_ERRLVL</dt>
+    <dd><p>Sets the error level of the latex command to check for.  If the error level is sufficiently low, then the html output window will be closed before the preview window is open.  If there are errors or warnings then the preview window stays around.  Some may want to have the preview window dissapear on warnings also, thus we have this variable.</p></dd>
+
+    <dt>TM_LATEX_COMPILER</dt>
+    <dd><p>There are two main values for this command pdflatex or latexmk.pl.  pdflatex runs the normal pdflatex command against the current file, or TM_LATEX_MASTER sending the output of one pass to the html output window.  latexmk.pl  is essentially like ant (or make) for latex.  It will run pdflatex, bibtex, and/or makeindex as many times as needed to get a clean pdf file free from missing references, bibliography entries or index entries.</p></dd>
     
-    <li>TM_LATEX_ERRLVL</li>  Sets the error level of the latex command to check for.  If the error level is sufficiently low, then the html output window will be closed before the preview window is open.  If there are errors or warnings then the preview window stays around.  Some may want to have the preview window dissapear on warnings also, thus we have this variable.
-    
-    <li>TM_LATEX_COMPILER:  There are two main values for this command pdflatex or latexmk.pl.  pdflatex runs the normal pdflatex command against the current file, or TM_LATEX_MASTER sending the output of one pass to the html output window.  latexmk.pl  is essentially like ant (or make) for latex.  It will run pdflatex, bibtex, and/or makeindex as many times as needed to get a clean pdf file free from missing references, bibliography entries or index entries.</li>
-    
-    <li>TM_LATEX_VIEWER</li>
-    Possible values for this are:  html (default), texniscope, preview.  See advanced notes on using Texniscope above.
-  </ul>
+    <dt>TM_LATEX_VIEWER</dt>
+    <dd><p>Possible values for this are:  html (default), texniscope, preview.  See advanced notes on using Texniscope above.</p></dd>
 
-  <li>TM_LATEX_INSERT_LABEL:  If you want the automatically generated begin/end environments to contain a label then you should set this to 1.</li>
+    <dt>TM_LATEX_INSERT_LABEL</dt>
+    <dd><p>If you want the automatically generated begin/end environments to contain a label then you should set this to 1.</p></dd>
+
+</dl>
   
   <h2>Related Commands</h2>
 
   <dl>
-    <dt>Defaults</dt>
+    <dt>Toggle Comment [cmd-/] (Source bundle)</dt>
 
-    <dd>The Defaults Bundle contains a set of commands called
-    Special Items xxx. The Special Items commands help you navigate
-    quickly through the sections subsections, etc of a LaTeX
-    file.</dd>
-
-    <dt>Uncomment [cmd-']</dt>
-
-    <dd>The Uncomment bundle toggles line comments for a single
-    line or selected lines of text. It supports LaTeX and many
-    other environments</dd>
+    <dd>The Toggle Comment command toggles line comments for
+    selected lines of text.</dd>
   </dl>
 
   <h2>Credits</h2>There were at least two or possibly three
@@ -257,7 +253,7 @@
   TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and
   Andrew Ellis At some point, January 2005, Eric Hsu pulled
   together the threads into one package. From then on there have
-  been contributions by Sune Foldager, Brad Miller, Alan Odgaard,
+  been contributions by Sune Foldager, Brad Miller, Allan Odgaard,
   and Jeroen van der Ham. The Generic Completion package was
   written by Marcin.
 
