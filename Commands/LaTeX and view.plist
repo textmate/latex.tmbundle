@@ -69,6 +69,8 @@ else
 	if (($RC &lt;= $EL)); then close; fi
 fi
 </string>
+	<key>dontFollowNewOutput</key>
+	<false/>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
