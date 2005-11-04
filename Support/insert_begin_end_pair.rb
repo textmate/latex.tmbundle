@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-commands = /^cite|footnote|label|ref$/
-shortcuts = { "it" => "textit", "bf" => "textbf" }
+commands = /^cite|footcite|footnote|label|ref$/
+shortcuts = { "it" => "textit", "bf" => "textbf", "tt" => "texttt", "fc" => "footcite", "fn" => "footnote" }
 
 sel = ENV['TM_SELECTED_TEXT'].to_s
 lab = ENV['TM_LATEX_INSERT_LABEL'].to_i
