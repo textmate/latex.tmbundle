@@ -98,6 +98,7 @@ foreach (@pieces){
 
 	s/(\\begin\{)(.*?)(\})/\n$1$2$3\n/g;
 	s/(\\end\{)(.*?)(\})/\n$1$2$3\n/g;
+	s/(\\begin\{array\})\n(\{)(.*?)(\})/\n$1$2$3$4\n/g;
 	
 #Newlines before each \item. 
 
