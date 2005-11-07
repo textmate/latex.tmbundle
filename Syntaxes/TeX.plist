@@ -25,13 +25,33 @@
 			<key>match</key>
 			<string>%.*$</string>
 			<key>name</key>
-			<string>comment.line.percentage.latex</string>
+			<string>comment.line.percentage.tex</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>\\\b(newcommand|renewcommand)\b</string>
 			<key>name</key>
 			<string>storage.type.function.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>[\[\]\{\}]</string>
+			<key>name</key>
+			<string>keyword.operator.braces.tex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>\$\$</string>
+			<key>end</key>
+			<string>\$\$</string>
+			<key>name</key>
+			<string>string.other.math.block.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\\\</string>
+			<key>name</key>
+			<string>keyword.operator.newline.tex</string>
 		</dict>
 		<dict>
 			<key>begin</key>

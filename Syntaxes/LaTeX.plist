@@ -20,26 +20,6 @@
 	<array>
 		<dict>
 			<key>begin</key>
-			<string>\$\$</string>
-			<key>end</key>
-			<string>\$\$</string>
-			<key>name</key>
-			<string>string.other.math.block.latex</string>
-		</dict>
-		<dict>
-			<key>match</key>
-			<string>[\[\]\{\}]</string>
-			<key>name</key>
-			<string>keyword.operator.braces.latex</string>
-		</dict>
-		<dict>
-			<key>match</key>
-			<string>\\\\</string>
-			<key>name</key>
-			<string>keyword.operator.newline.latex</string>
-		</dict>
-		<dict>
-			<key>begin</key>
 			<string>((\\(?:(?:sub)*section|chapter|paragraph|part))(\*?)(?:(\[)[^\[]*?(\]))??(\{))</string>
 			<key>captures</key>
 			<dict>
@@ -243,7 +223,7 @@
 				</dict>
 			</dict>
 			<key>comment</key>
-			<string>We put the keyword in a capture and name this capture, so that disabling spell checking for ‚Äúkeyword‚Äù won't be inherited by the argument to \textit{...}.
+			<string>We put the keyword in a capture and name this capture, so that disabling spell checking for ‚Äö√Ñ√∫keyword‚Äö√Ñ√π won't be inherited by the argument to \textit{...}.
 
 Put specific matches for particular LaTeX keyword.functions before the last two more general functions</string>
 			<key>end</key>
