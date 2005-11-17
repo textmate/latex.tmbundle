@@ -11,7 +11,7 @@
 	<key>keyEquivalent</key>
 	<string>~@.</string>
 	<key>name</key>
-	<string>Insert environment closer</string>
+	<string>Insert Environment Closer</string>
 	<key>output</key>
 	<string>afterSelectedText</string>
 	<key>scope</key>

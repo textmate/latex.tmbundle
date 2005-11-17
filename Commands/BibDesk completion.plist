@@ -63,7 +63,7 @@ fi
 	<key>keyEquivalent</key>
 	<string>~</string>
 	<key>name</key>
-	<string>BibDesk completion</string>
+	<string>BibDesk Completion</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>

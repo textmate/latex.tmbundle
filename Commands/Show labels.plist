@@ -28,7 +28,7 @@ awk &lt;&lt;&lt;${res#${var}} '{ printf("%s", $1) }'</string>
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
-	<string>Show labels</string>
+	<string>Insert Label From Document…</string>
 	<key>output</key>
 	<string>afterSelectedText</string>
 	<key>scope</key>
