@@ -6,7 +6,6 @@
 	<string>\\begin{figure}[${1:htbp}]
 	\\begin{center}
 		\\includegraphics[scale=${2:1}]{${3:file}}
-		\\includegraphics[scale=${2:3in}]{${3:file}}
 	\\end{center}
 	\\caption{${4:caption}}
 	\\label{fig:${5:label}}
