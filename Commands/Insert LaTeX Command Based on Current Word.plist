@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+
+commands = /^cite|footcite|footnote|label|ref$/
+shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt", "fc" =&gt; "footcite", "fn" =&gt; "footnote" }
+
+name = STDIN.read
+if(name == '')
+  print("\\begin{${1:environment}}\n\t$2\n\\end{$1}")
+elsif(commands.match(name))
+  print("\\#{name}{$1}")
+elsif(!shortcuts[name].nil?)
+  print("\\#{shortcuts[name]}{$1}")
+else
+  lab = ENV['TM_LATEX_INSERT_LABEL'].to_i
+  if(lab == 1) 
+    labPrefix = name.slice(0,3)
+    print("\\begin{#{name}}\n\\label{#{labPrefix}:}\n\t$1\n\\end{#{name}}")
+  else
+    print("\\begin{#{name}}\n\t$1\n\\end{#{name}}")
+  end
+end
+</string>
+	<key>fallbackInput</key>
+	<string>word</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^&lt;</string>
+	<key>name</key>
+	<string>Insert Environment/Command Based on Current Word</string>
+	<key>output</key>
+	<string>insertAsSnippet</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>521C9FC0-0B61-48C8-A76B-60A4AE8DF449</string>
+</dict>
+</plist>
