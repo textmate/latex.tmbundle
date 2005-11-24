@@ -31,7 +31,7 @@ echo "\\\\include{$filename}"</string>
 		<string>tex</string>
 	</array>
 	<key>name</key>
-	<string>Include file</string>
+	<string>Include File</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
