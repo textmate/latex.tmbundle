@@ -6,7 +6,7 @@
 	<string>\\subsection{${1:subsection name}}\\label{sub:${2:label}}
 </string>
 	<key>name</key>
-	<string>\subsection .. (sub)</string>
+	<string>Sub Section (sub)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>

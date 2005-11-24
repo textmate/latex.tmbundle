@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\cite{${1:citation}}</string>
+	<string>\cite{${1:citation}}</string>
 	<key>name</key>
-	<string>\cite (cite)</string>
+	<string>Citation (cite)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>

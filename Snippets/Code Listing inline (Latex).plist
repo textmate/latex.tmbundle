@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\lstinline{${1:code}}</string>
+	<string>\lstinline{${1:code}}</string>
 	<key>name</key>
-	<string>Code listing inline (cli)</string>
+	<string>Code Listing Inline (cli)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>

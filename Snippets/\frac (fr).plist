@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\frac{${1:num}}{${2:den}}</string>
+	<string>\frac{${1:num}}{${2:den}}</string>
 	<key>name</key>
 	<string>\frac (fr)</string>
 	<key>scope</key>

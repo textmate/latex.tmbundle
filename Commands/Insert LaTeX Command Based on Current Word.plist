@@ -6,9 +6,20 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
+#
+# This script will expand the current word either to
+# \word{} (if it's matched by the commands pattern),
+# to one of the shortcuts in the shortcut dictionary,
+# otherwise to \begin{word} … \end{word} with the caret
+# inbetween.
+#
+# With no selection, it will insert \begin{environment}
+# … \end{environment} and allow you to overwrite the
+# environment name.
 
 commands = /^cite|footcite|footnote|label|ref$/
-shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt", "fc" =&gt; "footcite", "fn" =&gt; "footnote" }
+shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
+	"em" =&gt; "emph", "fc" =&gt; "footcite", "fn" =&gt; "footnote" }
 
 name = STDIN.read
 if(name == '')

@@ -6,7 +6,7 @@
 	<string>\\section{${1:section name}}\\label{sec:${2:label}}
 </string>
 	<key>name</key>
-	<string>\section .. (sec)</string>
+	<string>Section (sec)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>

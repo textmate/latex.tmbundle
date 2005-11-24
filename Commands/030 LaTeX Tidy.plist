@@ -9,9 +9,9 @@
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string>~@L</string>
+	<string>^H</string>
 	<key>name</key>
-	<string>LaTeX Tidy</string>
+	<string>Tidy</string>
 	<key>output</key>
 	<string>replaceDocument</string>
 	<key>scope</key>

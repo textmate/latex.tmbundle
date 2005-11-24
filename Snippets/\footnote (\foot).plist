@@ -5,7 +5,7 @@
 	<key>content</key>
 	<string>footnote{${1:footnote text...}}</string>
 	<key>name</key>
-	<string>\footnote (foot)</string>
+	<string>Footnote (foot)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>

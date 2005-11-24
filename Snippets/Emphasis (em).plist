@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\emph{${1:emphasized text...}}</string>
+	<string>\emph{${1:emphasized text...}}</string>
 	<key>name</key>
 	<string>\emph (em)</string>
 	<key>scope</key>

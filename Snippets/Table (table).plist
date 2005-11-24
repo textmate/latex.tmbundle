@@ -3,18 +3,18 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\begin{table}	
+	<string>\begin{table}	
 
 
-	\\begin{center}
-	\\begin{tabular}{${3:c}}
+	\begin{center}
+	\begin{tabular}{${3:c}}
 		${4}
-     \\end{tabular}
-	\\end{center}
+     \end{tabular}
+	\end{center}
 
-	\\caption{${1:caption}}
-	\\label{${2:label}}
-\\end{table}</string>
+	\caption{${1:caption}}
+	\label{${2:label}}
+\end{table}</string>
 	<key>name</key>
 	<string>Table (table)</string>
 	<key>scope</key>

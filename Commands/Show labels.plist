@@ -9,7 +9,10 @@
 	<key>capturePattern</key>
 	<string>^([^:]*):([^:]*):(.*)$</string>
 	<key>command</key>
-	<string>var=`echo $TM_CURRENT_WORD|grep -v '}'`
+	<string># Search the current document for \label{…} declarations and show
+# these in a list, from which the user can pick.
+
+var=`echo $TM_CURRENT_WORD|grep -v '}'`
 list=`grep "\\label{$var.*}"|perl -pe 's/.*\\label\{(.*?)\}(.*)\n/"$1 : $2",/'|sed 's|\\\\||g'`
 res=`osascript &lt;&lt;EOF
 	tell application "System Events"

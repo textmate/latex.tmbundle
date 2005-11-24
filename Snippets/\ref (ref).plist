@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\ref{${1:xref}}</string>
+	<string>\ref{${1:xref}}</string>
 	<key>name</key>
-	<string>\ref (ref)</string>
+	<string>Reference (ref)</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>

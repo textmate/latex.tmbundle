@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\textbf{${1:bold text...}}</string>
+	<string>\textbf{${1:bold text...}}</string>
 	<key>name</key>
 	<string>\textbf .. (bf)</string>
 	<key>scope</key>

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>name</key>
-	<string>Symbol list</string>
+	<string>Symbol List</string>
 	<key>scope</key>
 	<string>text.latex entity.name</string>
 	<key>settings</key>

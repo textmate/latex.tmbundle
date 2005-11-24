@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\begin{figure}[${1:htbp}]
-	\\begin{center}
-		\\includegraphics[scale=${2:1}]{${3:file}}
-	\\end{center}
-	\\caption{${4:caption}}
-	\\label{fig:${5:label}}
-\\end{figure}</string>
+	<string>\begin{figure}[${1:htbp}]
+	\begin{center}
+		\includegraphics[scale=${2:1}]{${3:file}}
+	\end{center}
+	\caption{${4:caption}}
+	\label{fig:${5:label}}
+\end{figure}</string>
 	<key>name</key>
 	<string>Figure (fig)</string>
 	<key>scope</key>

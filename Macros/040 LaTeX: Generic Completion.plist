@@ -34,7 +34,7 @@
 	<key>keyEquivalent</key>
 	<string>^@ </string>
 	<key>name</key>
-	<string>LaTeX: Generic Completion</string>
+	<string>Generic Completion</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>

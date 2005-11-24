@@ -7,7 +7,7 @@
 	$0
 \end{frame}</string>
 	<key>name</key>
-	<string>Beamer Frames (frame)</string>
+	<string>Beamer Frame (frame)</string>
 	<key>scope</key>
 	<string>text.latex.beamer</string>
 	<key>tabTrigger</key>
