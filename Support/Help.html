@@ -124,8 +124,8 @@
   <h2>Macros</h2>
 
   <dl>
-      <dt><strong>Insert Begin/End Pair</strong>[^-&lt;]</dt>
-      <dd>This is one of the most useful LaTeX commands.  Not only can you quickly create any kind of  begin/end environment such as itemize, equation, verbatim, etc. But the command also completes many common latex formatting commands such as \textit{}, \textbf{}, \ref{}, etc. </dd>
+      <dt><strong>Insert Environment/Command Based on Current Word</strong>[^-&lt;]</dt>
+      <dd>This is one of the most useful LaTeX commands.  Not only can you quickly create any kind of  begin/end environment such as itemize, equation, verbatim, etc. But the command also completes many common latex formatting commands such as \textit{}, \textbf{}, \ref{}, etc. This command can now be customized be the user through environment variables, defined via the Advanced Tab in the Preferences. There are two relevant variables: TM_LATEX_SHORTCUTS and TM_LATEX_COMMANDS. See the Environment Variables section for more details.</dd>
       <dt><strong>Generic Completion:</strong> [^-cmd-space]</dt>
 
     <dd>This macro actually consists of a bunch of perl scripts
@@ -237,6 +237,12 @@
 
     <dt>TM_LATEX_INSERT_LABEL</dt>
     <dd><p>If you want the automatically generated begin/end environments to contain a label then you should set this to 1.</p></dd>
+
+    <dt>TM_LATEX_SHORTCUTS</dt>
+    <dd><p>This is used by the "Insert Environment/Command..." command to perform expansion before processing the current word. It is supposed to be a comma separated list of pairs of the form short=&gt;long where "short" is the shortcut, and "long" is its expansion. So for instance if this variable has the value "item=&gt;itemize,enum=&gt;enumerate", then executing the command with current word "item" will produce an itemize environment. Note: Some shortcuts are already performed by the command, e.g. it=&gt;textit</p></dd>
+
+    <dt>TM_LATEX_COMMANDS</dt>
+    <dd><p>This is used by the "Insert Environment/Command..." command to decide whether to expand as a command or as an environment. It is a regular expression matched against the current word after it has been expanded using TM_LATEX_SHORTCUTS. Note: Some commands are already implemented, e.g. text(it|rm|sl|sc|sf)|cite.</p></dd>
 
 </dl>
   
