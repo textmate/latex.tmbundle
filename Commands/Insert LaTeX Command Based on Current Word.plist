@@ -25,7 +25,7 @@ ENV['TM_LATEX_SHORTCUTS'].to_s.split(',').each { |x|
   customShortcuts["#{temp[0]}"]="#{temp[1]}"
 }
 shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
-"sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", "fc" =&gt; "footcite", "fn" =&gt; "footnote",  "eqn" =&gt; "equation", "item" =&gt; "itemize", "enum" =&gt; "enumerate" }.update(customShortcuts)
+"sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", "fc" =&gt; "footcite", "fn" =&gt; "footnote" }.update(customShortcuts)
 
 name = STDIN.read
 if(!shortcuts[name].nil?)
