@@ -4,12 +4,15 @@
 <dict>
 	<key>content</key>
 	<string>\begin{${1:itemize}}
-	\item
-\end{$1}</string>
+	\item$2
+\end{$1}
+</string>
 	<key>name</key>
 	<string>Itemize (item)</string>
 	<key>scope</key>
-	<string></string>
+	<string>text.latex</string>
+	<key>tabTrigger</key>
+	<string>item</string>
 	<key>uuid</key>
 	<string>E2530F0C-F8A9-43A0-93E5-6606C3E489AB</string>
 </dict>
