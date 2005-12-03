@@ -7,27 +7,18 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
 #
-# This script will expand the current word either to
-# \word{} (if it's matched by the commands pattern),
-# to one of the shortcuts in the shortcut dictionary,
-# otherwise to \begin{word} … \end{word} with the caret
-# inbetween.
+# This script will first expand the current word according 
+# to the shortcuts dictionary, and then it will expand it
+# to \begin{word} … \end{word} with the caret
+# inbetween. It also allows you to customize the first line 
+# through the TM_LATEX_FIRSTLINE variable.
 #
 # With no selection, it will insert \begin{environment}
 # … \end{environment} and allow you to overwrite the
 # environment name.
 
-# Add to the environment variable TM_LATEX_COMMANDS the regular expression for any words you want
-# expanded as \command{} instead of \begin-\end.
-if(ENV.has_key?('TM_LATEX_COMMANDS'))
-	customCommands = ENV['TM_LATEX_COMMANDS'].to_s
-	commands = /^cite|footcite|footnote|label|ref|text(it|bf|tt|sf|sc)|#{customCommands}$/
-else
-	commands = /^cite|footcite|footnote|label|ref|text(it|bf|tt|sf|sc)$/
-end
-
-# Add to the environment variable TM_LATEX_SHORTCUTS a list of all word combinations you want expanded
-# For instance, desc=&gt;description,eqn=&gt;equation etc.
+# Add to the environment variable TM_LATEX_SHORTCUTS a list of all word 
+# combinations you want expanded. For instance, desc=&gt;description,eqn=&gt;equation etc.
 customShortcuts = Hash.new
 if(ENV.has_key?('TM_LATEX_SHORTCUTS'))
 	ENV['TM_LATEX_SHORTCUTS'].to_s.split(',').each { |x| 
@@ -35,11 +26,12 @@ if(ENV.has_key?('TM_LATEX_SHORTCUTS'))
 		customShortcuts["#{temp[0]}"]="#{temp[1]}"
 	}
 end
-shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
-"sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", "fc" =&gt; "footcite", "fn" =&gt; "footnote",  "eqn" =&gt; "equation", "item" =&gt; "itemize", "enum" =&gt; "enumerate" }.update(customShortcuts)
+shortcuts = { "eqn" =&gt; "equation", "item" =&gt; "itemize", "enum" =&gt; "enumerate",
+              "desc" =&gt; "description", "eqa" =&gt; "eqnarray", "thm" =&gt; "theorem",
+              "pf" =&gt; "proof" }.update(customShortcuts)
 
-# Add to the environment variable TM_LATEX_FIRSTLINE a list of all environments you want to have stuff
-# in the first line. for instance itemize=&gt;\\item,enumerate=&gt;\\item etc
+# Add to the environment variable TM_LATEX_FIRSTLINE a list of all environments for which 
+# you want to have stuff in the first line. for instance itemize=&gt;\\item,enumerate=&gt;\\item etc
 customFirstlines = Hash.new
 if(ENV.has_key?('TM_LATEX_FIRSTLINE'))
 	ENV['TM_LATEX_FIRSTLINE'].to_s.split(',').each { |x| 
@@ -51,7 +43,13 @@ firstLine = {	"enumerate" =&gt; "\\item ",
 					"itemize" =&gt; "\\item ", 
 					"description" =&gt; "\\item ", 
 					"questions" =&gt; "\\question ", 
-					"parts" =&gt; "\\part "
+					"parts" =&gt; "\\part ",
+					"theorem"=&gt; "\\label{thm:$1}",
+					"corollary"=&gt; "\\label{cor:$1}",
+					"lemma"=&gt; "\\label{lem:$1}",
+					"proof"=&gt; "\\label{pf:$1}",
+					"proposition"=&gt; "\\label{pro:$1}",
+					"definition"=&gt; "\\label{def:$1}",
 				}.update(customFirstlines)
 
 # Expand according to shortcuts
@@ -62,21 +60,20 @@ end
 
 if(name == '')
 	stringToPrint = "\\begin{${1:environment}}\n\t$2\n\\end{$1}"
-elsif(commands.match(name))
-	stringToPrint = "\\#{name}{$1}"
 else
   lab = ENV['TM_LATEX_INSERT_LABEL'].to_i
   if(lab == 1) 
    	labPrefix = name.slice(0,3)
   		if(firstLine[name].nil?) 		
-			stringToPrint = "\\begin{#{name}}\n\\label{#{labPrefix}:$1}\n\t$2\n\\end{#{name}}"
+			stringToPrint = "\\begin{#{name}}\n\t\\label{#{labPrefix}:$1}\n\t$2\n\\end{#{name}}\n"
 		else
-			stringToPrint = "\\begin{#{name}}\n\\label{#{labPrefix}:$1}\n\t#{firstLine[name]}$2\n\\end{#{name}}"
+# We are using the placeholder $10 here to allow users to add placeholders in their customFirstLine's
+			stringToPrint = "\\begin{#{name}}\n\t\\label{#{labPrefix}:$1}\n\t#{firstLine[name]}\n$10\n\\end{#{name}}\n"
 		end
   elsif(firstLine[name].nil?)
-		stringToPrint = "\\begin{#{name}}\n\t$1\n\\end{#{name}}"
+		stringToPrint = "\\begin{#{name}}\n\t$1\n\\end{#{name}}\n"
 	else
-		stringToPrint = "\\begin{#{name}}\n\t#{firstLine[name]}$1\n\\end{#{name}}"
+		stringToPrint = "\\begin{#{name}}\n\t#{firstLine[name]}\n$10\n\\end{#{name}}\n"
   end
 end
 print stringToPrint
@@ -86,9 +83,9 @@ print stringToPrint
 	<key>input</key>
 	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>^&lt;</string>
+	<string>@{</string>
 	<key>name</key>
-	<string>Insert Environment/Command Based on Current Word</string>
+	<string>Insert Environment Based on Current Word</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>

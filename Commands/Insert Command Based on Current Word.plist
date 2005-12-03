@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+#
+# This script will first use the shortcuts dictionary to
+# expand the current word, and then expand the result either to
+# \word (if it's matched by the noBraceCommands pattern),
+# or to \word{} (if it isn't).
+# You can add your own shortcuts in the TM_LATEX_SHORTCUTS variable,
+# and you can add your own no-brace-commands in the TM_LATEX_COMMAND_NOBRACES variable.
+
+# Add to the environment variable TM_LATEX_SHORTCUTS a list of all word combinations you want expanded
+# For instance, desc=&gt;description,eqn=&gt;equation etc.
+customShortcuts = Hash.new
+if(ENV.has_key?('TM_LATEX_SHORTCUTS'))
+	ENV['TM_LATEX_SHORTCUTS'].to_s.split(',').each { |x| 
+ 		temp = x.split('=&gt;')
+		customShortcuts["#{temp[0]}"]="#{temp[1]}"
+	}
+end
+shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
+              "sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", 
+              "fc" =&gt; "footcite", "fn" =&gt; "footnote",  "ds" =&gt; "displaystyle"
+ }.update(customShortcuts)
+
+# Add to the environment variable TM_LATEX_COMMAND_NOBRACES a regexp of all commands for which you 
+# do not want the expansion to add braces. For instance "displaystyle|math(it|bf|bb|sf)".
+if(ENV.has_key?('TM_LATEX_COMMAND_NOBRACES'))
+  customNoBrace = ENV['TM_LATEX_COMMAND_NOBRACES'].to_s
+  noBraceCommands = /^displaystyle|#{customNoBrace}$/
+else
+  noBraceCommands = /^displaystyle$/
+end
+
+# Expand according to shortcuts
+name = STDIN.read
+if(!shortcuts[name].nil?)
+  name = shortcuts[name]
+end
+
+if(noBraceCommands.match(name))
+	print "\\#{name} "
+else
+  print "\\#{name}{$1}"
+end
+</string>
+	<key>fallbackInput</key>
+	<string>word</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>@}</string>
+	<key>name</key>
+	<string>Insert Command Based on Current Word</string>
+	<key>output</key>
+	<string>insertAsSnippet</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>79EBE164-2318-4563-83E5-F337588AAC73</string>
+</dict>
+</plist>
