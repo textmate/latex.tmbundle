@@ -17,37 +17,69 @@
 # … \end{environment} and allow you to overwrite the
 # environment name.
 
+# Add to the environment variable TM_LATEX_COMMANDS the regular expression for any words you want
+# expanded as \command{} instead of \begin-\end.
 if(ENV.has_key?('TM_LATEX_COMMANDS'))
 	customCommands = ENV['TM_LATEX_COMMANDS'].to_s
 	commands = /^cite|footcite|footnote|label|ref|text(it|bf|tt|sf|sc)|#{customCommands}$/
 else
 	commands = /^cite|footcite|footnote|label|ref|text(it|bf|tt|sf|sc)$/
 end
+
+# Add to the environment variable TM_LATEX_SHORTCUTS a list of all word combinations you want expanded
+# For instance, desc=&gt;description,eqn=&gt;equation etc.
 customShortcuts = Hash.new
-ENV['TM_LATEX_SHORTCUTS'].to_s.split(',').each { |x| 
-  temp = x.split('=&gt;')
-  customShortcuts["#{temp[0]}"]="#{temp[1]}"
-}
+if(!ENV.has_key?('TM_LATEX_SHORTCUTS'))
+	ENV['TM_LATEX_SHORTCUTS'].to_s.split(',').each { |x| 
+ 		temp = x.split('=&gt;')
+		customShortcuts["#{temp[0]}"]="#{temp[1]}"
+	}
+end
 shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
 "sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", "fc" =&gt; "footcite", "fn" =&gt; "footnote",  "eqn" =&gt; "equation", "item" =&gt; "itemize", "enum" =&gt; "enumerate" }.update(customShortcuts)
 
+# Add to the environment variable TM_LATEX_FIRSTLINE a list of all environments you want to have stuff
+# in the first line. for instance itemize=&gt;\\item,enumerate=&gt;\\item etc
+customFirstlines = Hash.new
+if(!ENV.has_key?('TM_LATEX_FIRSTLINE'))
+	ENV['TM_LATEX_FIRSTLINE'].to_s.split(',').each { |x| 
+		temp = x.split('=&gt;')
+		customFirstlines["#{temp[0]}"]="#{temp[1]}"
+	}
+end
+firstLine = {	"enumerate" =&gt; "\\item ", 
+					"itemize" =&gt; "\\item ", 
+					"description" =&gt; "\\item ", 
+					"questions" =&gt; "\\question ", 
+					"parts" =&gt; "\\part "
+				}.update(customFirstlines)
+
+# Expand according to shortcuts
 name = STDIN.read
 if(!shortcuts[name].nil?)
   name = shortcuts[name]
 end
+
 if(name == '')
-  print("\\begin{${1:environment}}\n\t$2\n\\end{$1}")
+	stringToPrint = "\\begin{${1:environment}}\n\t$2\n\\end{$1}"
 elsif(commands.match(name))
-  print("\\#{name}{$1}")
+	stringToPrint = "\\#{name}{$1}"
 else
   lab = ENV['TM_LATEX_INSERT_LABEL'].to_i
   if(lab == 1) 
-    labPrefix = name.slice(0,3)
-    print("\\begin{#{name}}\n\\label{#{labPrefix}:$1}\n\t$2\n\\end{#{name}}")
-  else
-    print("\\begin{#{name}}\n\t$1\n\\end{#{name}}")
+   	labPrefix = name.slice(0,3)
+  		if(firstLine[name].nil?) 		
+			stringToPrint = "\\begin{#{name}}\n\\label{#{labPrefix}:$1}\n\t$2\n\\end{#{name}}"
+		else
+			stringToPrint = "\\begin{#{name}}\n\\label{#{labPrefix}:$1}\n\t#{firstLine[name]}$2\n\\end{#{name}}"
+		end
+  elsif(firstLine[name].nil?)
+		stringToPrint = "\\begin{#{name}}\n\t$1\n\\end{#{name}}"
+	else
+		stringToPrint = "\\begin{#{name}}\n\t#{firstLine[name]}$1\n\\end{#{name}}"
   end
 end
+print stringToPrint
 </string>
 	<key>fallbackInput</key>
 	<string>word</string>
