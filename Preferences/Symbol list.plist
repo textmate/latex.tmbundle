@@ -5,11 +5,17 @@
 	<key>name</key>
 	<string>Symbol List</string>
 	<key>scope</key>
-	<string>text.latex entity.name</string>
+	<string>text.latex meta.section.latex</string>
 	<key>settings</key>
 	<dict>
 		<key>showInSymbolList</key>
 		<string>1</string>
+		<key>symbolTransformation</key>
+		<string>
+		s/^(\s*)\\section\{(.+)\}/$1$2/;
+		s/^(\s*)\\subsection\{(.+)\}/$1 $2/;
+		s/^(\s*)\\subsubsection\{(.+)\}/$1  $2/;
+	</string>
 	</dict>
 	<key>uuid</key>
 	<string>AF20835B-CB64-46F3-9E91-F3330378C4AE</string>
