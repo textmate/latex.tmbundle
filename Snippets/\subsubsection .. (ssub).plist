@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\subsubsection{${1:subsubsection name}}\\label{ssub:${2:label}}
+	<string>\subsubsection{${1:subsubsection name}}\label{ssub:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g/}}}
 </string>
 	<key>name</key>
 	<string>Sub Sub Section (ssub)</string>

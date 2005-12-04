@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\section{${1:section name}}\\label{sec:${2:label}}
+	<string>\section{${1:section name}}\label{sec:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}}
 </string>
 	<key>name</key>
 	<string>Section (sec)</string>
