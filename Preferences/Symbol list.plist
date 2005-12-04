@@ -12,9 +12,9 @@
 		<string>1</string>
 		<key>symbolTransformation</key>
 		<string>
-		s/^(\s*)\\section\{(.+)\}/$1$2/;
-		s/^(\s*)\\subsection\{(.+)\}/$1 $2/;
-		s/^(\s*)\\subsubsection\{(.+)\}/$1  $2/;
+		s/^\\section\{(.+)\}/$1/;
+		s/^\\subsection\{(.+)\}/ $1/;
+		s/^\\subsubsection\{(.+)\}/  $1/;
 	</string>
 	</dict>
 	<key>uuid</key>
