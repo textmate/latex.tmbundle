@@ -9,12 +9,11 @@
 	<key>settings</key>
 	<dict>
 		<key>showInSymbolList</key>
-		<string>1</string>
+		<integer>1</integer>
 		<key>symbolTransformation</key>
 		<string>
-		s/^\\section\{(.+)\}/$1/;
-		s/^\\subsection\{(.+)\}/ $1/;
-		s/^\\subsubsection\{(.+)\}/  $1/;
+		s/(?&lt;=\\|sub)sub/ /g;             # replace all leading "sub" with an em-space
+		s/^\\( *)section\{(.+)\}/$1$2/;   # then strip all but em-space + name
 	</string>
 	</dict>
 	<key>uuid</key>
