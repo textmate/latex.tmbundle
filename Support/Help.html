@@ -64,11 +64,11 @@
   like.</p>
 
   <p>The rest of this document is broken into six sections. There
-  is a section for each of the following: Commands, Macros,
-  Snippets, Templates, Environment Variables, and Credits. Happy
+  is a section for each of the following: <a href="#commands">Commands</a>, <a href="#macros">Macros</a>, <a href="#dragdrop">Drag and Drop Commands</a>,
+  <a href="#snippets">Snippets</a>, <a href="#templates">Templates</a>, <a href="#variables">Environment Variables</a>, <a href="#related">Related Commands</a> from other bundles, and <a href="#credits">Credits</a>. Happy
   LaTeXing</p>
 
-  <h2>Commands</h2>
+  <a name="commands">&nbsp;</a><h2>Commands</h2>
 
   <dl>
     <dt><strong>Typeset &amp; View</strong> [⌘-B]</dt>
@@ -115,17 +115,21 @@
     <dd>Searches in open bibliography files for the current word
     and replaces the current word with the appropriate cite
     key.</dd>
+
+    <dt><strong>Insert Command Based on Current Word</strong>[^-⌘-}]</dt>
+    <dd>This allows you to complete many common latex commands such as \textit{}, \textbf{}, \ref{}, etc. This command can now be customized by the user through environment variables, defined via the Advanced Tab in the Preferences. There are two relevant variables: TM_LATEX_SHORTCUTS and TM_LATEX_COMMAND_NOBRACES. See the <a href="variables">Environment Variables</a> section for more details.</dd>
+
+    <dt><strong>Insert Environment Based on Current Word</strong>[^-⌘-{]</dt>
+    <dd>This allows you to quickly create any kind of begin/end environment such as itemize, equation, verbatim, etc. This command can now be customized by the user through environment variables, defined via the Advanced Tab in the Preferences. There are two relevant variables: TM_LATEX_SHORTCUTS and TM_LATEX_FIRSTLINE. See the <a href="variables">Environment Variables</a> section for more details.</dd>
     
     <dt><strong>Run BibTeX</strong></dt>
     
     <dt><strong>Run Makeindex</strong></dt>
   </dl>
 
-  <h2>Macros</h2>
+  <a name="macros">&nbsp;</a><h2>Macros</h2>
 
   <dl>
-      <dt><strong>Insert Environment/Command Based on Current Word</strong>[^-&lt;]</dt>
-      <dd>This is one of the most useful LaTeX commands.  Not only can you quickly create any kind of  begin/end environment such as itemize, equation, verbatim, etc. But the command also completes many common latex formatting commands such as \textit{}, \textbf{}, \ref{}, etc. This command can now be customized be the user through environment variables, defined via the Advanced Tab in the Preferences. There are two relevant variables: TM_LATEX_SHORTCUTS and TM_LATEX_COMMANDS. See the Environment Variables section for more details.</dd>
       <dt><strong>Generic Completion:</strong> [^-cmd-space]</dt>
 
     <dd>This macro actually consists of a bunch of perl scripts
@@ -136,10 +140,10 @@
     <dt><strong>Add Word to Index</strong>[⌃-⇧-i]</dt>
     <dt><strong>Make Current Word TT</strong>[^-⇧-c]</dt>
 
-  <h2>Drag and Drop</h2>
+  <a name="dragdrop">&nbsp;</a><h2>Drag and Drop Commands</h2>
   <p>There are two drag and drop thingies that work well in LaTeX.  You can drag an image file in to the document and have it surrounded by by a complete figure environment.  You can also drag in another .tex file to have that file added to your document with an \include command.</p>
   
-  <h2>Snippets</h2>Many of the snippets that used to exist in the LaTeX bundle have been made obsolete by simpler commands such as the Insert Begin/End pair.
+  <a name="snippets">&nbsp;</a><h2>Snippets</h2>Many of the snippets that used to exist in the LaTeX bundle have been made obsolete by simpler commands such as the Insert Begin/End pair.
 
   <ul>
 
@@ -170,6 +174,7 @@
     
     <li>Here is a list of existing snippets that could also be replaced  by the use of completion and
         the Begin/end pair command</li>
+    <em>Most of these have now been replaced by the "Insert Command..." command.</em>
     <ul>
         <li>\textit  [it]</li>
         <li>\textbf [bf]</li>
@@ -183,7 +188,7 @@
         <li>\ref  [ref]</li>
     </ul>
     
-  <h2>Completions</h2>
+  <a name="completions">&nbsp;</a><h2>Completions</h2>
   <p>The following words are known to be in  the list of completions (accessed through escape) that LaTeX knows about:</p>
       <ul>
           <li>corollary</li>
@@ -197,7 +202,7 @@
           <li>proposition</li>
           <li>verbatim</li> 
       </ul>
-  <h2>Templates</h2>
+  <a name="templates">&nbsp;</a><h2>Templates</h2>
 
   <dl>
     <dt>Article</dt>
@@ -211,7 +216,7 @@
     contents, etc.</dd>
   </dl>
 
-  <h2>Environment Variables</h2>
+  <a name="variables">&nbsp;</a><h2>Environment Variables</h2>
 
   <dl>
     <dt>TM_LATEX_MASTER</dt>
@@ -239,14 +244,17 @@
     <dd><p>If you want the automatically generated begin/end environments to contain a label then you should set this to 1.</p></dd>
 
     <dt>TM_LATEX_SHORTCUTS</dt>
-    <dd><p>This is used by the "Insert Environment/Command..." command to perform expansion before processing the current word. It is supposed to be a comma separated list of pairs of the form short=&gt;long where "short" is the shortcut, and "long" is its expansion. So for instance if this variable has the value "item=&gt;itemize,enum=&gt;enumerate", then executing the command with current word "item" will produce an itemize environment. Note: Some shortcuts are already performed by the command, e.g. it=&gt;textit</p></dd>
+    <dd><p>This is used by the "Insert Environment..." and "Insert Command..." commands to perform expansion before processing the current word. It is supposed to be a comma separated list of pairs of the form short=&gt;long where "short" is the shortcut, and "long" is its expansion. So for instance if this variable has the value "item=&gt;itemize,enum=&gt;enumerate", then executing the command with current word "item" will produce an itemize environment. Note: Some shortcuts are already performed by the command, e.g. it=&gt;textit</p></dd>
 
-    <dt>TM_LATEX_COMMANDS</dt>
-    <dd><p>This is used by the "Insert Environment/Command..." command to decide whether to expand as a command or as an environment. It is a regular expression matched against the current word after it has been expanded using TM_LATEX_SHORTCUTS. Note: Some commands are already implemented, e.g. text(it|rm|sl|sc|sf)|cite.</p></dd>
+    <dt>TM_LATEX_COMMAND_NOBRACES</dt>
+    <dd><p>This is a regular expression used by the "Insert Command..." command to decide whether to place braces at the end of the expanded command or not. The default behavior is to add them, unless the word matches this regexp. Note: Some commands are already implemented, e.g. displaystyle.</p></dd>
+
+    <dt>TM_LATEX_FIRSTLINE</dt>
+    <dd><p>This is used by the "Insert Environment..." command to insert extra information in the line right below the \begin{word} line. It has syntax similar to the TM_LATEX_SHORTCUTS syntax. For example, if this variable is set to "enumerate=&gt;\\item ,theorem=&gt;\\label{thm:$1}\n\t", then enumerate environments get a starting "\item ", while theorem environments get a label. Note: Most standard environments are already set up.</p></dd>
 
 </dl>
   
-  <h2>Related Commands</h2>
+  <a name="related">&nbsp;</a><h2>Related Commands</h2>
 
   <dl>
     <dt>Toggle Comment [cmd-/] (Source bundle)</dt>
@@ -255,13 +263,14 @@
     selected lines of text.</dd>
   </dl>
 
-  <h2>Credits</h2>There were at least two or possibly three
+  <a name="credits">&nbsp;</a><h2>Credits</h2>
+  There were at least two or possibly three
   versions of a LaTeX bundle floating around in the early days of
   TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and
   Andrew Ellis At some point, January 2005, Eric Hsu pulled
   together the threads into one package. From then on there have
   been contributions by Sune Foldager, Brad Miller, Allan Odgaard,
-  and Jeroen van der Ham. The Generic Completion package was
+  Jeroen van der Ham, and Haris Skiadas. The Generic Completion package was
   written by Marcin.
 
   <h2>TODO</h2>
