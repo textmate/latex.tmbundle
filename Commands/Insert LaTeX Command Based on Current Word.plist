@@ -26,9 +26,11 @@ if(ENV.has_key?('TM_LATEX_SHORTCUTS'))
 		customShortcuts["#{temp[0]}"]="#{temp[1]}"
 	}
 end
-shortcuts = { "eqn" =&gt; "equation", "item" =&gt; "itemize", "enum" =&gt; "enumerate",
-              "desc" =&gt; "description", "eqa" =&gt; "eqnarray", "thm" =&gt; "theorem",
-              "pf" =&gt; "proof" }.update(customShortcuts)
+shortcuts = { "eqn" =&gt; "equation", "eq" =&gt; "equation", "item" =&gt; "itemize", 
+  "enum" =&gt; "enumerate", "desc" =&gt; "description", "eqa" =&gt; "eqnarray", 
+  "thm" =&gt; "theorem", "lem" =&gt; "lemma", "cor" =&gt; "corollary", 
+  "pro" =&gt; "proposition", "def" =&gt; "definition", "que" =&gt; "question", 
+  "par" =&gt; "parts", "pf" =&gt; "proof" }.update(customShortcuts)
 
 # Add to the environment variable TM_LATEX_FIRSTLINE a list of all environments for which 
 # you want to have stuff in the first line. for instance itemize=&gt;\\item,enumerate=&gt;\\item etc
@@ -40,17 +42,17 @@ if(ENV.has_key?('TM_LATEX_FIRSTLINE'))
 	}
 end
 firstLine = {	"enumerate" =&gt; "\\item ", 
-					"itemize" =&gt; "\\item ", 
-					"description" =&gt; "\\item ", 
-					"questions" =&gt; "\\question ", 
-					"parts" =&gt; "\\part ",
-					"theorem"=&gt; "\\label{thm:$1}\n\t",
-					"corollary"=&gt; "\\label{cor:$1}\n\t",
-					"lemma"=&gt; "\\label{lem:$1}\n\t",
-					"proof"=&gt; "\\label{pf:$1}\n\t",
-					"proposition"=&gt; "\\label{pro:$1}\n\t",
-					"definition"=&gt; "\\label{def:$1}\n\t",
-				}.update(customFirstlines)
+ 		"itemize" =&gt; "\\item ", 
+ 		"description" =&gt; "\\item ", 
+ 		"questions" =&gt; "\\question ", 
+ 		"parts" =&gt; "\\part ",
+ 		"theorem"=&gt; "\\label{thm:$1}\n\t",
+ 		"corollary"=&gt; "\\label{cor:$1}\n\t",
+ 		"lemma"=&gt; "\\label{lem:$1}\n\t",
+ 		"proof"=&gt; "\\label{pf:$1}\n\t",
+ 		"proposition"=&gt; "\\label{pro:$1}\n\t",
+ 		"definition"=&gt; "\\label{def:$1}\n\t",
+ 	}.update(customFirstlines)
 
 # Expand according to shortcuts
 name = STDIN.read
