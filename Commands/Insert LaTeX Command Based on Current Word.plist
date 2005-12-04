@@ -44,12 +44,12 @@ firstLine = {	"enumerate" =&gt; "\\item ",
 					"description" =&gt; "\\item ", 
 					"questions" =&gt; "\\question ", 
 					"parts" =&gt; "\\part ",
-					"theorem"=&gt; "\\label{thm:$1}",
-					"corollary"=&gt; "\\label{cor:$1}",
-					"lemma"=&gt; "\\label{lem:$1}",
-					"proof"=&gt; "\\label{pf:$1}",
-					"proposition"=&gt; "\\label{pro:$1}",
-					"definition"=&gt; "\\label{def:$1}",
+					"theorem"=&gt; "\\label{thm:$1}\n\t",
+					"corollary"=&gt; "\\label{cor:$1}\n\t",
+					"lemma"=&gt; "\\label{lem:$1}\n\t",
+					"proof"=&gt; "\\label{pf:$1}\n\t",
+					"proposition"=&gt; "\\label{pro:$1}\n\t",
+					"definition"=&gt; "\\label{def:$1}\n\t",
 				}.update(customFirstlines)
 
 # Expand according to shortcuts
@@ -68,12 +68,12 @@ else
 			stringToPrint = "\\begin{#{name}}\n\t\\label{#{labPrefix}:$1}\n\t$2\n\\end{#{name}}\n"
 		else
 # We are using the placeholder $10 here to allow users to add placeholders in their customFirstLine's
-			stringToPrint = "\\begin{#{name}}\n\t\\label{#{labPrefix}:$1}\n\t#{firstLine[name]}\n$10\n\\end{#{name}}\n"
+			stringToPrint = "\\begin{#{name}}\n\t\\label{#{labPrefix}:$1}\n\t#{firstLine[name]}$10\n\\end{#{name}}\n"
 		end
   elsif(firstLine[name].nil?)
 		stringToPrint = "\\begin{#{name}}\n\t$1\n\\end{#{name}}\n"
 	else
-		stringToPrint = "\\begin{#{name}}\n\t#{firstLine[name]}\n$10\n\\end{#{name}}\n"
+		stringToPrint = "\\begin{#{name}}\n\t#{firstLine[name]}$10\n\\end{#{name}}\n"
   end
 end
 print stringToPrint
