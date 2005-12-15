@@ -302,7 +302,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>$|^</string>
+			<string>(?=^\s*\\(item|end))</string>
 			<key>name</key>
 			<string>meta.scope.item.latex</string>
 			<key>patterns</key>
