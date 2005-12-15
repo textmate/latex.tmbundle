@@ -223,7 +223,7 @@
 				</dict>
 			</dict>
 			<key>comment</key>
-			<string>We put the keyword in a capture and name this capture, so that disabling spell checking for ‚Äö√Ñ√∫keyword‚Äö√Ñ√π won't be inherited by the argument to \textit{...}.
+			<string>We put the keyword in a capture and name this capture, so that disabling spell checking for ‚Äö√Ñ√∂‚àö√ë‚àö‚àÇ‚Äö√†√∂‚àö√´‚Äö√†√∂‚Äö√†¬¥keyword‚Äö√Ñ√∂‚àö√ë‚àö‚àÇ‚Äö√†√∂‚àö√´‚Äö√†√∂≈ì√Ñ won't be inherited by the argument to \textit{...}.
 
 Put specific matches for particular LaTeX keyword.functions before the last two more general functions</string>
 			<key>end</key>
@@ -302,7 +302,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>$</string>
+			<string>$|^</string>
 			<key>name</key>
 			<string>meta.scope.item.latex</string>
 			<key>patterns</key>
