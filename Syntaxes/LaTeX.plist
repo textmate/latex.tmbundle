@@ -223,7 +223,7 @@
 				</dict>
 			</dict>
 			<key>comment</key>
-			<string>We put the keyword in a capture and name this capture, so that disabling spell checking for ‚Äö√Ñ√∂‚àö√ë‚àö‚àÇ‚Äö√†√∂‚àö√´‚Äö√†√∂‚Äö√†¬¥keyword‚Äö√Ñ√∂‚àö√ë‚àö‚àÇ‚Äö√†√∂‚àö√´‚Äö√†√∂≈ì√Ñ won't be inherited by the argument to \textit{...}.
+			<string>We put the keyword in a capture and name this capture, so that disabling spell checking for “keyword” won't be inherited by the argument to \textit{...}.
 
 Put specific matches for particular LaTeX keyword.functions before the last two more general functions</string>
 			<key>end</key>
@@ -292,13 +292,13 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\item)</string>
-			<key>captures</key>
+			<string>\\item</string>
+			<key>beginCaptures</key>
 			<dict>
-				<key>1</key>
+				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.general.latex</string>
+					<string>keyword.general.item.latex</string>
 				</dict>
 			</dict>
 			<key>end</key>
@@ -423,12 +423,26 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>string.other.math.latex</string>
 		</dict>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>meta.escape-character.latex</string>
+				</dict>
+			</dict>
 			<key>comment</key>
 			<string>Not sure if this is the proper classification. This is a catch-all for \&lt;symbol&gt; so that e.g. \" doesn't start an (invalid) string</string>
 			<key>match</key>
-			<string>\\[^A-Za-z\n]</string>
+			<string>(\\)[^A-Za-z\n]</string>
 			<key>name</key>
 			<string>constant.character.escape.latex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\$</string>
+			<key>name</key>
+			<string>meta.escape-character.latex</string>
 		</dict>
 		<dict>
 			<key>match</key>
