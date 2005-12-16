@@ -49,13 +49,13 @@ end</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string>^@p</string>
+	<string>⌅</string>
 	<key>name</key>
 	<string>Insert Item Based on Current Environment</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>meta.environment.list text.latex</string>
+	<string>text.latex meta.environment</string>
 	<key>uuid</key>
 	<string>948DDCF2-0EB5-46A3-B970-09597D268BAF</string>
 </dict>
