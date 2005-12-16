@@ -45,21 +45,18 @@ if (results)
   end
 else
   puts("No match!")
-end  
-</string>
-	<key>fallbackInput</key>
-	<string>word</string>
+end</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string>#</string>
+	<string>^@p</string>
 	<key>name</key>
-	<string>Insert Itemization Code Based on Current Environment</string>
+	<string>Insert Item Based on Current Environment</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
 	<string>meta.environment.list text.latex</string>
 	<key>uuid</key>
-	<string>236026A5-201E-4AE3-98DD-46CA2EE9A6F8</string>
+	<string>948DDCF2-0EB5-46A3-B970-09597D268BAF</string>
 </dict>
 </plist>
