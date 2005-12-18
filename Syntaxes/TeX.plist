@@ -124,7 +124,7 @@
 					<array>
 						<dict>
 							<key>include</key>
-							<string>source.tex</string>
+							<string>$base</string>
 						</dict>
 					</array>
 				</dict>
@@ -137,7 +137,7 @@
 					<array>
 						<dict>
 							<key>include</key>
-							<string>source.tex</string>
+							<string>$base</string>
 						</dict>
 					</array>
 				</dict>

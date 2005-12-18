@@ -18,7 +18,9 @@ myStr = textArray[0..linesbefore-1].join
 myStr &lt;&lt; textArray[linesbefore].slice(0..columns-1)
 theArray = Array.new
 theRegexp = Regexp.new('(\\\begin\{|\\\end\{)(\w+[*]?)(\})')
-toInsert = { "itemize" =&gt; "\\item $1", "enumerate" =&gt; "\\item $1", "description" =&gt; "\\item[${1:label}] ${2:description}", "parts" =&gt; "\\part $1", "questions" =&gt; "\\question $1" }
+toInsertNoBeamer = { "itemize" =&gt; "\\item $1", "enumerate" =&gt; "\\item $1", "description" =&gt; "\\item[${1:label}] ${2:description}", "parts" =&gt; "\\part $1", "questions" =&gt; "\\question $1" }
+toInsertBeamer = { "itemize" =&gt; "\\item${1:&lt;${2:+-}&gt;} $3", "enumerate" =&gt; "\\item${1:&lt;${2:+-}&gt;} $3", "description" =&gt; "\\item&lt;+-&gt;[${1:label}] ${2:description}" }
+toInsert = /beamer/.match(ENV['TM_SCOPE'].to_s) ? toInsertBeamer : toInsertNoBeamer
 results = myStr.scan(theRegexp)
 if (results)
   results.each{|e|
@@ -38,6 +40,9 @@ if (results)
   }
   envName = theArray.pop
   puts("")
+  if (/\\begin\{/.match(textArray[linesbefore]))
+    print "\t"
+  end
   if (toInsert.has_key?(envName))
     puts(toInsert[envName])
   else
@@ -49,7 +54,7 @@ end</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string>⌅</string>
+	<string>#</string>
 	<key>name</key>
 	<string>Insert Item Based on Current Environment</string>
 	<key>output</key>

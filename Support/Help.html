@@ -120,7 +120,7 @@
     <dd>This allows you to complete many common latex commands such as \textit{}, \textbf{}, \ref{}, etc. This command can now be customized by the user through environment variables, defined via the Advanced Tab in the Preferences. There are two relevant variables: TM_LATEX_SHORTCUTS and TM_LATEX_COMMAND_NOBRACES. See the <a href="variables">Environment Variables</a> section for more details.</dd>
 
     <dt><strong>Insert Environment Based on Current Word</strong>[^-⌘-{]</dt>
-    <dd>This allows you to quickly create any kind of begin/end environment such as itemize, equation, verbatim, etc. This command can now be customized by the user through environment variables, defined via the Advanced Tab in the Preferences. There are two relevant variables: TM_LATEX_SHORTCUTS and TM_LATEX_FIRSTLINE. See the <a href="variables">Environment Variables</a> section for more details.</dd>
+    <dd>This allows you to quickly create any kind of begin/end environment such as itemize, equation, verbatim, etc. This command can now be customized by the user through environment variables, defined via the Advanced Tab in the Preferences. There are three relevant variables: TM_LATEX_SHORTCUTS, TM_LATEX_FIRSTLINE and TM_LATEX_ZEROLINE. See the <a href="variables">Environment Variables</a> section for more details.</dd>
     
     <dt><strong>Run BibTeX</strong></dt>
     
@@ -189,7 +189,7 @@
     </ul>
     
   <a name="completions">&nbsp;</a><h2>Completions</h2>
-  <p>The following words are known to be in  the list of completions (accessed through escape) that LaTeX knows about:</p>
+  <p>The following words are known to be in the list of completions (accessed through escape) that LaTeX knows about:</p>
       <ul>
           <li>corollary</li>
           <li>definition</li>
@@ -251,6 +251,9 @@
 
     <dt>TM_LATEX_FIRSTLINE</dt>
     <dd><p>This is used by the "Insert Environment..." command to insert extra information in the line right below the \begin{word} line. It has syntax similar to the TM_LATEX_SHORTCUTS syntax. For example, if this variable is set to "enumerate=&gt;\\item ,theorem=&gt;\\label{thm:$1}\n\t", then enumerate environments get a starting "\item ", while theorem environments get a label. Note: Most standard environments are already set up.</p></dd>
+
+    <dt>TM_LATEX_ZEROLINE</dt>
+    <dd><p>This is used by the "Insert Environment..." command to insert extra information immediately to the right of \begin{word}. It has syntax similar to the TM_LATEX_SHORTCUTS syntax. For example, if this variable is set to "theorem=&gt;\\label{thm:$1}", then theorem environments get a label right next to \begin{theorem}. Note: Most standard environments are already set up.</p></dd>
 
 </dl>
   

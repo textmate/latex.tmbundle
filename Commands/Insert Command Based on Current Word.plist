@@ -27,6 +27,23 @@ shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
               "sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", 
               "fc" =&gt; "footcite", "fn" =&gt; "footnote", "cli" =&gt;"lstinline", "ds" =&gt; "displaystyle"
  }.update(customShortcuts)
+# Add to the environment variable TM_LATEX_COMMAND_BEFOREBRACES a list of all commands for which you want some
+# text right after the command and before a potential brace, e.g. \put(10,10){stuff} could be done by setting 
+# the variable equal to "put=&gt;(10,10)".
+customBeforeBraces = Hash.new
+if(ENV.has_key?('TM_LATEX_COMMAND_BEFOREBRACES'))
+	ENV['TM_LATEX_COMMAND_BEFOREBRACES'].to_s.split(',').each { |x| 
+ 		temp = x.split('=&gt;')
+		customBeforeBraces["#{temp[0]}"]="#{temp[1]}"
+	}
+end
+beforeBraces = {
+  "put" =&gt; "(${1:0},${2:0})",
+  "multiput" =&gt; "(${1:0},${2:0})(${3:5},${4:0}){${5:2}}",
+  "line" =&gt; "(${1:0},${2:0}){${3:0}}",
+  "circle" =&gt; "${1:[*]}",
+  "frac" =&gt; "{${1:num}}"
+}.update(customBeforeBraces)
 
 # Add to the environment variable TM_LATEX_COMMAND_NOBRACES a regexp of all commands for which you 
 # do not want the expansion to add braces. For instance "displaystyle|math(it|bf|bb|sf)".
@@ -39,14 +56,17 @@ end
 
 # Expand according to shortcuts
 name = STDIN.read
-if(!shortcuts[name].nil?)
+if(shortcuts.has_key?(name))
   name = shortcuts[name]
 end
-
+beforeBraceToPrint = ""
+if (beforeBraces.has_key?(name))
+  beforeBraceToPrint = beforeBraces[name]
+end
 if(noBraceCommands.match(name))
-	print "\\#{name} "
+	print "\\#{name}" &lt;&lt; beforeBraceToPrint &lt;&lt; " "
 else
-  print "\\#{name}{$1}"
+  print "\\#{name}" &lt;&lt; beforeBraceToPrint &lt;&lt; "{$10}"
 end
 </string>
 	<key>fallbackInput</key>
