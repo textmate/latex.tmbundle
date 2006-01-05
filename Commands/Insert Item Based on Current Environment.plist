@@ -44,12 +44,12 @@ if (results)
     print "\t"
   end
   if (toInsert.has_key?(envName))
-    puts(toInsert[envName])
+    print(toInsert[envName])
   else
-    puts("\\item $1")
+    print("\\item ")
   end
 else
-  puts("No match!")
+  print("No match! ")
 end</string>
 	<key>input</key>
 	<string>document</string>
