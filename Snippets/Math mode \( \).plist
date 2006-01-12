@@ -3,18 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\[
-	$TM_SELECTED_TEXT$1
-\]</string>
+	<string>\( $TM_SELECTED_TEXT$1 \)</string>
 	<key>keyEquivalent</key>
 	<string>^@m</string>
 	<key>name</key>
-	<string>Displaymath ($$)</string>
+	<string>Math mode \( \)</string>
 	<key>scope</key>
 	<string>text.latex</string>
-	<key>tabTrigger</key>
-	<string>$$</string>
 	<key>uuid</key>
-	<string>F38DDE93-BF77-449D-A4C9-6C525ECAC6FB</string>
+	<string>445F9B97-7D25-4262-A715-03F9D688856A</string>
 </dict>
 </plist>
