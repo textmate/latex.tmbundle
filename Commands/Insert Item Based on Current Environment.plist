@@ -49,7 +49,7 @@ if (results)
     print("\\item ")
   end
 else
-  print("No match! ")
+  print("\n")
 end</string>
 	<key>input</key>
 	<string>document</string>
