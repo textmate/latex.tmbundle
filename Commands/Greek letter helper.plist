@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+shortcutHash = {
+  "a" =&gt; "\\alpha",
+  "b" =&gt; "\\beta",
+  "g" =&gt; "\\gamma",
+  "d" =&gt; "\\delta",
+  "e" =&gt; "\\epsilon",
+  "f" =&gt; "\\phi",
+  "vf" =&gt; "\\varphi",
+  "i" =&gt; "\\iota",
+  "z" =&gt; "\\zeta",
+  "h" =&gt; "\\eta",
+  "k" =&gt; "\\kappa",
+  "l" =&gt; "\\lambda",
+  "m" =&gt; "\\mu",
+  "n" =&gt; "\\nu",
+  "x" =&gt; "\\chi",
+  "p" =&gt; "\\pi",
+  "r" =&gt; "\\rho",
+  "s" =&gt; "\\sigma",
+  "vs" =&gt; "\\varsigma",
+  "t" =&gt; "\\tau",
+  "u" =&gt; "\\upsilon",
+  "w" =&gt; "\\omega",
+  "v" =&gt; "\\xi",
+  "y" =&gt; "\\psi",  
+  "G" =&gt; "\\Gamma",
+  "D" =&gt; "\\Delta",
+  "F" =&gt; "\\Phi",
+  "I" =&gt; "\\Iota",
+  "L" =&gt; "\\Lambda",
+  "X" =&gt; "\\Chi",
+  "P" =&gt; "\\Pi",
+  "S" =&gt; "\\Sigma",
+  "U" =&gt; "\\Upsilon",
+  "W" =&gt; "\\Omega",
+  "Y" =&gt; "\\Psi",
+  "V" =&gt; "\\Xi"
+}
+currentWord=ENV["TM_SELECTED_TEXT"].to_s
+if (shortcutHash.has_key?(currentWord)) then
+  print shortcutHash[currentWord]
+else
+  print currentWord
+end</string>
+	<key>fallbackInput</key>
+	<string>none</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string></string>
+	<key>name</key>
+	<string>Greek letter helper</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>uuid</key>
+	<string>A7D549C1-055E-4181-84F2-BA713EB66341</string>
+</dict>
+</plist>

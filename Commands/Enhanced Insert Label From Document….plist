@@ -24,7 +24,8 @@ res=`osascript &lt;&lt;EOF
 	end tell
 EOF`
 osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
-awk &lt;&lt;&lt;${res#${var}} '{ printf("%s", $1) }'</string>
+res2=`sed &lt;&lt;&lt;$res 's/^.* : \(.*\)$/\1/'`
+echo -n ${res2#${var}}</string>
 	<key>fileCaptureRegister</key>
 	<string>1</string>
 	<key>input</key>
