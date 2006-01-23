@@ -13,7 +13,7 @@
 		<key>symbolTransformation</key>
 		<string>
 		s/(?&lt;=\\|sub)sub/ /g;             # replace all leading "sub" with an em-space
-		s/^\\( *)section(?:\[[^]]*\])?\{(.+)\}/$1$2/;   # then strip all but em-space + name
+		s/^\\( *)section\*?(?:\[[^]]*\])?\{(.+)\}/$1$2/;   # then strip all but em-space + name
 	</string>
 	</dict>
 	<key>uuid</key>
