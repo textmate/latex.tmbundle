@@ -34,7 +34,6 @@ shortcutHash = {
   "G" =&gt; "\\Gamma",
   "D" =&gt; "\\Delta",
   "F" =&gt; "\\Phi",
-  "I" =&gt; "\\Iota",
   "L" =&gt; "\\Lambda",
   "X" =&gt; "\\Chi",
   "P" =&gt; "\\Pi",
@@ -44,11 +43,7 @@ shortcutHash = {
   "Y" =&gt; "\\Psi",
   "V" =&gt; "\\Xi"
 }
-if ENV.has_key?("TM_SELECTED_TEXT") then
-  currentWord=ENV["TM_SELECTED_TEXT"].to_s
-else
-  currentWord=ENV["TM_CURRENT_WORD"].to_s
-end
+currentWord = STDIN.read
 if (shortcutHash.has_key?(currentWord)) then
   print shortcutHash[currentWord]
 else
@@ -61,7 +56,7 @@ end</string>
 	<key>keyEquivalent</key>
 	<string>@G</string>
 	<key>name</key>
-	<string>Greek letter helper</string>
+	<string>Expand to Greek Letter</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>

@@ -55,9 +55,9 @@
 		</dict>
 	</array>
 	<key>keyEquivalent</key>
-	<string>~@a</string>
+	<string>^S</string>
 	<key>name</key>
-	<string>Arrow Completion</string>
+	<string>Convert ASCII Symbol to LaTeX Command</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>scopeType</key>

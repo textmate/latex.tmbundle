@@ -5,12 +5,12 @@ shortcutHash = {
   " <-" => "\\leftarrow",
   " <=" => "\\Leftarrow",
   " =>" => "\\Rightarrow",
-  " =>" => "\\rightarrow",
+  " ->" => "\\rightarrow",
   "<--" => "\\longleftarrow",
   "<==" => "\\Longleftarrow",
   "-->" => "\\longrightarrow",
   "==>" => "\\Longrightarrow",
-  "|->" => "\\mapsto"
+  "|->" => "\\mapsto",
 }
   currentWord=ENV["TM_SELECTED_TEXT"].to_s
 if (shortcutHash.has_key?(currentWord)) then
