@@ -23,6 +23,12 @@
 		</dict>
 		<dict>
 			<key>match</key>
+			<string>%:.*$</string>
+			<key>name</key>
+			<string>comment.line.texshop.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
 			<string>%.*$</string>
 			<key>name</key>
 			<string>comment.line.percentage.tex</string>
