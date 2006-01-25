@@ -44,22 +44,28 @@ shortcutHash = {
   "Y" =&gt; "\\Psi",
   "V" =&gt; "\\Xi"
 }
-currentWord=ENV["TM_SELECTED_TEXT"].to_s
+if ENV.has_key?("TM_SELECTED_TEXT") then
+  currentWord=ENV["TM_SELECTED_TEXT"].to_s
+else
+  currentWord=ENV["TM_CURRENT_WORD"].to_s
+end
 if (shortcutHash.has_key?(currentWord)) then
   print shortcutHash[currentWord]
 else
   print currentWord
 end</string>
 	<key>fallbackInput</key>
-	<string>none</string>
+	<string>word</string>
 	<key>input</key>
 	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string></string>
+	<string>@G</string>
 	<key>name</key>
 	<string>Greek letter helper</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>text.latex</string>
 	<key>uuid</key>
 	<string>A7D549C1-055E-4181-84F2-BA713EB66341</string>
 </dict>

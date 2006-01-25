@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+shortcutHash = {
+  " =&gt;" =&gt; "\\Rightarrow",
+  " -&gt;" =&gt; "\\rightarrow",
+  " &lt;=" =&gt; "\\Leftarrow",
+  " &lt;-" =&gt; "\\leftarrow",
+  "&lt;=&gt;" =&gt; "\\Leftrightarrow"
+}
+currentWord=ENV["TM_SELECTED_TEXT"].to_s
+if (shortcutHash.has_key?(currentWord)) then
+  print shortcutHash[currentWord]
+else
+  print currentWord
+end</string>
+	<key>fallbackInput</key>
+	<string>none</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string></string>
+	<key>name</key>
+	<string>Arrow helper</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>D740E077-D054-45D3-8E6D-2D04719FD6E1</string>
+</dict>
+</plist>
