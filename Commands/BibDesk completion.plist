@@ -44,10 +44,12 @@ res=`osascript &lt;&lt;EOF
 	end tell
 EOF`
 fi
+# If an error occurs, $? stores the return code.
+errorcode= $?
 # return control to TextMate
 osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
-# if user presses Cancel, then applescript returns false.
-if [[ ${res:0:5} == false ]]
+# If user presses Cancel, then applescript returns false. 
+if [[ (${res:0:5} == false) || ($errorcode != 0) ]]
 	then exit_discard
 fi
 
