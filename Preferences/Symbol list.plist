@@ -12,8 +12,13 @@
 		<integer>1</integer>
 		<key>symbolTransformation</key>
 		<string>
-		s/(?&lt;=\\|sub)sub/ /g;             # replace all leading "sub" with an em-space
-		s/^\\( *)section\*?(?:\[[^]]*\])?\{(.+)\}/$1$2/;   # then strip all but em-space + name
+		s/^\\part\*?(?:\[[^]]*\])?\{(.+)\}/$1/; # \part
+		s/^\\chapter\*?(?:\[[^]]*\])?\{(.+)\}/ $1/; # \part
+		s/^\\section\*?(?:\[[^]]*\])?\{(.+)\}/  $1/; # \section
+		s/^\\subsection\*?(?:\[[^]]*\])?\{(.+)\}/   $1/; # \section
+		s/^\\subsubsection\*?(?:\[[^]]*\])?\{(.+)\}/    $1/; # \section
+		s/^\\paragraph\*?(?:\[[^]]*\])?\{(.+)\}/     $1/; # \paragraph
+		s/^.*\{(.+)\}/$1/;     # take care of everything else
 	</string>
 	</dict>
 	<key>uuid</key>

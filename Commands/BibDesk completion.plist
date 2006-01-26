@@ -10,7 +10,7 @@
 # If the cursor is inside empty braces {}, then offer
 # a list of all bibliography items. In that case, 
 # the variable $phrase is not being set.
-	prev_ch=${TM_CURRENT_LINE:$TM_COLUMN_NUMBER-2:1}
+	prev_ch=${TM_CURRENT_LINE:$TM_LINE_INDEX-1:1}
 	if [[ $prev_ch != '{' ]]
 		then phrase=$TM_CURRENT_WORD
 	fi
@@ -44,28 +44,33 @@ res=`osascript &lt;&lt;EOF
 	end tell
 EOF`
 fi
-
-# NEED TO ADD HANDLING OF PRESSING "Cancel"
-
+# return control to TextMate
 osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
+# if user presses Cancel, then applescript returns false.
+if [[ ${res:0:5} == false ]]
+	then exit_discard
+fi
 
 res=`perl -pe &lt;&lt;&lt;$res 's/^(.*?)(\s*)%.*/$1/'` # strip comment
 res="${res//\\\\/\\\\}"                       # \ -&gt; \\
 res="${res//$/\\$}"                           # $ -&gt; \$
 
-if [[ -z $TM_SELECTED_TEXT ]] &amp;&amp; [[ -n $phrase ]]
-   then echo -n ${res:${#TM_CURRENT_WORD}}
-   else echo -n ${res}
-fi
-</string>
+echo -n $res
+#if [[ -z $TM_SELECTED_TEXT ]] &amp;&amp; [[ -n $phrase ]]
+#   then echo -n ${res:${#TM_CURRENT_WORD}}
+#   else echo -n ${res}
+#fi
+#</string>
+	<key>fallbackInput</key>
+	<string>word</string>
 	<key>input</key>
-	<string>none</string>
+	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>~</string>
+	<string></string>
 	<key>name</key>
 	<string>BibDesk Completion</string>
 	<key>output</key>
-	<string>insertAsSnippet</string>
+	<string>replaceSelectedText</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>
