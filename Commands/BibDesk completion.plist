@@ -45,7 +45,7 @@ res=`osascript &lt;&lt;EOF
 EOF`
 fi
 # If an error occurs, $? stores the return code.
-errorcode= $?
+errorcode=$?
 # return control to TextMate
 osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
 # If user presses Cancel, then applescript returns false. 
@@ -68,13 +68,13 @@ echo -n $res
 	<key>input</key>
 	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string></string>
+	<string>~</string>
 	<key>name</key>
 	<string>BibDesk Completion</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>meta.cite.latex</string>
 	<key>uuid</key>
 	<string>F80F9C22-ABB8-11D9-957A-000D93589AF6</string>
 </dict>
