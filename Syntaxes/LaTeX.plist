@@ -20,7 +20,7 @@
 	<array>
 		<dict>
 			<key>begin</key>
-			<string>((\\(?:(?:sub)*section|chapter|paragraph|part))(\*?)(?:(\[)[^\[]*?(\]))??(\{))</string>
+			<string>((\\(?:(?:sub)*section|chapter|paragraph|part|addpart|addchap|addsec|minisec))(\*?)(?:(\[)[^\[]*?(\]))??(\{))</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -315,7 +315,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\cite(al)?[tp]?\*?(\[[^\]]*\]){,2}\{)</string>
+			<string>(\\(foot)?cite(al)?[tp]?(year)?\*?(\[[^\]]*\]){,2}\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
