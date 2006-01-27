@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>if [[ -z $TM_SELECTED_TEXT ]]
+   then 
+# If the cursor is inside empty braces {}, then offer
+# a list of all bibliography items. In that case, 
+# the variable $phrase is not being set.
+	prev_ch=${TM_CURRENT_LINE:$TM_COLUMN_NUMBER-2:1}
+	if [[ $prev_ch != '{' ]]
+		then phrase=$TM_CURRENT_WORD
+	fi
+   else phrase=$TM_SELECTED_TEXT
+fi
+cd "$TM_SUPPORT_PATH/bin"
+if [[ -z $phrase ]]
+	then res=`./LatexCitekeys.rb -full=true $TM_LATEX_BIB $TM_LATEX_MASTER $TM_FILEPATH`
+	else res=`./LatexCitekeys.rb -full=true -p=$phrase $TM_LATEX_BIB $TM_LATEX_MASTER $TM_FILEPATH`
+fi
+if [[ -z $res ]]
+then
+	exit
+else
+# NEED TO ADD HANDLING OF PRESSING "Cancel"
+res=`sed &lt;&lt;&lt;$res -e $'s/,//g'`
+result=$(eval CocoaDialog dropdown \
+  --title 'Bibliography completion' \
+  --text 'Choose cite key for completion' \
+  --button1 Ok --button2 Cancel \
+  --string-output --no-newline \
+  --items "$res")
+fi
+if [[ ${result:0:2} != Ok ]]
+then
+	exit_discard
+else
+	result=${result:3}
+	echo -n ${result/ %*/}
+fi</string>
+	<key>fallbackInput</key>
+	<string>word</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>~</string>
+	<key>name</key>
+	<string>Bibliography Completion</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>meta.cite.latex</string>
+	<key>uuid</key>
+	<string>65E2109C-4309-4079-BD25-17D8B31F03CD</string>
+</dict>
+</plist>
