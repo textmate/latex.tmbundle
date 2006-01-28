@@ -10,20 +10,19 @@
 # If the cursor is inside empty braces {}, then offer
 # a list of all bibliography items. In that case, 
 # the variable $phrase is not being set.
-	prev_ch=${TM_CURRENT_LINE:$TM_COLUMN_NUMBER-2:1}
+	prev_ch=${TM_CURRENT_LINE:$TM_LINE_INDEX-1:1}
 	if [[ $prev_ch != '{' ]]
 		then phrase=$TM_CURRENT_WORD
 	fi
    else phrase=$TM_SELECTED_TEXT
 fi
-cd "$TM_SUPPORT_PATH/bin"
 if [[ -z $phrase ]]
-	then res=`./LatexCitekeys.rb -full=true $TM_LATEX_BIB $TM_LATEX_MASTER $TM_FILEPATH`
-	else res=`./LatexCitekeys.rb -full=true -p=$phrase $TM_LATEX_BIB $TM_LATEX_MASTER $TM_FILEPATH`
+	then res=`"$TM_SUPPORT_PATH/bin"/LatexCitekeys.rb -full=true $TM_LATEX_BIB $TM_LATEX_MASTER $TM_FILEPATH`
+	else res=`"$TM_SUPPORT_PATH/bin"/LatexCitekeys.rb -full=true -p=$phrase $TM_LATEX_BIB $TM_LATEX_MASTER $TM_FILEPATH`
 fi
 if [[ -z $res ]]
 then
-	exit
+	exit_discard
 else
 # NEED TO ADD HANDLING OF PRESSING "Cancel"
 res=`sed &lt;&lt;&lt;$res -e $'s/,//g'`
