@@ -213,17 +213,15 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\(footnote|noteToSelf)\{)</string>
+			<string>(\\footnote\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.footnote.latex</string>
 				</dict>
 			</dict>
-			<key>contentName</key>
-			<string>variable.parameter.footnote.latex</string>
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
@@ -232,7 +230,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>$self</string>
+					<string>$base</string>
 				</dict>
 			</array>
 		</dict>
@@ -248,7 +246,7 @@
 				</dict>
 			</dict>
 			<key>contentName</key>
-			<string>variable.parameter.emph.latex</string>
+			<string>markup.italic.emph.latex</string>
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
@@ -257,7 +255,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>$self</string>
+					<string>$base</string>
 				</dict>
 			</array>
 		</dict>
@@ -276,6 +274,8 @@
 			<string>We put the keyword in a capture and name this capture, so that disabling spell checking for “keyword” won't be inherited by the argument to \textit{...}.
 
 Put specific matches for particular LaTeX keyword.functions before the last two more general functions</string>
+			<key>contentName</key>
+			<string>markup.italic.textit.latex</string>
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
@@ -283,10 +283,8 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>match</key>
-					<string>[^}]+</string>
-					<key>name</key>
-					<string>markup.italic.textit.latex</string>
+					<key>include</key>
+					<string>$base</string>
 				</dict>
 			</array>
 		</dict>
@@ -301,6 +299,8 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<string>support.function.textbf.latex</string>
 				</dict>
 			</dict>
+			<key>contentName</key>
+			<string>markup.bold.textbf.latex</string>
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
@@ -308,10 +308,8 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>match</key>
-					<string>[^}]+</string>
-					<key>name</key>
-					<string>markup.bold.textbf.latex</string>
+					<key>include</key>
+					<string>$base</string>
 				</dict>
 			</array>
 		</dict>
@@ -326,6 +324,8 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<string>support.function.texttt.latex</string>
 				</dict>
 			</dict>
+			<key>contentName</key>
+			<string>markup.other.raw.texttt.latex</string>
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
@@ -333,10 +333,8 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>match</key>
-					<string>[^}]+</string>
-					<key>name</key>
-					<string>markup.other.raw.texttt.latex</string>
+					<key>include</key>
+					<string>$base</string>
 				</dict>
 			</array>
 		</dict>
@@ -359,7 +357,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>include</key>
-					<string>$self</string>
+					<string>$base</string>
 				</dict>
 			</array>
 		</dict>
@@ -382,7 +380,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>match</key>
-					<string>\w+</string>
+					<string>[\w:.]+</string>
 					<key>name</key>
 					<string>variable.parameter.cite.latex</string>
 				</dict>
