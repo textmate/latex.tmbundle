@@ -213,6 +213,56 @@
 		</dict>
 		<dict>
 			<key>begin</key>
+			<string>(\\(footnote|noteToSelf)\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.latex</string>
+				</dict>
+			</dict>
+			<key>contentName</key>
+			<string>variable.parameter.footnote.latex</string>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>meta.footnote.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>$self</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\emph\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.emph.latex</string>
+				</dict>
+			</dict>
+			<key>contentName</key>
+			<string>variable.parameter.emph.latex</string>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>meta.emph.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>$self</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
 			<string>(\\textit\{)</string>
 			<key>captures</key>
 			<dict>
@@ -315,7 +365,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\(foot)?cite(al)?[tp]?(year)?\*?(\[[^\]]*\]){,2}\{)</string>
+			<string>(\\(foot)?(full)?cite(al)?(t|p|author|year(par)?|title)?\*?(\[[^\]]*\]){,2}\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>

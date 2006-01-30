@@ -58,6 +58,27 @@ $D_1=\{x_1^2\}  \foo{bar}$
     \item item three with \textit{italic text}
 \end{enumerate}
 
+% emph, textit, textbf etc
+\textit{Italic text with math in it: $e^{frac{1}{2}}$. Also, and itemize list:
+\begin{itemize}
+  \item Item one, inside textit.
+\end{itemize}
+\textbf{And some bold face}.
+}
+
+\textbf{Some bold face by itself.}
+\emph{Emphasized text. Possibly rendered as italic?}
+
+% Footnotes, citations, references
+\footnote{A footnote. Math in the footnote: $\frac{1}{2}$. \textbf{Bold face in the footnote}.}
+\cite{citekey}
+\citealt{citekey}
+\citep{citekey:withsemicolon} % This should be all matched as one citekey
+\citeauthor{1985Metic..20..367D}  % This should be all matched as one citekey
+\footcite{citekey,secondkey}
+\footcitetitle{citekey}
+\ref{Reference Label}
+
 % the listing environment 
 \begin{lstlisting}[caption=The Vertex Class,label=lst:vertex,float=htbp]
 class Vertex:
