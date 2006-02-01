@@ -14,6 +14,15 @@
 
 \foo[f]{bar}{$10 + 20$} Here is a simple single function with several parameters
 
+% Catch commands followed by space properly so that this is not a mess:
+\foo{\bar [}
+\foo{\bar {stuff}}
+\foo{{\sf stuff}}
+\foo{{stuff}}
+% Maybe at some point deal with this. 4 is supposed to be the argument for \foo.
+\foo4
+
+
 LaTeX commands start with a \\ which must be followed by a single non-letter character, or one-or more letter characters.  LaTeX commands do not have numbers or underscores or any other non-letter character in them  so \this-is-not-a-legal-command.
 
 \newcommand{\uint}{\mathop{\mathchoice%

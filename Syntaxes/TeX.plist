@@ -40,8 +40,31 @@
 			<string>storage.type.function.tex</string>
 		</dict>
 		<dict>
+			<key>begin</key>
+			<string>(\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.operator.braces.tex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>meta.group.braces.tex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>$base</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
 			<key>match</key>
-			<string>[\[\]\{\}]</string>
+			<string>[\[\]]</string>
 			<key>name</key>
 			<string>keyword.operator.braces.tex</string>
 		</dict>
@@ -101,6 +124,20 @@
 			</array>
 			<key>swallow</key>
 			<string>\\\$</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.no-arg.tex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\\[A-Za-z]+)(?![a-zA-Z\{\[%])</string>
+			<key>name</key>
+			<string>meta.function.no-arg.tex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
