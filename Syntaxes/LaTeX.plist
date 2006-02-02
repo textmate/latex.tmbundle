@@ -339,9 +339,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</array>
 		</dict>
 		<dict>
-			<key>begin</key>
-			<string>\\item</string>
-			<key>beginCaptures</key>
+			<key>captures</key>
 			<dict>
 				<key>0</key>
 				<dict>
@@ -349,17 +347,10 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<string>keyword.general.item.latex</string>
 				</dict>
 			</dict>
-			<key>end</key>
-			<string>(?=^\s*\\(item|end))</string>
+			<key>match</key>
+			<string>\\item\b</string>
 			<key>name</key>
 			<string>meta.scope.item.latex</string>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>include</key>
-					<string>$base</string>
-				</dict>
-			</array>
 		</dict>
 		<dict>
 			<key>begin</key>

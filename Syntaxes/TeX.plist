@@ -41,17 +41,17 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\{)</string>
+			<string>\{</string>
 			<key>captures</key>
 			<dict>
-				<key>1</key>
+				<key>0</key>
 				<dict>
 					<key>name</key>
 					<string>keyword.operator.braces.tex</string>
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
 			<key>name</key>
 			<string>meta.group.braces.tex</string>
 			<key>patterns</key>
@@ -141,7 +141,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\[A-Za-z]+)(?=\s*[\{\[])</string>
+			<string>(\\[A-Za-z]+)(?=[\{\[])</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
