@@ -200,7 +200,7 @@
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\\end\{)(\2)(\})</string>
+			<string>(\\end\{)(\2)(\})(\s*\n)?</string>
 			<key>name</key>
 			<string>meta.environment.list.latex</string>
 			<key>patterns</key>
