@@ -126,69 +126,14 @@
 			<string>\\\$</string>
 		</dict>
 		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>support.function.no-arg.tex</string>
-				</dict>
-			</dict>
 			<key>match</key>
-			<string>(\\[A-Za-z]+)(?![a-zA-Z\{\[%])</string>
+			<string>(\\[A-Za-z]+)(?![a-zA-Z])</string>
 			<key>name</key>
-			<string>meta.function.no-arg.tex</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>(\\[A-Za-z]+)(?=[\{\[])</string>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>support.function.with-arg.latex</string>
-				</dict>
-			</dict>
-			<key>comment</key>
-			<string>These next two are catch-all matches that will match almost any latex function. First match: \foo{arg1}</string>
-			<key>end</key>
-			<string>(?=\s*[^\{\[\s])</string>
-			<key>name</key>
-			<string>meta.function.with-arg.tex</string>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>begin</key>
-					<string>\{</string>
-					<key>end</key>
-					<string>\}</string>
-					<key>patterns</key>
-					<array>
-						<dict>
-							<key>include</key>
-							<string>$base</string>
-						</dict>
-					</array>
-				</dict>
-				<dict>
-					<key>begin</key>
-					<string>\[</string>
-					<key>end</key>
-					<string>\]</string>
-					<key>patterns</key>
-					<array>
-						<dict>
-							<key>include</key>
-							<string>$base</string>
-						</dict>
-					</array>
-				</dict>
-			</array>
+			<string>support.function.general.tex</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\\([^a-zA-Z]|[A-Za-z]+)(?=\b|\}|\]|\^|\_)</string>
+			<string>\\[^a-zA-Z]</string>
 			<key>name</key>
 			<string>keyword.tex.general</string>
 		</dict>
