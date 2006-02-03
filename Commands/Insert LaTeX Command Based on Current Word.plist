@@ -58,9 +58,9 @@ firstLineNoBeamer = {	"enumerate" =&gt; "\\item ",
  		"parts" =&gt; "\\part ",
  		"figure" =&gt; "\t\\begin{center}\n\t\t\\includegraphics[scale=${2:1}]{${3:file}}\n\t\\end{center}\n\t\\caption{${4:caption}}\n\t\\label{fig:${5:label}}"
  	}
-firstLineBeamer = firstLineNoBeamer.clone.update({ "enumerate" =&gt; "\\item${1:&lt;${2:+-}&gt;} $3",
-   "itemize" =&gt; "\\item${1:&lt;${2:+-}&gt;} $3",
-	 "description" =&gt; "\\item${1:&lt;${2:+-}&gt;} $3",
+firstLineBeamer = firstLineNoBeamer.clone.update({ "enumerate" =&gt; "\\item&lt;${1:+-}&gt; $2",
+   "itemize" =&gt; "\\item&lt;${1:+-}&gt; $2",
+	 "description" =&gt; "\\item&lt;${1:+-}&gt; $2",
  	 "columns" =&gt; "\\begin{column}{${1:${2:0.5}\\textwidth}}\n\t$3\n\\end{column}"
    })
 firstLine = (/beamer/.match(ENV['TM_SCOPE'].to_s) ? firstLineBeamer : firstLineNoBeamer).update(customFirstLines)
