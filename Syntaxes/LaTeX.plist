@@ -107,7 +107,7 @@
 				</dict>
 			</dict>
 			<key>contentName</key>
-			<string>markup.other.raw.latex</string>
+			<string>markup.raw.verbatim.latex</string>
 			<key>end</key>
 			<string>(\\end\{)(verbatim)(\})</string>
 			<key>name</key>
@@ -179,21 +179,6 @@
 					<string>variable.parameter.latex</string>
 				</dict>
 				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>support.function.be.latex</string>
-				</dict>
-				<key>4</key>
-				<dict>
-					<key>name</key>
-					<string>support.function.be.latex</string>
-				</dict>
-				<key>5</key>
-				<dict>
-					<key>name</key>
-					<string>variable.parameter.latex</string>
-				</dict>
-				<key>6</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.be.latex</string>
@@ -325,7 +310,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>contentName</key>
-			<string>markup.other.raw.texttt.latex</string>
+			<string>markup.raw.texttt.latex</string>
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
@@ -379,26 +364,51 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\(?:ref|eqref|label)\{)</string>
+			<string>(\\(?:ref|eqref)\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.control.ref-or-label.latex</string>
+					<string>keyword.control.ref.latex</string>
 				</dict>
 			</dict>
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
-			<string>meta.ref-or-label.latex</string>
+			<string>meta.label.reference.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>match</key>
 					<string>[a-zA-Z,:0-9]+</string>
 					<key>name</key>
-					<string>variable.parameter.ref-or-latex.latex</string>
+					<string>variable.parameter.label.reference.latex</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\label\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.label.latex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>meta.label.definition.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>[a-zA-Z,:0-9]+</string>
+					<key>name</key>
+					<string>variable.parameter.label.definition.latex</string>
 				</dict>
 			</array>
 		</dict>
@@ -408,26 +418,28 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.general.latex</string>
+					<string>support.function.verb.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>support.delimiter.latex</string>
+					<string>keyword.operator.delimiter.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>markup.other.raw.latex</string>
+					<string>markup.raw.verb.latex</string>
 				</dict>
 				<key>4</key>
 				<dict>
 					<key>name</key>
-					<string>support.delimiter.latex</string>
+					<string>keyword.operator.delimiter.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>
 			<string>(\\verb[\*]?)(\S)(.*?)(\2|$)</string>
+			<key>name</key>
+			<string>meta.verb.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
