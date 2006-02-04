@@ -119,7 +119,8 @@ else
 	else
 	  firstLineToPrint = "\t$10"
   end
-  puts(zeroLineToPrint,firstLineToPrint,endLineToPrint)
+  puts(zeroLineToPrint,firstLineToPrint)
+  print(endLineToPrint)
 end
 </string>
 	<key>fallbackInput</key>
