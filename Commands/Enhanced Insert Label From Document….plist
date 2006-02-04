@@ -9,37 +9,57 @@
 	<key>capturePattern</key>
 	<string>^([^:]*):([^:]*):(.*)$</string>
 	<key>command</key>
-	<string># Search the current document for \label{…} declarations and 
-# show these in a list, from which the user can pick.
-# Also search in files \include'd in the file pointed to 
-# by the TM_LATEX_MASTER variable.
-
-var=`echo $TM_CURRENT_WORD|grep -v '}'`
-list=`ruby -- "$TM_BUNDLE_PATH/Support/bin/labelList.rb"`
-#list=`grep "\\label{$var.*}"|perl -pe 's/.*\\label\{(.*?)\}(.*)\n/"$1 : $2",/'|sed 's|\\\\||g'`
-res=`osascript &lt;&lt;EOF
-	tell application "System Events"
-		activate
-		choose from list { ${list:0:${#list}-1} }
-	end tell
-EOF`
-osascript -e 'tell app "TextMate" to activate' &amp;&gt;/dev/null &amp;
-res2=`sed &lt;&lt;&lt;$res 's/^.* : \(.*\)$/\1/'`
-echo -n ${res2#${var}}</string>
+	<string>if [[ -z $TM_SELECTED_TEXT ]]
+   then 
+# If the cursor is inside empty braces {}, then offer
+# a list of all bibliography items. In that case, 
+# the variable $phrase is not being set.
+	prev_ch=${TM_CURRENT_LINE:$TM_LINE_INDEX-1:1}
+	if [[ $prev_ch != '{' ]]
+		then phrase=$TM_CURRENT_WORD
+	fi
+   else phrase=$TM_SELECTED_TEXT
+fi
+if [[ -z $phrase ]]
+	then res=`"$TM_SUPPORT_PATH/bin"/LatexLabelCompletions.rb $TM_LATEX_MASTER $TM_FILEPATH`
+	else res=`"$TM_SUPPORT_PATH/bin"/LatexLabelCompletions.rb -p=$phrase $TM_LATEX_MASTER $TM_FILEPATH`
+fi
+if [[ -z $res ]]
+then
+	exit_discard
+else
+# NEED TO ADD HANDLING OF PRESSING "Cancel"
+res=`sed &lt;&lt;&lt;$res -e $'s/,//g'`
+result=$(eval CocoaDialog dropdown \
+  --title 'Label completion' \
+  --text 'Choose label for completion' \
+  --button1 Ok --button2 Cancel \
+  --string-output --no-newline \
+  --items "$res")
+fi
+if [[ ${result:0:2} != Ok ]]
+then
+	exit_discard
+else
+	result=${result:3}
+	echo -n ${result/ %*/}
+fi</string>
+	<key>fallbackInput</key>
+	<string>word</string>
 	<key>fileCaptureRegister</key>
 	<string>1</string>
 	<key>input</key>
-	<string>document</string>
+	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>^~</string>
+	<string>~</string>
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
 	<string>Enhanced Insert Label From Document…</string>
 	<key>output</key>
-	<string>afterSelectedText</string>
+	<string>replaceSelectedText</string>
 	<key>scope</key>
-	<string>meta.ref-or-label</string>
+	<string>meta.label.reference</string>
 	<key>uuid</key>
 	<string>9A3FE182-40AB-4980-AB6C-32DDA22DE41D</string>
 </dict>
