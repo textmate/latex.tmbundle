@@ -165,7 +165,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\begin\{)(\w+[*]?)(\})</string>
+			<string>(?:\s*)(\\begin\{)(\w+[*]?)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -185,7 +185,7 @@
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\\end\{)(\2)(\})(\s*\n)?</string>
+			<string>(\\end\{)(\2)(\})(?:\s*\n)?</string>
 			<key>name</key>
 			<string>meta.environment.list.latex</string>
 			<key>patterns</key>

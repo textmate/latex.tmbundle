@@ -27,7 +27,7 @@ awk &lt;&lt;&lt;${res#${var}} '{ printf("%s", $1) }'</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string>~</string>
+	<string>^~</string>
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
@@ -35,7 +35,7 @@ awk &lt;&lt;&lt;${res#${var}} '{ printf("%s", $1) }'</string>
 	<key>output</key>
 	<string>afterSelectedText</string>
 	<key>scope</key>
-	<string>meta.ref-or-label</string>
+	<string>meta.label.reference</string>
 	<key>uuid</key>
 	<string>9B80A79A-BF8D-11D9-9186-000A95C0F626</string>
 </dict>

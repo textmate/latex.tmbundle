@@ -26,7 +26,8 @@ end
 shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
               "sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", 
               "fc" =&gt; "footcite", "fn" =&gt; "footnote", "cli" =&gt;"lstinline", "ds" =&gt; "displaystyle",
-              "sec" =&gt; "section", "sub" =&gt; "subsection", "ssub" =&gt; "subsubsection"
+              "sec" =&gt; "section", "sub" =&gt; "subsection", "ssub" =&gt; "subsubsection",
+              "un" =&gt; "uncover", "dc" =&gt; "documentclass"
  }.update(customShortcuts)
 # Add to the environment variable TM_LATEX_COMMAND_BEFOREBRACES a list of all commands for which you want some
 # text right after the command and before a potential brace, e.g. \put(10,10){stuff} could be done by setting 
@@ -43,7 +44,8 @@ beforeBraces = {
   "multiput" =&gt; "(${1:0},${2:0})(${3:5},${4:0}){${5:2}}",
   "line" =&gt; "(${1:0},${2:0}){${3:0}}",
   "circle" =&gt; "${1:[*]}",
-  "frac" =&gt; "{${1:num}}"
+  "frac" =&gt; "{${1:num}}",
+  "uncover" =&gt; "&lt;${1:+-}&gt;"
 }.update(customBeforeBraces)
 
 # Add to the environment variable TM_LATEX_COMMAND_NOBRACES a regexp of all commands for which you 

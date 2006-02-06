@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Label Completion</string>
 	<key>scope</key>
-	<string>text.latex meta.ref-or-label.latex</string>
+	<string>text.latex meta.label.reference</string>
 	<key>settings</key>
 	<dict>
 		<key>completionCommand</key>

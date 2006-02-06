@@ -86,7 +86,7 @@ zeroLineNoBeamer = {
 }
 zeroLineBeamer = zeroLineNoBeamer.clone.update({  
   "column" =&gt; "{${1:${2:0.5}\\textwidth}}",
-  "frame" =&gt; "\\frametitle{${1:title}}",
+  "frame" =&gt; "[${1:t}]\\frametitle{${2:title}}",
   "block" =&gt; "{$1}",
   "table" =&gt; "\n\n\t\\begin{center}\n\t\\begin{tabular}{${3:c}}\n\t\t${4}\n\\end{tabular}\n\t\\end{center}\n\n\t\\caption{${1:caption}}\n\t\\label{${2:label}}\n"
 })
