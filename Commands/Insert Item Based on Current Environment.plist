@@ -54,7 +54,7 @@ end</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string>#</string>
+	<string></string>
 	<key>name</key>
 	<string>Insert Item Based on Current Environment</string>
 	<key>output</key>
