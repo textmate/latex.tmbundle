@@ -55,6 +55,7 @@ if (($RC &gt;= 2)); then exit; fi
 if [ "$V" == html ]; then
 	if [ -s "${PDF}" ]; then
 		WEB_LOC="tm-file://${DIR}/${PDF}"
+		WEB_LOC="${WEB_LOC//\\#/%23}"
 		if (($RC &gt; $EL)); then
 			link "${WEB_LOC}" 'Click Here to Preview'
 		else
