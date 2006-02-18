@@ -12,12 +12,15 @@ if ENV.has_key?('TM_SELECTED_TEXT') then
 else
   result=`"$TM_SUPPORT_PATH/bin"/CocoaDialog.app/Contents/MacOS/CocoaDialog standard-inputbox \
   --title 'LaTeX Array Creation' \
-  --informative-text '\# of rows and columns, separated by space' \
-  --no-cancel`
+  --informative-text 'Number of rows and columns:' \
+  --text '6 4'`
+  exit if result[0..0] == '2'
   result=result.split(/$/)[1]
 end
 # print "Result: #{result}"
-rows, columns = result.to_s.split(' ').map{|i| i.to_i}
+m = /(\d+)\D+(\d+)/.match(result.to_s)
+exit if m.nil?
+rows, columns = m[1].to_i, m[2].to_i
 # print "Rows: #{rows}"
 # print "Columns: #{columns}"
 print "\\begin{tabular}{"
