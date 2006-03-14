@@ -445,9 +445,18 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>begin</key>
 			<string>``</string>
 			<key>end</key>
-			<string>''</string>
+			<string>''|"</string>
 			<key>name</key>
 			<string>string.quoted.double.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\\.</string>
+					<key>name</key>
+					<string>constant.character.escape.latex</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
