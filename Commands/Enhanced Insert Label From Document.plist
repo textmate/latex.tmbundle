@@ -21,8 +21,8 @@
    else phrase=$TM_SELECTED_TEXT
 fi
 if [[ -z $phrase ]]
-	then res=`"$TM_SUPPORT_PATH/bin"/LatexLabelCompletions.rb $TM_LATEX_MASTER $TM_FILEPATH`
-	else res=`"$TM_SUPPORT_PATH/bin"/LatexLabelCompletions.rb -p=$phrase $TM_LATEX_MASTER $TM_FILEPATH`
+	then res=`"$TM_SUPPORT_PATH/bin"/LatexLabelCompletions.rb -e $TM_LATEX_MASTER $TM_FILEPATH`
+	else res=`"$TM_SUPPORT_PATH/bin"/LatexLabelCompletions.rb -e -p=$phrase $TM_LATEX_MASTER $TM_FILEPATH`
 fi
 if [[ -z $res ]]
 then
