@@ -53,7 +53,7 @@ if (($RC &gt;= 2)); then exit; fi
 
 # View...
 if [ "$V" == html ]; then
-	if [ -s "${PDF}" ]; then
+	if [ -s "${PDF}" -a "$PDF" -nt "$FILE" ]; then
 		WEB_LOC="tm-file://${DIR}/${PDF}"
 		WEB_LOC="${WEB_LOC//\\#/%23}"
 		if (($RC &gt; $EL)); then

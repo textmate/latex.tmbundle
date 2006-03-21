@@ -50,10 +50,17 @@ while line:
         print '<h3>' + line[:-1] + '</h3>'
         sys.stdin.readline()
         inbibidx = True
-
-    if re.match('(! Emergency stop|Error:)',line):
+    
+    if re.match('\! LaTeX Error:', line):
         print '<div class="error">'
         print line
+        print '</div>'
+        numErrs = numErrs + 1
+    
+    es = re.match('([^:]*):(\d+): Emergency stop',line)
+    if es:
+        print '<div class="error">'
+        print '<a class="error" href="' + make_link(os.getcwd()+'/'+es.group(1),es.group(2)) +  '">' + es.group(1) + '</a>'
         print 'See the log file for details'
         print '</div>'
         numErrs = numErrs + 1
@@ -88,7 +95,7 @@ while line:
     e = errPat.match(line)
     me = miscWarnPat.match(line)
     
-    # if we detect a warning message add the current file to the warning plus a tag
+    # elif we detect a warning message add the current file to the warning plus a tag
     # to make it easy to pick out the line as an error line in TextMate.
     # Do the same thing for error messages.
     if w:
@@ -112,8 +119,8 @@ if numWarns > 0 or numErrs > 0:
         eCode = 2
     else:
         eCode = 1
-else:
-    print "Success"
+# else:
+#     print "Success"
 
 print '</pre>'
 sys.exit(eCode)
