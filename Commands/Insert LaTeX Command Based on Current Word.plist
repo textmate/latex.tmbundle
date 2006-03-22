@@ -78,7 +78,7 @@ zeroLineNoBeamer = {
  		"theorem" =&gt; "\\label{thm:$1}",
  		"corollary" =&gt; "\\label{cor:$1}",
  		"lemma" =&gt; "\\label{lem:$1}",
- 		"proof" =&gt; "\\label{pf:$1}",
+ 		"proof" =&gt; "${1:\\label{pf:$2\\}}",
  		"proposition" =&gt; "\\label{pro:$1}",
  		"definition" =&gt; "\\label{def:$1}",
     "lstlisting" =&gt; "[caption=${1:cap},label=lst:${2:lab},float=htbp]",
@@ -109,7 +109,7 @@ else
 		zeroLineToPrint = "\\begin{#{name}}#{zeroLine[name]}"
   elsif (lab == 1)
    	labPrefix = name.slice(0,3)
-		zeroLineToPrint = "\\begin{#{name}}\\label{#{labPrefix}:$1}"
+		zeroLineToPrint = "\\begin{#{name}}{$1:\\label{#{labPrefix}:$2\\}}"
   else
     zeroLineToPrint = "\\begin{#{name}}" 
 	end

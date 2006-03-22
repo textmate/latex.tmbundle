@@ -27,6 +27,7 @@ shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
               "sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", 
               "fc" =&gt; "footcite", "fn" =&gt; "footnote", "cli" =&gt;"lstinline", "ds" =&gt; "displaystyle",
               "sec" =&gt; "section", "sub" =&gt; "subsection", "ssub" =&gt; "subsubsection",
+              "cha" =&gt; "chapter",
               "un" =&gt; "uncover", "dc" =&gt; "documentclass", "l" =&gt; "lim", "fr" =&gt; "frac"
  }.update(customShortcuts)
 # Add to the environment variable TM_LATEX_COMMAND_BEFOREBRACES a list of all commands for which you want some
