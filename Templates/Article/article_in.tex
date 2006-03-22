@@ -34,14 +34,16 @@
 % If you want to generate a toc for each chapter (use with book)
 \usepackage{minitoc}
 
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
 
-\newif\ifpdf
-\ifx\pdfoutput\undefined
-\pdffalse % we are not running PDFLaTeX
-\else
-\pdfoutput=1 % we are running PDFLaTeX
-\pdftrue
-\fi
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%\pdffalse % we are not running PDFLaTeX
+%\else
+%\pdfoutput=1 % we are running PDFLaTeX
+%\pdftrue
+%\fi
 
 \ifpdf
 \usepackage[pdftex]{graphicx}
