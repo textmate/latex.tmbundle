@@ -523,12 +523,6 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>constant.character.latex</string>
 		</dict>
 		<dict>
-			<key>match</key>
-			<string>«press a-z and space for greek letter»[a-zA-Z]*</string>
-			<key>name</key>
-			<string>meta.placeholder.greek.latex</string>
-		</dict>
-		<dict>
 			<key>include</key>
 			<string>source.tex</string>
 		</dict>
