@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array/>
+	<key>foldingStartMarker</key>
+	<string>/\*\*|\{\s*$</string>
+	<key>foldingStopMarker</key>
+	<string>\*\*/|^\s*\}</string>
+	<key>name</key>
+	<string>TeX Math</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>match</key>
+			<string>\\\b(alpha|theta|tau|beta|vartheta|pi|upsilon|gamma|iota|varpi|phi|delta|kappa|rho|varphi|epsilon|lambda|varrho|chi|varepsilon|mu|sigma|psi|zeta|nu|varsigma|omega|eta|xi|Gamma|Lambda|Sigma|Psi|Delta|Xi|Upsilon|Omega|Theta|Pi|Phi|pm|cap|diamond|oplus|mp|cup|bigtriangleup|ominus|times|uplus|bigtriangledown|otimes|div|sqcap|triangleleft|oslash|ast|sqcup|triangleright|odot|star|vee|lhd|bigcirc|circ|wedge|rhd|dagger|bullet|setminus|unlhd|ddagger|cdot|wr|unrhd|amalg|leq|geq|equiv|models|prec|succ|sim|perp|preceq|succeq|simeq|mid|ll|gg|asymp|parallel|subset|supset|approx|bowtie|subseteq|supseteq|cong|Join|sqsubset|sqsupset|neq|smile|sqsubseteq|sqsupseteq|doteq|frown|in|ni|propto|vdash|dashv|colon|ldotp|cdotp|leftarrow|longleftarrow|uparrow|Leftarrow|Longleftarrow|Uparrow|rightarrow|longrightarrow|downarrow|Rightarrow|Longrightarrow|Downarrow|leftrightarrow|longleftrightarrow|updownarrow|Leftrightarrow|Longleftrightarrow|Updownarrow|mapsto|longmapsto|nearrow|hookleftarrow|hookrightarrow|searrow|leftharpoonup|rightharpoonup|swarrow|leftharpoondown|rightharpoondown|nwarrow|rightleftharpoons|leadsto|ldots|cdots|vdots|ddots|aleph|prime|forall|infty|hbar|emptyset|exists|Box|imath|nabla|neg|Diamond|jmath|surd|flat|triangle|ell|top|natural|clubsuit|wp|bot|sharp|diamondsuit|Re|backslash|heartsuit|Im|angle|partial|spadesuit|mho|sum|bigcap|bigodot|prod|bigcup|bigotimes|coprod|bigsqcup|bigoplus|int|bigvee|biguplus|oint|bigwedge|uparrow|Uparrow|downarrow|Downarrow|updownarrow|Updownarrow|lfloor|rfloor|lceil|rceil|langle|rangle|backslash|ulcorner|urcorner|llcorner|lrcorner|dashrightarrow|dashleftarrow|leftleftarrows|leftrightarrows|Lleftarrow|twoheadleftarrow|leftarrowtail|looparrowleft|leftrightharpoons|curvearrowleft|circlearrowleft|Lsh|upuparrows|upharpoonleft|downharpoonleft|multimap|leftrightsquigarrow|rightrightarrows|rightleftarrows|rightrightarrows|rightleftarrows|twoheadrightarrow|rightarrowtail|looparrowright|rightleftharpoons|curvearrowright|circlearrowright|Rsh|downdownarrows|upharpoonright|downharpoonright|rightsquigarrow|nleftarrow|nrightarrow|nLeftarrow|nRightarrow|nleftrightarrow|nLeftrightarrow|digamma|varkappa|beth|daleth|gimel|hbar|hslash|vartriangle|triangledown|square|lozenge|circledS|angle|measuredangle|nexists|mho|Finv|Game|Bbbk|backprime|varnothing|blacktriangle|blacktriangledown|blacksquare|blacklozenge|bigstar|sphericalangle|complement|eth|diagup|diagdown|dotplus|smallsetminus|Cap|Cup|barwedge|veebar|doublebarwedge|boxminus|boxtimes|boxdot|boxplus|divideontimes|ltimes|rtimes|leftthreetimes|rightthreetimes|curlywedge|curlyvee|circleddash|circledast|circledcirc|centerdot|intercal|leqq|leqslant|eqslantless|lesssim|lessapprox|approxeq|lessdot|lll|lessgtr|lesseqgtr|lesseqqgtr|doteqdot|risingdotseq|fallingdotseq|backsim|backsimeq|subseteqq|Subset|sqsubset|preccurlyeq\|curlyeqprec|precsim|precapprox|vartriangleleft\|trianglelefteq|vDash|Vvdash|smallsmile|smallfrown|bumpeq|Bumpeq|geqq|geqslant|eqslantgtr|gtrsim|gtrapprox|gtrdot|ggg|gtrless|gtreqless|gtreqqless|eqcirc|circeq|triangleq|thicksim|thickapprox|supseteqq|Supset|sqsupset|succcurlyeq|curlyeqsucc|succsim|succapprox|vartriangleright|trianglerighteq|Vdash|shortmid|shortparallel|between|pitchfork|varpropto|blacktriangleleft|therefore|backepsilon\|blacktriangleright|because|nless|nleq|nleqslant|nleqq|lneq|lneqq|lvertneqq|lnsim|lnapprox|nprec|npreceq|precnsim|precnapprox|nsim|nshortmid|nmid|nvdash|nvDash|ntriangleleft|ntrianglelefteq\|nsubseteq|subsetneq|varsubsetneq|subsetneqq|varsubsetneqq|ngtr|ngeq|ngeqslant|ngeqq|gneq|gneqq|gvertneqq|gnsim|gnapprox|nsucc|nsucceq|nsucceq|succnsim|succnapprox|ncong|nshortparallel|nparallel|nvDash|nVDash|ntriangleright|ntrianglerighteq|nsupseteq|nsupseteqq\|supsetneq|varsupsetneq|supsetneqq|varsupsetneqq|Lbag|Rbag|lbag|rbag|llceil|rrceil|llfloor|rrfloor|llbracket|rrbracket|Longmapsfrom|Longmapsto|Mapsfrom|Mapsto|nnearrow|nnwarrow|ssearrow|sswarrow|shortdownarrow|shortuparrow|shortleftarrow|shortrightarrow|longmapsfrom|mapsfrom|leftarrowtriangle|rightarrowtriangle|lightning|rrparenthesis|leftrightarroweq|leftrightarrowtriangle|Arrownot|Mapsfromchar|Mapstochar|arrownot|mapsfromchar|Ydown|Yleft|Yright|Yup|baro|bbslash|binampersand|bindnasrepma|boxast|boxbar|boxbox|boxbslash|boxcircle|boxdot|boxempty|boxslash|curlyveedownarrow|curlyveeuparrow|curlywedgedownarrow|curlywedgeuparrow|fatbslash|fatsemi|fatslash|interleave|leftslice|merge|minuso|moo|nplus|obar|oblong|obslash|ogreaterthan|olessthan|ovee|owedge|rightslice|sslash|talloblong|varbigcirc|varcurlyvee|varcurlywedge|varoast|varobar|varobslash|varocircle|varodot|varogreaterthan|varolessthan|varominus|varoplus|varoslash|varotimes|varovee|varowedge|vartimes|bigbox|bigcurlyvee|bigcurlywedge|biginterleave|bignplus|bigparallel|bigsqcap|bigtriangledown|bigtriangleup|inplus|niplus|subsetplus|subsetpluseq|supsetplus|supsetpluseq|trianglelefteqslant|trianglerighteqslant|ntrianglelefteqslant|ntrianglerighteqslant)\b</string>
+			<key>name</key>
+			<string>constant.character.math.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\\b(sum|prod|coprod|int|oint|bigcap|bigcup|bigsqcup|bigvee|bigwedge|bigodot|bigotimes|bogoplus|biguplus)\b</string>
+			<key>name</key>
+			<string>constant.character.math.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\\b(arccos|arcsin|arctan|arg|cos|cosh|cot|coth|csc|deg|det|dim|exp|gcd|hom|inf|ker|lg|lim|liminf|limsup|ln|log|max|min|pr|sec|sin|sinh|sup|tan|tanh)\b</string>
+			<key>name</key>
+			<string>constant.language.math.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\([^a-zA-Z]|[A-Za-z]+)(?=\b|\}|\]|\^|\_)</string>
+			<key>name</key>
+			<string>constant.language.general.math.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>(([0-9]*[\.][0-9]+)|[0-9]+)</string>
+			<key>name</key>
+			<string>constant.numeric.math.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>«press a-z and space for greek letter»[a-zA-Z]*</string>
+			<key>name</key>
+			<string>meta.placeholder.greek.math.tex</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.math.tex</string>
+	<key>uuid</key>
+	<string>027D6AF4-E9D3-4250-82A1-8A42EEFE4F76</string>
+</dict>
+</plist>

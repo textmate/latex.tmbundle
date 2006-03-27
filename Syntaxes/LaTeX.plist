@@ -165,6 +165,41 @@
 		</dict>
 		<dict>
 			<key>begin</key>
+			<string>(?:\s*)(\\begin\{)((?:align|equation|eqnarray|multline|aligned|alignat|split|gather|gathered)[*]?)(\})</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.be.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.be.latex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\\end\{)(\2)(\})(?:\s*\n)?</string>
+			<key>name</key>
+			<string>string.environment.math.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.math.tex</string>
+					<key>name</key>
+					<string>string.other.math.latex</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
 			<string>(?:\s*)(\\begin\{)(\w+[*]?)(\})</string>
 			<key>captures</key>
 			<dict>
@@ -364,7 +399,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\(?:ref|eqref)\{)</string>
+			<string>(\\(?:[a-z]*ref)\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -473,6 +508,13 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>\\\)</string>
 			<key>name</key>
 			<string>string.other.math.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.math.tex</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -481,6 +523,13 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>\\\]</string>
 			<key>name</key>
 			<string>string.other.math.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.math.tex</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>captures</key>
