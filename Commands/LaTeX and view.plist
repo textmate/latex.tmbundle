@@ -41,7 +41,7 @@ close() {
 run_tex () {
 if [ "$TEX" != latexmk.pl ]
 	then "$TEX" ${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style} "$1"
-	else "$TEX" -f -r "${TM_BUNDLE_PATH}/latexmkrc" "$1"
+	else "$TEX" -f -r "${TM_BUNDLE_SUPPORT}/latexmkrc" "$1"
 fi
 }
 
