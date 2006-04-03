@@ -56,6 +56,17 @@ while line:
         print line
         print '</div>'
         numErrs = numErrs + 1
+
+    le = re.match('([^:]*):(\d+): LaTeX Error:(.*)',line)
+    if le:
+        print '<div class="warning">'
+        latexErrorMsg = '<a class="warning" href="' + make_link(os.getcwd()+'/'+le.group(1),le.group(2)) +  '">' + le.group(1)+":"+le.group(2) + '</a> '+le.group(3)
+        line = sys.stdin.readline()
+        while len(line) > 1:
+            latexErrorMsg = latexErrorMsg+line
+            line = sys.stdin.readline()
+        print latexErrorMsg+'</div>'
+        numWarns = numWarns + 1
     
     es = re.match('([^:]*):(\d+): Emergency stop',line)
     if es:

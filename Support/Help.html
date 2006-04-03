@@ -253,7 +253,15 @@
     <dd><p>This is how the generated PDF should be accessed (see PDFTEX_FILE_LOCATION). It defaults to http://localhost/~$USER</p></dd>    
 
     <dt>TM_LATEX_ERRLVL</dt>
-    <dd><p>Sets the error level of the latex command to check for.  If the error level is sufficiently low, then the html output window will be closed before the preview window is open.  If there are errors or warnings then the preview window stays around.  Some may want to have the preview window dissapear on warnings also, thus we have this variable.</p></dd>
+    <dd><p>Set this to the error level you still want to be able to see:
+	<ul>
+		<li><b>2</b>: If a document was successfully built, it will jump directly to the preview.</li>
+		<li><b>1</b>: If there are any warnings, these are shown, together with a link to the preview.</li>
+		<li><b>0</b>: Halt on any errors or warnings, a link to the preview is only included if the document was built.</li>
+	</ul>
+	The default value is <b>2</b>. If the document could not be built, then the error messages are always shown.
+</p>
+</dd>
 
     <dt>TM_LATEX_COMPILER</dt>
     <dd><p>There are two main values for this command pdflatex or latexmk.pl.  pdflatex runs the normal pdflatex command against the current file, or TM_LATEX_MASTER sending the output of one pass to the html output window.  latexmk.pl  is essentially like ant (or make) for latex.  It will run pdflatex, bibtex, and/or makeindex as many times as needed to get a clean pdf file free from missing references, bibliography entries or index entries.</p></dd>

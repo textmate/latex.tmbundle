@@ -1,11 +1,69 @@
+eval '(exit $?0)' && eval 'exec perl -x -S "$0" ${1+"$@"}' && 
+eval 'exec perl -x -S  "$0" $argv:q'
+if 0;
 #!/usr/bin/perl -w
 #!/opt/local/bin/perl -w
 #!/usr/local/bin/perl -w
 
+
+# ATTEMPT TO ALLOW FILENAMES WITH SPACES:
+#    (as of 1 Apr 2006)
+
+# Problems:
+# A.  Quoting filenames will not always work.  
+#        a.  Under UNIX, quotes are legal in filenames, so when PERL
+#            directly runs a binary, a quoted filename will be treated as
+#            as a filename containing a quote character.  But when it calls
+#            a shell, the quotes are handled by the shell as quotes.
+#        b.  Under MSWin32, quotes are illegal filename characters, and tend
+#            to be handled correctly.
+#        c.  But under cygwin, results are not so clear (there are many 
+#            combinations: native v. cygwin perl, native v cygwin programs
+#            NT v. unix scripts, which shell is called.
+# B.  TeX doesn't handle filenames with spaces gracefully.
+#        a.  Current UNIX (gluon2 Mar 31, Apr 1, 2006) doesn't handle them 
+#            at all.  (Somewhere there's raw TeX that treats space as separater.)
+#        b.  Current fptex does.  But in \input the filename must be in quotes.
+#            This is incompatible with UNIX, where quotes are legal filename 
+#            characters, and so quotes are interpreted as belonging to the 
+#            filename.
+#     =====> Thus there is no OS- and TeX-version independent way of using 
+#     filenames with spaces with \input. ===========================
+# C.  =====> Using the shell for command lines is not safe, since special 
+#     characters can cause lots of mayhem.
+#     It will therefore be a good idea to sanitize filenames.  
+#
+# I've sanitized all calls out:
+#     a. system and exec use a single argument, which forces
+#        use of shell, under all circumstances
+#        Thus I can safely use quotes on filenames:  They will be handled by 
+#        the shell under UNIX, and simply passed on to the program under MSWin32.
+#     b. I reorganized Run, Run_Detached to use single command line
+#     c. All calls to Run and Run_Detached have quoted filenames.
+#     d. So if a space-free filename with wildcards is given on latexmk's
+#        command line, and it globs to space-containing filename(s), that
+#        works (fptex on home computer, native NT tex)
+#     e. ====> But globbing fails: the glob function takes space as filename 
+#        separator.   ====================
+
 #================= TO DO ================
 #
-# 1.  Check file of bug reports and requests
-
+# 1.  See ??  ESPECIALLY $MSWin_fudge_break
+# 2.  Check fudged conditions in looping and make_files 
+# 3.  Should not completely abort after a run that ends in failure from latex
+#     Missing input files (including via custom dependency) should be checked for
+#     a change in status
+#         If sources for missing files from custom dependency 
+#             are available, then do a rerun
+#         If sources of any kind become available rerun (esp. for pvc)
+#             rerun
+#         Must parse log_file after unsuccessful run of latex: it may give
+#             information about missing files. 
+# 4.  Check file of bug reports and requests
+# 5.  Rationalize bibtex warnings and errors.  Two almost identical routines.
+#         Should 1. Use single routine
+#                2. Convert errors to failure only in calling routine
+#                3. Save first warning/error.
 
 # The above code allows this script to be run under UNIX/LINUX without
 # the need to adjust the path to the perl program in a "shebang" line.
@@ -31,15 +89,35 @@
 #   Test for already running previewer gets wrong answer if another
 #     process has the viewed file in its command line
 
-$version_num = '3.07a';
-$version_details = 'latexmk, John Collins, 2 June 2004';
+$version_num = '3.08l';
+$version_details = 'latexmk, John Collins, 1 April 2006';
 
+use Config;
 use File::Copy;
 use File::Basename;
 use FileHandle;
 use File::Find;
+use Cwd;            # To be able to change cwd
+use Cwd "chdir";    # Ensure $ENV{PWD}  tracks cwd
 
-## Copyright John Collins 1998-2004
+#use strict;
+
+# Translation of signal names to numbers and vv:
+%signo = ();
+@signame = ();
+if ( defined $Config{sig_name} ) {
+   $i = 0;
+   foreach $name (split(' ', $Config{sig_name})) {
+      $signo{$name} = $i;
+      $signame[$i] = $name;
+      $i++;
+   }
+}
+else {
+   warn "Something wrong with the perl configuration: No signals?\n";
+}
+
+## Copyright John Collins 1998-2005
 ##           (username collins at node phys.psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -109,15 +187,124 @@ use File::Find;
 ##   Modified 
 ##
 ##
+##       1 Apr 2006, John Collins
+##         Nix that.  For consistency, always pass single command to system
+##             and to exec.  This forces perl to send the command line
+##             to a shell, so that quoting the file name is always sensible. 
+##         Otherwise quoting a filename will be wrong under UNIX whenever
+##             a direct call to a binary is made: \" is a legal character
+##             in a UNIX filename
+##      31 Mar 2006, John Collins
+##         Not correct: need to fix Run to use array of arguments
+##      30 Mar 2006, John Collins
+##         Attempt to use quoted filenames, to handle filenames with spaces. 
+##         Started: look at all calls to Run*.
+##                  a. latex started.
+##       8 Mar 2006, John Collins
+##         Add -cd and -cd- switches to switch/not to directory 
+##            containing source file
+##      14 Jan 2006, John Collins
+##         Add 'out' to generated extensions.  (Hyperref generated file)
+##         Restored 'ind' to this list, as per documentation
+##         IS THIS CORRECT?
+##      13 Jan 2006, John Collins
+##         List of excluded primary files (@default_excluded_files).
+##             Useful when doing automatic "latexmk"
+##             Must allow explicit run on excluded file, so only
+##               apply it when using default file list
+##         When testing for out-of-date dest, explicitly include
+##             primary source file.  It may not get into @includes
+##             under certain error conditions, e.g., files renamed
+##             to different base.
+##      14 Dec 2005, John Collins
+##         Fix up loop for incorrectly found missing file, associated
+##            with bad line-breaks in .log file.
+##       9 Aug 2005, John Collins
+##         Correct spelling error.
+##       8 Aug 2005, John Collins
+##         Globbing, etc of commandline files preserves order of files
+##            and eliminates directories.
+##      18 Jul 2005, John Collins
+##         Preserve order of files in @default_files
+##      22 May 2005, John Collins
+##         Fix copy_file_and_time
+##      14 Feb 2005, John Collins
+##         Variables for the signal to update previewer.
+##            Defaults: SIGUSR1 for dvi viewer (correct for xdvi)
+##                      SIGHUP for ps and pdf viewer (correct for gv)
+##      28 Jan 2005, John Collins
+##         Try 'use strict'.  Turned it off.  Too many warnings for now.
+##      15 Jan 2005, John Collins
+##         Quote $0 on first two lines, so that paths to latexmk work
+##            when they contain spaces
+##      28 Sep 2004, John Collins
+##         Correct parsing of log file:
+##             '(file{' is not treated, as produced by
+##                     pdfeTeXk, Version 3.141592-1.11a-2.1
+##      14 Sep 2004, John Collins
+##      13 Sep 2004, John Collins
+##         Correct diagnostics in make_pdf2 when psF file does not exist
+##         Correct making of psF file: when psF but not ps file is old
+##         Similarly on dviF
+##       2 Sep 2004, John Collins
+##         Correct bug in sub view_file_via_temporary
+##      31 Aug 2004, John Collins
+##         Change name of $ignore_break_pvc to $MSWin_fudge_break
+##      30 Aug 2004, John Collins
+##         Correct non-continuation when references or citations are undefined
+##         Correct some issues related to the $failure variables.
+##         Finish MAC OSX initialization: pscmd.
+##         Etc
+##         Fix incorrect reruns: Exclude all generated files from missing
+##             file list, and from @includes.  Stop using the change of set
+##             of input files criterion.
+##      29 Aug 2004, John Collins
+##         Remove the evals in the main makes: they cause funny behavior
+##             with ctrl/C and ctrl/break, since they don't insulate the 
+##             outside perl from the break.
+##         Fix some stuff in find_dirs and find_files
+##         $ignore_break_pvc
+##         Make the commands defined as NONE more self-documenting
+##         Use the GNU TMPDIR env variable for $tmpdir when available
+##         Start MAC OSX configuration section
+##         Correct non-reading of subsidiary aux files by parse_aux
+##         Correct treatment of view_via_temporary
+##      14 Jul 2004, John Collins
+##         Rcfiles: give error message when appropriate
+##           (Use subroutine process_rc_file to unify this)
+##           Previously a syntax error in an rcfile did not result in a message
+##         Remove currently superfluous $count variable in sub make_postscript
+##         Deal with "No file name." line in log file
+##         Version number 3.08a
+##      14 Jun 2004, John Collins
+##         Correct misprint in comment on $texfile_search to refer to 
+##               current name of @default_files variable.
+##       8 Jun 2004, John Collins
+##         Set up: make view files (but dvi not possible) to temporary, and
+##               then move to final location.
+##       7 Jun 2004, John Collins
+##         Makeindex is called with full filename
 ##       2 Jun 2004, John Collins
 ##         Correct bug in parsing of log files from pdflatex
+##      24 May 2004, John Collins
+##         Version number to 3.08a (later 3.08) (Aim at 3.10 for next release)
+##         In &build_latex_dvi_pdf, change rerun condition to do rerun 
+##              after error when files changed
 ##      17 May 2004, John Collins
 ##      16 May 2004, John Collins
 ##         Correct bug in using $print_type eq 'pdf'
 ##         Command line switches for print_type
+##      15 May 2004, John Collins
+##          Change version to 3.11 for after next release
 ##      14 May 2004, John Collins
+##      12 May 2004, John Collins
 ##      11 May 2004, John Collins
 ##         Correct parse_log bug 
+##       9 May 2004, John Collins
+##         Check source times in determining rerun condition on latex
+##         Pvc: test on changed sources.  
+##              improve ordering of ops.
+##         Move all make_bbl and make_ind inside make_files
 ##       3 May 2004, John Collins
 ##         Correct bug
 ##       2 May 2004, John Collins
@@ -307,6 +494,16 @@ use File::Find;
 ##-----------------------------------------------------------------------
 
 
+## Explicit exit codes: 
+##             10 = bad command line arguments
+##             11 = file specified on command line not found
+##                  or other file not found
+##             12 = failure in some part of making files
+##             13 = error in initialization file
+##             20 = probable bug
+##             or retcode from called program.
+
+
 #Line length in log file that indicates wrapping.  
 # This number EXCLUDES line-end characters, and is one-based
 $log_wrap = 79;
@@ -331,6 +528,8 @@ $bibtex_silent_switch  = '-terse';
 
 ## Command to invoke makeindex
 $makeindex  = 'makeindex';
+# Switch(es) to make makeinex silent:
+$makeindex_silent_switch  = '-q';
 
 ## Command to convert dvi file to pdf file directly:
 $dvipdf  = 'dvipdf';
@@ -362,13 +561,53 @@ $print_type = 'ps';     # When printing, print the postscript file.
 ## Current tex's treat extensions like UNIX teTeX:
 $extension_treatment = 'unix';
 
+$dvi_update_signal = undef;
+$ps_update_signal = undef;
+$pdf_update_signal = undef;
+
 #########################################################################
+
+################################################################
+##  Special variables for system-dependent fudges, etc.
+$MSWin_fudge_break = 1; # Give special treatment to ctrl/C and ctrl/break
+                        #    in -pvc mode under MSWin
+                        # Under MSWin32 (at least with perl 5.8 and WinXP)
+                        #   when latemk is running another program, and the 
+                        #   user gives ctrl/C or ctrl/break, to stop the 
+                        #   daughter program, not only does it reach
+                        #   the daughter, but also latexmk/perl, so
+                        #   latexmk is stopped also.  In -pvc mode,
+                        #   this is not normally desired.  So when the
+                        #   $MSWin_fudge_break variable is set,
+                        #   latexmk arranges to ignore ctrl/C and
+                        #   ctrl/break during processing of files;
+                        #   only the daughter programs receive them.
+                        # This fudge is not applied in other
+                        #   situations, since then having latexmk also
+                        #   stopping because of the ctrl/C or
+                        #   ctrl/break signal is desirable.
+                        # The fudge is not needed under UNIX (at least
+                        #   with Perl 5.005 on Solaris 8).  Only the
+                        #   daughter programs receive the signal.  In
+                        #   fact the inverse would be useful: In
+                        #   normal processing, as opposed to -pvc, if
+                        #   force mode (-f) is set, a ctrl/C is
+                        #   received by a daughter program does not
+                        #   also stop latexmk.  Under tcsh, we get
+                        #   back to a command prompt, while latexmk
+                        #   keeps running in the background!
+
+
+################################################################
+
 
 # System-dependent overrides:
 if ( $^O eq "MSWin32" ) {
 # Pure MSWindows configuration
     ## Configuration parameters:
-    $tmpdir = "$ENV{TEMP}";
+
+    ## Use first existing case for $tmpdir:
+    $tmpdir = $ENV{TMPDIR} || $ENV{TEMP} || '.';
 
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
@@ -391,22 +630,28 @@ if ( $^O eq "MSWin32" ) {
     #    0 => auto update: viewer watches file (e.g., gv)
     #    1 => manual update: user must do something: e.g., click on window.
     #         (e.g., ghostview, MSWIN previewers, acroread under UNIX)
-    #    2 => send SIGUSR1 signal (xdvi)
+    #    2 => send signal.  Number of signal in $dvi_update_signal,
+    #                         $ps_update_signal, $pdf_update_signal
     #    3 => viewer can't update, because it locks the file and the file 
     #         cannot be updated.  (acroread under MSWIN)
     $dvi_update_method = 1;
     $ps_update_method = 1;
     $pdf_update_method = 3; # acroread locks the pdf file
-    $lpr  = 'NONE lpr';        # Use NONE as flag that I am not implementing this
-    $lpr_dvi  = 'NONE lpr_dvi';# Use NONE as flag that I am not implementing this
-    $lpr_pdf  = 'NONE lpr_pdf';# Use NONE as flag that I am not implementing this
+    # Use NONE as flag that I am not implementing some commands:
+    $lpr =
+        'NONE $lpr variable is not configured to allow printing of ps files';
+    $lpr_dvi =
+        'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
+    $lpr_pdf =
+        'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
     # The $pscmd below holds a command to list running processes.  It
     # is used to find the process ID of the viewer looking at the
     # current output file.  The output of the command must include the
     # process number and the command line of the processes, since the
     # relevant process is identified by the name of file to be viewed.
     # Its use is not essential.
-    $pscmd = 'NONE pscmd';  # Use NONE as flag that I am not implementing this
+    $pscmd = 
+        'NONE $pscmd variable is not configured to detect running processes';
     $pid_position = -1;     # offset of PID in output of pscmd.  
                             # Negative means I cannot use ps
 }
@@ -462,7 +707,7 @@ elsif ( $^O eq "cygwin" ) {
     # This may fail: perl converts MSWin temp directory name to cygwin
     # format. Names containing this string cannot be handled by native
     # NT executables.
-    $tmpdir = "$ENV{TEMP}";
+    $tmpdir = $ENV{TMPDIR} || $ENV{TEMP} || '.';
 
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
@@ -493,15 +738,20 @@ elsif ( $^O eq "cygwin" ) {
     #    0 => auto update: viewer watches file (e.g., gv)
     #    1 => manual update: user must do something: e.g., click on window.
     #         (e.g., ghostview, MSWIN previewers, acroread under UNIX)
-    #    2 => send SIGUSR1 signal (xdvi)
+    #    2 => send signal.  Number of signal in $dvi_update_signal,
+    #                         $ps_update_signal, $pdf_update_signal
     #    3 => viewer can't update, because it locks the file and the file 
     #         cannot be updated.  (acroread under MSWIN)
     $dvi_update_method = 1;
     $ps_update_method = 1;
     $pdf_update_method = 3; # acroread locks the pdf file
-    $lpr  = 'NONE lpr';     # Use NONE as flag that I am not implementing this
-    $lpr_dvi  = 'NONE lpr_dvi';# Use NONE as flag that I am not implementing this
-    $lpr_pdf  = 'NONE lpr_pdf';# Use NONE as flag that I am not implementing this
+    # Use NONE as flag that I am not implementing some commands:
+    $lpr =
+        'NONE $lpr variable is not configured to allow printing of ps files';
+    $lpr_dvi =
+        'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
+    $lpr_pdf =
+        'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
     # The $pscmd below holds a command to list running processes.  It
     # is used to find the process ID of the viewer looking at the
     # current output file.  The output of the command must include the
@@ -517,7 +767,8 @@ elsif ( $^O eq "cygwin" ) {
     # Only the user, not latemk knows which, so we default to not
     # using the ps command.  The user can override this in a
     # configuration file. 
-    $pscmd = 'NONE pscmd';  # Use NONE as flag that I am not implementing this
+    $pscmd = 
+        'NONE $pscmd variable is not configured to detect running processes';
     $pid_position = -1;     # offset of PID in output of pscmd.  
                             # Negative means I cannot use ps
 }
@@ -525,7 +776,10 @@ else {
     # Assume anything else is UNIX or clone
 
     ## Configuration parameters:
-    $tmpdir = '/tmp';
+
+
+    ## Use first existing case for $tmpdir:
+    $tmpdir = $ENV{TMPDIR} || '/tmp';
 
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
@@ -539,28 +793,45 @@ else {
        '/usr/local/lib/latexmk/LatexMk' );
 
     $search_path_separator = ':';  # Separator of elements in search_path
+
+    $dvi_update_signal = $signo{USR1} 
+         if ( defined $signo{USR1} ); # Suitable for xdvi
+    $ps_update_signal = $signo{HUP} 
+         if ( defined $signo{HUP} );  # Suitable for gv
+    $pdf_update_signal = $signo{HUP} 
+         if ( defined $signo{HUP} );  # Suitable for gv
     ## default document processing programs.
-    $pdf_previewer = 'start acroread';
-    ## The following are corrects for the SUNs at phys.psu.edu:
-    #$ps_previewer  = 'start ghostview';
-    #$ps_previewer_landscape  = 'start ghostview -swap';
-    $ps_previewer  = 'start gv -watch';
-    $ps_previewer_landscape  = 'start gv -swap -watch';
-    $dvi_previewer  = 'start xdvi';
-    $dvi_previewer_landscape = 'start xdvi -paper usr';
     # Viewer update methods: 
     #    0 => auto update: viewer watches file (e.g., gv)
     #    1 => manual update: user must do something: e.g., click on window.
     #         (e.g., ghostview, MSWIN previewers, acroread under UNIX)
-    #    2 => send SIGUSR1 signal (xdvi)
+    #    2 => send signal.  Number of signal in $dvi_update_signal,
+    #                         $ps_update_signal, $pdf_update_signal
     #    3 => viewer can't update, because it locks the file and the file 
     #         cannot be updated.  (acroread under MSWIN)
-    $dvi_update_method = 2;  # xdvi responds to SIGUSR1 to update
-    $ps_update_method = 0;   # gv -watch watches the ps file
+    $dvi_previewer  = 'start xdvi';
+    $dvi_previewer_landscape = 'start xdvi -paper usr';
+    if ( defined $dvi_update_signal ) { 
+        $dvi_update_method = 2;  # xdvi responds to signal to update
+    } else {
+        $dvi_update_method = 1;  
+    }
+    if ( defined $ps_update_signal ) { 
+        $ps_update_method = 2;  # dv responds to signal to update
+        $ps_previewer  = 'start gv -nowatch';
+        $ps_previewer_landscape  = 'start gv -swap -nowatch';
+    } else {
+        $ps_update_method = 0;  # gv -watch watches the ps file
+        $ps_previewer  = 'start gv -watch';
+        $ps_previewer_landscape  = 'start gv -swap -watch';
+    }
+    $pdf_previewer = 'start acroread';
     $pdf_update_method = 1;  # acroread under unix needs manual update
     $lpr = 'lpr';         # Assume lpr command prints postscript files correctly
-    $lpr_dvi  = 'NONE lpr_dvi';# Use NONE as flag that I am not implementing this
-    $lpr_pdf  = 'NONE lpr_pdf';# Use NONE as flag that I am not implementing this
+    $lpr_dvi =
+        'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
+    $lpr_pdf =
+        'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
     # The $pscmd below holds a command to list running processes.  It
     # is used to find the process ID of the viewer looking at the
     # current output file.  The output of the command must include the
@@ -589,6 +860,11 @@ else {
         #    systems, e.g., Solaris 8.
         $pscmd = "ps --width 200 -f -u $ENV{USER}"; 
     }
+    elsif ( $^O eq "darwin" ) {
+        # OS-X on Macintosh
+        $lpr_pdf  = 'lpr';  
+        $pscmd = "ps -ww -u $ENV{USER}"; 
+    }
 }
 
 ## default parameters
@@ -610,6 +886,10 @@ $max_repeat = 5;        # Maximum times I repeat latex.  Normally
 			# usually an indication of a problem; further
 			# runs may not resolve the problem, and
 			# instead could cause an infinite loop.
+$max_abs_repeat = 50;   # Sometimes latex will be rerun because of 
+                        # source files that change during a run.
+                        # To save really infinite loops, we'll set an 
+                        # upper limit.
 $clean_ext = "";        # space separated extensions of files that are
                         # to be deleted when doing cleanup, beyond
                         # standard set
@@ -621,9 +901,15 @@ $clean_full_ext = "";   # space separated extensions of files that are
                         # no files are specified on the command line.
                         # Wildcards allowed
                         # Best used for project specific files.
+@default_excluded_files = ( );   
+                        # Array of LaTeX files to exclude when using
+                        # @default_files, i.e., when no files are specified
+                        # on the command line.
+                        # Wildcards allowed
+                        # Best used for project specific files.
 $texfile_search = "";   # Specification for extra files to search for
                         # when no files are specified on the command line
-                        # and the @file_list variable is empty.
+                        # and the @default_files variable is empty.
                         # Space separated, and wildcards allowed.
                         # These files are IN ADDITION to *.tex in current 
                         # directory. 
@@ -642,7 +928,10 @@ $landscape_mode = 0;	# default to portrait mode
 # This list can be overridden in a configuration file if it causes problems.
 # The extensions "aux" and "bbl" are always excluded from the dependents,
 # because they get special treatment.
-@generated_exts = ( 'lof', 'lot', 'toc');
+@generated_exts = ( 'ind', 'lof', 'lot', 'out', 'toc' );
+     # 'out' is generated by hyperref package
+# But it's worth making a list anyway
+@generated_exts1 = ( 'aux', 'bbl', 'ind' );
 # Which kinds of file do I have requests to make?
 # If no requests at all are made, then I will make dvi file
 # If particular requests are made then other files may also have to be
@@ -661,6 +950,9 @@ $banner = 0;            # Non-zero if we have a banner to insert
 $banner_scale = 220;    # Original default scale
 $banner_intensity = 0.95;  # Darkness of the banner message
 $banner_message = 'DRAFT'; # Original default message
+$do_cd = 0;     # Do not do cd to directory of source file.
+                #   Thus behave like latex.
+@dir_stack = (); # Stack of pushed directories.
 $cleanup_mode = 0;      # No cleanup of nonessential files.
                         # $cleanup_mode = 0: no cleanup
                         # $cleanup_mode = 1: full cleanup 
@@ -679,8 +971,13 @@ $go_mode = 0;           # =1 to force processing regardless of time-stamps
 $preview_mode = 0;
 $preview_continuous_mode  = 0;
 $printout_mode = 0;     # Don't print the file
-@bib_files = ();
 
+# Do we make view file in temporary then move to final destination?
+#  (To avoid premature updating by viewer).
+$always_view_file_via_temporary = 0;      # Set to 1 if  viewed file is always
+                                   #    made through a temporary.
+$pvc_view_file_via_temporary = 1;  # Set to 1 if only in -pvc mode is viewed 
+                                   #    file made through a temporary.
 
 # State variables initialized here:
 
@@ -694,7 +991,8 @@ $bad_reference = 0;
 $bad_citation = 0;
 
 
-# Get search paths for includes.
+# Set search paths for includes.
+# Set them early so that they can be overridden
 $TEXINPUTS = $ENV{'TEXINPUTS'};
 if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
 $BIBINPUTS = $ENV{'BIBINPUTS'};
@@ -710,8 +1008,6 @@ if (!$BIBINPUTS) { $BIBINPUTS = '.'; }
 @TEXINPUTS = find_dirs1 ($TEXINPUTS);
 @BIBINPUTS = find_dirs1 ($BIBINPUTS);
 
-#show_array ("TEXINPUTS", @TEXINPUTS); show_array ("BIBINPUTS", @BIBINPUTS); die;
-
 ## Read rc files:
 
 # Read first system rc file that is found:
@@ -723,7 +1019,7 @@ foreach $rc_file ( @rc_system_files )
    {
       # print "===Reading system rc file \"$rc_file\" ...\n";
       # Read the system rc file
-      do "$rc_file";
+      process_rc_file( $rc_file );
       last SYSTEM_RC_FILE;
    }
 }
@@ -732,21 +1028,24 @@ foreach $rc_file ( @rc_system_files )
 $rc_file = "$ENV{'HOME'}/.latexmkrc";
 if ( -e $rc_file )
 {
-  # Read the user rc file
-  do "$rc_file";
+  process_rc_file( $rc_file );
 }
 
 # Read rc file in current directory.
 $rc_file = "latexmkrc";
 if ( -e $rc_file )
 {
-  # Read the user rc file
-  do "$rc_file";
+  &process_rc_file( $rc_file );
 }
+
+#show_array ("TEXINPUTS", @TEXINPUTS); show_array ("BIBINPUTS", @BIBINPUTS); die;
 
 ## Process command line args.
 @command_line_file_list = ();
 $bad_options = 0;
+
+#print "Command line arguments:\n"; for ($i = 0; $i <= $#ARGV; $i++ ) {  print "$i: '$ARGV[$i]'\n"; }
+
 while ($_ = $ARGV[0])
 {
   # Make -- and - equivalent at beginning of option:
@@ -755,7 +1054,8 @@ while ($_ = $ARGV[0])
   if (/^-c$/)        { $cleanup_mode = 2; }
   elsif (/^-commands$/) { &print_commands; exit; }
   elsif (/^-C$/)     { $cleanup_mode = 1; }
-  elsif (/^-c1$/)    { $cleanup_mode = 3; }
+  elsif (/^-cd$/)    { $do_cd = 1; }
+  elsif (/^-cd-$/)   { $do_cd = 0; }
   elsif (/^-d$/)     { $banner = 1; }
   elsif (/^-dvi$/)   { $dvi_mode = 1; }
   elsif (/^-dvi-$/)  { $dvi_mode = 0; }
@@ -765,7 +1065,8 @@ while ($_ = $ARGV[0])
   elsif (/^-F-$/)    { $force_include_mode = 0; }
   elsif (/^-g$/)     { $go_mode = 1; }
   elsif (/^-g-$/)    { $go_mode = 0; }
-  elsif ( /^-h$/ || /^-help$/ )   { &print_help; }
+  elsif (/^-gg$/)    { $go_mode = 2; }
+  elsif ( /^-h$/ || /^-help$/ )   { &print_help; exit;}
   elsif (/^-il$/)    { $includes_from_log = 1; }
   elsif (/^-it$/)    { $includes_from_log = 0; }
   elsif (/^-i$/)     { $generate_and_save_includes = 1; }
@@ -791,7 +1092,7 @@ while ($_ = $ARGV[0])
           $printout_mode = 1;
       }
       else {
-          &die_help("Latexmk: unknown print type '$value' in option '$_'");
+          &exit_help("Latexmk: unknown print type '$value' in option '$_'");
       }
   }
   elsif (/^-ps$/)    { $postscript_mode = 1; }
@@ -815,49 +1116,53 @@ while ($_ = $ARGV[0])
   elsif (/^-verbose$/)  { $silent = 0; }
   elsif (/^-view=default$/) { $view = "default";}
   elsif (/^-view=dvi$/)     { $view = "dvi";}
+  elsif (/^-view=none$/)    { $view = "none";}
   elsif (/^-view=ps$/)      { $view = "ps";}
   elsif (/^-view=pdf$/)     { $view = "pdf"; }
   elsif (/^-r$/) {  
      if ( $ARGV[0] eq '' ) {
-        &die_help( "Latexmk: No RC file specified after -r switch"); 
+        &exit_help( "No RC file specified after -r switch"); 
      }
      if ( -e $ARGV[0] ) {
-	do "$ARGV[0]"; } else {
+	process_rc_file( $ARGV[0] );
+     } 
+     else {
+	$! = 11;
 	die "Latexmk: RC file [$ARGV[0]] does not exist\n"; 
      }
      shift; 
   }
   elsif (/^-bm$/) {
      if ( $ARGV[0] eq '' ) {
-	&die_help( "Latexmk: No message specified after -bm switch");
+	&exit_help( "No message specified after -bm switch");
      }
      $banner = 1; $banner_message = $ARGV[0];
      shift; 
   }
   elsif (/^-bi$/) {
      if ( $ARGV[0] eq '' ) {
-	&die_help( "Latexmk: No intensity specified after -bi switch");
+	&exit_help( "No intensity specified after -bi switch");
      }
      $banner_intensity = $ARGV[0];
      shift; 
   }
   elsif (/^-bs$/) {
      if ( $ARGV[0] eq '' ) {
-	&die_help( "Latexmk: No scale specified after -bs switch");
+	&exit_help( "No scale specified after -bs switch");
      }
      $banner_scale = $ARGV[0];
      shift; 
   }
   elsif (/^-dF$/) {
      if ( $ARGV[0] eq '' ) {
-	&die_help( "Latexmk: No dvi filter specified after -dF switch");
+	&exit_help( "No dvi filter specified after -dF switch");
      }
      $dvi_filter = $ARGV[0];
      shift; 
   }
   elsif (/^-pF$/) {
      if ( $ARGV[0] eq '' ) {
-        &die_help( "Latexmk: No ps filter specified after -pF switch");
+        &exit_help( "No ps filter specified after -pF switch");
      }
      $ps_filter = $ARGV[0];
      shift; 
@@ -872,10 +1177,10 @@ while ($_ = $ARGV[0])
 }
 
 if ( $bad_options > 0 ) {
-    &die_help( "Bad options specified" );
+    &exit_help( "Bad options specified" );
 }
 
-warn "This is $version_details, version: $version_num.\n",
+warn "Latexmk: This is $version_details, version: $version_num.\n",
      "**** Report bugs etc to John Collins <collins at phys.psu.edu>. ****\n"
    unless $silent;
 
@@ -885,6 +1190,9 @@ warn "This is $version_details, version: $version_num.\n",
 if ( $texfile_search ne "" ) {
     @default_files = split / /, "*.tex $texfile_search";
 }
+
+#printA "A: Command line file list:\n";
+#for ($i = 0; $i <= $#command_line_file_list; $i++ ) {  print "$i: '$command_line_file_list[$i]'\n"; }
 
 #Glob the filenames command line if the script was not invoked under a 
 #   UNIX-like environment.
@@ -897,11 +1205,18 @@ if ( $texfile_search ne "" ) {
 #          (3) UNIX               Don't glob (cmd interpreter does it)
 #                      (Currently, I assume this is everything else)
 if ( ($^O eq "MSWin32") || ($^O eq "cygwin") ) {
-    @file_list = glob_list(@command_line_file_list);
+    # Preserve ordering of files
+    @file_list = glob_list1(@command_line_file_list);
+#print "A1:File list:\n";
+#for ($i = 0; $i <= $#file_list; $i++ ) {  print "$i: '$file_list[$i]'\n"; }
 }
 else {
-    @file_list = uniq( sort(@command_line_file_list) );
+    @file_list = @command_line_file_list;
+#print "A2:File list:\n";
+#for ($i = 0; $i <= $#file_list; $i++ ) {  print "$i: '$file_list[$i]'\n"; }
 }
+@file_list = uniq1( @file_list );
+
 
 # Check we haven't selected mutually exclusive modes.
 # Note that -c overides all other options, but doesn't cause
@@ -912,45 +1227,64 @@ if (($printout_mode && ( $preview_mode || $preview_continuous_mode ))
   # Each of the options -p, -pv, -pvc turns the other off.
   # So the only reason to arrive here is an incorrect inititalization
   #   file, or a bug.
-  &die_help( "Latexmk: Conflicting options (print, preview, preview_continuous) selected");
+  &exit_help( "Conflicting options (print, preview, preview_continuous) selected");
 }
 
 if ( @command_line_file_list ) {   
     # At least one file specified on command line (before possible globbing).
     if ( !@file_list ) {
-        &die_help( "Latexmk: Wildcards in file names didn't match any files");
+        &exit_help( "Wildcards in file names didn't match any files");
     }
 }
 else {
     # No files specified on command line, try and find some
-    @file_list = glob_list(@default_files);
+    # Evaluate in order specified.  The user may have some special
+    #   for wanting processing in a particular order, especially
+    #   if there are no wild cards.
+    # Preserve ordering of files
+    my @file_list1 = uniq1( glob_list1(@default_files) );
+    my @excluded_file_list = uniq1( glob_list1(@default_excluded_files) );
+    # Make hash of excluded files, for easy checking:
+    my %excl = ();
+    foreach my $file (@excluded_file_list) {
+	$excl{$file} = '';
+    }
+    foreach my $file (@file_list1) {
+	push( @file_list, $file)  unless ( exists $excl{$file} );
+    }    
     if ( !@file_list ) {
-	&die_help( "Latexmk: No file name specified, and I couldn't find any");
+	&exit_help( "No file name specified, and I couldn't find any");
     }
 }
 
 $num_files = $#file_list + 1;
 $num_specified = $#command_line_file_list + 1;
 
+#print "Command line file list:\n";
+#for ($i = 0; $i <= $#command_line_file_list; $i++ ) {  print "$i: '$command_line_file_list[$i]'\n"; }
+#print "File list:\n";
+#for ($i = 0; $i <= $#file_list; $i++ ) {  print "$i: '$file_list[$i]'\n"; }
+
+
 # If selected a preview-continuous mode, make sure exactly one filename was specified
 if ($preview_continuous_mode && ($num_files != 1) ) {
-    if ($num_specified > 0) {
-        &die_help( 
-          "Latexmk: Need to specify exactly one filename for ".
+    if ($num_specified > 1) {
+        &exit_help( 
+          "Need to specify exactly one filename for ".
               "preview-continuous mode\n".
           "    but $num_specified were specified"
         );
     }
     elsif ($num_specified == 1) {
-        &die_help( 
-          "Latexmk: Need to specify exactly one filename for ".
+        &exit_help( 
+          "Need to specify exactly one filename for ".
               "preview-continuous mode\n".
           "    but wildcarding produced $num_files files"
         );
     }
     else {
-        &die_help( 
-          "Latexmk: Need to specify exactly one filename for ".
+        &exit_help( 
+          "Need to specify exactly one filename for ".
               "preview-continuous mode.\n".
           "    Since none were specified on the command line, I looked for \n".
           "    files in '@default_files'.\n".
@@ -972,6 +1306,7 @@ if ( $silent ) {
     $latex .= " $latex_silent_switch"; 
     $pdflatex .= " $pdflatex_silent_switch"; 
     $bibtex .= " $bibtex_silent_switch"; 
+    $makeindex .= " $makeindex_silent_switch"; 
     $dvips .= " $dvips_silent_switch"; 
 }
 
@@ -1066,6 +1401,10 @@ if ($need_pdf == 3) { $dvi_to_pdf = 1; }
 foreach (@generated_exts) {
     $generated_exts{".$_"} = 1;
 }
+%generated_exts_all = %generated_exts;
+foreach (@generated_exts1) {
+    $generated_exts_all{".$_"} = 1;
+}
 
 $quell_uptodate_msgs = $silent; 
    # Whether to quell informational messages when files are uptodate
@@ -1076,6 +1415,9 @@ $quell_uptodate_msgs = $silent;
 # overridden, during file processing, so save it:
 $save_bibtex_mode = $bibtex_mode;
 
+$failure_count = 0;
+$last_failed = 0;    # Flag whether failed on making last file
+                     # This is used for showing suitable error diagnostics
 FILE:
 foreach $filename ( @file_list )
 {
@@ -1083,6 +1425,17 @@ foreach $filename ( @file_list )
                          # a make.  Use value as exit code if I exit.
     $failure_msg = '';   # Indicate reason for failure
     $bibtex_mode = $save_bibtex_mode;
+
+    if ( $do_cd ) {
+       ($filename, $path) = fileparse( $filename );
+       warn "Latexmk: Changing directory to '$path'\n";
+       pushd( $path );
+    }
+    else {
+	$path = '';
+    }
+
+
     ## remove extension from filename if was given.
     if ( &find_basename($filename, $root_filename, $texfile_name) )
     {
@@ -1090,8 +1443,9 @@ foreach $filename ( @file_list )
 	   warn "Latexmk: Could not find file [$texfile_name]\n";
 	}
 	else {
+            &ifcd_popd;
 	    &exit_msg1( "Could not find file [$texfile_name]",
-			1);
+			11);
 	}
     }
 
@@ -1105,15 +1459,76 @@ foreach $filename ( @file_list )
     }
     if ($go_mode == 2) {
         warn "Latexmk: Removing all generated files\n" unless $silent;
+        &cleanup_basic;
         &cleanup_dvi_ps_pdf;
         &cleanup_aux_dep;
     }
-    #Default aux file list:
+    #Initialize aux_file list:
     @aux_files = ("$root_filename.aux");
     ## Make file. ##
-    ## Find includes.
-    @includes = ();         # Input files 
-    %includes_missing = (); # Possible input files, status problematic:
+    ## Find source files:
+    %source_times = ();
+         # This will hold a hash mapping filenames to times
+         #    filename => time stamp
+         # Each file will be a source, direct or indirect.
+         # Time_stamp is zero for non-existent file.
+         # It is to be used to determine whether a remake through latex 
+         #     is needed, particularly in -pvc mode
+         # The time will be the file's timestamp when:
+         #     (a) it is used as source, just before run
+         #  or (b) created as dependent, just after run
+         #  or (c) when first encountered (e.e., initially)
+         #  in order of preference.
+         # The update_... subroutines provide the best method of handling 
+         #  this:
+         # Overall rules:
+         #    1.  %source_times reflects the times of files immediately a run
+         #        in which they are sources or destinations
+         #    2.  Source files have times corresponding to the files used 
+         #        by their user program.
+         #    3.  After each program is run, it should check for changes in its 
+         #        sources, and rerun if needed.
+         #    4.  Thus after running a program, we know that its output is 
+         #        up-to-date with respect to its sources, and 
+         #        %source_times contains the times of the sources used.
+         #    5.  If it updates the times of the destination files, that is OK,
+         #        since we are not yet using the destination files as sources
+         #        for another program; these destination files will automatically
+         #        cause an out-of-date condition for the other program.
+         #    6.  The last condition is important, because the finding
+         #        of dependencies may result in new files being found.
+         # HENCE:
+         # After running each program (latex, makeindex, bibtex or 
+         #    custom_dependency), update the part of %source_times 
+         #    corresponding to its input files.
+         #    But leave other times unaltered.
+         # In addition cus_dependency may find new source files for latex
+         #    and we must add these to the relevant list
+         # (Hence need list of relevant source filenames.)
+         # In addition, we must allow for source files changing
+         #    during a run.  This is most important for latex, since
+         #    it may run a long time.  
+         # So we must check for changed source files immediately after a run.
+         #    and trigger a rerun.
+         # In addition, unused files may accumulate in %source_times,
+         #    if they were used earlier and then not used later.
+         # So after a full parse_log, we must ensure that %source_times
+         #    is updated to reflect the current set of source files.
+         #    But with the times  being taken from the previously known 
+         #    values, if any.
+         # Using the previously known values ensures that we can detect
+         #    the case that a source filetime changed since its user
+         #    program was run. 
+    # We split the source files according to their status
+    # bibtex and makeindex are special, because they are in 
+    #    a circular dependence loop
+    @bib_files = ();      # Sources for bibtex
+    @cus_dep_files = ();  # Sources for custom dependency
+    @ind_files = ();      # Sources for makeindex
+    @includes = ();       # Sources files read by latex, excluding
+                          # those involved circularly
+    %includes_missing = (); # Possible source files for latex, 
+        # whose status is problematic.  In form
         # filename => [wherefrom, fullname]
         # wherefrom  0: exact name known. 
         #            1: name for non-existent file, from logfile, possibly 
@@ -1162,10 +1577,24 @@ foreach $filename ( @file_list )
     }
     elsif ( $read_depend )
     {
-      # Read the dependency file
-      open(dep_file) || die "Latexmk: Couldn't open dependency file [$root_filename.dep]\n";
-      while(<dep_file>) { eval; }
-      close(dep_file);
+      # Read the dependency file     
+      # $read_depend should only be set if the dep_file actually exists
+      # So a failure to open it indicates a problem, e.g., user deleted the file,
+      #    which calls for a die rather than simply setting $failure
+      my $return = process_dep_file( $dep_file );
+      if ($return > 0) {
+          # Error message was already printed.
+	  if (!$force_mode ) {
+             warn "Latexmk: I will not continue processing this file.\n";
+             warn "Latexmk: Use the -f option to force processing.\n";
+             if ($return ==2) {
+                # There were syntax errors
+                warn "Latexmk: Try deleting or removing the dependency file '$dep_file'\n",
+                     "   to remove errors\n";
+	     }
+             next FILE;
+	  }
+      }
     }
     else
     {
@@ -1178,54 +1607,76 @@ foreach $filename ( @file_list )
 
     #************************************************************
 
-    # Ensure bbl file up-to-date.  
-    # Also remake the bbl file if there is a bad citation, or if we
-    #     use go_mode (which says to remake everything)
-    # The call to &make_bbl will also remake the bbl file if it is
-    #    out-of-date with respect to the bib files
-    # But ignore the return code from make_bbl, since the bbl file depends 
-    # on the aux file, which may in fact be out of date if the tex file has
-    # changed, and we are about to re-latex it.
-    if ($bibtex_mode) { 
-        &make_bbl($bad_citation || $go_mode); 
-        if ( ($failure > 0) && !$force_mode && ! $preview_continuous_mode) {
-            goto END_FIRST;
-        }
-    }
-
-    # Similarly for ind file.  This is simpler because it only depends
-    # on the idx file.
-    if ($index_mode) {
-        &make_ind($go_mode); 
-        if ( ($failure > 0) && !$force_mode && ! $preview_continuous_mode) {
-            goto END_FIRST;
-        }
-    }
-
-    $dest_condition_ignore = 0;  #According to this setting
-                  # &make_latex_dvi_pdf will or will not examine whether destination
-                  # files exist when deciding to make latex
-    &make_files($go_mode);
-END_FIRST:
-    if ( ($failure > 0) && !$force_mode && ! $preview_continuous_mode) {
-        &exit_msg1( $failure_msg, $failure );
-    }
     if ( $preview_continuous_mode ) { 
-       &make_preview_continous; 
+        &make_preview_continuous; 
+        # Will probably exit by ctrl/C and never arrive here.
+        next FILE;
     }
-    elsif ( $preview_mode ) { 
-        &make_preview; 
-        if ( ($failure > 0) && !$force_mode ) {
-           &exit_msg1( $failure_msg, $failure );
+
+
+## Handling of failures:
+##    Variable $failure is set to indicate a failure, with information
+##       put in $failure_msg.  
+##    These variables should be set to 0 and '' at any point at which it
+##       should be assumed that no failures have occurred.
+##    When after a routine is called it is found that $failure is set, then
+##       processing should normally be aborted, e.g., by return.
+##    Then there is a cascade of returns back to the outermost level whose 
+##       responsibility is to handle the error.
+##    Exception: An outer level routine may reset $failure and $failure_msg
+##       after initial processing, when the error condition may get 
+##       ameliorated later.
+    #Initialize failure flags now.
+    $failure = 0;
+    $failure_msg = '';
+    &make_files($go_mode);
+    if ($failure > 0) { next FILE;}
+    &make_preview  if  $preview_mode ;
+    if ($failure > 0) { next FILE;}
+    &make_printout if $printout_mode ;
+    if ($failure > 0) { next FILE;}
+} # end FILE
+continue {
+    # Handle any errors
+    if ( $failure > 0 ) {
+        if ( $failure_msg ) {
+            #Remove trailing space
+            $failure_msg =~ s/\s*$//;
+            warn "Latexmk: Did not finish processing file: $failure_msg\n";
+            $failure = 1;
         }
+        $failure_count ++;
+        $last_failed = 1;
     }
-    elsif ( $printout_mode) { 
-        &make_printout; 
-        if ( ($failure > 0) && !$force_mode ) {
-           &exit_msg1( $failure_msg, $failure );
-        }
+    else {
+        $last_failed = 0;
     }
-} # end FILES
+    &ifcd_popd;
+}
+# If we get here without going through the continue section:
+if ( $do_cd && ($#dir_stack > -1) ) {
+   # Just in case we did an abnormal exit from the loop
+   warn "Latexmk: Potential bug: dir_stack not yet unwound, undoing all directory changes now\n";
+   &finish_dir_stack;
+}
+
+if ($failure_count > 0) {
+    if ( $last_failed <= 0 ) {
+        # Error occured, but not on last file, so
+        #     user may not have seen error messages
+        warn "\n------------\n";
+        warn "Latexmk: Some operations failed.\n";
+    }
+    if ( !$force_mode ) {
+      warn "Latexmk: Use the -f option to force complete processing.\n";
+    }
+    exit 12;
+}
+
+
+
+# end MAIN PROGRAM
+#############################################################
 
 #************************************************************
 #### Subroutines
@@ -1238,40 +1689,54 @@ END_FIRST:
 sub make_files
 {
     my $do_build = $_[0];
-    my $new_files 
-       = &find_new_files;
-    my $new_deps 
-       = &make_dependents($do_build);
-    if ($failure > 0) {return;}
+    my $new_files = &find_new_files;
+    my $new_deps = &make_dependents($do_build);
     if ( ($new_files > 0) || ($new_deps > 0) ) {
 	$do_build = 1;
     }
-    if ($need_dvi)
-    {
-        &make_latex_dvi_pdf($do_build, 'dvi');
-        if ($failure > 0) {return;}
-    } 
-    if ( $need_ps ) {
-        &make_postscript; 
-        if ($failure > 0) {return;}
-    }
-    if ( $need_pdf == 1 ) {
-        &make_latex_dvi_pdf($do_build, 'pdf'); 
-        if ($failure > 0) {return;}
-    }
-    if ( $need_pdf == 2 ) {
-        &make_pdf2; 
-        if ($failure > 0) {return;}
-    }
-    if ( $need_pdf == 3 ) {
-        &make_pdf3; 
-        if ($failure > 0) {return;}
-    }
+
+    # Ensure bbl file up-to-date.  
+    # Also remake the bbl file if there is a bad citation, or if we
+    #     use go_mode (which says to remake everything)
+    # The call to &make_bbl will also remake the bbl file if it is
+    #    out-of-date with respect to the bib files
+    # But ignore the return code from make_bbl, since the bbl file depends 
+    # on the aux file, which may in fact be out of date if the tex file has
+    # changed, and we are about to re-latex it.
+
+    &make_bbl($bad_citation || $do_build) if $bibtex_mode ; 
+
+    # Similarly for ind file.  This is simpler because it only depends
+    # on the idx file.
+    &make_ind($do_build) if $index_mode ;
+
+    # In the remaining makes, the postscript and pdf makes will be
+    #   triggered by a successful make of dvi or pdf, so they do not
+    #   need a $do_build argument
+    # Reset the failure information, since the initial set up routines 
+    #   may have reacted to out-of-date information.
+    $failure = 0;
+    $failure_msg = '';
+    &make_latex_dvi_pdf($do_build, 'dvi') if ($need_dvi) ;
+    if ($failure > 0) { return;}
+    &make_postscript                      if ($need_ps) ;
+    if ($failure > 0) { return;}
+    &make_latex_dvi_pdf($do_build, 'pdf') if ($need_pdf == 1) ;
+    if ($failure > 0) { return;}
+    &make_pdf2                            if ($need_pdf == 2) ;
+    if ($failure > 0) { return;}
+    &make_pdf3                            if ($need_pdf == 3) ;
+    if ($failure > 0) { return;}
 }
 
 #************************************************************
 
 sub make_latex_dvi_pdf
+# Usage make_latex_dvi_pdf( do_build, type_of_build )
+# Arrive here:  log_file parsed
+#               dependents up-to-date
+#               bbl up-to-date
+#               ind up-to-date
 {
   my $do_build = $_[0];
   my $dest_type = $_[1];
@@ -1284,11 +1749,16 @@ sub make_latex_dvi_pdf
       $dest = "$root_filename.pdf"; 
       $processor = $pdflatex; 
   } else {
-      die("Latexmk: BUG: undefined destination type $dest_type in make_latex_dvi_pdf\n");
+      warn "Latexmk::make_latex_dvi_pdf: BUG: ",
+           "undefined destination type '$dest_type'";
+      exit 20;
   }
 
   ## get initial last modified times.
-  my $tex_mtime = &get_latest_mtime(@includes);
+  #    Include explicit name of primary tex source, just in case
+  #      it's not obtained from parsing the log file 
+  #      (under error or exotic conditions, e.g., files renamed)
+  my $tex_mtime = &get_latest_mtime(@includes, $texfile_name);
   my $dest_mtime= &get_mtime("$dest");
   my $aux_mtime = &get_mtime("$root_filename.aux");
   my $bib_mtime = &get_latest_mtime(@bib_files);
@@ -1300,6 +1770,8 @@ sub make_latex_dvi_pdf
   ##      or .aux older than tex file or bib file or anything they input, 
   ##   then run latex.
 
+  #print "'$root_filename': aux = $aux_mtime;  tex = $tex_mtime\n";
+  #show_array( "Include names: ", @includes );
   #&list_conditions (
   #   $do_build, 
   #   !(-e "$root_filename.aux"),
@@ -1311,30 +1783,26 @@ sub make_latex_dvi_pdf
   #   ( (-e "$root_filename.ind") && ($aux_mtime < $ind_mtime) ),
   #   ( $includes_from_log && ! -e "$root_filename.log" )
   #);
-  my $dest_bad =  !(-e "$dest") || ($dest_mtime < $tex_mtime) ;
-  if ($dest_condition_ignore) {$dest_bad = 0;}
-  if ( $do_build
-    || !(-e "$root_filename.aux")
-    || ($aux_mtime < $tex_mtime)
-    || $dest_bad
-    || ( (-e "$root_filename.bbl") && ($aux_mtime < $bbl_mtime) )
-    || ( (-e "$root_filename.ilg") && ($aux_mtime < $ilg_mtime) )
-    || ( (-e "$root_filename.ind") && ($aux_mtime < $ind_mtime) )
-    || ( $includes_from_log && ! -e "$root_filename.log" )
-   )
-   { 
+  my $dest_bad =  (!-e "$dest") || ($dest_mtime < $tex_mtime) ;
+  my $outofdate =
+	$do_build
+	|| !(-e "$root_filename.aux")
+	|| ($aux_mtime < $tex_mtime)
+	|| $dest_bad
+	|| ( (-e "$root_filename.bbl") && ($aux_mtime < $bbl_mtime) )
+	|| ( (-e "$root_filename.ilg") && ($aux_mtime < $ilg_mtime) )
+	|| ( (-e "$root_filename.ind") && ($aux_mtime < $ind_mtime) )
+	|| ( $includes_from_log && ! -e "$root_filename.log" );
+  if ( $outofdate ){ 
       &build_latex_dvi_pdf($processor);
-      if ($failure > 0) {return;}
-      if ( $dest_type eq 'dvi') {
-         &make_dvi_filtered;
-         if ($failure > 0) {return;}
-      }
-   }
-   else
-   { 
-       warn "Latexmk: File '$dest' is up to date\n" 
-          if !$quell_uptodate_msgs;
-   }
+      if ($failure > 0) { return;}
+  }
+  else { 
+      warn "Latexmk: File '$dest' is up to date\n" 
+         if !$quell_uptodate_msgs;
+  }
+  &make_dvi_filtered if ( $dest_type eq 'dvi');
+  if ($failure > 0) { return;}
 }
 
 sub list_conditions {
@@ -1411,7 +1879,14 @@ sub build_latex_dvi_pdf {
     #
     #    1.  The .aux file has changed from the previous run.
     #    2.  The .idx file has changed from the previous run.
-    #    3.  The set of input files has changed from the previous run.
+    #    3.  ?? The set of input files has changed from the previous run.
+    #       This causes too many problems.
+    #       If the generated files are in the input list, their
+    #           time stamps get tested, which is VERY wrong
+    #       Change of set of input files is entirely irrelevant under all 
+    #           other situations, and to test for it is WRONG.
+    #       Best is a thorough-going configurable analysis of generated files
+    #           that get into circular dependences.
     #
     # Of course, if a previous version of one of these files did not
     # exist (as on a first run), then that implies a rerun is
@@ -1425,24 +1900,35 @@ sub build_latex_dvi_pdf {
     my $aux_file;
     my $processor = $_[0];
 
-    my $count_latex = 0;
+    # Count runs of latex, so we can bail out if we need too many runs,
+    #    but we'll reset the count if the source files change.
+    # But for sane error messages, we'll count the previous runs
+    my $count_latex = 0;  
+    my $uncounted_latex = 0;
     my $repeat = 0;
-    
+  
     do {
         # Arrival here means that a new run of latex/pdflatex is requested
-        # Assume that the .ind file (if any) corresponds to the .idx file
-        #    from the previous run
-        # and that the .bbl file (if any) corresponds to the .aux file from
-        #    the previous run.
+        # Assume:
+        # (a) .ind file (if any) 
+        #          corresponds to the .idx file from the previous run
+        #      AND is up-to-date wrt any sources (.ist) ?? to check
+        # (b) .bbl file (if any) 
+        #          corresponds to the .aux file from the previous run.
+        #      AND is up-to-date wrt sources (.bib, .bst) ?? to check
+        # (c) files generated by custom dependency are up-do-date
+        # (d) %source_times set
 
         $repeat = 0;     # Assume no repeat necessary.
 	$count_latex++;  # Count the number of passes through latex
-        warn "------------\nRun number $count_latex of ",
-             "$processor [$texfile_name]\n------------\n";
+        my $count_string = "$count_latex";
+        if ($uncounted_latex > 0) { $count_string .= "+$uncounted_latex"; }
+        warn_running( "Run number $count_string of '$processor $texfile_name'" );
         foreach $aux_file (@aux_files) 
         {
             if ( -e $aux_file ) {
-	        warn "Saving old .aux file \"$aux_file\"\n" unless $silent;
+	        warn "Latexmk: Saving old .aux file \"$aux_file\"\n"
+                    unless $silent;
                 copy_file_and_time ( "$aux_file", "$aux_file.bak");
             }
         }
@@ -1454,9 +1940,14 @@ sub build_latex_dvi_pdf {
             # which does not need any cross references, etc.  Generating this
             # .aux.bak file will save a pass through latex on simple files.
             local $aux_bak_file = ">$root_filename.aux.bak";
-            open(aux_bak_file) || die "Cannot write file $aux_bak_file\n";
+            open(aux_bak_file) or die "Cannot write file $aux_bak_file\n";
             print aux_bak_file "\\relax \n";
             close(aux_bak_file);
+        }
+        if ( (! -e "$root_filename.aux") && ( -e "$root_filename.aux.bak") ) {
+            # Arrive here if .aux does NOT exist 
+            # BUT the .aux.bak file DOES exist
+            # ?? What to do?
         }
         if ( (-e "$root_filename.aux") && $bibtex_mode) { 
            # We have assumed that the bbl file is up-to-date 
@@ -1464,53 +1955,100 @@ sub build_latex_dvi_pdf {
            #    it may be out-of-date with respect to the bib file(s).
            # So run bibtex in this case
            my $bibtex_return_code = &make_bbl(0);
-           if ( ($bibtex_return_code eq 2) & !$force_mode )
+           if ( ($bibtex_return_code == 2) & !$force_mode )
            {
 	       $failure = 1;
                $failure_msg = 'Bibtex reported an error';
                return;
+               #### Bypass to end of calling eval-block
+               ###die "Bibtex reported an error\n";
            }
         }
 
         if ( -e "$root_filename.idx" ) {
-	    warn "Saving old .idx file\n" unless $silent;
+	    warn "Latexmk: Saving old .idx file '$root_filename.idx'\n" 
+               unless $silent;
             copy_file_and_time ( "$root_filename.idx", "$root_filename.idx.bak");
         }
 
+        ########## Run latex (or c.):
         my @includes_previous = @includes;
-        my ($pid, $return) = &Run("$processor $texfile_name"); 
-        $updated = 1;    # Flag that some dependent file has been remade
-        if ($return) {
+        &update_source_times(@includes);
+        my ($pid, $return_latex) = &Run("$processor \"$texfile_name\""); 
+        # Did the source files change while we were running?
+        my $source_changed = &update_source_times(@includes);
+
+
+        ######### Analyze results of run:
+        # List reasons for rerun. 
+        my @reason = ();
+        # Variables to analyze need to rerun:
+        my $aux_changed = 0;
+        my $idx_changed = 0;
+        my @aux_files_previous = @aux_files;
+
+        ####### Capture any changes in source file status before we
+        #         check for errors in the latex run
+        my $return_log = &parse_log;
+        if ( $return_log == 0 ) {
+           &aux_restore;
+           $failure = 1;
+           $failure_msg = "Latex failed to generate a log file";
+           return;
+           #### Bypass to end of calling eval-block
+           ###die "Latex failed to generate a log file\n";
+	}
+
+        ####### Check for new files, direct or indirect
+        my $new_files = &find_new_files;
+        my $new_deps = &make_dependents(0);
+#	warn "==== $new_files $new_deps";
+        if ($new_files > 0) {
+            push @reason, "New source files found";
+	}
+        if ($new_deps > 0) {
+            push @reason, "Custom-dependency files changed";
+            $uncounted_latex += $count_latex;
+            $count_latex = 0;
+	}
+
+
+        if ($return_latex) {
+           # ?? Must 
+           #  a) parse_log file (so -pvc has latest dependency information)
+           #  b) check for newfiles, and do dependency check;
+           #     don't abort if new files become available.  Rather repeat
+           #  c) Perhaps best to explicitly look for the missing files.
+           #  d) Also in -pvc must check for new files.
            if (!$force_mode) {
-	       $failure = $return;
-               $failure_msg = 'Latex encountered an error';
-               &aux_restore;
-               return;
+               if ( ($new_files > 0) || $source_changed ) {
+                  warn "Latexmk: Latex encountered an error,\n",
+                       "         I am not in force_mode,\n",
+                       "         but new source files are found,\n",
+                       "   So I will try running Latex again\n";
+	       }
+               else {
+                   &aux_restore;
+                   $failure = 1;
+                   $failure_msg = "Latex encountered an error";
+                   return;
+                   #### Bypass to end of calling eval-block
+                   ###die "Latex encountered an error\n";
+	       }
            }
            elsif ($silent) {
                # User may not have seen error
                warn "====Latex encountered an error: see .log file====\n";
            }
         }
-        $return = &parse_log;
-        my $aux_changed = 0;
-        my $idx_changed = 0;
 
-        if ( $return == 0 ) 
-        {
-           $failure = 1;
-           $failure_msg = 'Latex failed to generate a log file';
-           &aux_restore;
-           return;
-	}
+        $updated = 1;    # Flag that some dependent file has been remade
+
         if ( $includes_from_log )
         {
-           my @aux_files_previous = @aux_files;
            if ( @aux_files ne @aux_files_previous ){
 	       $aux_changed = 1;
-               warn "List of .aux files has changed. ",
-                    "I must run latex again\n"
-                    unless $silent;
+               push @reason, "List of .aux files has changed";
 	   }
         }
 
@@ -1521,21 +2059,20 @@ sub build_latex_dvi_pdf {
            {
               if ( -e "$aux_file" ) {
                   if ( &diff ("$aux_file", "$aux_file.bak") ) {
-                      warn ".aux file \"$aux_file\" changed.  ",
-                           "I must run latex again\n"
-                           unless $silent;
+                      push @reason, ".aux file '$aux_file' changed";
                       $aux_changed = 1;
                       last;
                   }
                   else {
-                      warn "File \"$aux_file\" has not changed, ",
+                      warn "Latexmk: File \"$aux_file\" has not changed, ",
                            "so it is valid\n" unless $silent;
 	          }
 	      }
 	   }
         }
         if ( (!-e "$root_filename.aux") && (-e "$root_filename.aux.bak") ) {
-           warn "No aux file was generated, so I don't need .aux.bak file\n"
+           warn "Latexmk: No aux file was generated, ",
+                         "so I don't need .aux.bak file\n"
               unless $silent;
            unlink ("$root_filename.aux.bak");
         }
@@ -1548,93 +2085,131 @@ sub build_latex_dvi_pdf {
             # &make_bbl also checks whether the bbl file is
             #   out-of-date with respect to the bib files.
             my $bibtex_return_code = &make_bbl($aux_changed);
-            if ( ($bibtex_return_code eq 2) && !$force_mode ) 
+            if ( ($bibtex_return_code == 2) && !$force_mode ) 
             {
    	       $failure = 1;
                $failure_msg = 'Bibtex reported an error';
                return;
+               #### Bypass to end of calling eval-block
+               ###die "Bibtex reported an error\n";
+
             }
         }
 
         if ( -e "$root_filename.idx" ) {
            if ( &diff ("$root_filename.idx", "$root_filename.idx.bak") ) {
-               warn "The .idx file changed.  I must run latex again\n"
-                   unless $silent;
                # idx file exists and has changed 
                #    implies idx file written 
                #    implies indexing being used
+               push @reason, "The .idx file changed";
                $index_mode = 1;
 	       $idx_changed = 1;
            } else {
-               warn "The .idx file has not changed, so it is valid\n"
+               warn "Latexmk: The .idx file has not changed, so it is valid\n"
                   unless $silent;
            }
            if ($index_mode) {
               my $makeindex_return_code = &make_ind($idx_changed);
-              if ( ($makeindex_return_code eq 2) && !$force_mode ) {
-                  $failure = 1;
-                  $failure_msg = 'Makeindex encountered an error';
-                  return;
+              if ( ($makeindex_return_code == 2) & !$force_mode ) {
+	         $failure = 1;
+                 $failure_msg = 'Makeindex reported an error';
+                 return;
+                 #### Bypass to end of calling eval-block
+                 ###die "Makeindex reported an error\n";
               }
            }
-        } else {
+        }
+        else {
            if ($index_mode) {
-              warn "No .idx file was generated, but index_mode is set; ",
+              warn "Latexmk: No .idx file was generated, but index_mode is set; ",
                    "I will unset it"
                  unless $silent;
               $index_mode = 0;
            }
            if ( -e "$root_filename.idx.bak") {
-              warn "No idx file was generated. ",
+              warn "Latexmk: No idx file was generated. ",
                    "So I delete unneeded .idx.bak file\n"
                  unless $silent;
               unlink ("$root_filename.idx.bak");
            }
-        }
+       }
 
-        if ( @includes ne @includes_previous ) { 
-            warn "The set of input files changed.  I must run latex again\n"
-              unless $silent;
-        }
+#        if ( @includes ne @includes_previous ) { 
+#            push @reason, "The set of input files changed.  ";
+#        }
 
-        if ( $aux_changed 
-             || $idx_changed 
-             ||( @includes ne @includes_previous ) 
+        $source_changed2 = &update_all_source_times;
+
+        if ($source_changed ) {
+            push @reason, "File '$source_changed' changed during run";
+            $uncounted_latex += $count_latex;
+            $count_latex = 0;
+	}
+        if ($source_changed2) {
+            push @reason, "File '$source_changed2' changed during run";
+            $uncounted_latex += $count_latex;
+            $count_latex = 0;
+	}
+        if ( $#reason >= 0
+#             $aux_changed 
+#             || $idx_changed 
+#             ||( @includes ne @includes_previous ) 
+#             || ( $new_files > 0 )
+#             || ( $new_deps > 0 )
+#             || $source_changed
+#             || $source_changed2
            ) {
-	    $repeat = 1;
+            $repeat = 1;
+            if ( $diagnostics ) {
+                show_array( "Latexmk: I must rerun latex, because:", @reason);
+            }
+            elsif (!$silent) {
+		warn "Latexmk: $reason[0].  I must rerun latex\n";
+#		if !$silent && ($#reason >=0) ;
+            }
         }
 
         if ( $count_latex ge $max_repeat ) { 
            # Avoid infinite loop by having a maximum repeat count
            # Getting here represents some kind of weird error.
            if ($repeat ) {
-              warn "Maximum runs of latex reached ",
+              warn "Latexmk: Maximum runs of latex reached ",
                    "without correctly resolving cross references\n";
+           }
+           $repeat = 0;
+        }
+        if ( $count_latex + $uncounted_latex ge $max_abs_repeat ) { 
+           if ($repeat ) {
+              warn "Latexmk: Absolute maximum runs of latex reached ",
+                   "without finding stable source files\n";
            }
            $repeat = 0;
         }
     } until ($repeat == 0);
 
+# Summarize issues that may have escaped notice:
+    my @warnings = ();
+    if ($bad_reference) {
+        push @warnings, "Latex could not resolve all references";
+    }
+    if ($bad_citation) {
+        push @warnings, "Latex could not resolve all citations";
+    }
     if ($bibtex_mode) {
-        my $retcode = &check_for_bibtex_warnings;
-        if ($retcode == 1) {
-           print "See $root_filename.blg for details\n";
+        my $retcode = &check_bibtex_log;
+        if ($retcode == 3) {
+            push @warnings, "Could not open bibtex log file for error check";
         }
         elsif ($retcode == 2) {
-           return;
+          push @warnings, "Bibtex errors";
         }
-    }
+        elsif ($retcode == 1) {
+          push @warnings, "Bibtex warnings";
+        }
 
-    if (!$force_mode && $bad_reference) {
-        $failure = 1;
-        $failure_msg = 'Latex could not resolve all references';
-        return;
     }
-
-     if (!$force_mode && $bad_citation) {
-        $failure = 1;
-        $failure_msg = 'Latex could not resolve all citations or labels';
-        return;
+    if ($#warnings > 0) {
+	show_array( "Latexmk: Summary of warnings:", @warnings );
     }
 }
 
@@ -1651,6 +2226,7 @@ sub build_latex_dvi_pdf {
 # The variable $extension_treatment determines which rules are used.
 
 sub find_basename
+#?? Need to use kpsewhich, if possible
 {
   local($given_name, $base_name, $ext, $path, $tex_name);
   $given_name = $_[0];
@@ -1708,10 +2284,10 @@ sub find_basename
   }
   else {
      die "Latexmk: Incorrect configuration gives \$extension_treatment=",
-         "\"$extension_treatment\"\n";
+         "'$extension_treatment'\n";
   }
    if ($diagnostics) {
-      print "Given=\"$given_name\", tex=\"$tex_name\", base=\"$base_name\"\n";
+      print "Given='$given_name', tex='$tex_name', base='$base_name'\n";
   }
   return ! -e $tex_name;
 }
@@ -1721,6 +2297,8 @@ sub find_basename
 sub make_bbl {
 # If necessary, make bbl file.  Assume bibtex mode on.
 # Force run if first argument is non-zero.
+# Update times for bibfiles (external sources for bibtex)
+# ?? Should parse blg file to find .bst files
 # Return 0 if nothing made, 
 #        1 if bbl file made, 
 #        2 if bibtex reported an error
@@ -1735,16 +2313,15 @@ sub make_bbl {
       # nothing to do
        return 0;
    }   
+
    if (($_[0] != 0)
        || !(-e "$root_filename.bbl")
        || ($bbl_mtime < $bib_mtime)
        )
    {
-       warn "------------\nRunning $bibtex [$root_filename]",
-            "\n------------\n"
-         unless $silent;
-       my ($pid, $return) = &Run("$bibtex $root_filename"); 
+       my ($pid, $return) = &Run_msg("$bibtex \"$root_filename\""); 
        $updated = 1;
+       &update_source_times( @bib_files );
        $bbl_mtime = &get_mtime("$root_filename.bbl");
        if ( $return != 0 ) 
           {  return 2; }
@@ -1767,6 +2344,8 @@ sub make_bbl {
 sub make_ind {
 # If necessary, make ind file.  Assume makeindex mode on.
 # Force run if first argument is non-zero.
+# Update times for ind_files
+# ?? Should parse .ilg file to find .ist files
 # Return 0 if nothing made, 
 #        1 if ind file made, 
 #        2 if makeindex reported an error
@@ -1778,22 +2357,15 @@ sub make_ind {
    }   
    if ( ($_[0] != 0) || !(-e "$root_filename.ind") )
    {
-      warn "------------\nRunning $makeindex [$root_filename]",
-           "\n------------\n"
-         unless $silent;
-      my ($pid, $return) = &Run("$makeindex $root_filename");
+      my ($pid, $return) = &Run_msg("$makeindex \"$root_filename.idx\"");
+      &update_source_times( @ind_files );
       $updated = 1;
-      if ($return) 
-      {  
-	  $failure = 1;
-          $failure_msg = 'Problem with makeindex';
-          return 2; 
-      }
-      else 
-      { return 1; }
+      if ($return) { return 2; }
+      else { return 1; }
    }
-   else 
-   { return 0; }
+   else {
+      return 0; 
+   }
 }
 
 #************************************************************
@@ -1802,7 +2374,7 @@ sub find_new_files
 {
     my @new_includes = ();
 MISSING_FILE:
-    foreach my $missing (sort keys %includes_missing) {
+    foreach my $missing (uniq( sort keys %includes_missing ) ) {
        my ($base, $path, $ext) = fileparse ($missing, '\.[^\.]*');
        if ( -e "$missing.tex" ) { 
 	   push @new_includes, "$missing.tex";
@@ -1852,11 +2424,40 @@ MISSING_FILE:
     } # end MISSING_FILES
 
     @new_includes = uniq( sort(@new_includes) );
+
+    # Sometimes bad line-breaks in log file (etc) create the
+    # impression of a missing file e.g., ./file, but with an incorrect
+    # extension.  The above tests find the file with an extension,
+    # e.g., ./file.tex, but it is already in the list.  So now I will
+    # remove files in the new_include list that are already in the
+    # include list.  Also handle aliasing of file.tex and ./file.tex.
+    # For example, I once found:
+# (./qcdbook.aux (./to-do.aux) (./ideas.aux) (./intro.aux) (./why.aux) (./basics
+#.aux) (./classics.aux)
+
+    my @really_new = ();
+    # Create a hash indexed by filenames so we can look up filenames.
+    my %includes_tmp = ();
+    foreach my $file (@includes) {
+        my $stripped = $file;
+        $stripped =~ s{^\./}{};
+        $includes_tmp{$stripped} = 1;
+    }
+    foreach my $file (@new_includes) {
+        my $stripped = $file;
+        $stripped =~ s{^\./}{};
+        if ( !exists $includes_tmp{$stripped} ) {
+           push @really_new, $file;
+        }
+    }
+    @new_includes = @really_new;
+
     @includes = uniq( sort(@includes, @new_includes) );
+    &add_source_times(@new_includes);
     
     my $found = $#new_includes + 1;
     if ( $diagnostics && ( $found > 0 ) ) {
-	warn "Detected previously missing files:\n";
+	warn "Latexmk: Detected previously missing files:\n";
         foreach (@new_includes) {
             warn "   '$_'\n";
 	}
@@ -1890,6 +2491,7 @@ DEP:
 	   # Found match of rule
 	   if ( -e "$base_name.$fromext" )
 	   {
+	      &add_source_times( "$base_name.$fromext", "$base_name.$toext" );
               # From file exists, now check if it is newer
   	      if (( ! (-e "$base_name.$toext" ))
                   || $build
@@ -1898,15 +2500,17 @@ DEP:
                      )
                  )
               {
-	         warn "------------\nRunning $func_name [$base_name]\n------------\n"
-                    unless $silent;
+                 warn_running( "Running '&$func_name( $base_name )'" );
 	         my $return = &$func_name($base_name);
                  $updated = 1;
+                 &update_source_times( "$base_name.$fromext", "$base_name.$toext" );
 	         if ( !$force_mode && $return )
 	         {
                     $failure = $return;
                     $failure_msg = "$func_name encountered an error";
                     last FILE;
+                    #### Bypass to end of calling eval-block
+                    ###die "$func_name encountered an error\n";
 	         }
                  else {
                     $makes++;
@@ -1922,6 +2526,9 @@ DEP:
                 $failure_msg = "File '$base_name.$fromext' does not exist ".
                                "to build '$base_name.$toext'";
                 last FILE;
+                #### Bypass to end of calling eval-block
+                ###die "File '$base_name.$fromext' does not exist ".
+                ###    "to build '$base_name.$toext'\n";
 	     }
 	  } # 
        } # End of Rule found
@@ -1935,15 +2542,32 @@ DEP:
 sub make_dvi_filtered
 {
   my $dvi_file = "$root_filename.dvi";
+  my $dviF_file = "$root_filename.dviF";
   return if ( length($dvi_filter) == 0 );
   if ( ! -e $dvi_file ) {
-       warn "Dvi file \"$dvi_file\" has not been made, so I cannot filter it\n";
+       warn "Latexmk: Dvi file \"$dvi_file\" has not been made, ",
+            "so I cannot filter it\n";
        return;
   }
-  warn "------------\nRunning $dvi_filter [$root_filename]\n------------\n"
-     unless $silent;
-  &Run("$dvi_filter < $dvi_file > $root_filename.dviF");
-  $updated = 1;
+  my $dviF_mtime = &get_mtime("$dviF_file");
+  my $dvi_mtime = &get_mtime("$dvi_file");
+  if ( (! -e "$dviF_file") 
+       || ( $dviF_mtime < $dvi_mtime )
+     ) {
+     if ( &view_file_via_temporary ) {
+        my $tmpfile1 = tempfile1( "${root_filename}_tmp", ".dviF" );
+        &Run_msg( "$dvi_filter < \"$dvi_file\" > \"$tmpfile1\"" );
+        move( $tmpfile1, $dviF_file );
+     }
+     else {
+        &Run_msg( "$dvi_filter < \"$dvi_file\" > \"$dviF_file\"" );
+     }
+     $updated = 1;
+  }
+  else { 
+      warn "Latexmk: File '$dviF_file' is up to date\n"
+           if !$quell_uptodate_msgs;
+  }
 }
 
 #************************************************************
@@ -1962,16 +2586,22 @@ sub make_pdf2
     my $ps_mtime = &get_mtime("$ps_file");
     my $pdf_mtime = &get_mtime("$pdf_file");
     if ( ! -e $ps_file ) {
-	warn "Postscript file \"$ps_file\" has not been made\n";
+	warn "Latexmk: Postscript file \"$ps_file\" has not been made,\n",
+             "         so I cannot convert it to pdf\n";
         return;
     }
     if ((! -e "$pdf_file") 
         ||( $pdf_mtime < $ps_mtime )
        )
     {
-        warn "------------\nRunning $ps2pdf [$root_filename]\n------------\n"
-          unless $silent;
-        &Run("$ps2pdf  $ps_file $pdf_file");
+        if ( &view_file_via_temporary ) {
+           my $tmpfile = tempfile1( "${root_filename}_tmp", ".pdf" );
+           &Run_msg( "$ps2pdf  \"$ps_file\" \"$tmpfile\"" );
+           move( $tmpfile, $pdf_file );
+        }
+        else {
+           &Run_msg( "$ps2pdf  \"$ps_file\" \"$pdf_file\"" );
+        }
         $updated = 1;
     }
     else
@@ -1996,16 +2626,22 @@ sub make_pdf3
     my $dvi_mtime = &get_mtime("$dvi_file");
     my $pdf_mtime = &get_mtime("$pdf_file");
     if ( ! -e $dvi_file ) {
-	warn "Dvi file \"$dvi_file\" has not been made, so I cannot convert it to pdf\n";
+	warn "Latexmk: Dvi file \"$dvi_file\" has not been made,\n",
+             "         so I cannot convert it to pdf\n";
         return;
     }
     if ((! -e "$pdf_file") 
         ||( $pdf_mtime < $dvi_mtime )
        )
     {
-        warn "------------\nRunning $dvipdf [$root_filename]\n------------\n"
-           unless $silent;
-        &Run("$dvipdf  $dvi_file $pdf_file");
+        if ( &view_file_via_temporary ) {
+           my $tmpfile = tempfile1( "${root_filename}_tmp", ".pdf" );
+           &Run_msg( "$dvipdf  \"$dvi_file\" \"$tmpfile\"" );
+           move( $tmpfile, $pdf_file );
+        }
+        else {
+           &Run_msg( "$dvipdf  \"$dvi_file\" \"$pdf_file\"" );
+        }
         $updated = 1;
     }
     else
@@ -2057,12 +2693,11 @@ sub make_printout
   }
   my $file = $root_filename.$ext;
   if ( ! -e $file ) {
-      warn "File \"$file\" has not been made, so I cannot print it\n";
+      warn "Latexmk: File \"$file\" has not been made, so I cannot print it\n";
       return;
   }
-  warn "------------\nPrinting using $command $file\n------------\n"
-     unless $silent;
-  &Run("$command $file");
+  warn_running( "Printing using '$command $file'" );
+  &Run("$command \"$file\"");
 }
 
 #************************************************************
@@ -2070,8 +2705,11 @@ sub make_printout
 sub make_postscript
 {
   my $tmpfile;
+  my $tmpfile1;
   my $header;
   my $dvi_file;
+  my $ps_file = "$root_filename.ps";
+  my $psF_file = "$root_filename.psF";
 
   # Figure out the dvi file name
   if ( length($dvi_filter) == 0 )
@@ -2084,7 +2722,8 @@ sub make_postscript
   }
 
   if ( ! -e $dvi_file ) {
-      warn "Dvi file \"$dvi_file\" has not been made, so I cannot convert it to postscript\n";
+      warn "Latexmk: Dvi file '$dvi_file' has not been made, ",
+                "so I cannot convert it to postscript\n";
       return;
   }
 
@@ -2092,16 +2731,10 @@ sub make_postscript
   if ( $banner )
   {
     ## Make temp banner file
-#    local(*INFILE,*OUTFILE,$count);
-    local(*OUTFILE,$count);
+#    local(*INFILE,*OUTFILE);
+    local(*OUTFILE);
 
-    $tmpfile = "$tmpdir/latexmk.$$";
-    $count = 0;
-    while ( -e $tmpfile )
-    {
-      $count = $count + 1;
-      $tmpfile = "$tmpdir/latexmk.$$.$count";
-    }
+    $tmpfile = tempfile1("latexmk_header", ".ps");
     if ( ! open(OUTFILE, ">$tmpfile") ) {
       die "Latexmk: Could not open temporary file [$tmpfile]\n"; }
     print OUTFILE "userdict begin /bop-hook{gsave 200 30 translate\n";
@@ -2115,28 +2748,51 @@ sub make_postscript
     $header = '';
   }
 
-  my $ps_mtime = &get_mtime("$root_filename.ps");
+  my $ps_mtime = &get_mtime("$ps_file");
   my $dvi_mtime = &get_mtime("$dvi_file");
-  if ((! -e "$root_filename.ps") 
-      ||( $ps_mtime < $dvi_mtime )
+  if ( (! -e "$ps_file") 
+       || ( $ps_mtime < $dvi_mtime )
      )
   {
-      warn "------------\nRunning $dvips [$root_filename]\n------------\n"
-         unless $silent;
-      &Run("$dvips $header $dvi_file -o $root_filename.ps");
-      ## Do we have postscript filtering?
-      if ( length($ps_filter) != 0 )
-      {
-         warn "------------\nRunning $ps_filter [$root_filename]\n------------\n"
-            unless $silent;
-         &Run("$ps_filter < $root_filename.ps > $root_filename.psF");
+      if ( &view_file_via_temporary ) {
+	  $tmpfile1 = tempfile1( "${root_filename}_tmp", ".ps" );
+          &Run_msg( "$dvips $header \"$dvi_file\" -o \"$tmpfile1\"" );
+          move( $tmpfile1, $ps_file );
+      }
+      else {
+          &Run_msg( "$dvips $header \"$dvi_file\" -o \"$ps_file\"" );
       }
       $updated = 1;
   }
   else
   { 
-      warn "Latexmk: File '$root_filename.ps' is up to date\n" if !$quell_uptodate_msgs;
+      warn "Latexmk: File '$ps_file' is up to date\n" if !$quell_uptodate_msgs;
   }
+  # End make of ps file
+
+  if ( length($ps_filter) != 0 ) {
+     my $psF_mtime = &get_mtime("$psF_file");
+     # Get ps_mtime again, since the ps_file may have changed:
+     my $ps_mtime = &get_mtime("$ps_file");
+     if ( (! -e "$psF_file") 
+          || ( $psF_mtime < $ps_mtime )
+     ) {
+         if ( &view_file_via_temporary ) {
+	    $tmpfile1 = tempfile1( "${root_filename}_tmp", ".ps" );
+            &Run_msg("$ps_filter < \"$ps_file\" > \"$tmpfile1\"");
+            move( $tmpfile1, $psF_file );
+         }
+         else {
+            &Run_msg("$ps_filter < \"$ps_file\" > \"$psF_file\"");
+         }
+         $updated = 1;
+      }
+      else  { 
+          warn "Latexmk: File '$psF_file' is up to date\n" 
+             if !$quell_uptodate_msgs;
+      }
+  }
+  # End make of psF file
 
   if ( $banner )
   {
@@ -2161,6 +2817,11 @@ sub make_preview
        $ext = '.dviF';
      }
   } 
+  elsif ( $view eq 'none' )
+  {
+      warn "Not using a previewer\n" if !$silent;
+      return;
+  }
   elsif ( $view eq 'ps' )
   {
     $viewer = $ps_previewer;
@@ -2177,48 +2838,58 @@ sub make_preview
   }
   else
   {
-      die "Latexmk: BUG: No preview method defined\n";
+      warn "Latexmk::make_preview BUG: Invalid preview method '$view'\n";
+      exit 20;
   }
 
   my $view_file = "$root_filename$ext";  
 
   if ( ! -e $view_file ) {
-      warn "File \"$view_file\" has not been made, so I cannot view it\n";
+      warn "Latexmk: File \"$view_file\" has not been made, so I cannot view it\n";
       return;
   }
-  warn "------------\nStarting previewer: $viewer $view_file\n------------\n"
-     unless $silent;
-  my ($pid, $return) = &Run ("$viewer $view_file");
+  warn_running( "Starting previewer: '$viewer $view_file'" );
+  my ($pid, $return) = &Run ("$viewer \"$view_file\"");
   if ($return){
     warn "Latexmk: Could not start previewer [$viewer $view_file]";
   }
-#  exit;
 }
 
 #************************************************************
 
-sub make_preview_continous
+sub make_preview_continuous
 {
 
   # How do we persuade viewer to update.  Default is to do nothing.
   my $viewer_update_method = 0;
+  my $viewer_update_signal = undef;
   # Extension of file:
-  my $ext;    
+  my $ext;
+  # Command to run viewer.  '' for none
+  my $viewer;
   $quell_uptodate_msgs = 1;
   if ( $view eq 'dvi' )
   {
      $viewer = $dvi_previewer;
      $viewer_update_method = $dvi_update_method;
+     $viewer_update_signal = $dvi_update_signal;
      $ext = '.dvi';
      if ( length($dvi_filter) != 0 )
      {
        $ext = '.dviF';
      }
   } 
+  elsif ( $view eq 'none' )
+  {
+      warn "Not using a previewer\n";
+      $viewer = '';
+      $ext = '';
+  }
   elsif ( $view eq 'ps' )
   {
      $viewer = $ps_previewer;
      $viewer_update_method = $ps_update_method;
+     $viewer_update_signal = $ps_update_signal;
      $ext = '.ps';
      if ( length($ps_filter) != 0 )
      {
@@ -2228,12 +2899,15 @@ sub make_preview_continous
   elsif ( $view eq 'pdf' )
   {
      $viewer_update_method = $pdf_update_method;
+     $viewer_update_signal = $pdf_update_signal;
      $viewer = $pdf_previewer;
      $ext = '.pdf';
   }
   else
   {
-      die "Latexmk: BUG: No preview method defined\n";
+      warn "Latexmk::make_preview_continuous BUG: ",
+           "Invalid preview method '$view'\n";
+      exit 20;
   }
 
 
@@ -2241,63 +2915,160 @@ sub make_preview_continous
   my $viewer_running = 0;    # No viewer running yet
   my $view_file = "$root_filename$ext";  
   my $viewer_process = 0;    # default: no viewer process number known
-  
-  $dest_condition_ignore = 1;   #make_latex_dvi-pdf will ignore destination 
-                                #in make rule. If the destination file does not
-                                #exists, it is because of an error.
+
+  if ( -e $view_file && ($viewer ne '') ) {
+      # Is a viewer already running?
+      #    (We'll save starting up another viewer.)
+      $viewer_process = &find_process_id(  $view_file );
+      if ( $viewer_process ) {
+          warn "Latexmk: Previewer is already running\n" 
+              if !$silent;
+          $viewer_running = 1;
+      }
+  }
   # Loop forever, rebuilding .dvi and .ps as necessary.
-  my $first_time = 1;
-  while ( 1 ) {
-     # Wait to run a viewer until we know we have the view file
-     # If there are errors in the initial run, the 
-     if ( (!$viewer_running) && (-e $view_file) ) {
-        # note, we only launch a previewer if one isn't already running...
-        # But I only know how to do this under UNIX
-        $viewer_process = &find_process_id(  $view_file );
-        if ( $viewer_process ) {
-           warn "Previewer is already running\n" 
-              if $first_time && !$silent;
-        } else {
-           warn "I have not found a previewer that is already running. \n",
-                "So I will start it: $viewer $view_file\n------------\n"
-              unless $silent;
-           my $retcode;
-           ($viewer_process, $retcode) 
-              = &Run ("start $viewer $root_filename$ext");
-           if ( $retcode != 0 ) {
-              if ($force_mode) {
-                 warn "I could not run previewer\n";
-              }
-              else {
-                 &exit_msg1( "I could not run previewer", $retcode);
-	      }
-           }
-           else {
-              $viewer_running = 1;
-	   } # end analyze result of trying to run viewer
-       } # end if $viewer_process
-     } # end start viewer
-     if ( $first_time || $updated ) {
-        print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
-        $first_time = 0;
-     }
+  # Set $first_time to flag first run (to save unnecessary diagnostics)
+CHANGE:
+  for (my $first_time = 1; 1; $first_time = 0 ) {
      $updated = 0;
      $failure = 0;
-     sleep($sleep_time);
-     &make_files;
-     if ( ($failure <= 0) 
-          && ($viewer_process != 0) 
-          && $updated 
-          && ($viewer_update_method == 2) 
-        )
-     {
-        if ( $diagnostics ) {
-	    print "I am signalling viewer, process ID $viewer_process\n";
-        }
-	kill 'USR1', $viewer_process;
+     $failure_msg = '';
+     if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
+        # Fudge under MSWin32 ONLY, to stop perl/latexmk from
+        #   catching ctrl/C and ctrl/break, and let it only reach
+        #   downstream programs. See comments at first definition of
+        #   $MSWin_fudge_break.
+        $SIG{BREAK} = $SIG{INT} = 'IGNORE';
      }
-  } #end infinite_loop
+
+     make_files($go_mode && $first_time);
+
+     if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
+        $SIG{BREAK} = $SIG{INT} = 'DEFAULT';
+     }
+     if ( $failure > 0 ) {
+        if ( !$failure_msg ) {
+	    $failure_msg = 'Failure to make the files correctly';
+	}
+        #Remove trailing space
+        $failure_msg =~ s/\s*$//;
+        warn "Latexmk: $failure_msg\n";
+     }
+     elsif ( $updated && ($viewer_process != 0) )
+     {
+        # Get viewer to update screen if we have to do it:
+	 if ($viewer_update_method == 2) {
+            if (defined $viewer_update_signal) {
+               print "Latexmk: signalling viewer, process ID $viewer_process\n"
+                  if $diagnostics ;
+	       kill $viewer_update_signal, $viewer_process;
+	    }
+            else {
+               warn "Latexmk: viewer is supposed to be sent a signal\n",
+                    "  but no signal is defined.  Misconfiguration or bug?\n";
+            }
+         }
+     }
+     if ( (!$viewer_running) && (-e $view_file) && ($viewer ne '') ) {
+        warn "Latexmk: I have not found a previewer that is already running. \n",
+	"   So I will start it: $viewer $view_file\n------------\n";
+#              unless $silent;
+        my $retcode;
+        ($viewer_process, $retcode) 
+              = &Run ("start $viewer \"$root_filename$ext\"");
+        if ( $retcode != 0 ) {
+           if ($force_mode) {
+              warn "Latexmk: I could not run previewer\n";
+           }
+           else {
+              &exit_msg1( "I could not run previewer", $retcode);
+           }
+        }
+        else {
+           $viewer_running = 1;
+	} # end analyze result of trying to run viewer
+     } # end start viewer
+     if ( $first_time || $updated || $failure ) {
+        print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
+     }
+     WAIT: while (1) {
+        sleep($sleep_time);
+#        print "DDD ";
+#	show_source_times();
+#	print "INCLUDES: @includes\n"; 
+        my $changed_file = &update_all_source_times;
+        if ($changed_file) {
+#?? Need a test above for change in non-found files
+#?? Need to check for new_files
+	    warn "Latexmk: Changed file '$changed_file' ....  Remake files.\n";
+            last WAIT; 
+        }
+        my $new_files = &find_new_files;
+        if ($new_files > 0) {
+	    warn "Latexmk: New file found.\n";
+            last WAIT; 
+        }
+     } # end WAIT:
+  } #end infinite_loop CHANGE:
 } #end sub make_preview_continuous
+
+#************************************************************
+
+sub process_rc_file {
+    # Usage process_rc_file( filename )
+    # Run rc_file whose name is given in first argument
+    #    Exit with code 11 if file could not be read.  
+    #      (In general this is not QUITE the right error)
+    #    Exit with code 13 if there is a syntax error or other problem.
+    # ???Should I leave the exiting to the caller (perhaps as an option)?
+    #     But I can always catch it with an eval if necessary.
+    #     That confuses ctrl/C and ctrl/break handling.
+    my $rc_file = $_[0];
+    do( $rc_file );
+    # The return value from the do is not useful, since it is the value of 
+    #    the last expression evaluated, which could be anything.
+    # The correct test of errors is on the values of $! and $@.
+    if ( $! ) {
+	$! = 11;
+        die "Latexmk: Initialization file '$rc_file' could not be read\n";
+    }
+    if ( $@ ) {
+	$! = 11;
+        # Indent the error message to make it easier to locate
+        my $indented = prefix( $@, "    " );
+        $@ = "";
+        die "Latexmk: Initialization file '$rc_file' gave an error:\n",
+            "$indented";
+    }
+} #end process_rc_file
+
+#************************************************************
+
+sub process_dep_file {
+    # Usage process_dep_file( filename )
+    # Run dep_file whose name is given in first argument
+    #    Return 0 on success
+    #    Return 1 if file could not be read.
+    #      (In general this is not QUITE the right error)
+    #    Retrun 2 if there is a syntax error or other problem.
+    my $rc_file = $_[0];
+    do( $rc_file );
+    # The return value from the do is not useful, since it is the value of 
+    #    the last expression evaluated, which could be anything.
+    # The correct test of errors is on the values of $! and $@.
+    if ( $! ) {
+        warn "Latexmk: Dependency file '$rc_file' could not be read\n";
+        return 1;
+    }
+    if ( $@ ) {
+        my $indented = prefix( $@, "    " );
+        $@ = "";
+        warn "Latexmk: Probable bug; dependency file '$rc_file' gave an error:\n",
+            "$indented";
+        return 2
+    }
+    return 0;
+} #end process_dep_file
 
 #************************************************************
 
@@ -2317,14 +3088,10 @@ sub cleanup_basic
   unlink("$root_filename.idx");
   unlink("$root_filename.idx.bak");
   unlink("$root_filename.ilg");
-  unlink("$root_filename.toc");
-  unlink("$root_filename.toc.bak");
-  unlink("$root_filename.lof");
-  unlink("$root_filename.lot");
   unlink("texput.log");
 
   # Do any other file extensions specified
-  foreach $ext (split(' ',$clean_ext))
+  foreach $ext (split(' ',$clean_ext), @generated_exts )
   {
     unlink("$root_filename.$ext");
   }
@@ -2405,10 +3172,25 @@ sub exit_msg1
 
 #************************************************************
 
-sub die_help
-# Die giving diagnostic from arguments and how to get help.
+sub warn_running {
+   # Message about running program:
+    if ( $silent ) {
+        warn "Latexmk: @_\n";
+    }
+    else {
+        warn "------------\n@_\n------------\n";
+    }
+}
+
+#************************************************************
+
+sub exit_help
+# Exit giving diagnostic from arguments and how to get help.
 {
-    die "\n@_\nUse\n    latexmk -help\nto get usage information\n";
+    warn "\nLatexmk: @_\n",
+         "Use\n",
+         "   latexmk -help\nto get usage information\n";
+    exit 10;
 }
 
 
@@ -2425,12 +3207,14 @@ sub print_help
   "   -bs <scale> - Set scale for banner\n",
   "   -commands  - list commands used by latexmk for processing files\n",
   "   -c     - clean up (remove) all nonessential files, except\n",
-  "            dvi, ps and pdf files\n",
+  "            dvi, ps and pdf files.\n",
+  "            This and the other clean-ups are instead of a regular make.\n",
   "   -C     - clean up (remove) all nonessential files\n",
   "            including aux, dep, dvi, postscript and pdf files\n",
   "   -c1    - clean up (remove) all nonessential files,\n",
   "            including dvi, pdf and ps files, but excluding aux and dep files \n",
-  "   -d     - Print `DRAFT' across the page when converting to postscript\n",
+  "   -cd    - Change to directory of source file when processing it\n",
+  "   -cd-   - Do NOT change to directory of source file when processing it\n",
   "   -dF <filter> - Filter to apply to dvi file\n",
   "   -dvi   - generate dvi\n",
   "   -dvi-  - turn off required dvi\n",
@@ -2438,6 +3222,8 @@ sub print_help
   "   -f-    - turn off forced continuing processing past errors\n",
   "   -F     - Ignore non-existent files when making dependencies\n",
   "   -F-    - Turn off -F\n",
+  "   -gg    - Super go mode: clean out generated files (-C), and then\n",
+  "            process files regardless of file timestamps\n",
   "   -g     - process regardless of file timestamps\n",
   "   -g-    - Turn off -g\n",
   "   -h     - print help\n",
@@ -2458,10 +3244,10 @@ sub print_help
   "   -ps-   - turn off postscript\n",
   "   -pF <filter> - Filter to apply to postscript file\n",
   "   -p     - print document after generating postscript.\n",
-  "            (Can also print .dvi or .pdf files -- see documentation)\n",
-  "   -print=dvi - print dvi file\n",
-  "   -print=ps  - print ps file\n",
-  "   -print=pdf - print pdf file\n",
+  "            (Can also .dvi or .pdf files -- see documentation)\n",
+  "   -print=dvi     - when file is to be printed, print the dvi file\n",
+  "   -print=ps      - when file is to be printed, print the ps file (default)\n",
+  "   -print=pdf     - when file is to be printed, print the pdf file\n",
   "   -pv    - preview document.  (Side effect turn off continuous preview)\n",
   "   -pv-   - turn off preview mode\n",
   "   -pvc   - preview document and continuously update.  (This also turns\n",
@@ -2475,6 +3261,7 @@ sub print_help
   "   -version      - display program version\n",
   "   -view=default - viewer is default (dvi, ps, pdf)\n",
   "   -view=dvi     - viewer is for dvi\n",
+  "   -view=none    - no viewer is used\n",
   "   -view=ps      - viewer is for ps\n",
   "   -view=pdf     - viewer is for pdf\n",
   "   filename = the root filename of LaTeX document\n",
@@ -2486,7 +3273,6 @@ sub print_help
   "Contents of RC file specified by -r overrides options specified\n",
   "  before the -r option on the command line\n";
 
-  exit;
 }
 
 #************************************************************
@@ -2512,14 +3298,21 @@ sub print_commands
        "   To print a ps file, I use \"$lpr\"\n",
        "   To print a dvi file, I use \"$lpr_dvi\"\n",
        "   To print a pdf file, I use \"$lpr_pdf\"\n",
-       "   To find running processes, I use \"$pscmd\", ",
-          "and the process number is at position $pid_position\n";
+       "   To find running processes, I use \"$pscmd\", \n",
+       "      and the process number is at position $pid_position\n";
    warn "Notes:\n",
         "  Command starting with \"start\" is run detached\n",
         "  Command that is just \"start\" without any other command, is\n",
         "     used under MS-Windows to run the command the operating system\n",
         "     has associated with the relevant file.\n",
         "  Command starting with \"NONE\" is not used at all\n";
+}
+
+#************************************************************
+
+sub view_file_via_temporary {
+    return $always_view_file_via_temporary 
+           || ($pvc_view_file_via_temporary && $preview_continuous_mode);
 }
 
 #************************************************************
@@ -2532,14 +3325,18 @@ sub check_for_bibtex_errors
 # return 0: OK, 1: bibtex error, 2: could not open .blg file.
 {
   my $log_name = "$root_filename.blg";
-  my $log_file = 0;
+  my $log_file = new FileHandle;
   my $retcode = open( $log_file, "<$log_name" );
   if ( $retcode == 0) {
      if ( !$force_mode ) {
         $failure = 1;
         $failure_msg = "Could not open bibtex log file for error check";
+        #### Bypass to end of calling eval-block
+        ###die "Could not open bibtex log file for error check\n";
      }
-     warn "Could not open bibtex log file for error check\n";
+     else {
+        warn "Latexmk: Could not open bibtex log file for error check\n";
+     }
      return 2;
   }
   $retcode = 0;
@@ -2559,27 +3356,33 @@ sub check_for_bibtex_errors
 #************************************************************
 # check for bibtex warnings
 
-sub check_for_bibtex_warnings
-# return 0: OK, 1: bibtex warnings, 2: could not open .blg file.
+sub check_bibtex_log
+# return 0: OK, 1: bibtex warnings, 2: bibtex errors, 
+#        3: could not open .blg file.
 {
   my $log_name = "$root_filename.blg";
-  my $log_file = 0;
+  my $log_file = new FileHandle;
   my $retcode = open( $log_file, "<$log_name" );
-  if ( $retcode == 0 ) 
-  {    
-      $failure = 1;
-      $failure_msg = "Could not open bibtex log file for warning check";
-      warn "Latexmk: $failure_msg\n";
-      return 2;
+  if ( $retcode == 0 ) {    
+      return 3;
   }
   my $have_warning = 0;
+  my $have_error = 0;
   while (<$log_file>)
   {
-    if (/Warning--/) { print "Bibtex warning: $_"; $have_warning = 1}
-    if (/error message/) { print "Bibtex error: $_"; $have_warning = 1}
+    if (/Warning--/) { 
+        #print "Bibtex warning: $_"; 
+        $have_warning = 1;
+    }
+    if (/error message/) { 
+        #print "Bibtex error: $_"; 
+        $have_error = 1;
+    }
   }
   close $log_file;
-  return $have_warning;
+  if ($have_error) {return 2;}
+  if ($have_warning) {return 1;}
+  return 0;
 }
 
 #************************************************************
@@ -2595,6 +3398,7 @@ sub scan_for_includes
   &scan_for_includes_($texfile_name);
   ## put root tex file into list of includes.
   push @includes, $texfile_name;
+  &save_source_times;
 }
 
 sub scan_for_includes_
@@ -2694,12 +3498,12 @@ LINE:
         {
           if ( $orig_filename =~ /^\// )
           {
-            die "Latexmk: In \\include, ",
+            warn "Latexmk: In \\include, ",
                 "could not find file [$orig_filename]\n";
           }
           else
           {
-            die "Latexmk: In \\include, ",
+            warn "Latexmk: In \\include, ",
                 "could not find file [$orig_filename] in path [@TEXINPUTS]\n";
           }
         }
@@ -2739,11 +3543,11 @@ LINE:
 	{
 	  if ( $orig_filename =~ /^\// )
 	  {
-	    die "Latexmk: In \\input, could not find file [$orig_filename]\n";
+	    warn "Latexmk: In \\input, could not find file [$orig_filename]\n";
 	  }
 	  else
 	  {
-	    die "Latexmk: In \\input, ",
+	    warn "Latexmk: In \\input, ",
                 "could not find file [$orig_filename] in path [@TEXINPUTS]\n";
 	  }
 	}
@@ -2810,7 +3614,7 @@ LINE:
         warn "Latexmk: For \\includegraphics, ",
              "could not find file [$orig_filename]\n",
              "          in path [@psfigsearchpath]\n";
-	if ( ! $force_include_mode ) {die "\n";}        
+	if ( ! $force_include_mode ) {warn "\n";}        
       }
     }
     elsif (/\\documentstyle[^\000]+landscape/)
@@ -2823,6 +3627,7 @@ LINE:
       @bib_files = split /,/, $1;
       &find_file_list1( \@bib_files, \@bib_files, '.bib', \@BIBINPUTS );
       warn "	Found bibliography files [@bib_files]\n" unless $silent;
+      &update_source_times( @bib_files );
       $bibtex_mode = 1;
     }
     elsif (/\\psfigsearchpath{([^}]+)}/)
@@ -2856,23 +3661,27 @@ sub parse_log
 #   @aux_files to list of .aux files.
 #   Leave these unchanged if there is no log file.
 #   $reference_changed, $bad_reference, $bad_citation
+#   Apply &save_source_times
 
 
+    my @default_includes = ($texfile_name);  #Use under error conditions
+    @includes = ();   
     my $log_name = "$root_filename.log";
-    my $log_file = 0;
+    my $log_file = new FileHandle;
     if ( ! open( $log_file, "<$log_name" ) )
     {
+        @includes = @default_includes;
         return 0;
     }
     my $line_number = 0;
     my $graphic_line = 0;
+    @aux_files = ();
     my @bbl_files = ();
     my @ignored_input_files = ();
     my @existent = ();
-    my @include_list = ($texfile_name);
+    my @include_list = ();
     my @include_graphics_list = ();
     my %includes_from_errors = ();
-    @includes = ();
     %includes_missing = ();
     
 
@@ -2893,7 +3702,13 @@ LINE:
 	      # First line OK\n";
               next LINE;
           } else {
-             die "Error on first line of \"$log_name\".  This is not a TeX log file.\n$_";
+             warn "Latexmk: Error on first line of \"$log_name\".  ".
+                 "This is apparently not a TeX log file.\n";
+             close $log_file;
+             $failure = 1;
+             $failure_msg = 'Log file appeared to be in wrong format.';
+             @includes = @default_includes;
+             return 0;
 	  }
       }
       # Handle wrapped lines:
@@ -2910,15 +3725,15 @@ LINE:
       }
       # Check for changed references, bad references and bad citations:
       if (/Rerun to get/) { 
-          warn "\n=== References changed.\n";
+          warn "Latexmk: References changed.\n";
           $reference_changed = 1;
       } 
       if (/LaTeX Warning: (Reference[^\001]*undefined)./) { 
-	 warn "\n=== $1 \n";
+	 warn "Latexmk: $1 \n";
          $bad_reference = 1;
       } 
       if (/LaTeX Warning: (Citation[^\001]*undefined)./) {
-	 warn "\n=== $1 \n";
+	 warn "Latexmk: $1 \n";
          $bad_citation = 1;
       }
       if ( /^Document Class: / ) {
@@ -2956,9 +3771,16 @@ LINE:
 	  next LINE;
       }
       if ( /^No file .*?\.bbl./ ) {
-          warn "Non-existent bbl file, so turn on bibtex_mode\n $_"
+          warn "Latexmk: Non-existent bbl file, so turn on bibtex_mode\n $_\n"
              unless $bibtex_mode == 1;
           $bibtex_mode = 1;
+	  next LINE;
+      }
+      if ( /^No file\s*(.*)\.$/ ) {
+          # This message is given by standard LaTeX macros, like \IfFileExists
+          warn "Latexmk: Missing input file: '$1' from 'No file ...' line\n"
+	      unless $silent;
+	  $includes_missing{$1} = [3];
 	  next LINE;
       }
       if ( /^File: ([^\s\[]*) Graphic file \(type / ) {
@@ -2975,8 +3797,22 @@ LINE:
 	  $includes_missing{$1} = [3];
           next LINE;
       }
+      if (/.*?:\d*: LaTeX Error: File \`([^\']*)\' not found\./ ) {
+          # Alternate file-line-error style of errors
+	  $includes_missing{$1} = [3];
+          next LINE;
+      }
+      if (/^LaTeX Warning: File \`([^\']*)\' not found/ ) {
+	  $includes_missing{$1} = [3];
+          next LINE;
+      }
       if (/^\! LaTeX Error: / ) {
           next LINE;
+      }
+      if (/^No pages of output\./) {
+          warn "Latexmk: Log file says no output from latex\n"
+             unless $silent;
+	  next LINE;
       }
    INCLUDE_CANDIDATE:
        while ( /\((.*$)/ ) {
@@ -3027,6 +3863,7 @@ LINE:
           $_ = $1; 
 ##          warn "==='$_'===\n";
           if ( /^([^\(^\)^\{]*?)\s\[/ ) {
+              # Terminator: space then '['
               # Use *? in condition: to pick up first ' [' as terminator
               # 'file [' should give good filename.
           }
@@ -3036,6 +3873,11 @@ LINE:
           }
           elsif  ( /^([^\(^\)^\{]*)(\))/ ) {
               # Terminator is ')'
+          }
+          elsif ( /^([^\(^\)^\{]*?)\s*\{/ ) {
+              # Terminator: arbitrary space then '{'
+              # Use *? in condition: to pick up first ' [' as terminator
+              # 'file [' should give good filename.
           }
 	  else {
               #Terminator is end-of-string
@@ -3048,7 +3890,7 @@ LINE:
               # Part of overfull hbox message
               next INCLUDE_CANDIDATE;
           }
-          # Put on list of new include files
+          # Make list of new include files; sometimes more than one.
           my @new_includes = ($include_candidate);
           if ( $include_candidate =~ /^(.+)\[([^\]]+)\]$/ ) {
              # Construct of form 'file1[file2]', as produced by pdflatex
@@ -3066,15 +3908,16 @@ LINE:
           foreach my $include_name (@new_includes) {
 	      my ($base, $path, $ext) = fileparse ($include_name, '\.[^\.]*');
 	      if ( $ext eq '.bbl' ) {
-		  warn "Input bbl file \"$include_name\", so turn on bibtex_mode\n"
+		  warn "Latexmk: Input bbl file \"$include_name\", ",
+                                 "so turn on bibtex_mode\n"
 		     unless ($bibtex_mode == 1) || $silent;
 		  $bibtex_mode = 1;
 		  push @bbl_files, $include_name;
 	      } elsif ( $ext eq ".aux" ) {
 		  push @aux_files, $include_name;
 		  push @ignored_input_files, $include_name;
-	      } elsif ( $generated_exts{$ext} ) {
-		  #warn "Ignoring '$include_name'\n";
+	      } elsif ( $generated_exts_all{$ext} ) {
+		  #warn "Ignoring '$include_name'\n" if $diagnostics;
 		  push @ignored_input_files, $include_name;
 	      } else {
 		  push @include_list, $include_name;
@@ -3089,7 +3932,7 @@ LINE:
   if ( $bibtex_mode ) 
   {  
       &parse_aux; 
-      push @include_list, @bib_files;
+      # Has side effect of setting @bib_files.
   }
   @include_list = &uniq(sort @include_list);
   @include_graphics_list = &uniq(sort @include_graphics_list);
@@ -3112,15 +3955,24 @@ LINE:
   my $non_exist = 0;
   my $not_found = 0;
   my $missing = 0;
-  foreach (sort keys %includes_missing) {
+  my @missing_names = keys %includes_missing;
+  foreach (@missing_names) {
+      my ($base, $path, $ext) = fileparse( $_, '\.[^\.]*' );
+      if ( $generated_exts_all{$ext} ) {
+	  #warn "Ignoring possibly missing file '$_'\n" if $diagnostics;
+	  delete $includes_missing{$_};
+          next;
+      }
       $missing++;
       my $code = ${$includes_missing{$_}}[0];
       if ($code == 1) {$non_exist ++;}
       if ($code == 2) {$not_found ++;}
   }
 
-
+#?? Have I done a full parse here?
+#?? Must also update cus_dep_file_list? 
   @includes = @existent;
+  &save_source_times;
 
   if ( $diagnostics ) 
   {
@@ -3146,9 +3998,11 @@ LINE:
         print "  Some correspond to misunderstood lines in the .log file\n";
         print "  Some are files that latexmk failed to find\n";
         print "  Some really don't exist\n";
-        foreach (sort keys %includes_missing) { print "   $_\n";  }
+        foreach (uniq( sort keys %includes_missing) ) { print "   $_\n";  }
      }
   }
+  # Ensure @includes has something in it:
+  if ($#includes < 0) { @includes = @default_includes;}
   return 1;
 }
 
@@ -3156,45 +4010,47 @@ LINE:
 
 sub parse_aux
 # Parse aux_file for bib files.  
-# Return 3 with @bib_files set if aux_file exists, but I couldn't find all the bib_files
-# Return 2 with @bib_files empty if aux_file exists, but there are no \bibdata
+# Return 0 and leave @bib_files unchanged if cannot open any aux files.
+# Else set @bib_files from information in the aux files
+# And:
+# Return 1 if no problems
+# Return 2 with @bib_files empty if there are no \bibdata
 #   lines. In that case turn off bibtex mode, as side effect.
-# Return 1 with @bib_files set if aux_file exists
-# Return 0 and leave @bib_files unchanged in aux_file does not exist (or 
-#      cannot be opened)
+# Return 3 if I couldn't locate all the bib_files
 {
-   local($aux_file) = "$root_filename.aux";
-   if (! open(aux_file) ) 
-      { return 0; }
-   @bib_files = ();
-AUX_LINE:
-   while (<aux_file>)
-   {
-      if ( /^\\bibdata\{(.*)\}/ )
-      { 
-         # \\bibdata{comma_separated_list_of_bib_file_names}
-         # (Without the '.bib' extension)
-         push( @bib_files, split /,/, $1 ); 
-      }
+   # List of detected bib files:
+   local @new_bib_files = ();
+   # List of detected aux files.  Perhaps wrong approach
+   local @new_aux_files = ();
+   foreach my $aux_file (@aux_files) {
+       parse_aux1( $aux_file );
    }
-   close(aux_file);
-   if ( $#bib_files eq -1 ) {
-       warn "No .bib files listed in .aux file, so turn off bibtex_mode\n";
+   if ($#new_aux_files < 0) {
+       return 0;
+   }
+
+   @bib_files = uniq( sort( @new_bib_files ) );
+
+   if ( $#bib_files == -1 ) {
+       warn "Latexmk: No .bib files listed in .aux file, ",
+            "so turn off bibtex_mode\n";
        $bibtex_mode = 0;
        return 2;
    }
    my $bibret = &find_file_list1( \@bib_files, \@bib_files, '.bib', \@BIBINPUTS );
+   &update_source_times( @bib_files );
    if ($bibret == 0) {
-      warn "Found bibliography files [@bib_files]\n" unless $silent;
+      warn "Latexmk: Found bibliography files [@bib_files]\n" unless $silent;
    }
    else {
-       warn "Failed to find one or more bibliography files in [@bib_files]\n";
+       warn "Latexmk: Failed to find one or more bibliography files in [@bib_files]\n";
        if ($force_mode) {
           warn "==== Force_mode is on, so I will continue.  But there may be problems ===\n";
        }
        else {
-           $failure = -1;
-           $failure_msg = 'Failed to find one or more bib files';
+           #$failure = -1;
+           #$failure_msg = 'Failed to find one or more bib files';
+           warn "Latexmk: Failed to find one or more bib files\n";
        }
        return 3;
    }
@@ -3203,12 +4059,48 @@ AUX_LINE:
 
 #************************************************************
 
+sub parse_aux1
+# Parse single aux file for bib files.  
+# Usage: &parse_aux1( aux_file_name )
+#   Append newly found bib_filenames in @new_bib_files, already 
+#        initialized/in use.
+#   Append aux_file_name to @new_aux_files if aux file opened
+#   Recursively check \@input aux files
+#   Return 1 if success in opening $aux_file_name and parsing it
+#   Return 0 if fail to open it
+{
+   my $aux_file = $_[0];
+   my $aux_fh = new FileHandle;
+   if (! open($aux_fh, $aux_file) ) { 
+       warn "Latexmk: Couldn't find aux file '$aux_file'\n";
+       return 0; 
+   }
+   push @new_aux_files, $aux_file;
+AUX_LINE:
+   while (<$aux_fh>) {
+      if ( /^\\bibdata\{(.*)\}/ ) { 
+          # \\bibdata{comma_separated_list_of_bib_file_names}
+          # (Without the '.bib' extension)
+          push( @new_bib_files, split /,/, $1 ); 
+      }
+#      elsif ( /^\\\@input\{(.*)\}/ ) { 
+#          # \\@input{next_aux_file_name}
+#	  &parse_aux1( $1 );
+#      }
+   }
+   close($aux_fh);
+   return 1;
+}
+
+#************************************************************
+
 sub update_depend_file
 {
-  warn "Writing dependency file [$root_filename.dep]\n";
+  warn "Latexmk: Writing dependency file [$root_filename.dep]\n";
   $rc_file = ">$root_filename.dep";
-  open(rc_file) || die "Latexmk: Unable to open dependency file [$rc_file] for updating\n";
-  print rc_file '@includes = (\n';
+  open(rc_file) 
+    or die "Latexmk: Unable to open dependency file [$rc_file] for updating\n";
+  print rc_file "\@includes = (\n";
   my $first = 1;
   foreach my $name (@includes) {
       if (!$first) {print rc_file ",\n";}
@@ -3216,7 +4108,7 @@ sub update_depend_file
       $first = 0;
   }
   print rc_file "\n)\n";
-  print rc_file '@bib_files = (\n';
+  print rc_file "\@bib_files = (\n";
   $first = 1;
   foreach $name (@bib_files) {
       if (!$first) {print rc_file ",\n";}
@@ -3226,11 +4118,11 @@ sub update_depend_file
   print rc_file "\n)\n";
   if ($bibtex_mode)
   {
-    print rc_file '$bibtex_mode = 1;' . "\n";
+    print rc_file "\$bibtex_mode = 1;\n";
   }
   if ($index_mode)
   {
-    print rc_file '$index_mode = 1;' . "\n";
+    print rc_file "\$index_mode = 1;\n";
   }
   print rc_file "\$view = \"$view\";\n";
   print rc_file "\$need_dvi = $need_dvi;\n";
@@ -3244,6 +4136,149 @@ sub update_depend_file
 #************************************************************
 #************************************************************
 #
+#      SOURCE TIME ROUTINES:
+#
+
+#************************************************************
+
+
+sub save_source_times {
+    # But preserve old times, when known
+#    print "SST ";
+    my %old_times = %source_times;
+    &set_times( \%source_times, @includes, @bib_files, @ind_files, @cus_dep_files );
+    foreach my $file (keys %source_times) {
+        if ( defined $old_times{$file} ) {
+#            print "Defined $old_times{$file}\n";
+            $source_times{$file} = $old_times{$file};
+        }
+    }
+#    show_source_times();
+}
+
+#************************************************************
+
+sub add_source_times {
+    # Add time stamps of specified files to %source_time hash,
+    # preserving old times when they exist.
+    &add_times( \%source_times, @_ );
+}
+
+#************************************************************
+
+sub update_all_source_times {
+    # Update selected source times
+    return &update_times( \%source_times, keys %source_times );
+}
+
+#************************************************************
+
+sub update_source_times {
+    # Update selected source times
+    return &update_times( \%source_times, @_ );
+}
+
+#************************************************************
+
+sub changed_source_times {
+    return &changed_times( \%source_times );
+}
+
+#************************************************************
+
+sub show_source_times {
+    print "Source times:\n";
+    foreach my $file (sort keys %source_times) {
+        if ( defined $source_times{$file}  )
+           {print " '$file' => $source_times{$file}\n";}
+        else { print "  Trouble with '$file'\n";}
+    }
+}
+
+#************************************************************
+
+sub set_times {
+    # In hash pointed to by $_[0], 
+    # set (file->time) for each file in rest of arguments
+    my $ref = shift;
+    %$ref = ();
+    &add_times( $ref, @_ );
+}
+
+#************************************************************
+
+sub add_times {
+    # Usage: add_times( ref_to_list_of_times, files ....)
+    # In hash pointed to by first argument, save times of files
+    # Keep old times when they exist.
+    # The hash maps filenames to times
+    # Filenames for non-existent files map to zero
+    my $ref = shift;
+FILE:
+    foreach my $file (@_) {
+        if (defined $$ref{$file}) {
+            # We've already seen this file.  Use orginal time only
+            next FILE;
+	}
+        $$ref{$file} = get_mtime0($file);
+    } #end FILE
+}
+
+#************************************************************
+
+sub update_times {
+    # Usage: update_times( ref_to_list_of_times, files ....)
+    # In hash pointed to by first argument, save times of files
+    # The hash maps filenames to times
+    # Filenames for non-existent files map to zero
+    # Return first changed file
+    my $ref = shift;
+    my $changed_file = '';
+FILE:
+    foreach my $file (@_) {
+        my $old_time = $$ref{$file};
+        if ( !$old_time ) {$old_time = 0;}
+        my $new_time = get_mtime0($file);
+        $$ref{$file} = $new_time;
+        if ( ($new_time != $old_time) && ($changed_file eq '') ) {
+	    $changed_file = $file;
+            print "$file' changed time from $old_time to $new_time\n"
+		if $diagnostics;
+	}
+    } #end FILE
+    return $changed_file;
+}
+
+#************************************************************
+
+sub changed_times {
+    # Usage: changed_times( ref_to_list_of_times )
+    # The argument is a ref to a hash that maps filenames to times
+    # Non-existent files have time zero
+    # Return name of first changed file, if at least one file changed
+    #        else "" if no files changed
+    # (Change => change of time or change of existence.)
+    
+    my $ref = shift;
+FILE:
+    foreach my $file (keys %$ref) {
+        my $old_time = $$ref{$file};
+        my $new_time = get_mtime0($file);
+        if ( $old_time != $new_time ) {
+            print "$file' changed time from '$old_time to $new_time\n"
+		if $diagnostics;
+            return $file;
+	}
+    } #end FILE
+    return '';
+}
+
+#************************************************************
+
+#************************************************************
+#************************************************************
+#************************************************************
+#
 #      UTILITIES:
 #
 
@@ -3251,10 +4286,12 @@ sub update_depend_file
 # Miscellaneous
 
 sub show_array {
-# For use in debugging. $_[0] = label.  Rest of @_ is list of items
-    print "$_[0]\n";
+# For use in diagnostics and debugging. 
+#  On stderr, print line with $_[0] = label.  
+#  Then print rest of @_, one item per line preceeded by some space
+    warn "$_[0]\n";
     shift;
-    foreach (@_){ print "  $_\n";}
+    foreach (@_){ warn "  $_\n";}
 }
 
 #************************************************************
@@ -3268,6 +4305,41 @@ sub glob_list {
     }
     return uniq( sort( @globbed ) );
 }
+
+#==================================================
+
+sub glob_list1 {
+    # Glob a collection of filenames.  
+    # But no sorting or elimination of duplicates
+    # Usage: e.g., @globbed = glob_list1(string, ...);
+
+    my @globbed = ();
+    foreach my $file_spec (@_) {
+        # Problem, when the PATTERN contains spaces, the space(s) are
+        # treated as pattern separaters (in MSWin at least).
+        # MSWin: I can quote the pattern (is that MSWin native, or also 
+        #        cygwin?)
+        # Linux: Quotes in a pattern are treated as part of the filename!
+        #        So quoting a pattern is definitively wrong.
+        push @globbed, glob( "$file_spec" );
+    }
+    return @globbed;
+}
+
+#************************************************************
+# Miscellaneous
+
+sub prefix {
+   #Usage: prefix( string, prefix );
+   #Return string with prefix inserted at the front of each line
+   my @line = split( /\n/, $_[0] );
+   my $prefix = $_[1];
+   for (my $i = 0; $i <= $#line; $i++ ) {
+       $line[$i] = $prefix.$line[$i]."\n";
+   }
+   return join( "", @line );
+}
+
 
 #************************************************************
 #      File handling routines:
@@ -3294,10 +4366,30 @@ sub get_latest_mtime
 }
 
 #************************************************************
-sub get_mtime
+
+sub get_mtime_raw
 { 
   my $mtime = (stat($_[0]))[9];
   return $mtime;
+}
+
+#************************************************************
+
+sub get_mtime { 
+    return get_mtime0($_[0]);
+}
+
+#************************************************************
+
+sub get_mtime0 {
+   # Return time of file named in argument
+   # If file does not exist, return 0;
+   if ( -e $_[0] ) {
+       return get_mtime_raw($_[0]);
+   }
+   else {
+       return 0;
+   }
 }
 
 #************************************************************
@@ -3307,6 +4399,7 @@ sub get_mtime
 # Find file with default extension
 # Usage: find_file_ext( name, default_ext, ref_to_array_search_path)
 sub find_file_ext
+#?? Need to use kpsewhich, if possible.  Leave to find_file?
 {
     my $full_filename = shift;
     my $ext = shift;
@@ -3338,31 +4431,27 @@ sub find_file_ext
 # given filename and path, return full name of file, or die if none found.
 # when force_include_mode=1, only warn if an include file was not
 # found, and return 0 (PvdS).
-# Usage: find_file(name, ref_to_array_search_path, param)
+# Usage: find_file(name, ref_to_array_search_path, warn_on_continue)
 sub find_file
+#?? Need to use kpsewhich, if possible
 {
   my $name = $_[0];
   my $ref_path = $_[1];
   my $dir;
   if ( $name =~ /^\// )
   {
-    if ($force_include_mode)
-    {
-	if ( $_[2] eq '' )
-	{
-	  warn "Latexmk: Could not find file [$name]\n";
-	}
-	return("$name");
+    #Aboslute pathname (by UNIX standards)
+    if ( (!-e $name) && ( $_[2] eq '' ) ) {
+        if ($force_include_mode) {
+           warn "Latexmk: Could not find file [$name]\n";
+        }
+        else {
+           die "Latexmk: Could not find file [$name]\n";
+        }
     }
-    else
-    {
-	if (-e $name)
-	{
-	  return("$name");
-	}
-	die "Latexmk: Could not find file [$name]\n";
-    }
+    return $name;
   }
+  # Relative pathname
   foreach $dir ( @{$ref_path} )
   {
 #warn "\"$dir\", \"$name\"\n";
@@ -3392,23 +4481,23 @@ sub find_file
 }
 
 #************************************************************
-# Usage: find_file1(name, ref_to_array_search_path, param)
+# Usage: find_file1(name, ref_to_array_search_path)
 # Modified find_file, which doesn't die.
 # Given filename and path, return array of:
 #             full name 
 #             retcode
 # On success: full_name = full name with path, retcode = 0
 # On failure: full_name = given name, retcode = 1
-# If second argument is absent, give warning
 sub find_file1
+#?? Need to use kpsewhich, if possible
 {
   my $name = $_[0];
   my $ref_path = $_[1];
-  my $action = $_[2];
   my $dir;
   if ( $name =~ /^\// )
   {
-     # Absolute path
+     # Absolute path (if under UNIX)
+     # This needs fixing, in general
      if (-e $name)
         { return( $name, 0 );}
      else
@@ -3421,9 +4510,6 @@ sub find_file1
     {
       return("$dir/$name", 0);
     }
-  }
-  if ( $_[2] eq '' ) {
-     warn "Latexmk: Could not find file [$name] in path [@{$ref_path}]\n";
   }
   return("$name" , 1);
 }
@@ -3483,7 +4569,7 @@ sub find_dirs {
 #         name ending in //, a list of all subdirectories (recursive)
 #         is added to the list.
 #   Non-existent directories and non-directories are removed from the list
-#   Trailing "/"s are removed, and multiple "/" are collapsed to single "/".
+#   Trailing "/"s and "\"s are removed
     local @result = ();
     my $find_action 
         = sub 
@@ -3496,9 +4582,8 @@ sub find_dirs {
         # Remove all trailing /s, since directory name with trailing /
         #   is not always allowed:
         $directory =~ s[/+$][];
-        # Collapse multiple / to single /, since filenames with
-        #   multiple slashes are not necessarily valid.
-        $directory =~ s[/+][/];
+        # Similarly for MSWin reverse slash
+        $directory =~ s[\\+$][];
 	if ( ! -e $directory ){
             next;
 	}
@@ -3535,6 +4620,25 @@ sub uniq
     return @sort;
 }
 
+#==================================================
+
+sub uniq1 {
+   # Usage: uniq1( strings )
+   # Returns array of strings with duplicates later in list than
+   # first occurence deleted.  Otherwise preserves order.
+
+    my @strings = ();
+    my %string_hash = ();
+
+    foreach my $string (@_) {
+        if (!exists( $string_hash{$string} )) { 
+            $string_hash{$string} = 1;
+            push @strings, $string; 
+        }
+    }
+    return @strings;
+}
+
 #************************************************************
 
 sub copy_file_and_time {
@@ -3544,7 +4648,7 @@ sub copy_file_and_time {
     my $dest   = shift;
     my $retcode = copy ($source, $dest)
 	and do {
-              my $mtime = get_mtime($dest);
+              my $mtime = get_mtime($source);
               utime $mtime, $mtime, $dest;
 	  };
     return $retcode;    
@@ -3639,9 +4743,41 @@ sub split_search_path
     return @list;
 }
 
+#################################
+
+
+sub tempfile1 {
+    # Makes a temporary file of a unique name.  I could use file::temp,
+    # but it is not present in all versions of perl
+    # Filename is of form $tmpdir/$_[0]nnn$suffix, where nnn is an integer
+    my $tmp_file_count = 0;
+    my $prefix = $_[0];
+    my $suffix = $_[1];
+    while (1==1) {
+        # Find a new temporary file, and make it.
+        $tmp_file_count++;
+        my $tmp_file = "${tmpdir}/${prefix}${tmp_file_count}${suffix}";
+        if ( ! -e $tmp_file ) {
+            open( TMP, ">$tmp_file" ) 
+               or next;
+            close(TMP);
+            return $tmp_file;
+	 }
+     }
+     die "Latexmk::tempfile1: BUG TO ARRIVE HERE\n";
+}
+
+#################################
+
 #************************************************************
 #************************************************************
 #      Process/subprocess routines
+
+sub Run_msg {
+    # Same as Run, but give message about my running
+    warn_running( "Running '$_[0]'" );
+    Run($_[0]);
+}
 
 sub Run {
 # Usage: Run ("program arguments ");
@@ -3672,29 +4808,34 @@ sub Run {
 
 # Split command line into one word per element, separating words by 
 #    one (OR MORE) spaces:
-    my @cmdline = split (/ +/, $_[0]);
-    if (! @cmdline ) {
+# The purpose of this is to identify latexmk-defined pseudocommands
+#  'start' and 'NONE'.
+# After dealing with them, the command line is reassembled
+    my $cmd_line = $_[0];
+    if ( $cmd_line eq '' ) {
 	warn "Latexmk::Run: Attempt to run a null program.";
         return (0, 1);
     }
-    if ( "$cmdline[0]" eq "start" ) {
+    if ( $cmd_line =~ /^start +/ ) {
+        print "Before: '$cmd_line'\n";
         # Run detached.  How to do this depends on the OS
         # But first remove extra starts (which may have been inserted
         # to force a command to be run detached, when the command
 	# already contained a "start").
-        while ($cmdline[0] eq "start") {shift (@cmdline);}
-        return &Run_Detached (@cmdline);
+        while ( $cmd_line =~ s/^start +// ) {}
+        print "After: '$cmd_line'\n";
+        return &Run_Detached( $cmd_line );
     }
-    elsif ( "$cmdline[0]" eq "NONE" ) {
+    elsif ( $cmd_line =~ /^NONE/ ) {
         warn "Latexmk::Run: ",
              "Program not implemented for this version.  Command line:\n";
-	warn "   \"@cmdline\"\n";
+	warn "   '$cmd_line'\n";
         return (0, 1);
     }
     else { 
        # The command is given to system as a single argument, to force shell
        # metacharacters to be interpreted:
-       return (0, system( join( ' ', @cmdline) ) );
+       return( 0, system( $cmd_line ) );
    }
 }
 
@@ -3715,13 +4856,19 @@ sub Run_Detached {
 #   else if I fail to spawn a process
 #       return (0, 1)
 
+    my $cmd_line = $_[0];
 
-
-##    warn "Running \"@_\" detached...\n";
+##    warn "Running '$cmd_line' detached...\n";
+    if ( $cmd_line =~ /^NONE / ) {
+        warn "Latexmk::Run: ",
+             "Program not implemented for this version.  Command line:\n";
+	warn "   '$cmd_line'\n";
+        return (0, 1);
+    }
 
     if ( "$^O" eq "MSWin32" ){
         # Win95, WinNT, etc: Use MS's start command:
-        return (0, system( "start", @_) );
+        return( 0, system( "start $cmd_line" ) );
     } else {
         # Assume anything else is UNIX or clone
         # For this purpose cygwin behaves like UNIX.
@@ -3731,7 +4878,7 @@ sub Run_Detached {
         if ( ! defined $pid ) {
             ## warn "Run_Detached.UNIX: C\n";
 	    warn "Latexmk:: Could not fork to run the following command:\n";
-            warn "   \"@_\"\n";
+            warn "   '$cmd_line'\n";
             return (0, 1);
 	}
         elsif( $pid == 0 ){
@@ -3742,10 +4889,10 @@ sub Run_Detached {
            # Perhaps this works if setpgrp doesn't exist 
            #    (and therefore gives fatal error):
            eval{ setpgrp(0,0);};
-           exec(@_);
+           exec( $cmd_line );
            # Exec never returns; it replaces current process by new process
            die "Latexmk forked process: could not run the command\n",
-               "  \"@_\"\n";
+               "  '$cmd_line'\n";
         }
         ##warn "Run_Detached.UNIX: E\n";
         # Original process arrives here
@@ -3786,4 +4933,30 @@ sub find_process_id {
 
 #************************************************************
 
+sub pushd {
+    push @dir_stack, cwd();
+    if ( $#_ > -1) { chdir $_[0]; }
+}
 
+#************************************************************
+
+sub popd {
+    if ($#dir_stack > -1 ) { chdir pop @dir_stack; }
+}
+
+#************************************************************
+
+sub ifcd_popd {
+    if ( $do_cd ) {
+        warn "Latexmk: Undoing directory change\n";
+        &popd;
+    }
+}
+
+#************************************************************
+
+sub finish_dir_stack {
+    while ($#dir_stack > -1 ) { &popd; }
+}
+
+#************************************************************
