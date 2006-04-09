@@ -31,7 +31,7 @@
             match = "\\\\[^a-zA-Z\n]";
         },
         {   name = "comment.line.percentage.bibtex"; 
-            match = "%.*$"; 
+            match = '%.*$\n?'; 
         }, 
     ); 
     smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
