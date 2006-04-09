@@ -56,27 +56,6 @@
 		</array>
 		<key>increaseIndentPattern</key>
 		<string>^\s*\\begin\{.*\}</string>
-		<key>shellVariables</key>
-		<array>
-			<dict>
-				<key>name</key>
-				<string>TM_COMMENT_START</string>
-				<key>value</key>
-				<string>%</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>TM_COMMENT_END</string>
-				<key>value</key>
-				<string></string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>TM_COMMENT_MODE</string>
-				<key>value</key>
-				<string>line</string>
-			</dict>
-		</array>
 		<key>smartTypingPairs</key>
 		<array>
 			<array>
