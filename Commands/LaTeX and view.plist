@@ -33,10 +33,6 @@ echo '&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;'
 # Check if we actually have a tex compiler
 require_cmd "$TEX" "You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt; variable to the full path of your LaTeX compiler (e.g. &lt;tt&gt;/opt/local/bin/pdflatex&lt;/tt&gt; or set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;pdflatex&lt;/tt&gt;."
 
-# Function to close window if the error level is low enough.
-close() {
-	if (($RC &lt;= $EL)); then closeWindow; fi
-}
 
 run_tex () {
 if [ "$TEX" != latexmk.pl ]
@@ -45,13 +41,11 @@ if [ "$TEX" != latexmk.pl ]
 fi
 }
 
-# Compile. Bail out on errors.
+# Compile.
 run_tex "$FILE" 2&gt;&amp;1| latexErrWarnHtml.py -v
 RC=$?
 
-if (($RC &gt;= 2)); then exit; fi
-
-# View...
+# If there is output and it's newer than the current document, then we go directly to preview or link to it.
 if [ "$V" == html ]; then
 	if [ -s "${PDF}" -a "$PDF" -nt "$FILE" ]; then
 		WEB_LOC="tm-file://${DIR}/${PDF}"
@@ -67,7 +61,7 @@ if [ "$V" == html ]; then
 	htmlFooter
 else
 	open -a "$V" "$PDF"
-	if (($RC &lt;= $EL)); then close; fi
+	if (($RC &lt;= $EL)); then closeWindow; fi
 fi
 </string>
 	<key>dontFollowNewOutput</key>
