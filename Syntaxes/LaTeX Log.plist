@@ -2,12 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>firstLineMatch</key>
+	<string>This is pdfeTeXk, Version </string>
 	<key>foldingStartMarker</key>
 	<string>/\*\*|\(\s*$</string>
 	<key>foldingStopMarker</key>
 	<string>\*\*/|^\s*\)</string>
 	<key>keyEquivalent</key>
-	<string>^~L</string>
+	<string></string>
 	<key>name</key>
 	<string>LaTeX Log</string>
 	<key>patterns</key>
