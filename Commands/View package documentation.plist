@@ -12,7 +12,7 @@ M=${TM_LATEX_MASTER:=$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`
 export TM_LATEX_DOCBASE=${TM_LATEX_DOCBASE:="/usr/local/teTeX/share/texmf.tetex/"}
-export TM_HELP_CATALOG=${TM_HELP_CATALOG:="/usr/local/teTeX/share/texmf.tetex/doc/help/Catalogue/entries/"}
+export TM_LATEX_HELP_CATALOG=${TM_LATEX_HELP_CATALOG:="/usr/local/teTeX/share/texmf.tetex/doc/help/Catalogue/entries/"}
 
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"

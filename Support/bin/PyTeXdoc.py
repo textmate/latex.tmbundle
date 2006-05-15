@@ -18,10 +18,11 @@ for line in myFile:
     if g:
         mList.append(g.group(2))
 
-docIndex = "/usr/local/teTeX/share/texmf.tetex/texdoctk/texdoctk.dat"
+
 texMFbase = os.environ["TM_LATEX_DOCBASE"]
+docIndex = texMFbase + "texdoctk/texdoctk.dat"
 docBase = texMFbase + "doc/"
-catalogDir = os.environ["TM_HELP_CATALOG"]
+catalogDir = os.environ["TM_LATEX_HELP_CATALOG"]
 
 pathDict = {}
 descDict = {}
