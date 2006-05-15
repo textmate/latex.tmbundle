@@ -59,7 +59,36 @@ cwPackage = os.environ.get("TM_CURRENT_WORD",None)
 if cwPackage in pathDict:
     os.system("open " + pathDict[cwPackage])
     sys.exit()
-    
+
+print """
+<style type="text/css"><!--
+.save{
+   behavior:url(#default#savehistory);}
+a.dsphead{
+   text-decoration:none;
+   margin-left:1.5em;}
+a.dsphead:hover{
+   text-decoration:underline;}
+a.dsphead span.dspchar{
+   font-family:monospace;
+   font-weight:normal;}
+.dspcont{
+   display:none;
+   margin: 0px 20px 0px 20px;}
+//--></style>
+
+
+<script type="text/javascript"><!--
+function dsp(loc){
+   if(document.getElementById){
+      foc=loc.parentNode.nextSibling.style?
+         loc.parentNode.nextSibling:
+         loc.parentNode.nextSibling.nextSibling;
+      foc.style.display=foc.style.display=='block'?'none':'block';}}  
+
+//-->
+</script>
+"""    
 print "<h1>Your Packages</h1>"
 print "<ul>"
 for p in mList:
@@ -74,11 +103,13 @@ print "<hr />"
 print "<h1>Packages Browser</h1>"
 print "<ul>"
 for h in headings:
-    print "<li>" + h + "</li>"
+    print '<li><a href="javascript:dsp(this)" class="dsphead" onclick="dsp(this)">%s</a></li>'%(h)
+    print '<div class="dspcont">'
     print "<ul>"
     for p in headings[h]:
         print """<li><a href="javascript:TextMate.system('open %s', null);">%s</a>
              </li> """%(pathDict[p],descDict[p])
     print "</ul>"
+    print '</div>'
 print "</ul>"
 
