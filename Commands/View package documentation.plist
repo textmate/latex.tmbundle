@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string># View documentation for Latex package
+# take advantage of the texdoctk index as well as the texdoc catalog directory.
+
+M=${TM_LATEX_MASTER:=$TM_FILEPATH}
+DIR=`dirname "$M"`
+FILE=`basename "$M"`
+export TM_LATEX_DOCBASE=${TM_LATEX_DOCBASE:="/usr/local/teTeX/share/texmf.tetex/"}
+export TM_HELP_CATALOG=${TM_HELP_CATALOG:="/usr/local/teTeX/share/texmf.tetex/doc/help/Catalogue/entries/"}
+
+# Switch to the right directory.
+cd "$TM_PROJECT_DIRECTORY"
+cd "$DIR"
+
+PyTeXdoc.py</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string></string>
+	<key>name</key>
+	<string>View package documentation</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>text.latex</string>
+	<key>uuid</key>
+	<string>1A12B844-4074-4655-A45C-18AC8D943267</string>
+</dict>
+</plist>
