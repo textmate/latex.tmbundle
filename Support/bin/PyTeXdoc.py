@@ -37,9 +37,13 @@ for line in docIndexFile:
         headings[currentHeading] = []
     else:
         try:
-            key,desc,path,cats = line.split(';')
+            lineFields = line.split(';')
+            key = lineFields[0]
+            desc = lineFields[1]
+            path = lineFields[2]
         except:
-            key,desc,path = line.split(';')
+            print "Error parsing line: ", line
+            
         headings[currentHeading].append(key)
         if path.rfind('.sty') >= 0:
             path = texMFbase + "tex/" + path
@@ -66,15 +70,42 @@ print """
    behavior:url(#default#savehistory);}
 a.dsphead{
    text-decoration:none;
-   margin-left:1.5em;}
+   font-family: "Lucida Grand", sans-serif
+   font-size: 120%;
+   font-weight: bold;
+   margin-left:0.5em;}
 a.dsphead:hover{
    text-decoration:underline;}
-a.dsphead span.dspchar{
-   font-family:monospace;
-   font-weight:normal;}
 .dspcont{
    display:none;
-   margin: 0px 20px 0px 20px;}
+   text-decoration:none;
+   font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
+   margin: 0px 20px 0px 20px;} 
+.dspcont a{
+    text-decoration: none;
+    color: #000000;
+} 
+.dspcont a:hover{
+    text-decoration:none;
+    color: #FF0C0C; 
+    background-color: lightgray;
+}
+div#mypkg{
+   text-decoration:none;
+   color: #AAAAAA;
+   font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
+}
+div#mypkg a{
+   text-decoration:none;
+   color: #000000;
+   font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
+}
+div#mypkg a:hover{
+   text-decoration:none;
+    color: #FF0C0C; 
+    background-color: lightgray;
+}
+
 //--></style>
 
 
@@ -92,11 +123,13 @@ function dsp(loc){
 print "<h1>Your Packages</h1>"
 print "<ul>"
 for p in mList:
+    print '<div id="mypkg">'
     if p in pathDict:
-        print """<li><a href="javascript:TextMate.system('open %s', null);">%s</a>
+        print """<li><a href="javascript:TextMate.system('open %s', null);" >%s</a>
              </li> """%(pathDict[p],descDict[p])
     else:
         print """<li>%s</li>"""%(p)
+    print '</div>'
 print "</ul>"
 
 print "<hr />"
