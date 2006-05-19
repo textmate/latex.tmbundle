@@ -3,18 +3,20 @@
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>if test \! -e "$TM_NEW_FILE"; then
+	<string>if [[ ! -f "$TM_NEW_FILE" ]]; then
    TM_YEAR=`date +%Y` \
    TM_DATE=`date +%Y-%m-%d` \
    TM_USERNAME=`niutil -readprop / /users/\$USER realname` \
-   AUTHOR_ADDR=$(RA="defaults read AddressBookMe"; cat &lt;&lt;EOA
-`$RA FirstName` `$RA LastName`
-\\\\ `$RA StreetAddr1`
-\\\\ `$RA StreetAddr2`
-\\\\ `$RA ZipPostal` `$RA City`
-\\\\ `$RA Email`
-\\\\ http://www.xxx.yyy/mysite.html
-EOA) \
+   AUTHOR_ADDR=$(ruby &lt;&lt;"EOF" -rplist
+file = "#{ENV['HOME']}/Library/Preferences/AddressBookMe.plist"
+plist = PropertyList::load(File.new(file))
+puts plist['FirstName'] + " " + plist['LastName'] + '\\\\'
+puts plist['StreetAddr1'] + '\\\\'
+puts plist['StreetAddr2'] + '\\\\'
+puts plist['ZipPostal'] + " " + plist['City'] + '\\\\'
+puts plist['Email'] + '\\\\'
+puts "http://www.xxx.yyy/mysite.html"
+EOF) \
    perl -pe 's/\$\{([^}]*)\}/$ENV{$1}/g' \
       &lt; article_in.tex &gt; "$TM_NEW_FILE"
 fi</string>
