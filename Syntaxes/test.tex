@@ -1,6 +1,5 @@
 \documentclass[letter]{article}
 
-
 % Welcome to the Latex torture test file.  Please add your ugliest latex syntax examples 
 % to the appropriate place in this file so we can make sure that Latex works consistently 
 % for all of us.
@@ -9,6 +8,9 @@
 
 %preamble type stuff here
 
+% The following line is to make sure that braces in catcode are caught properly
+\catcode`\{=2
+\catcode`\(=2
 
 % The following four lines should be all math:
 $\sin(x)$

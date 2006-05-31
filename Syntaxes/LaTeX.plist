@@ -399,7 +399,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\(?:[a-z]*ref)\{)</string>
+			<string>(\\(?:\w*[r|R]ef\*?)\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>

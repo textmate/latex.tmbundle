@@ -49,7 +49,7 @@ beforeBraces = {
   "uncover" =&gt; "&lt;${1:+-}&gt;",
   "lim" =&gt; "_",
   "sum" =&gt; "_\{${1:bot}\}^",
-  "frac" =&gt; "\{${1:bot}\}"
+  "frac" =&gt; "\{${1:top}\}"
 }.update(customBeforeBraces)
 
 # Add to the environment variable TM_LATEX_COMMAND_NOBRACES a regexp of all commands for which you 

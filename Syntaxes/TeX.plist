@@ -23,6 +23,12 @@
 		</dict>
 		<dict>
 			<key>match</key>
+			<string>\\\bcatcode`\\.=\d+</string>
+			<key>name</key>
+			<string>keyword.control.catcode.tex</string>
+		</dict>
+		<dict>
+			<key>match</key>
 			<string>%:.*$\n?</string>
 			<key>name</key>
 			<string>comment.line.texshop.tex</string>
