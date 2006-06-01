@@ -8,9 +8,10 @@
 
 %preamble type stuff here
 
-% The following line is to make sure that braces in catcode are caught properly
+% The following line is to make sure that backticks in catcode are caught properly
 \catcode`\{=2
 \catcode`\(=2
+\catcode`\"=2
 
 % The following four lines should be all math:
 $\sin(x)$
@@ -18,6 +19,8 @@ $$\sin(x)$$
 \[\sin(x)\]
 \(\sin(x)\)
 
+``$\sin(x)$\textit{italic}'' % Math etc in strings!!
+` single quotes should not be paired as strings, as they appear alone too often.'
 % Math environments
 \begin{equation}
   \sin(x)

@@ -13,7 +13,7 @@
 	<key>foldingStopMarker</key>
 	<string>\\end\{.*\}</string>
 	<key>keyEquivalent</key>
-	<string>~^L</string>
+	<string>^~L</string>
 	<key>name</key>
 	<string>LaTeX</string>
 	<key>patterns</key>
@@ -486,20 +486,22 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>match</key>
-					<string>\\.</string>
-					<key>name</key>
-					<string>constant.character.escape.latex</string>
+					<key>include</key>
+					<string>$base</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
-			<key>begin</key>
+			<key>match</key>
 			<string>`</string>
-			<key>end</key>
+			<key>name</key>
+			<string>string.quoted.single.open.latex</string>
+		</dict>
+		<dict>
+			<key>match</key>
 			<string>'</string>
 			<key>name</key>
-			<string>string.quoted.single.latex</string>
+			<string>string.quoted.single.close.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
