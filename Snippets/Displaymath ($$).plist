@@ -9,7 +9,7 @@
 	<key>keyEquivalent</key>
 	<string>^@m</string>
 	<key>name</key>
-	<string>Displaymath ($$)</string>
+	<string>Displaymath</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
