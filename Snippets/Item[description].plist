@@ -5,7 +5,7 @@
 	<key>content</key>
 	<string>\\item[${1:description}] ${0:item}</string>
 	<key>name</key>
-	<string>\item[description] (itd)</string>
+	<string>\item[description]</string>
 	<key>scope</key>
 	<string>meta.environment.list</string>
 	<key>tabTrigger</key>
