@@ -109,7 +109,7 @@ else
 		zeroLineToPrint = "\\begin{#{name}}#{zeroLine[name]}"
   elsif (lab == 1)
    	labPrefix = name.slice(0,3)
-		zeroLineToPrint = "\\begin{#{name}}{$1:\\label{#{labPrefix}:$2\\}}"
+		zeroLineToPrint = "\\begin{#{name}}${1:\\label{#{labPrefix}:$2\\}}"
   else
     zeroLineToPrint = "\\begin{#{name}}" 
 	end
