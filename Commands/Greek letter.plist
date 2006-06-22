@@ -67,7 +67,7 @@ end</string>
 	<key>input</key>
 	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>@G</string>
+	<string>^G</string>
 	<key>name</key>
 	<string>Expand to Greek Letter</string>
 	<key>output</key>
