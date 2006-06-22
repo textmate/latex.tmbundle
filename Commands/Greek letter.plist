@@ -73,7 +73,7 @@ end</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.latex, source.bibtex</string>
 	<key>uuid</key>
 	<string>A7D549C1-055E-4181-84F2-BA713EB66341</string>
 </dict>
