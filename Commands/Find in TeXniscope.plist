@@ -11,12 +11,14 @@
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"
 cd `dirname "$TM_LATEX_MASTER"`
-FILE=`basename "$TM_LATEX_MASTER"`
+
+# CHANGE IS HERE: commented out next line and replaced it with the line after that
+#FILE=`basename "$TM_LATEX_MASTER"`
+FILE="$TM_LATEX_MASTER"
 
 export Tspath=${TM_TSCOPE:=/Applications}
 echo $Tspath
-"$Tspath"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" `echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs` ; open -a TeXniscope
-</string>
+"$Tspath"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" `echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs` ; open -a TeXniscope</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
