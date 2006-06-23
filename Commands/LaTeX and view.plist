@@ -61,6 +61,14 @@ if [ "$V" == html ]; then
 	htmlFooter
 else
 	open -a "$V" "$PDF"
+	if (($V==TeXniscope)); then
+	  osascript &lt;&lt; EOF
+  tell application "TeXniscope"
+  	refresh the front document
+  	the front document goto line $TM_LINE_NUMBER of source "$TM_FILEPATH"
+  end tell
+EOF
+  fi
 	if (($RC &lt;= $EL)); then closeWindow; fi
 fi
 </string>
