@@ -60,15 +60,10 @@ if [ "$V" == html ]; then
 	fi
 	htmlFooter
 else
-	open -a "$V" "$PDF"
 	if [[ $(tr &lt;&lt;&lt;"$V" '[A-Z]' '[a-z]') == texniscope ]]; then
-	  osascript &lt;&lt; EOF
-  tell application "TeXniscope"
-  	refresh the front document
-  	the front document goto line $TM_LINE_NUMBER of source "$TM_FILEPATH"
-  end tell
-EOF
- fi
+        /Applications/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF";
+    fi
+	open -a "$V" "$PDF"
 	if (($RC &lt;= $EL)); then closeWindow; fi
 fi
 </string>
