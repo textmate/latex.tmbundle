@@ -24,7 +24,7 @@ echo $Tspath
 	<key>keyEquivalent</key>
 	<string>^~@o</string>
 	<key>name</key>
-	<string>Find in TeXniscope</string>
+	<string>Show in TeXniscope (pdfsync)</string>
 	<key>output</key>
 	<string>discard</string>
 	<key>scope</key>
