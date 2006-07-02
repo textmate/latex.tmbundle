@@ -10,6 +10,8 @@
 	<string>word</string>
 	<key>input</key>
 	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>@b</string>
 	<key>name</key>
 	<string>Bold</string>
 	<key>output</key>

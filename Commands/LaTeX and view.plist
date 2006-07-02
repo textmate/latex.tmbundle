@@ -72,7 +72,7 @@ fi
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
-	<string>@b</string>
+	<string>@r</string>
 	<key>name</key>
 	<string>Typeset &amp; View (PDF)</string>
 	<key>output</key>
