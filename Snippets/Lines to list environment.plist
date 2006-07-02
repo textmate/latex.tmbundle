@@ -10,7 +10,7 @@ ${TM_SELECTED_TEXT/^((.*):\s*)?(.+)$/\n\t\item(?1: [ $2 ]) $3/g}
 	<key>keyEquivalent</key>
 	<string>^L</string>
 	<key>name</key>
-	<string>Lines to List Environment</string>
+	<string>Itemize Lines in Selection</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>

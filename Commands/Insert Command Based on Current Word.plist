@@ -83,7 +83,7 @@ end
 	<key>keyEquivalent</key>
 	<string>@}</string>
 	<key>name</key>
-	<string>Insert Command Based on Current Word</string>
+	<string>Command Based on Current Word</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>

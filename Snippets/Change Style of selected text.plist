@@ -7,7 +7,7 @@
 	<key>keyEquivalent</key>
 	<string>^W</string>
 	<key>name</key>
-	<string>Wrap Selection in Command</string>
+	<string>Command — \command{…}</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>

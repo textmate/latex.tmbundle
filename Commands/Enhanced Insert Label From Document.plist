@@ -55,7 +55,7 @@ fi</string>
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
-	<string>Insert Label From Document…</string>
+	<string>Label From Document…</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>

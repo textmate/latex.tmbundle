@@ -10,7 +10,7 @@ ${TM_SELECTED_TEXT/(\s*).*/$1/m}\end{$1}
 	<key>keyEquivalent</key>
 	<string>^L</string>
 	<key>name</key>
-	<string>Wrap Selection in Environment</string>
+	<string>Environment — \begin{}…\end{}</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>

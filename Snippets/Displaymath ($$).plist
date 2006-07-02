@@ -7,9 +7,9 @@
 	$TM_SELECTED_TEXT$1
 \]</string>
 	<key>keyEquivalent</key>
-	<string>^@m</string>
+	<string>^M</string>
 	<key>name</key>
-	<string>Displaymath</string>
+	<string>Display Math — \[ … \]</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>

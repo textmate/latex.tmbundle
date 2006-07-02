@@ -24,7 +24,7 @@ PyTeXdoc.py</string>
 	<key>keyEquivalent</key>
 	<string>^h</string>
 	<key>name</key>
-	<string>View Package Documentation</string>
+	<string>Documentation for Package</string>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>

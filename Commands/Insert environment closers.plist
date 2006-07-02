@@ -14,7 +14,7 @@ ruby -- "$TM_SUPPORT_PATH/bin/checknest.rb" '\\begin\{([^}]+)\}' '\\end\{([^}]+)
 	<key>keyEquivalent</key>
 	<string>~@.</string>
 	<key>name</key>
-	<string>Insert Environment Closer</string>
+	<string>Environment Closer — \end{…}</string>
 	<key>output</key>
 	<string>afterSelectedText</string>
 	<key>scope</key>

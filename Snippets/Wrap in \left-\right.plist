@@ -7,7 +7,7 @@
 	<key>keyEquivalent</key>
 	<string>^L</string>
 	<key>name</key>
-	<string>Wrap Selection in \left…\right</string>
+	<string>Brackets — \left…\right</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>
