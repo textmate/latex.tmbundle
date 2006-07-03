@@ -61,7 +61,7 @@ if [ "$V" == html ]; then
 	htmlFooter
 else
 	if [[ $(tr &lt;&lt;&lt;"$V" '[A-Z]' '[a-z]') == texniscope ]]; then
-        /Applications/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF";
+        "${TM_TSCOPE:=/Applications}"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF";
     fi
 	open -a "$V" "$PDF"
 	if (($RC &lt;= $EL)); then closeWindow; fi
