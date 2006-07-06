@@ -67,16 +67,15 @@ my @keywords = qw(
 # to ensure that they all land in 
 # separate pieces. Then each piece that has a leading % is immediately passed.
 
-$in =~ s/\%(.*?)\n/\n\n\%$1\n\n/g;
+$in =~ s/(?<!\\)\%(.*?)\n/\n\n\%$1\n\n/g;
 
 my @pieces = split(/\n\s*\n/, $in);
 my $string, $keyword;
 
 foreach (@pieces){
 
-# Every comment is left as is.
-
-	if (/^\s*\%/) {
+# Every comment is left as is. 	But ignore % that are immediately preceded by \
+	if (/^\s*(?<!\\)\%/) {
 		$string .= $_ . "\n" ;
 		next;
 	}
@@ -92,12 +91,14 @@ foreach (@pieces){
 	}
 
 #Newlines before each \begin and \end. After each \end{}
+#We want to ignore begin and end document, since those shouldn't 
+#induce additional indenting
 
 	s/([^\\]\%)/\n$1/g;
 
 
-	s/(\\begin\{)(.*?)(\})/\n$1$2$3\n/g;
-	s/(\\end\{)(.*?)(\})/\n$1$2$3\n/g;
+	s/(\\begin\{)((?!document).*?)(\})/\n$1$2$3\n/g;
+	s/(\\end\{)((?!document).*?)(\})/\n$1$2$3\n/g;
 	s/(\\begin\{array\})\n(\{)(.*?)(\})/\n$1$2$3$4\n/g;
 	
 #Newlines before each \item. 
@@ -143,15 +144,16 @@ $string =~ s/(\%[^\n]*)(\\)(begin)/$1$2\{\n\n\n\}$3/g;
 
 # Now let's put [triple \n] at the start of each \begin and the start of each 
 # \end. Then we'll split on them, since they are unique. 
-# Each of those pieces must be at the same indent level.
+# Each of those pieces must be at the same indent level. Again, we need to 
+# ignore beginning and end of document.
 
 #$string =~s/(\\end)/\[\n\n\n$\]$1/g;
 #$string =~s/(\\begin)/\[\n\n\n$\]$1/g;
 #
 #@pieces = split(/\[\n\n\n$\]/, $string);
 
-$string =~s/(\\end)/\[\n\n\n\]$1/g;
-$string =~s/(\\begin)/\[\n\n\n\]$1/g;
+$string =~s/(\\end(?!\{document\}))/\[\n\n\n\]$1/g;
+$string =~s/(\\begin(?!\{document\}))/\[\n\n\n\]$1/g;
 
 @pieces = split(/\[\n\n\n\]/, $string);
 
