@@ -559,13 +559,13 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>match</key>
 			<string>(?&lt;!\S)'.*?'</string>
 			<key>name</key>
-			<string>invalid.string.quoted.single.latex</string>
+			<string>invalid.illegal.string.quoted.single.latex</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>(?&lt;!\S)".*?"</string>
 			<key>name</key>
-			<string>invalid.string.quoted.double.latex</string>
+			<string>invalid.illegal.string.quoted.double.latex</string>
 		</dict>
 		<dict>
 			<key>match</key>
