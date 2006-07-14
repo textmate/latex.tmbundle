@@ -1,39 +1,123 @@
-{
-    fileTypes = (bib); 
-    foldingStartMarker = "\\@[a-zA-Z]+\\{.+,"; 
-    foldingStopMarker = "\\}"; 
-    highlightPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
-    name = BibTeX; 
-    scopeName = "source.bibtex";
-    patterns = (
-        {   name = "keyword.other.entries.bibtex"; 
-            match = "^\\@[a-zA-Z]+"; 
-        }, 
-        {   name = "string.other.math.line.bibtex"; 
-            begin = "(^|[^\\\\])\\$"; end = "\\$"; 
-        }, 
-        {   name = "declaration.cite.bibtex"; 
-            begin = "(\\\\cite[np]*\\{)"; end = "(\\})"; 
-            captures = {
-                1 = { name = "keyword.control.cite.bibtex"; };
-            };
-        }, 
-        {   name = "support.function.bibtex"; 
-            match = "\\\\\\w+"; 
-        }, 
-        {   name = "declaration.key-assignment.bibtex"; 
-            match = "([a-zA-Z]+)\\s*\\="; 
-            captures = {
-                1 = { name = "keyword.other.bibtex"; };
-            };
-        },
-        {   name = "constant.character.bibtex";
-            match = "\\\\[^a-zA-Z\n]";
-        },
-        {   name = "comment.line.percentage.bibtex"; 
-            match = '%.*$\n?'; 
-        }, 
-    ); 
-    smartTypingPairs = (("(", ")"), ("[", "]"), ("{", "}"), ("\"", "\"")); 
-    uuid = "47F30BA1-6B1D-11D9-9A60-000D93589AF6"; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>bib</string>
+	</array>
+	<key>foldingStartMarker</key>
+	<string>\@[a-zA-Z]+\{.+,</string>
+	<key>foldingStopMarker</key>
+	<string>\}</string>
+	<key>highlightPairs</key>
+	<array>
+		<array>
+			<string>(</string>
+			<string>)</string>
+		</array>
+		<array>
+			<string>[</string>
+			<string>]</string>
+		</array>
+		<array>
+			<string>{</string>
+			<string>}</string>
+		</array>
+		<array>
+			<string>"</string>
+			<string>"</string>
+		</array>
+	</array>
+	<key>name</key>
+	<string>BibTeX</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>match</key>
+			<string>^\@[a-zA-Z]+</string>
+			<key>name</key>
+			<string>keyword.other.entries.bibtex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(^|[^\\])\$</string>
+			<key>end</key>
+			<string>\$</string>
+			<key>name</key>
+			<string>string.other.math.line.bibtex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(\\cite[np]*\{)</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.cite.bibtex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>(\})</string>
+			<key>name</key>
+			<string>meta.cite.bibtex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\\w+</string>
+			<key>name</key>
+			<string>support.function.bibtex</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.bibtex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>([a-zA-Z]+)\s*\=</string>
+			<key>name</key>
+			<string>meta.key-assignment.bibtex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\\[^a-zA-Z\n]</string>
+			<key>name</key>
+			<string>constant.character.escaped.bibtex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>%.*$\n?</string>
+			<key>name</key>
+			<string>comment.line.percentage.bibtex</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.bibtex</string>
+	<key>smartTypingPairs</key>
+	<array>
+		<array>
+			<string>(</string>
+			<string>)</string>
+		</array>
+		<array>
+			<string>[</string>
+			<string>]</string>
+		</array>
+		<array>
+			<string>{</string>
+			<string>}</string>
+		</array>
+		<array>
+			<string>"</string>
+			<string>"</string>
+		</array>
+	</array>
+	<key>uuid</key>
+	<string>47F30BA1-6B1D-11D9-9A60-000D93589AF6</string>
+</dict>
+</plist>
