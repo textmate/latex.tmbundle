@@ -87,7 +87,7 @@
 			<key>match</key>
 			<string>\\[^a-zA-Z\n]</string>
 			<key>name</key>
-			<string>constant.character.escaped.bibtex</string>
+			<string>constant.character.escape.bibtex</string>
 		</dict>
 		<dict>
 			<key>match</key>
