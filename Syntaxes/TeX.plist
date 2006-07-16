@@ -31,7 +31,7 @@
 			<key>match</key>
 			<string>%:.*$\n?</string>
 			<key>name</key>
-			<string>comment.line.texshop.tex</string>
+			<string>comment.line.percentage-semicolon.texshop.tex</string>
 		</dict>
 		<dict>
 			<key>match</key>
