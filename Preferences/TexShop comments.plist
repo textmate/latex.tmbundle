@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>TexShop %: comments</string>
 	<key>scope</key>
-	<string>text.latex comment.line.percentage-semicolon.texshop.tex</string>
+	<string>text.latex comment.line.percentage.semicolon.texshop.tex</string>
 	<key>settings</key>
 	<dict>
 		<key>showInSymbolList</key>
