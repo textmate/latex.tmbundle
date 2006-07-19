@@ -8,8 +8,6 @@
 	<string>/\*\*|\(\s*$</string>
 	<key>foldingStopMarker</key>
 	<string>\*\*/|^\s*\)</string>
-	<key>keyEquivalent</key>
-	<string></string>
 	<key>name</key>
 	<string>LaTeX Log</string>
 	<key>patterns</key>
@@ -96,28 +94,10 @@
 		<dict>
 			<key>begin</key>
 			<string>(&lt;)</string>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>string</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>storage</string>
-				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>string</string>
-				</dict>
-			</dict>
 			<key>end</key>
 			<string>(&gt;)</string>
 			<key>name</key>
-			<string>meta.log.latex.filename</string>
+			<string>string.unquoted.other.filename.log.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -126,7 +106,7 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>entity.name</string>
+							<string>entity.name.function.filename.latex</string>
 						</dict>
 					</dict>
 					<key>match</key>

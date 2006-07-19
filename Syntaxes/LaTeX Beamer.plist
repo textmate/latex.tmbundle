@@ -126,7 +126,7 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>entity.name.frame</string>
+							<string>entity.name.function.frame.latex</string>
 						</dict>
 					</dict>
 					<key>match</key>

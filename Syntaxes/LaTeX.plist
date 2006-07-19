@@ -187,7 +187,7 @@
 			<key>end</key>
 			<string>(\\end\{)(\2)(\})(?:\s*\n)?</string>
 			<key>name</key>
-			<string>string.environment.math.latex</string>
+			<string>string.quoted.other.environment.math.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -364,7 +364,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.general.item.latex</string>
+					<string>keyword.other.item.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>

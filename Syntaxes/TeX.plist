@@ -130,7 +130,7 @@
 			<key>match</key>
 			<string>\\[^a-zA-Z]</string>
 			<key>name</key>
-			<string>keyword.tex.general</string>
+			<string>keyword.other.general.tex</string>
 		</dict>
 		<dict>
 			<key>match</key>
