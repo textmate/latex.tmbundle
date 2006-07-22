@@ -12,7 +12,6 @@
 		<key>excludedItems</key>
 		<array>
 			<string>F80F9C22-ABB8-11D9-957A-000D93589AF6</string>
-			<string>65E2109C-4309-4079-BD25-17D8B31F03CD</string>
 			<string>3B6A7039-C276-4C96-B896-B7B487401280</string>
 			<string>7D3548FA-AE80-11D9-8B45-000D93B6E43C</string>
 		</array>
@@ -87,6 +86,9 @@
 					<string>D52CA669-A6DA-4CF1-BDF5-522D591D7E7D</string>
 					<string>------------------------------------</string>
 					<string>9A3FE182-40AB-4980-AB6C-32DDA22DE41D</string>
+					<string>65E2109C-4309-4079-BD25-17D8B31F03CD</string>
+					<string>------------------------------------</string>
+					<string>688FBE87-D5B4-445D-AD02-231F6E99F9C1</string>
 				</array>
 				<key>name</key>
 				<string>Insert</string>

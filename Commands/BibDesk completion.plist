@@ -67,8 +67,6 @@ echo -n $res
 	<string>word</string>
 	<key>input</key>
 	<string>selection</string>
-	<key>keyEquivalent</key>
-	<string>~</string>
 	<key>name</key>
 	<string>BibDesk Completion</string>
 	<key>output</key>
