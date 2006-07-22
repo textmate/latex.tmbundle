@@ -30,6 +30,7 @@ end
 shortcuts = {
 # Enumerate environments
   "item" =&gt; "itemize", "enum" =&gt; "enumerate", "desc" =&gt; "description",
+  "it" =&gt; "itemize", "en" =&gt; "enumerate",
 # Standard math environments
   "doc" =&gt; "document", "eqa" =&gt; "eqnarray","eqn" =&gt; "equation", "eq" =&gt; "equation",  
   "thm" =&gt; "theorem", "lem" =&gt; "lemma", "cor" =&gt; "corollary", 
