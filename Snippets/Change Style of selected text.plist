@@ -5,11 +5,9 @@
 	<key>content</key>
 	<string>\\${1:text${2:bf}}{$TM_SELECTED_TEXT}</string>
 	<key>keyEquivalent</key>
-	<string>^W</string>
+	<string>^E</string>
 	<key>name</key>
 	<string>Command — \command{…}</string>
-	<key>scope</key>
-	<string>text.latex</string>
 	<key>uuid</key>
 	<string>7D3548FA-AE80-11D9-8B45-000D93B6E43C</string>
 </dict>

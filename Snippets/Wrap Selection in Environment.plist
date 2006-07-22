@@ -8,7 +8,7 @@ ${TM_SELECTED_TEXT/(.+)|\n\z/(?1:\t$0)/g}
 ${TM_SELECTED_TEXT/(\s*).*/$1/m}\end{$1}
 </string>
 	<key>keyEquivalent</key>
-	<string>^L</string>
+	<string>^@W</string>
 	<key>name</key>
 	<string>Environment — \begin{}…\end{}</string>
 	<key>scope</key>
