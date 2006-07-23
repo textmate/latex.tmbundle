@@ -5,7 +5,9 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>echo -n "\\\\\${1:text\${2:bf}}{${TM_SELECTED_TEXT:=\$3}}"</string>
+	<string>#!/usr/bin/env ruby
+require ENV['TM_SUPPORT_PATH'] +'/lib/escape.rb'
+print "\\\\${1:text${2:bf}}{#{if s = ENV['TM_SELECTED_TEXT'] then e_sn(s) else '$3' end}}"</string>
 	<key>fallbackInput</key>
 	<string>word</string>
 	<key>input</key>
