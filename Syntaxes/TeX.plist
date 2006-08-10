@@ -109,6 +109,12 @@
 			<key>patterns</key>
 			<array>
 				<dict>
+					<key>match</key>
+					<string>\\\$</string>
+					<key>name</key>
+					<string>constant.character.escape.tex</string>
+				</dict>
+				<dict>
 					<key>include</key>
 					<string>source.math.tex</string>
 				</dict>
@@ -117,8 +123,6 @@
 					<string>$self</string>
 				</dict>
 			</array>
-			<key>swallow</key>
-			<string>\\\$</string>
 		</dict>
 		<dict>
 			<key>match</key>
