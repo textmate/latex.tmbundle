@@ -28,13 +28,13 @@
 			<key>match</key>
 			<string>\\\b(arccos|arcsin|arctan|arg|cos|cosh|cot|coth|csc|deg|det|dim|exp|gcd|hom|inf|ker|lg|lim|liminf|limsup|ln|log|max|min|pr|sec|sin|sinh|sup|tan|tanh)\b</string>
 			<key>name</key>
-			<string>constant.language.math.tex</string>
+			<string>constant.other.math.tex</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>\\([^a-zA-Z]|[A-Za-z]+)(?=\b|\}|\]|\^|\_)</string>
 			<key>name</key>
-			<string>constant.language.general.math.tex</string>
+			<string>constant.other.general.math.tex</string>
 		</dict>
 		<dict>
 			<key>match</key>
