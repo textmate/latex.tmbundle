@@ -40,7 +40,7 @@
 			<key>match</key>
 			<string>.*\.cls</string>
 			<key>name</key>
-			<string>entity.name.class</string>
+			<string>entity.name.type.class</string>
 		</dict>
 		<dict>
 			<key>match</key>
