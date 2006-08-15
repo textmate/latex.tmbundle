@@ -2,81 +2,269 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>comment</key>
+	<string>Grammar based on description from http://artis.imag.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html#comment</string>
 	<key>fileTypes</key>
 	<array>
 		<string>bib</string>
 	</array>
 	<key>foldingStartMarker</key>
-	<string>\@[a-zA-Z]+\{.+,</string>
+	<string>\@[a-zA-Z]+\s*[{(].+,</string>
 	<key>foldingStopMarker</key>
-	<string>\}</string>
+	<string>^\s*[)}]\s*$</string>
 	<key>name</key>
 	<string>BibTeX</string>
 	<key>patterns</key>
 	<array>
 		<dict>
-			<key>match</key>
-			<string>^\@[a-zA-Z]+</string>
-			<key>name</key>
-			<string>keyword.other.entries.bibtex</string>
-		</dict>
-		<dict>
 			<key>begin</key>
-			<string>(^|[^\\])\$</string>
-			<key>end</key>
-			<string>\$</string>
-			<key>name</key>
-			<string>string.other.math.line.bibtex</string>
-		</dict>
-		<dict>
-			<key>begin</key>
-			<string>(\\cite[np]*\{)</string>
-			<key>captures</key>
+			<string>@Comment</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.control.cite.bibtex</string>
+					<string>keyword.other.comment.bibtex</string>
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\})</string>
+			<string>$\n?</string>
 			<key>name</key>
-			<string>meta.cite.bibtex</string>
+			<string>comment.line.at-sign.bibtex</string>
 		</dict>
 		<dict>
-			<key>match</key>
-			<string>\\\w+</string>
-			<key>name</key>
-			<string>support.function.bibtex</string>
-		</dict>
-		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(@String)\s*\{\s*([a-zA-Z]*)</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.other.bibtex</string>
+					<string>keyword.other.string-constant.bibtex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>variable.other.bibtex</string>
 				</dict>
 			</dict>
-			<key>match</key>
-			<string>([a-zA-Z]+)\s*\=</string>
+			<key>end</key>
+			<string>\}</string>
 			<key>name</key>
-			<string>meta.key-assignment.bibtex</string>
+			<string>meta.string-constant.braces.bibtex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#string_content</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
-			<key>match</key>
-			<string>\\[^a-zA-Z\n]</string>
+			<key>begin</key>
+			<string>(@String)\s*\(\s*([a-zA-Z]*)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.string-constant.bibtex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>variable.other.bibtex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>\)</string>
 			<key>name</key>
-			<string>constant.character.escape.bibtex</string>
+			<string>meta.string-constant.parenthesis.bibtex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#string_content</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
-			<key>match</key>
-			<string>%.*$\n?</string>
+			<key>begin</key>
+			<string>(@[a-zA-Z]+)\s*\{\s*([^\s,]*)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.entry-type.bibtex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.type.entry-key.bibtex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>\}</string>
 			<key>name</key>
-			<string>comment.line.percentage.bibtex</string>
+			<string>meta.entry.braces.bibtex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>([a-zA-Z]+)\s*\=</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>string.unquoted.key.bibtex</string>
+						</dict>
+					</dict>
+					<key>end</key>
+					<string>(?=[,}])</string>
+					<key>name</key>
+					<string>meta.key-assignment.bibtex</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#string_content</string>
+						</dict>
+						<dict>
+							<key>include</key>
+							<string>#integer</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(@[a-zA-Z]+)\s*\(\s*([^\s,]*)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.entry-type.bibtex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.type.entry-key.bibtex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>\)</string>
+			<key>name</key>
+			<string>meta.entry.parenthesis.bibtex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>([a-zA-Z]+)\s*\=</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>string.unquoted.key.bibtex</string>
+						</dict>
+					</dict>
+					<key>end</key>
+					<string>(?=[,)])</string>
+					<key>name</key>
+					<string>meta.key-assignment.bibtex</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#string_content</string>
+						</dict>
+						<dict>
+							<key>include</key>
+							<string>#integer</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>[^@\n]</string>
+			<key>end</key>
+			<string>(?=@)</string>
+			<key>name</key>
+			<string>comment.block.bibtex</string>
 		</dict>
 	</array>
+	<key>repository</key>
+	<dict>
+		<key>integer</key>
+		<dict>
+			<key>match</key>
+			<string>\d+</string>
+			<key>name</key>
+			<string>constant.numeric.bibtex</string>
+		</dict>
+		<key>nested_braces</key>
+		<dict>
+			<key>begin</key>
+			<string>\{</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#nested_braces</string>
+				</dict>
+			</array>
+		</dict>
+		<key>string_content</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>"</string>
+					<key>end</key>
+					<string>"</string>
+					<key>name</key>
+					<string>string.quoted.double.bibtex</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#nested_braces</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>\{</string>
+					<key>end</key>
+					<string>\}</string>
+					<key>name</key>
+					<string>string.quoted.other.braces.bibtex</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>match</key>
+							<string>@</string>
+							<key>name</key>
+							<string>invalid.illegal.at-sign.bibtex</string>
+						</dict>
+						<dict>
+							<key>include</key>
+							<string>#nested_braces</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 	<key>scopeName</key>
 	<string>source.bibtex</string>
 	<key>uuid</key>
