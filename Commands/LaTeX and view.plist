@@ -19,7 +19,7 @@ EL=${TM_LATEX_ERRLVL:=1}
 M=${TM_LATEX_MASTER:=$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`
-PDF="${FILE%.tex}.pdf"
+PDF="${FILE%.*}.pdf"
 CWD="`pwd`/"
 
 # Switch to the right directory.
