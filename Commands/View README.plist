@@ -5,7 +5,11 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>cat "$TM_BUNDLE_SUPPORT/Help.html"</string>
+	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
+
+	htmlHeader "LaTeX Bundle Help" "LaTeX"
+	Markdown.pl "$TM_BUNDLE_SUPPORT/help.markdown"|Smartypants.pl
+	htmlFooter</string>
 	<key>dontFollowNewOutput</key>
 	<true/>
 	<key>input</key>
