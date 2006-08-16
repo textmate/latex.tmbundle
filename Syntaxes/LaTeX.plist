@@ -58,7 +58,7 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.latex</string>
+					<string>variable.parameter.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
@@ -98,7 +98,7 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.latex</string>
+					<string>variable.parameter.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
@@ -124,7 +124,7 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.latex</string>
+					<string>variable.parameter.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
@@ -150,7 +150,7 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.latex</string>
+					<string>variable.parameter.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
@@ -176,7 +176,7 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.latex</string>
+					<string>variable.parameter.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
@@ -211,7 +211,7 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.latex</string>
+					<string>variable.parameter.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
