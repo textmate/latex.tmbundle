@@ -7,9 +7,9 @@
 	<key>command</key>
 	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
 
-	htmlHeader "LaTeX Bundle Help" "LaTeX"
+	html_header "LaTeX Bundle Help" "LaTeX"
 	Markdown.pl "$TM_BUNDLE_SUPPORT/help.markdown"|Smartypants.pl
-	htmlFooter</string>
+	html_footer</string>
 	<key>dontFollowNewOutput</key>
 	<true/>
 	<key>input</key>

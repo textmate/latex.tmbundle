@@ -27,7 +27,7 @@ cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
 
 # Prepare output window.
-htmlHeader "Compiling LaTeX (file $FILE)"
+html_header "Compiling LaTeX (file $FILE)"
 echo '&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;'
 
 # Check if we actually have a tex compiler
@@ -58,7 +58,7 @@ if [ "$V" == html ]; then
 	else
 		strong "Error: PDF file not written to disk"
 	fi
-	htmlFooter
+	html_footer
 else
 	if [[ $(tr &lt;&lt;&lt;"$V" '[A-Z]' '[a-z]') == texniscope ]]; then
         "${TM_TSCOPE:=/Applications}"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF";
