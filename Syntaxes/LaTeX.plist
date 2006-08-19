@@ -32,7 +32,7 @@
 			<key>comment</key>
 			<string>this works OK with all kinds of crazy stuff as long as section is one line</string>
 			<key>contentName</key>
-			<string>entity.name.section</string>
+			<string>entity.name.section.latex</string>
 			<key>end</key>
 			<string>(\})</string>
 			<key>name</key>
