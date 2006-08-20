@@ -177,11 +177,11 @@ Exam
 
 * `PDFTEX_FILE_LOCATION`
 
-	The PDF LaTeX command currently needs to go through http to display the PDF inline. This is done by copying the file to a place where apache can find it and redirecting to that file using `http://localhost/`. It defaults to `~/Sites`
+	<strike>The PDF LaTeX command currently needs to go through http to display the PDF inline. This is done by copying the file to a place where apache can find it and redirecting to that file using `http://localhost/`. It defaults to `~/Sites`</strike>
 
 * `PDFTEX_WEB_LOCATION`
 
-	This is how the generated PDF should be accessed (see `PDFTEX_FILE_LOCATION`). It defaults to `http://localhost/~$USER`
+	<strike>This is how the generated PDF should be accessed (see `PDFTEX_FILE_LOCATION`). It defaults to `http://localhost/~$USER`</strike>
 
 * `TM_LATEX_ERRLVL`
 
