@@ -1,239 +1,187 @@
 # A Short Guide to the Mysteries of the LaTeX Bundle
 
-## Intro
+## Outline
 
-The LaTeX Bundle has a long history, it was one of the earliest contributed bundles in the TextMate family. Many people have contributed to this bundle over the short life of TextMate. Those people are documented in the credits section based on the now defunct history file and what can be gleaned from the subversion logs and mailing list. Since there are several ways to use the LaTeX bundle and several different distributions of TeX out there for the Mac now seems like as good a time as any to document some of the prerequisites and options.
+This document is pretty long, so this section is an outline of the rest of this document.
 
-First, you need a working version of LaTeX. Some of the commands in the bundle assume that you are using the latest version that you can get using the [i-installer][1] package. You should use the 2005 install package from Gerben's i-Directory.
+## Getting Started
 
-Several of the commands also assume that you have some kind of pdf previewer. There are four options:
+  * Installing LaTeX
+  * Building a LaTeX file
+      * Standard typesetting
+      * Using latexmk.pl
+      * Using a master file
+          * Tips and tricks, e.g. change it for specific files, link to a few mailing list posts about this (one by Jeroen van der Ham)
 
-  1. The HTML output window of TextMate 
-  2. The [TeXShop][2] Application
-  3. The [TeXniscope][3] previewer
-  4. Apple's Preview.app
+  * Previewing a LaTeX file
+      * Default Preview (requires Tiger)
+      * Installing PDF Browser Plug-In
+      * External Previewers (Preview, TeXShop, Texniscope)
+      * Preview Options (only switch to preview when there are no warnings, auto-close build window on no errors (for external preview), etc.)
 
-Some of the previewers, TeXniscope and TeXShop work with the pdfsync package. The pdfsync package is great because it allows you to easily hop back and forth between TextMate and the pdf version of your document
+## Installing LaTeX
 
-The LaTeX bundle also works well with bibtex. In particular the [Bibdesk][4] application for managing bibliography files works well with TextMate.
+Before using LaTeX, you need a working version of LaTeX installed. We recommend that you use the [i-installer][1] program to install the necessary packages. If you feel comfortable with the command line, you may use [DarwinPorts](http://darwinports.opendarwin.org/) or [Fink](http://fink.sourceforge.net/) if you prefer.
 
-Spell Checking: The system spell check service works find with LaTeX but is a bit annoying since it will mark all the various LaTeX commands as misspelled. However, you can install [CocoAspell][5] which works as another system dictionary and is able to filter out LaTeX commands.
+No matter which method you use, make sure that the [`PATH` variable](http://macromates.com/textmate/manual/shell_commands#search_path) contains a path to the various latex executables, particularly pdflatex. For instance it might contain something like this:
 
-_**Note** since 1.1b12 (or around that time), spell checking should no longer be applied to LaTeX reserved keywords. There still is a problem with spell checking in math environments (because the constructs there aren't always marked up as an entity for which spell checking is disabled)._
+    /usr/local/teTeX/bin/powerpc-apple-darwin-current
 
-You can find all of the above on Version Tracker and the like.
+## Building a LaTeX file
 
-The rest of this document is broken into six sections. There is a section for each of the following: [Commands](#commands), [Macros][7], [Drag and Drop Commands][8], [Snippets][9], [Templates][10], [Environment Variables][11], [Related Commands][12] from other bundles, and [Credits][13]. Happy LaTeXing!
+### Standard typesetting
 
-## Commands
+Most of the time you will want to typeset the currently selected file. This is accomplished by the command `Typeset & View`, bound to `⌘R`. TextMate shows you, in its HTML window, progress on the compile, as well as any errors that may occur. Depending on the settings of the environment variable `TM_LATEX_ERRLVL`, this window will stay open, and you can click on any of the errors encountered, which will take you to the corresponding location in the LaTeX file, where that error is reported to have occurred. Keep in mind, that LaTeX occasionally reports errors very far from where the actual problem occurs.
 
-* Typeset & View `⌘R`
+### Using latexmk.pl
 
-    typeset the current project to a temporary directory and display LaTeX output in the TextMate HTML output window (requires PDF Browser Plugin or Tiger (?) to display the resulting PDF) The typeset document will appear using your preferred viewer. If you are a TeXniscope user you can configure TextMate to be your external editor in the prefs panel for TeXniscope. You should set the options as follows (assumes you have mate installed, see Help → Terminal Usage… if you haven't):  
+Because of the LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` or `makeindex` in-between. The `latexmk.pl` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk.pl` when compiling, you have to set the environment variable `TM_LATEX_COMPILER` to have value `latexmk.pl`.
+
+TODO: Update this section if a new command is created for latexmk.pl
+
+### Using a master file
+
+If you work on a large project, you would want to use TextMate's [support for projects](http://macromates.com/textmate/manual/working_with_multiple_files#working_with_multiple_files), and split your project in chapters, using a master file that then includes the various chapters via `\include`.
+
+If you have created an actual “project file”, then you can set *project specific* environment variables via the project info button on the bottom right of the project drawer. You should set such a variable with name `TM_LATEX_MASTER` and value the full path to the master tex file. If you are instead using a scratch folder, you can do the trick explained [here](http://lists.macromates.com/pipermail/textmate/2006-July/012151.html). Effectively, if a folder has a file called `.textmate_init`, then whatever shell code is specified there will be executed right before any command that is ran with current file a file in this folder. So for instance this file could contain something like this:
+
+    export TM_LATEX_MASTER=master_file_or_whatever
+
+This allows, among other things, “faking project specific variables for sratch projects”.
+
+When the `TM_LATEX_MASTER` variable is set, then all LaTeX commands use this as their basis. In particular, the `Typeset & View` command will typeset the master file, instead of whatever the currently active file is. So you can freely edit whatever chapter you are working on, and when you want to see the result you just press `⌘T` without having to worry about switching to the master file. The error window that may show up is arranged so that clicking any of the errors opens up the corresponding \include'd file where the error occurred, and places the caret at the appropriate location.
+
+There is a way to arrange it so that the individual chapters can be compiled by themselves, and still work fine when included via the `\include` command. If that is something that might interest you, then the thread starting with [this](http://thread.gmane.org/gmane.editors.textmate.general/10474/focus=10481) might interest you. 
+
+## Previewing a LaTeX file
+
+The `Typeset & View` command has a second component, the `View` one. After a successful build, TextMate proceeds to show you the pdf file created. There are a number of possibilities at this point:
+
+### Default Preview
+
+Since Tiger, html windows can show pdf files. This is the standard behavior. The window that was used to show you the building progress now turns into a view of your pdf file, provided there were no errors.
+
+### Installing PDF Browser Plug-In
+
+Another alternative is to use the [Schubert PDF plugin](TODO:link), which is an alternative to the built in previewer described above. If you install the plugin, you will need to restart TextMate for the changes to take effect.
+
+Note: If you also use Adobe Reader, then you might have problems with such a setup. Adobe Reader “highjacks” the pdf settings, and sets itself as the handler for pdf previewing from within html. Unfortunately, this results in a crash of TextMate. In that case, you might want to use one of the previewers described in the next section.
+
+### External Previewers
+
+You can set things up so as to use some external previewer for showing the pdf output. The focus will then switch to that previewer.
+
+Any program that opens pdf files will probably do, but there are three standard options, Apple's own Preview.app, the [TeXShop][2] application used as an external viewer and the [texniscope][3] application.
+
+To use one of these previewers, you must set the `TM_LATEX_VIEWER` environment variable to the name of the previewer. For instance for Texniscope, you would set the variable to have value “TeXniscope”.
+
+### Preview Options
+
+The environment variable `TM_LATEX_ERRLVL` controls the behavior of the html window in the absence of critical errors in the Typesetting step. It has three possible values:
+
+* **2**: If a document was successfully built, it will jump directly to the preview.. This is the default.
+* **1**: If there are any warnings, these are shown, together with a link to the preview.
+* **0**: Halt on any errors or warnings, a link to the preview is only included if the document was built.
+
+If the document could not be built, then the error messages are always shown regardless of the setting above.
+
+## Working With LaTeX
+
+This section describes the various LaTeX tasks, and how they can be accomplished with the commands provided in the bundle. Some of the commands whose behavior is clear from their name (like “Format⇢Bold” and friends) may not be included here, so you might want to have a look at the bundle commands via the “gear” pop-up.
+
+### Automated Typing
+
+Writing LaTeX often requires typing some amount of standard commands and environments. TextMate makes that a lot easier with a set of commands in the LaTeX bundle, that we'll discuss in this section.
+
+#### Completing commands and environments
+
+The LaTeX bundle contains two commands that, if you type a lot of LaTeX, will become your best friends. They are `Insert Environment Based on Current Word`, bound by default to `⌃⌘{`, and `Insert Command Based on Current Word`, bound by default to `⌃⌘}`. They create an environment/command based on the current word, or with a default editable text in the absence of a current word. They are smart enough to understand a number “standard” shortcuts. For instance, typing `thm` and then calling the `Insert Environment…` command creates:
+
+		\begin{theorem}
+			#cursor is here
+		\end{theorem}
+
+Similarly, typing `fig` followed by calling the `Insert Environment…` command creates a lot of the standard text required in a figure environment. You can further customize these commands.
+
+TODO: Add instructions on customizing.
+This command currently supports by default the following shortcut words: `bf`, `cha`, `cli`, `dc`, `ds`, `em`, `fc`, `fn`, `fr`, `it`, `l`, `sc`, `sec`, `sf`, `ssub`, `sub`, `tt`, `un`.
+
+This command currently supports by default the following shortcut words: it, item, en, enum, desc, doc, eqa, eqn, eq, thm, lem, cor, pro, def, pf, que, q, p, par, lst, fig, pic, fr, cols, col, bl.
+
+Another useful command is Insert Environment Closer, which is by default bound to `⌥⌘.`. This commands locates the innermost `\begin{foo}` that hasn't been closed by a corresponding `\end{foo}` and inserts this closing part. Of course if you have used the `Insert Environment…` command, then you probably don't need this much.
+
+Finally, there is a command to quickly generate the LaTeX commands for greek letters, called Expand to Greek Letter. It is bound by default to `⌃⇧G`. What it does is it expands the current word to an appropriate greek letter, e.g. 'a' becomes `\alpha`, 'b' becomes `\beta`, 'vf' becomes `\varphi` etc. See the command for a complete list of the associations.
+
+#### List environments (inserting \item)
+
+The most commonly used environments are the three itemize environments, `itemize`, `enumerate` and description. These can be created by the `Insert Environment…` command via the shortcuts `it` and `en`, as well as `item` and `enum`, and the first `\item` is automatically entered for you. Then, when you want to create a new item, pressing `enter` automatically inserts the required `\item` in front. This is a functionality common among most languages in TextMate that support some sort of list.
+
+There is also a Lines to List Environment command, bound to `⌃⇧L`, which wraps the selected group of lines inside a list environment(enumerate,itemize,description). Each non-blank line becomes an `\item` in the environment. If the first 20 characters of the line contain a `:` it is assumed that the environment will be a description environment and all the characters up to the `:` are placed inside left/right brackets.
+
+#### Wrapping text
+
+Often one wants to enclose the currently selected text in an environment, or a command. The LaTeX bundle offers a list of `Wrap Selection In…` commands for all tastes. Here they are:
+
+* Wrap Selection in Command `⌃⇧W`: Wraps the selected text in a LaTeX command, with default value “textbf”. This is a trigger with two parts: You can override the entire textbf word to get something like `emph` or whatever you want. Optionally, you can simply press tab to have the “text” part stay there, and the “bf” part get highlighted for overriding, so as to be able to get “textit” and “texttt” easily.
+* Wrap Selection in Environment `⌃⇧⌘W`: Wraps the selected text in an environment. Also works without a selection.
+* Wrap Selection in Double Quotes `` ⌃` ``: Wraps the currently selected text in LaTeX double quotes, i.e. ` ``selection here'' `.
+* Wrap Selection in left…right `⌃⇧L`: Wraps the currently selected text in the \left-\right pair, so that if the selection is for instance “(text here)”, then it would become
+* Wrap Selection in Display Math
+* Wrap Selection in Math Mode
+
+### Completion
+
+The LaTeX bundle adds the following words to the list of completions (accessed through ⎋): corollary, definition, description, enumerate, equation, itemize, lemma, proof, proposition and verbatim.
+
+LaTeX overrides the standard completion behavior when the caret is inside a `\cite{}` or `\ref{}` block, (as well as all other equivalent commands like `eqref`, `vref`, `prettyref`, `citeauthor` etc).
+
+In the case where what is expected is a bibliography key, pressing escape when the caret is inside the braces offers completion with respect to all cite keys. This is accomplished by scanning all bib files linked to from the TeX file via a `\bibliography` command. For instance if the caret is right before the closing brace in `\cite{Ka}`, then pressing escape will offer as completion options all bibliography keys starting with `Ka`.
+
+In the case where what is expected is a label, then pressing escape will offer similarly all matching labels from the TeX document. Depending on your naming conventions, this could for instance offer a list of all theorems: If the labels for theorems are all of the form `thm:labelname`, **and** you have included the colon (`:`) in the list of word characters in TextMate's preferences, then pressing escape when the caret is right before the closing brace in `\ref{thm}` will offer as completion options all labels corresponding to theorems.
+
+If there are many matching completions, it is often more convenient to use the pull-down-list versions of the commands, which are triggered by `⌥⎋`.
+
+Note further, that the completion commands will recursively search inside \include'd files as well, starting from either the current file or `TM_LATEX_MASTER`, if that is set.
+
+### Advanced Tasks
+
+#### PDFSync
+
+Some of the previewers, TeXniscope and TeXShop work with the pdfsync package. The pdfsync package is great because it allows you to easily hop back and forth between TextMate and the pdf version of your document.
+
+We will discuss here how to set TeXniscope to synchronize with TextMate. First of all, you need to install TeXniscope. Even if you are on an Intel machine, you *might need* to install the PowerPC binary of TeXniscope instead of a universal binary. TeXniscope is also a bit picky when it comes to filenames. It might not work if the filename of the TeX file, or any part of the path leading to it, contains spaces.
+
+Once you have told TextMate to use TeXniscope as a previewer, via the `TM_LATEX_VIEWER`, and you have used the command `\usepackage{pdfsync}` in your LaTeX file, you already have set things up so that using the `Find in TeXniscope` command in TextMate takes you close to the place in the pdf file corresponding to the caret's location. In order to get the converse behavior, open TeXniscope, and go to the preferences. There, set the following two options:
 
 		Editor: mate
 		Editor options: %file -l %line
 
-	If you are using TeXniscope you can make use of the pdfsync package by inserting `\usepackage{pdfsync}` in you LaTeX document. This allows you to quickly navigate back and forth between the source and the preview window. Command-clicking in the preview window brings you to the correct line in your source file. 
+This assumes you have mate installed (see Help → Terminal Usage…). After this is done, command-clicking at a location in the pdf file should take you to the corresponding location in TextMate.
 
-* LaTeX Tidy `⇧⌥⌘L`
+#### Drag and Drop
 
-    Reformats your LaTeX code to be neat and tidy.
+There are two key drag and drop commands in LaTeX: 
 
-* Trash aux Files `^⌥⌫`
+* You can drag an image file in to the document and have it surrounded by a complete figure environment.
+* You can drag in another .tex file to have that file added to your document with an `\include` command.
 
-    Clean up your directory by removing all the auxiliary files generated by Latex
+#### Templates
 
-* Insert Label from Document... `^⌥⎋`
+To start from a template file, select `File⇢New From Template⇢LaTeX` and choose the template you prefer.
 
-    Popup a dialog box with the list of defined labels to select from. Selecting a label inserts it at the cursor. This is a nice way to quickly find a label to use with a `\ref`. It is deprecated in favor of the following, more powerful, command.
+* Article
 
-* Enhanced Insert Label from Document... `⌥⎋`
-
-    Popup a dialog box with the list of defined labels to select from. It searches for labels in the current document, as well as in the document pointed to by `TM_LATEX_MASTER`, and in any documents recursively included in those two via `\include` and `\input` commands.
-
-* Find in TeXniscope `^⌥⌘O`
-
-    Again, if you are using the pdfsync package this command will bring you to the preview window where the current line of source is displayed.
-
-* BibDesk completion `⌥⎋`
-
-    Searches in open bibliography files for the current word and replaces the current word with the appropriate cite key.
-
-* Bibliography completion `⌥⎋`
-
-    Searches in the current document and in the document pointed to by `TM_LATEX_MASTER`, and looks recursively for bib files included via the `\bibliography` command in those documents, as well as any documents included in those via `\include` and `\input` commands. It further searches in the file pointed to by `TM_LATEX_BIB`. It searches for the current word/selection in the author/editor, citekey and title fields, or shows a list of all citekeys if there is no current word.
-
-* Insert Command Based on Current Word `^⌘}`
-
-    This allows you to complete many common latex commands such as `\textit{}`, `\textbf{}`, `\ref{}`, etc. This command can now be customized by the user through environment variables, defined via the Advanced Tab in the Preferences. There are two relevant variables: `TM_LATEX_SHORTCUTS` and `TM_LATEX_COMMAND_NOBRACES`. See the [Environment Variables][11] section for more details. This command currently supports by default the following shortcut words: `bf`, `cha`, `cli`, `dc`, `ds`, `em`, `fc`, `fn`, `fr`, `it`, `l`, `sc`, `sec`, `sf`, `ssub`, `sub`, `tt`, `un`. It behaves intelligently for the words: `put`, `multiput`, `line`, `circle`, `frac`, `uncover`.
-
-* Insert Environment Based on Current Word `^⌘{`
-
-    This allows you to quickly create any kind of begin/end environment such as itemize, equation, verbatim, etc. This command can now be customized by the user through environment variables, defined via the Advanced Tab in the Preferences. There are three relevant variables: `TM_LATEX_SHORTCUTS`, `TM_LATEX_FIRSTLINE` and `TM_LATEX_ZEROLINE`. See the [Environment Variables][11] section for more details. This command currently supports by default the following shortcut words: item, enum, desc, doc, eqa, eqn, eq, thm, lem, cor, pro, def, pf, que, q, p, par, lst, fig, pic, fr, cols, col, bl. It behaves intelligently for the environments: enumerate, description, itemize, questions, parts, figure, equation, eqnarray, columns, theorem, corollary, lemma, proof, proposition, definition, lstlisting, picture, column, frame, block, table.
-
-* Insert Item based on Current Environment `⌤`
-
-    Inserts `\item` when in an itemize or enumerate environment, `\part` when in a parts environment, `\question` when in a questions environment etc. Also adds overlay specifications in Beamer (i.e. `\item<+->`).
-
-* Insert Environment Closer `⌥⌘.`
-
-    Locates the innermost `\begin{foo}` that hasn't been closed by a corresponding `\end{foo}` and inserts this closing part.
-
-* Expand to Greek Letter `⌃⇧G`
-
-    Expands the current word to an appropriate greek letter, e.g. 'a' becomes `\alpha`, 'b' becomes `\beta`, 'vf' becomes `\varphi` etc.
-
-* Create Table `⌃⇧⌘T`
-
-    Creates the basic structure for a tabular environment, with number of rows and columns either as the current selection, or in the absence of current selection provided via a dialog.
-
-* Help
-
-	Brings up this very helpful page.
-
-* Run BibTeX
-
-* Run Makeindex
-
-## Macros
-
-* Generic Completion `^⌘␣`
-
-    _This command, and the scripts accompanying it, are no longer part of the bundle. They have been deleted, and replaced by other commands._
-
-	<span style="text-decoration: line-through;">This macro actually consists of a bunch of perl scripts that get run to do completion on bib entries, cross-refs and commands. It is context sensitive and makes its best guess based on context as to what you are trying to accomplish.</span>
-
-* Convert Selection to Table `⌃⇧⌘T`
-
-* Convert ASCII Symbol to LaTeX Command `⌃⇧S`
-
-* Add Word to Index `⌃⇧I`
-
-* Make Current Word TT `⌃⇧C`
-
-## Drag and Drop Commands
-
-There are two drag and drop thingies that work well in LaTeX. You can drag an image file in to the document and have it surrounded by by a complete figure environment. You can also drag in another .tex file to have that file added to your document with an `\include` command.
-
-## Snippets
-
-Many of the snippets that used to exist in the LaTeX bundle have been made obsolete by simpler commands such as the Insert Begin/End pair. 
-
-  * Table [Table]
-  * Figure [Fig]
-  * Code listing (lstlisting) [lst]
-  * Code listing inline (lstinline) [li]
-  * Wrap Selection in Command `⌃⇧W`: Makes it easy to wrap the selected text with `\textbf`, `\textit`, or `\texttt`
-  * section, subsection, et. al. [sec, sub, ssub]
-  * Wrap in Left Right () `⌃⇧L`
-  * Lines to List Environment `⌃⇧L`: Wrap the selected group of lines inside a list environment(enumerate,itemize,description). Each non-blank line becomes an `\item` in the environment. If the first 20 characters of the line contain a : it is assumed that the environment will be a description environment and all the characters up to the : are placed inside left/right brackets.
-
-* Beamer Frames [frame] Make a begin/end frame if you are using Beamer...
-* Here is a list of existing snippets that could also be replaced by the use of completion and the Begin/end pair command
-_Most of these have now been replaced by the "Insert Command..." command._
-
-  * `\textit` [it]
-  * `\textbf` [bf]
-  * `\texttt` [tt]
-  * `\emph` [em]
-  * `\frac` [fr]
-  * `\item` [enter]
-  * `\item` for description [itd]
-  * `\footnote` [foot]
-  * `\cite` [cite]
-  * `\ref` [ref]
-
-## Completions
-
-The following words are known to be in the list of completions (accessed through ⎋) that LaTeX knows about:
-
-  * corollary
-  * definition
-  * description
-  * enumerate
-  * equation
-  * itemize
-  * lemma
-  * proof
-  * proposition
-  * verbatim
-
-## Templates
-
-Article
     Sets up a single file article document. Includes lots of nice packages for graphics, math, code listings, table of contents, etc.
-Exam
+
+* Exam
+
     Sets up a single file exam document. If you write exams in LaTeX this is the template for you. Includes lots of nice packages for graphics, math, code listings, table of contents, etc.
-## Environment Variables
-
-* `TM_LATEX_MASTER`
-
-	If set this variable contains the filename of a LaTeX file that includes other LaTeX files to create a larger work. If not set, this variable defaults to `TM_FILEPATH`
-
-* `TM_TSCOPE`
-
-	If set this variable contains the path to the TeXniscope application. If not set it defaults to `/Applications`
-
-* `PDFTEX_FILE_LOCATION`
-
-	<strike>The PDF LaTeX command currently needs to go through http to display the PDF inline. This is done by copying the file to a place where apache can find it and redirecting to that file using `http://localhost/`. It defaults to `~/Sites`</strike>
-
-* `PDFTEX_WEB_LOCATION`
-
-	<strike>This is how the generated PDF should be accessed (see `PDFTEX_FILE_LOCATION`). It defaults to `http://localhost/~$USER`</strike>
-
-* `TM_LATEX_ERRLVL`
-
-	Set this to the error level you still want to be able to see: 
-
-	* **2**: If a document was successfully built, it will jump directly to the preview.
-	* **1**: If there are any warnings, these are shown, together with a link to the preview.
-	* **0**: Halt on any errors or warnings, a link to the preview is only included if the document was built.
-
-The default value is **2**. If the document could not be built, then the error messages are always shown. 
-
-* `TM_LATEX_COMPILER`
-
-	There are two main values for this command pdflatex or `latexmk.pl`. pdflatex runs the normal pdflatex command against the current file, or `TM_LATEX_MASTER` sending the output of one pass to the html output window. `latexmk.pl` is essentially like ant (or make) for latex. It will run pdflatex, bibtex, and/or makeindex as many times as needed to get a clean pdf file free from missing references, bibliography entries or index entries.
-
-* `TM_LATEX_VIEWER`
-
-	Possible values for this are: “html” (default), “texniscope”, “preview”. See advanced notes on using Texniscope above.
-
-* `TM_LATEX_INSERT_LABEL`
-
-	If you want the automatically generated begin/end environments to contain a label then you should set this to 1.
-
-* `TM_LATEX_SHORTCUTS`
-
-	This is used by the "Insert Environment..." and "Insert Command..." commands to perform expansion before processing the current word. It is supposed to be a comma separated list of pairs of the form `short=>long` where "short" is the shortcut, and "long" is its expansion. So for instance if this variable has the value "`item=>itemize,enum=>enumerate`", then executing the command with current word "item" will produce an itemize environment. Note: Some shortcuts are already performed by the command, e.g. `it=>textit`
-
-* `TM_LATEX_COMMAND_NOBRACES`
-
-	This is a regular expression used by the "Insert Command..." command to decide whether to place braces at the end of the expanded command or not. The default behavior is to add them, unless the word matches this regexp. Note: Some commands are already implemented, e.g. `displaystyle`.
-
-* `TM_LATEX_FIRSTLINE`
-
-	This is used by the "Insert Environment..." command to insert extra information in the line right below the `\begin{word}` line. It has syntax similar to the `TM_LATEX_SHORTCUTS` syntax. For example, if this variable is set to "`enumerate=>\\item ,theorem=>\\label{thm:$1}\n\t`", then enumerate environments get a starting "`\item `", while theorem environments get a label. Note: Most standard environments are already set up.
-
-* `TM_LATEX_ZEROLINE`
-
-	This is used by the "Insert Environment..." command to insert extra information immediately to the right of `\begin{word}`. It has syntax similar to the `TM_LATEX_SHORTCUTS` syntax. For example, if this variable is set to "`theorem=>\\label{thm:$1}`", then theorem environments get a label right next to `\begin{theorem}`. Note: Most standard environments are already set up.
-
-## Related Commands
-
-* Toggle Comment `⌘/` (Source bundle)
-
-    The Toggle Comment command toggles line comments for selected lines of text.
 
 ## Credits
 
 There were at least two or possibly three versions of a LaTeX bundle floating around in the early days of TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and Andrew Ellis At some point, January 2005, Eric Hsu pulled together the threads into one package. From then on there have been contributions by Sune Foldager, Brad Miller, Allan Odgaard, Jeroen van der Ham, and Haris Skiadas. The Generic Completion package was written by Marcin. 
 
-## TODO
-
-  * Once the new Syntax and Scope system is in place it would be good to rethink some of the keyboard shortcuts.
+Happy LaTeXing!
 
 [1]: http://ii2.sourceforge.net/
 [2]: http://www.uoregon.edu/~koch/texshop/
@@ -248,3 +196,20 @@ There were at least two or possibly three versions of a LaTeX bundle floating ar
 [11]: #environmentvariables
 [12]: #relatedcommands
 [13]: #credits
+
+## TODO
+
+* Add discussion of functionality for the [Beamer](#beamer) class.
+* Add the LaTeX templates command and discussion.
+
+<!-- 						DOCUMENT CURRENTLY ENDS HERE. THE REST NEEDS CLEANING UP -->
+
+
+
+
+## Environment Variables
+
+* `TM_TSCOPE`
+
+	If set this variable contains the path to the TeXniscope application. If not set it defaults to `/Applications`
+
