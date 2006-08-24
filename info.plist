@@ -89,6 +89,8 @@
 					<string>65E2109C-4309-4079-BD25-17D8B31F03CD</string>
 					<string>------------------------------------</string>
 					<string>688FBE87-D5B4-445D-AD02-231F6E99F9C1</string>
+					<string>------------------------------------</string>
+					<string>0E901597-FFB6-4D81-A57D-821A9B5089A5</string>
 				</array>
 				<key>name</key>
 				<string>Insert</string>
@@ -127,6 +129,7 @@
 	<string>LaTeX</string>
 	<key>ordering</key>
 	<array>
+		<string>0E901597-FFB6-4D81-A57D-821A9B5089A5</string>
 		<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
 		<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
 		<string>DF9F9DF7-5F85-11D9-97D0-000D9332809C</string>
