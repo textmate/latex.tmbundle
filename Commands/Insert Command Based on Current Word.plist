@@ -6,74 +6,27 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
-#
-# This script will first use the shortcuts dictionary to
-# expand the current word, and then expand the result either to
-# \word (if it's matched by the noBraceCommands pattern),
-# or to \word{} (if it isn't).
-# You can add your own shortcuts in the TM_LATEX_SHORTCUTS variable,
-# and you can add your own no-brace-commands in the TM_LATEX_COMMAND_NOBRACES variable.
-
-# Add to the environment variable TM_LATEX_SHORTCUTS a list of all word combinations you want expanded
-# For instance, desc=&gt;description,eqn=&gt;equation etc.
-customShortcuts = Hash.new
-if(ENV.has_key?('TM_LATEX_SHORTCUTS'))
-	ENV['TM_LATEX_SHORTCUTS'].to_s.split(',').each { |x| 
- 		temp = x.split('=&gt;')
-		customShortcuts["#{temp[0]}"]="#{temp[1]}"
-	}
-end
-shortcuts = { "it" =&gt; "textit", "bf" =&gt; "textbf", "tt" =&gt; "texttt",
-              "sf" =&gt; "textsf", "sc" =&gt; "textsc",	"em" =&gt; "emph", 
-              "fc" =&gt; "footcite", "fn" =&gt; "footnote", "cli" =&gt;"lstinline", "ds" =&gt; "displaystyle",
-              "sec" =&gt; "section", "sub" =&gt; "subsection", "ssub" =&gt; "subsubsection",
-              "cha" =&gt; "chapter",
-              "un" =&gt; "uncover", "dc" =&gt; "documentclass", "l" =&gt; "lim", "fr" =&gt; "frac"
- }.update(customShortcuts)
-# Add to the environment variable TM_LATEX_COMMAND_BEFOREBRACES a list of all commands for which you want some
-# text right after the command and before a potential brace, e.g. \put(10,10){stuff} could be done by setting 
-# the variable equal to "put=&gt;(10,10)".
-customBeforeBraces = Hash.new
-if(ENV.has_key?('TM_LATEX_COMMAND_BEFOREBRACES'))
-	ENV['TM_LATEX_COMMAND_BEFOREBRACES'].to_s.split(',').each { |x| 
- 		temp = x.split('=&gt;')
-		customBeforeBraces["#{temp[0]}"]="#{temp[1]}"
-	}
-end
-beforeBraces = {
-  "put" =&gt; "(${1:0},${2:0})",
-  "multiput" =&gt; "(${1:0},${2:0})(${3:5},${4:0}){${5:2}}",
-  "line" =&gt; "(${1:0},${2:0}){${3:0}}",
-  "circle" =&gt; "${1:[*]}",
-  "frac" =&gt; "{${1:num}}",
-  "uncover" =&gt; "&lt;${1:+-}&gt;",
-  "lim" =&gt; "_",
-  "sum" =&gt; "_\{${1:bot}\}^",
-  "frac" =&gt; "\{${1:top}\}"
-}.update(customBeforeBraces)
-
-# Add to the environment variable TM_LATEX_COMMAND_NOBRACES a regexp of all commands for which you 
-# do not want the expansion to add braces. For instance "displaystyle|math(it|bf|bb|sf)".
-if(ENV.has_key?('TM_LATEX_COMMAND_NOBRACES'))
-  customNoBrace = ENV['TM_LATEX_COMMAND_NOBRACES'].to_s
-  noBraceCommands = /^displaystyle|#{customNoBrace}$/
-else
-  noBraceCommands = /^displaystyle$/
+require "#{ENV['TM_SUPPORT_PATH']}/lib/plist"
+file = File.expand_path('~/Library/Preferences/com.macromates.textmate.latex_config.plist')
+if !FileTest.exist?(file) then
+  file = ENV['TM_BUNDLE_SUPPORT'] + "/latex_config.plist"
 end
 
-# Expand according to shortcuts
+File.open(file) do |f|
+  # puts f.read
+  @plist = PropertyList::load(f)
+end
+shortcuts = @plist['commands']
+if ENV['TM_SCOPE'].match('beamer') then
+  shortcuts.update(@plist['commands_beamer'])
+end
 name = STDIN.read
-if(shortcuts.has_key?(name))
-  name = shortcuts[name]
-end
-beforeBraceToPrint = ""
-if (beforeBraces.has_key?(name))
-  beforeBraceToPrint = beforeBraces[name]
-end
-if(noBraceCommands.match(name))
-	print "\\#{name}" &lt;&lt; beforeBraceToPrint &lt;&lt; " "
+if (shortcuts.has_key?(name)) then
+  print shortcuts[name]
+elsif name.nil?
+  print "\\${1:cmd}{$2} "
 else
-  print "\\#{name}" &lt;&lt; beforeBraceToPrint &lt;&lt; "{$10}"
+  print "\\" + name + "{$1} "
 end
 </string>
 	<key>fallbackInput</key>

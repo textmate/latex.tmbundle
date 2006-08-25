@@ -6,122 +6,46 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
-#
-# This script will first expand the current word according 
-# to the shortcuts dictionary, and then it will expand it
-# to \begin{word} … \end{word} with the caret
-# inbetween. It allows you to customize the first line 
-# through the TM_LATEX_FIRSTLINE variable. It also allows you to insert custom code
-# next to the \begin{word} text, for things like labels, parameters in lstlisting, figures etc.
-#
-# With no selection, it will insert \begin{environment}
-# … \end{environment} and allow you to overwrite the
-# environment name.
+require "#{ENV['TM_SUPPORT_PATH']}/lib/plist"
+file = File.expand_path('~/Library/Preferences/com.macromates.textmate.latex_config.plist')
+if !FileTest.exist?(file) then
+  file = ENV['TM_BUNDLE_SUPPORT'] + "/latex_config.plist"
+end
 
-# Add to the environment variable TM_LATEX_SHORTCUTS a list of all word 
-# combinations you want expanded. For instance, desc=&gt;description,eqn=&gt;equation etc.
-customShortcuts = Hash.new
-if(ENV.has_key?('TM_LATEX_SHORTCUTS'))
-	ENV['TM_LATEX_SHORTCUTS'].to_s.split(',').each { |x| 
- 		temp = x.split('=&gt;')
-		customShortcuts["#{temp[0]}"]="#{temp[1]}"
-	}
+File.open(file) do |f|
+  @plist = PropertyList::load(f)
 end
-shortcuts = {
-# Enumerate environments
-  "item" =&gt; "itemize", "enum" =&gt; "enumerate", "desc" =&gt; "description",
-  "it" =&gt; "itemize", "en" =&gt; "enumerate",
-# Standard math environments
-  "doc" =&gt; "document", "eqa" =&gt; "eqnarray","eqn" =&gt; "equation", "eq" =&gt; "equation",  
-  "thm" =&gt; "theorem", "lem" =&gt; "lemma", "cor" =&gt; "corollary", 
-  "pro" =&gt; "proposition", "def" =&gt; "definition", "pf" =&gt; "proof",
-# Exam class environments  
-  "que" =&gt; "questions", "q" =&gt; "questions", "p" =&gt; "parts", "par" =&gt; "parts",
-# Various stuff
-  "lst" =&gt; "lstlisting", "fig" =&gt; "figure", "pic" =&gt; "picture", 
-# Beamer class environments
-  "fr" =&gt; "frame", "cols" =&gt; "columns", "col" =&gt; "column", "bl" =&gt; "block"
-    }.update(customShortcuts)
-
-# Add to the environment variable TM_LATEX_FIRSTLINE a list of all environments for which 
-# you want to have stuff in the first line. For instance itemize=&gt;\\item,enumerate=&gt;\\item etc
-customFirstLines = Hash.new
-if(ENV.has_key?('TM_LATEX_FIRSTLINE'))
-	ENV['TM_LATEX_FIRSTLINE'].to_s.split(',').each { |x| 
-		temp = x.split('=&gt;')
-		customFirstLines["#{temp[0]}"]="#{temp[1]}"
-	}
+shortcuts = @plist['environments']
+lshortcuts = @plist['labeled_environments']
+if ENV['TM_SCOPE'].match('beamer') then
+  shortcuts.update(@plist['environments_beamer'])
+  lshortcuts.update(@plist['labeled_environments_beamer'])
 end
-firstLineNoBeamer = {	"enumerate" =&gt; "\\item ", 
- 		"itemize" =&gt; "\\item ", 
- 		"description" =&gt; "\\item ", 
- 		"questions" =&gt; "\\question ", 
- 		"parts" =&gt; "\\part ",
- 		"figure" =&gt; "\t\\begin{center}\n\t\t\\includegraphics[scale=${2:1}]{${3:file}}\n\t\\end{center}\n\t\\caption{${4:caption}}\n\t\\label{fig:${5:label}}"
- 	}
-firstLineBeamer = firstLineNoBeamer.clone.update({ "enumerate" =&gt; "\\item&lt;${1:+-}&gt; $2",
-   "itemize" =&gt; "\\item&lt;${1:+-}&gt; $2",
-	 "description" =&gt; "\\item&lt;${1:+-}&gt; $2",
- 	 "columns" =&gt; "\\begin{column}{${1:0.${2:5}\\textwidth}}\n\t$3\n\\end{column}"
-   })
-firstLine = (/beamer/.match(ENV['TM_SCOPE'].to_s) ? firstLineBeamer : firstLineNoBeamer).update(customFirstLines)
-# Add to the environment variable TM_LATEX_ZEROLINE a list of all environments for which 
-# you want to have stuff right after the \begin{env}. For instance see "lstlisting" below.
-customZeroLines = Hash.new
-if(ENV.has_key?('TM_LATEX_ZEROLINE'))
-	ENV['TM_LATEX_ZEROLINE'].to_s.split(',').each { |x| 
-		temp = x.split('=&gt;')
-		customZeroLines["#{temp[0]}"]="#{temp[1]}"
-	}
-end
-zeroLineNoBeamer = {
-    "figure" =&gt; "[${1:htbp}]",
- 		"theorem" =&gt; "\\label{thm:$1}",
- 		"corollary" =&gt; "\\label{cor:$1}",
- 		"lemma" =&gt; "\\label{lem:$1}",
- 		"proof" =&gt; "${1:\\label{pf:$2\\}}",
- 		"proposition" =&gt; "\\label{pro:$1}",
- 		"definition" =&gt; "\\label{def:$1}",
-    "lstlisting" =&gt; "[caption=${1:cap},label=lst:${2:lab},float=htbp]",
-    "picture" =&gt; "(${1:100},${2:100})${3:(${4:0},${5:0})}"
-}
-zeroLineBeamer = zeroLineNoBeamer.clone.update({  
-  "column" =&gt; "{${1:0.${2:5}\\textwidth}}",
-  "frame" =&gt; "[${1:t}]\\frametitle{${2:title}}",
-  "block" =&gt; "{$1}",
-  "table" =&gt; "\n\n\t\\begin{center}\n\t\\begin{tabular}{${3:c}}\n\t\t${4}\n\\end{tabular}\n\t\\end{center}\n\n\t\\caption{${1:caption}}\n\t\\label{${2:label}}\n"
-})
-zeroLine = (/beamer/.match(ENV['TM_SCOPE'].to_s) ? zeroLineBeamer : zeroLineNoBeamer).update(customZeroLines)
-# Expand according to shortcuts
 name = STDIN.read
-if (shortcuts.has_key?(name))
-  name = shortcuts[name]
+cmd = nil
+for key in shortcuts.keys do
+  if shortcuts[key]['triggers'].index(name) then
+    cmd = key
+    setting = :no_label
+    dict = shortcuts
+  end
 end
-if(name == '')
-	puts("\\begin{${1:environment}}\n\t$2\n\\end{$1}\n")
+for key in lshortcuts.keys do
+  if lshortcuts[key]['triggers'].index(name) then
+    cmd = key
+    setting = :label
+    dict = lshortcuts
+  end
+end
+if !cmd.nil? then
+  print "\\begin{#{cmd}}"
+  print "\n" if setting == :no_label
+  print dict[cmd]["content"]
+  print "\n\\end{#{cmd}}"
+elsif name == ""
+  print "\\begin{${1:env}}\n\t$0\n\\end{${1:env}}"
 else
-  endLineToPrint = "\\end{#{name}}"
-  if (ENV.has_key?('TM_LATEX_INSERT_LABEL'))
-    lab = ENV['TM_LATEX_INSERT_LABEL'].to_i
-  else
-    lab = 0
-  end
-  if (zeroLine.has_key?(name)) 
-		zeroLineToPrint = "\\begin{#{name}}#{zeroLine[name]}"
-  elsif (lab == 1)
-   	labPrefix = name.slice(0,3)
-		zeroLineToPrint = "\\begin{#{name}}${1:\\label{#{labPrefix}:$2\\}}"
-  else
-    zeroLineToPrint = "\\begin{#{name}}" 
-	end
-# We are using the placeholder $10 here to allow users to add placeholders in their customFirstLine's
-  if(firstLine.has_key?(name))
-    firstLineToPrint = "\t#{firstLine[name]}$10"
-	else
-	  firstLineToPrint = "\t$10"
-  end
-  puts(zeroLineToPrint,firstLineToPrint)
-  print(endLineToPrint)
+  print "\\begin{#{name}}\n\t$0\n\\end{#{name}}"
 end
 </string>
 	<key>fallbackInput</key>
