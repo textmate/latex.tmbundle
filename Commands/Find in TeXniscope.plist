@@ -5,20 +5,26 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string># If TM_LATEX_MASTER not set use TM_FILEPATH
-[ -z "$TM_LATEX_MASTER" ] &amp;&amp; export TM_LATEX_MASTER="$TM_FILEPATH"
+	<string># If TM_LATEX_MASTER is not set use TM_FILEPATH
+: ${TM_LATEX_MASTER:=$TM_FILEPATH}
 
-# Switch to the right directory.
-cd "$TM_PROJECT_DIRECTORY"
-cd `dirname "$TM_LATEX_MASTER"`
+# Switch to the right directory
+cd "${TM_PROJECT_DIRECTORY:-$TM_DIRECTORY}"
+cd "$(dirname "$TM_LATEX_MASTER")"
 
-# CHANGE IS HERE: commented out next line and replaced it with the line after that
-#FILE=`basename "$TM_LATEX_MASTER"`
 FILE="$TM_LATEX_MASTER"
+SCRIPT="${TM_TSCOPE:=/Applications}/TeXniscope.app/Contents/Resources/forward-search.sh"
 
-export Tspath=${TM_TSCOPE:=/Applications}
-echo $Tspath
-"$Tspath"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" `echo $FILE | perl -e 'while(&lt;&gt;){s/\.tex$/.pdf/;print;}' | xargs` ; open -a TeXniscope</string>
+if [[ -x "$SCRIPT" ]]; then
+	"$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "${FILE%.tex}.pdf"
+	open -a "${TM_TSCOPE}/TeXniscope.app"
+else
+	echo "Error locating TeXniscope."
+	echo
+	echo "Please set the TM_TSCOPE variable"
+	echo "to the location of TeXniscope.app."
+fi
+</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
@@ -26,7 +32,7 @@ echo $Tspath
 	<key>name</key>
 	<string>Show in TeXniscope (pdfsync)</string>
 	<key>output</key>
-	<string>discard</string>
+	<string>showAsTooltip</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>uuid</key>
