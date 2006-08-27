@@ -44,7 +44,7 @@ IO.popen("Markdown.pl|Smartypants.pl", "r+") do |io|
         stack.push(stack.pop + 1)
 
         index = stack.join '.'
-        io &lt;&lt; "#{$1} &lt;span id='#{index}'&gt;#{index}&lt;/span&gt; #{$2}"
+        io &lt;&lt; "#{$1} &lt;span id='sect_#{index}'&gt;#{index}&lt;/span&gt; #{$2}"
       else
         io &lt;&lt; line
       end
@@ -55,13 +55,13 @@ IO.popen("Markdown.pl|Smartypants.pl", "r+") do |io|
   root = tree_node = TreeNode.new
   contents = ''
   io.each_line do |line|
-    if line =~ %r{^&lt;h(.)&gt;&lt;span id='(.*?)'&gt;\2&lt;/span&gt; (.*)&lt;/h.&gt;$} then
+    if line =~ %r{^&lt;h(.)&gt;&lt;span id='(.*?)'&gt;(.*?)&lt;/span&gt; (.*)&lt;/h.&gt;$} then
       level = $1.to_i
       contents &lt;&lt; "\n&lt;hr /&gt;\n" if level == 1
       tree_node = tree_node.parent while tree_node.level &gt; level
       tree_node = tree_node.new_child while tree_node.level &lt; level
       tree_node = tree_node.new_sibling if tree_node.label
-      tree_node.label = "#{$2} &lt;a href='\##{$2}'&gt;#{$3}&lt;/a&gt;"
+      tree_node.label = "#{$3} &lt;a href='\##{$2}'&gt;#{$4}&lt;/a&gt;"
     end
     contents &lt;&lt; line
   end
