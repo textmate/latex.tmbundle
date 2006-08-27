@@ -6,10 +6,74 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
+html_header "LaTeX Bundle Help" "LaTeX"
 
-	html_header "LaTeX Bundle Help" "LaTeX"
-	Markdown.pl "$TM_BUNDLE_SUPPORT/help.markdown"|Smartypants.pl
-	html_footer</string>
+ruby -w &lt;&lt;'RUBY'
+
+class TreeNode
+  attr_accessor :label, :parent, :level
+  def initialize(parent = nil)
+    @parent = parent
+    @level = parent ? parent.level + 1 : 1
+    @child = @next = nil
+  end
+  def dump
+    child = @child ? "\n&lt;ul style='list-style: none'&gt;\n#{@child.dump}&lt;/ul&gt;\n" : ''
+    entry = @label ? "&lt;li&gt;#{@label + child}&lt;/li&gt;\n" : child
+    @next ? entry + @next.dump : entry
+  end
+  def new_child
+    abort "Already has child" if @child
+    @child = TreeNode.new(self)
+  end
+  def new_sibling
+    @next = TreeNode.new(@parent)
+  end
+end
+
+file = "#{ENV['TM_BUNDLE_SUPPORT']}/help.markdown"
+IO.popen("Markdown.pl|Smartypants.pl", "r+") do |io|
+
+  Thread.new do
+    stack = [ ]
+    open(file).each_line do |line|
+      if line =~ /^(#+) (.*)( \1)?$/ then
+        level = $1.length
+        stack.pop  while stack.size &gt; level
+        stack &lt;&lt; 0 while stack.size &lt; level
+        stack.push(stack.pop + 1)
+
+        index = stack.join '.'
+        io &lt;&lt; "#{$1} &lt;span id='#{index}'&gt;#{index}&lt;/span&gt; #{$2}"
+      else
+        io &lt;&lt; line
+      end
+    end
+    io.close_write
+  end
+
+  root = tree_node = TreeNode.new
+  contents = ''
+  io.each_line do |line|
+    if line =~ %r{^&lt;h(.)&gt;&lt;span id='(.*?)'&gt;\2&lt;/span&gt; (.*)&lt;/h.&gt;$} then
+      level = $1.to_i
+      contents &lt;&lt; "\n&lt;hr /&gt;\n" if level == 1
+      tree_node = tree_node.parent while tree_node.level &gt; level
+      tree_node = tree_node.new_child while tree_node.level &lt; level
+      tree_node = tree_node.new_sibling if tree_node.label
+      tree_node.label = "#{$2} &lt;a href='\##{$2}'&gt;#{$3}&lt;/a&gt;"
+    end
+    contents &lt;&lt; line
+  end
+
+  puts "&lt;h2&gt;Table of Contents&lt;/h2&gt;"
+  puts "&lt;ul style='list-style: none'&gt;\n#{root.dump}&lt;/ul&gt;"
+  puts contents
+
+end
+RUBY
+
+html_footer</string>
 	<key>dontFollowNewOutput</key>
 	<true/>
 	<key>input</key>
