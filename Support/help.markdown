@@ -186,7 +186,7 @@ We will discuss here how to set TeXniscope to synchronize with TextMate. First o
 Once you have told TextMate to use TeXniscope as a previewer, via the `TM_LATEX_VIEWER`, and you have used the command `\usepackage{pdfsync}` in your LaTeX file, you already have set things up so that using the `Find in TeXniscope` command in TextMate takes you close to the place in the PDF file corresponding to the caret's location. In order to go the other way (i.e. go from PDF to LaTeX source), open TeXniscope, and go to the preferences. There, set the following two options:
 
 		Editor: mate
-		Editor options: "%file" -l %line
+		Editor options: -l %line "%file"
 
 This assumes you have `mate` installed (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking at a location in the PDF file should take you to the corresponding location in TextMate.
 
@@ -241,11 +241,4 @@ Happy LaTeXing!
 <!-- 						DOCUMENT CURRENTLY ENDS HERE. THE REST NEEDS CLEANING UP -->
 
 
-
-
 ## Environment Variables
-
-* `TM_TSCOPE`
-
-	If set this variable contains the path to the TeXniscope application. If not set it defaults to `/Applications`
-
