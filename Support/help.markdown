@@ -41,6 +41,8 @@ When the `TM_LATEX_MASTER` variable is set, then all LaTeX commands use the mast
 
 There is a way to arrange it so that the individual chapters can be compiled by themselves, and still work fine when included via the `\include` command. If that is something that might interest you, then [this thread from the mailing list](http://thread.gmane.org/gmane.editors.textmate.general/10474/focus=10481) might interest you. 
 
+TODO: Mention that `TM_LATEX_MATER` can be relative to the project directory (or directory of current file) -- this way one can set it in the global preferences if one always use the same name of the master file.
+
 # Previewing a LaTeX File
 
 The `Typeset & View` command has a second component, the `View` one. After a successful build, TextMate proceeds to show you the PDF file created. There are a number of possibilities at this point which will be explained in the following sections.
