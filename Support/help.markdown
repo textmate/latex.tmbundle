@@ -179,16 +179,16 @@ Note further, that the completion commands will recursively search inside `\incl
 
 Some of the previewers such as TeXniscope and TeXShop work with the [pdfsync package](http://itexmac.sourceforge.net/pdfsync.html). The pdfsync package is great because it allows you to easily hop back and forth between TextMate and the PDF version of your document.
 
-**Note**: The pdf package does not come installed by default. You need to download it and place it in the appropriate place. Follow the instructions in the above link to do that.
+**Note**: The PDF package does not come installed by default. You need to download it and place it in the appropriate place. Follow the instructions in the above link to do that.
 
-We will discuss here how to set TeXniscope to synchronize with TextMate. First of all, you need to install TeXniscope. Even if you are on an Intel machine, you *might need* to install the PowerPC binary of TeXniscope instead of a universal binary. TeXniscope is also a bit picky when it comes to filenames. It might not work if the filename of the TeX file, or any part of the path leading to it, contains spaces.
+We will discuss here how to set TeXniscope to synchronize with TextMate. First of all, you need to install TeXniscope. Even if you are on an Intel machine, you *might need* to install the PowerPC binary of TeXniscope instead of a universal binary. TeXniscope is also a bit picky when it comes to filenames. It does not work if the filename of the TeX file contains spaces.
 
 Once you have told TextMate to use TeXniscope as a previewer, via the `TM_LATEX_VIEWER`, and you have used the command `\usepackage{pdfsync}` in your LaTeX file, you already have set things up so that using the `Find in TeXniscope` command in TextMate takes you close to the place in the PDF file corresponding to the caret's location. In order to go the other way (i.e. go from PDF to LaTeX source), open TeXniscope, and go to the preferences. There, set the following two options:
 
 		Editor: mate
-		Editor options: %file -l %line
+		Editor options: "%file" -l %line
 
-This assumes you have mate installed (see Help → Terminal Usage… in TextMate). After this is done, command-clicking at a location in the PDF file should take you to the corresponding location in TextMate.
+This assumes you have `mate` installed (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking at a location in the PDF file should take you to the corresponding location in TextMate.
 
 #### Drag and Drop
 
