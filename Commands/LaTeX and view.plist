@@ -46,26 +46,26 @@ run_tex "$FILE" 2&gt;&amp;1| latexErrWarnHtml.py -v
 RC=$?
 
 # If there is output and it's newer than the current document, then we go directly to preview or link to it.
-if [ "$V" == html ]; then
-	if [ -s "${PDF}" -a "$PDF" -nt "$FILE" ]; then
+if [ -s "${PDF}" -a "$PDF" -nt "$FILE" ]; then
+	if [[ "$V" == html ]]; then
 		WEB_LOC="tm-file://${DIR}/${PDF}"
 		WEB_LOC="${WEB_LOC//\\#/%23}"
-		if (($RC &gt; $EL)); then
-			link "${WEB_LOC}" 'Click Here to Preview'
-		else
-			redirect "${WEB_LOC}"
+		if (($RC &gt; $EL))
+			then link "${WEB_LOC}" 'Click Here to Preview'
+			else redirect "${WEB_LOC}"
 		fi
 	else
-		strong "Error: PDF file not written to disk"
+		if [[ "$V" == TeXniscope ]]; then
+			SCRIPT="$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh"
+			[[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
+		fi
+		open -a "$V" "$PDF"
+		if (($RC &lt;= $EL)); then exit_discard; fi
 	fi
-	htmlFooter
 else
-	if [[ $(tr &lt;&lt;&lt;"$V" '[A-Z]' '[a-z]') == texniscope ]]; then
-        "${TM_TSCOPE:=/Applications}"/TeXniscope.app/Contents/Resources/forward-search.sh "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF";
-    fi
-	open -a "$V" "$PDF"
-	if (($RC &lt;= $EL)); then closeWindow; fi
+	strong "Error: PDF file not written to disk"
 fi
+htmlFooter
 </string>
 	<key>dontFollowNewOutput</key>
 	<false/>

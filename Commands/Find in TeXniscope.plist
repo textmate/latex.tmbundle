@@ -13,16 +13,13 @@ cd "${TM_PROJECT_DIRECTORY:-$TM_DIRECTORY}"
 cd "$(dirname "$TM_LATEX_MASTER")"
 
 FILE="$TM_LATEX_MASTER"
-SCRIPT="${TM_TSCOPE:=/Applications}/TeXniscope.app/Contents/Resources/forward-search.sh"
+SCRIPT="$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh"
 
 if [[ -x "$SCRIPT" ]]; then
 	"$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "${FILE%.tex}.pdf"
-	open -a "${TM_TSCOPE}/TeXniscope.app"
+	open -a TeXniscope.app
 else
-	echo "Error locating TeXniscope."
-	echo
-	echo "Please set the TM_TSCOPE variable"
-	echo "to the location of TeXniscope.app."
+	echo "Unable to locate TeXniscope."
 fi
 </string>
 	<key>input</key>
