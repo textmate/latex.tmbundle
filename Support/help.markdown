@@ -106,7 +106,7 @@ This file follows the [Property List Format](http://macromates.com/textmate/manu
 
 The versions with the word “beamer” added are the *extra* shortcuts/words that get recognized in LaTeX Beamer, *in addition to the non-beamer ones*. The commands and commands\_beamer entries are dictionaries consisting of pairs, where the key is the shortcut to be recognized, and the value is the  text to be inserted when the shortcut is found. **All inserted text, for both commands and environments, is interpreted as a [Snippet](http://macromates.com/textmate/manual/snippets#snippets)**.
 
-The four environments dictionaries are a bit different. They have key-value pairs, where the key is the *name* of the environment, i.e. the text to be placed inside the braces in `\begin{}`. The value is itself a dictionary with two entries:
+The four environment dictionaries are a bit different. They have key-value pairs, where the key is the *name* of the environment, i.e. the text to be placed inside the braces in `\begin{}`. The value is itself a dictionary with two entries:
 
   * `triggers` is the list of shortcuts/words that will trigger this environments to be inserted.
   * `content` is a string representing the text to be inserted inside the environment. If the environment is in one of the two `labeled\_environments` groups, then this text is inserted right after the closing brace in `\begin{env}`, so as to allow for the addition of labels. Otherwise, it is inserted starting on the next line.
@@ -151,6 +151,12 @@ If there are many matching completions, it is often more convenient to use the p
 Note further, that the completion commands will recursively search inside `\include`'d files as well, starting from either the current file or `TM_LATEX_MASTER`, if that is set.
 
 ## Advanced Tasks
+
+### LaTeX Beamer
+
+LaTeX has particular support for the [Beamer document class](http://latex-beamer.sourceforge.net/). Namely, the “Insert Environment…” and “Insert Command…” commands understand more shortcuts, and also behave intelligently with respect to older shortcuts, adding overlay specifications where appropriate. The same goes for the “Lists ⇢ New Item” command.
+
+In order for all this to work, make sure that the language for the document is set to “LaTeX Beamer” (⌃⇧⌥/B).
 
 ### PDFSync
 
@@ -209,13 +215,3 @@ Happy LaTeXing!
 [11]: #environmentvariables
 [12]: #relatedcommands
 [13]: #credits
-
-# TODO
-
-* Add discussion of functionality for the [Beamer](#beamer) class.
-
-
-<!-- 						DOCUMENT CURRENTLY ENDS HERE. THE REST NEEDS CLEANING UP -->
-
-
-# Environment Variables
