@@ -6,70 +6,31 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
-shortcutHash = {
-  "a" =&gt; "\\alpha",
-  "b" =&gt; "\\beta",
-  "g" =&gt; "\\gamma",
-  "d" =&gt; "\\delta",
-  "th" =&gt; "\\delta",
-  "e" =&gt; "\\epsilon",
-  "f" =&gt; "\\phi",
-  "ph" =&gt; "\\phi",
-  "vf" =&gt; "\\varphi",
-  "vph" =&gt; "\\varphi",
-  "i" =&gt; "\\iota",
-  "z" =&gt; "\\zeta",
-  "h" =&gt; "\\eta",
-  "th" =&gt; "\\theta",
-  "vth" =&gt; "\\vartheta",
-  "k" =&gt; "\\kappa",
-  "l" =&gt; "\\lambda",
-  "m" =&gt; "\\mu",
-  "n" =&gt; "\\nu",
-  "x" =&gt; "\\chi",
-  "p" =&gt; "\\pi",
-  "r" =&gt; "\\rho",
-  "s" =&gt; "\\sigma",
-  "vs" =&gt; "\\varsigma",
-  "t" =&gt; "\\tau",
-  "u" =&gt; "\\upsilon",
-  "y" =&gt; "\\upsilon",
-  "w" =&gt; "\\omega",
-  "v" =&gt; "\\xi",
-  "ks" =&gt; "\\xi",
-  "ps" =&gt; "\\psi",
-  "G" =&gt; "\\Gamma",
-  "D" =&gt; "\\Delta",
-  "F" =&gt; "\\Phi",
-  "L" =&gt; "\\Lambda",
-  "X" =&gt; "\\Chi",
-  "P" =&gt; "\\Pi",
-  "S" =&gt; "\\Sigma",
-  "U" =&gt; "\\Upsilon",
-  "Y" =&gt; "\\Upsilon",
-  "W" =&gt; "\\Omega",
-  "Ps" =&gt; "\\Psi",
-  "PS" =&gt; "\\Psi",
-  "V" =&gt; "\\Xi",
-  "Ks" =&gt; "\\Xi",
-  "KS" =&gt; "\\Xi",
-  "TH" =&gt; "\\Theta",
-  "Th" =&gt; "\\Theta"
-}
+require "#{ENV['TM_SUPPORT_PATH']}/lib/plist"
+require "#{ENV['TM_SUPPORT_PATH']}/lib/exit_codes"
+file = File.expand_path('~/Library/Preferences/com.macromates.textmate.latex_config.plist')
+if !FileTest.exist?(file) then
+  file = ENV['TM_BUNDLE_SUPPORT'] + "/latex_config.plist"
+end
+
+File.open(file) do |f|
+  @plist = PropertyList::load(f)
+end
+shortcutHash = @plist['symbols']
 currentWord = STDIN.read
 if (shortcutHash.has_key?(currentWord)) then
   print shortcutHash[currentWord]
 else
-  print currentWord
+  TextMate.exit_discard
 end</string>
 	<key>fallbackInput</key>
 	<string>word</string>
 	<key>input</key>
 	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>^G</string>
+	<string>@\</string>
 	<key>name</key>
-	<string>Expand to Greek Letter</string>
+	<string>LaTeX Symbol Based on Current Word</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
