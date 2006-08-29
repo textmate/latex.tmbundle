@@ -40,7 +40,7 @@ end
 if !cmd.nil? then
   print "\\begin{#{cmd}}"
   print "\n" if setting == :no_label
-  print dict[cmd]["content"]
+  print dict[cmd]["content"] || "\t$0"
   print "\n\\end{#{cmd}}"
 elsif name == ""
   print "\\begin{${1:env}}\n\t$0\n\\end{${1:env}}"
