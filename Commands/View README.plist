@@ -32,7 +32,7 @@ class TreeNode
 end
 
 file = "#{ENV['TM_BUNDLE_SUPPORT']}/help.markdown"
-IO.popen("Markdown.pl|Smartypants.pl", "r+") do |io|
+IO.popen("Markdown.pl|SmartyPants.pl", "r+") do |io|
 
   Thread.new do
     stack = [ ]
