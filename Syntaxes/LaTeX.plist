@@ -19,6 +19,12 @@
 	<key>patterns</key>
 	<array>
 		<dict>
+			<key>match</key>
+			<string>(?&lt;=\\\w|\\\w{2}|\\\w{3}|\\\w{4})\s</string>
+			<key>name</key>
+			<string>meta.space-after-command.latex</string>
+		</dict>
+		<dict>
 			<key>begin</key>
 			<string>((\\(?:(?:sub)*section|chapter|paragraph|part|addpart|addchap|addsec|minisec))(\*?)(?:(\[)[^\[]*?(\]))??(\{))</string>
 			<key>captures</key>
