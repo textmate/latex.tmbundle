@@ -117,7 +117,20 @@ See the many examples already present in the file.
 
 Another useful command is `Insert Environment Closer`, which is by default bound to `⌥⌘.`. This command locates the innermost `\begin{foo}` that hasn't been closed by a corresponding `\end{foo}` and inserts the closing part. Of course if you have used the `Insert Environment Based on Current Word` command, then you probably don't need this much.
 
-Finally, there is a command to quickly generate the LaTeX commands for greek letters, called `Expand to Greek Letter`. It is bound by default to `⌃⇧G`. What it does is it expands the current word to an appropriate greek letter, e.g. 'a' becomes `\alpha`, 'b' becomes `\beta`, 'vf' becomes `\varphi` etc. See the command for a complete list of the associations.
+Finally, there is a command to quickly insert commands for the various symbols, called `Insert Symbol based on Current Word`. It is bound by default to `⌘\`. It works in two stages:
+
+  * First, you have to trigger the command, by typing a couple of letters first. The rules are basically as follows:
+    * Single letters are converted to greek letters
+    * Two letter combinations are converted to the various commands starting with those two letters (for instance pressing `in` would trigger commands like `\int`, `\inf`, `\infty` etc) with a few exceptions, like `sk` for skip.
+    * Three letter combinations are converted to arrows, where the three digits signify the kind of arrow, for instance `lar` would stand for left arrows.
+    * There's a couple of exceptions to these rules, which you can look at and alter in the LaTeX configuration file, under the `symbols` key.
+  * Once you have triggered the command once, pressing it again cycles you through the various options. For instance, if you started with `e`, you would be cycling between `\epsilon` and `\varepsilon`. This is accomplished by this set of entries in the configuration file:
+
+        "e" = "\\epsilon";
+        "epsilon" = "varepsilon";
+        "varepsilon" = "epsilon";
+
+When you create your own additions to this list, keep in mind these two simple principle: For the item that is the initial trigger, like the `"e"` above,  the text to be used must contain the two backslashes. For the items used for cycling through options, it must not.
 
 ### List Environments (inserting \item)
 
@@ -156,7 +169,7 @@ Note further, that the completion commands will recursively search inside `\incl
 
 LaTeX has particular support for the [Beamer document class](http://latex-beamer.sourceforge.net/). Namely, the “Insert Environment…” and “Insert Command…” commands understand more shortcuts, and also behave intelligently with respect to older shortcuts, adding overlay specifications where appropriate. The same goes for the “Lists ⇢ New Item” command.
 
-In order for all this to work, make sure that the language for the document is set to “LaTeX Beamer” (⌃⇧⌥/B).
+In order for all this to work, make sure that the language for the document is set to “LaTeX Beamer” (⌃⇧⌥B).
 
 ### PDFSync
 
