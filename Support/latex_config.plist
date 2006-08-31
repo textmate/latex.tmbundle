@@ -216,7 +216,8 @@
 		"blacktriangleleft" = "blacktriangleright";
 		"blacktriangleright" = "blacktriangledown";
 		"blacktriangledown" = "blacksquare";
-		"bo" = "\\boxminus";
+		"bo" = "\\Box";
+		"Box" = "boxminus";
 		"boxminus" = "boxtimes";
 		"boxtimes" = "boxplus";
 		"boxplus" = "boxdot";
@@ -224,6 +225,8 @@
 		"bu" = "\\bullet";
 		"c" = "\\chi";
 		"ca" = "\\cap";
+		"cap" = "Cap";
+		"Cap" = "cap";
 		"cd" = "\\cdot";
 		"cdot" = "cdots";
 		"cdots" = "cdot";
@@ -243,7 +246,8 @@
 		"complement" = "cos";
 		"ct" = "\\cite";
 		"cu" = "\\cup";
-		"cup" = "curlywedge";
+		"cup" = "Cup";
+		"Cup" = "curlywedge";
 		"curlywedge" = "curlyvee";
 		"curlyvee" = "cup";
 		"g" = "\\gamma";
@@ -257,7 +261,8 @@
 		"di" = "\\displaystyle";
 		"displaystyle" = "div";
 		"div" = "diamond";
-		"diamond" = "diagdown";
+		"diamond" = "Diamond";
+		"Diamond" = "diagdown";
 		"diagdown" = "diagup";
 		"diagup" = "divideontimes";
 		"divideontimes" = "diamondsuit";
@@ -279,9 +284,11 @@
 		"f" = "\\phi";
 		"phi" = "varphi";
 		"varphi" = "phi";
+		"fi" = "\\Finv";
 		"fl" = "\\flat";
 		"fo" = "\\forall";
 		"fr" = "\\frac";
+		"ga" = "\\Game";
 		"gg" = "\\ggg";
 		"gr" = "\\grtsim";
 		"hb" = "\\hbar";
@@ -453,16 +460,9 @@
 		"ve" = "\\vee";
 		"vee" = "veebar";
 		"veebar" = "vee";
-		"Bb" = "\\Bbbk";
-		"Bo" = "\\Box";
-		"Ca" = "\\Cap";
-		"Cu" = "\\Cup";
 		"G" = "\\Gamma";
-		"Ga" = "\\Game";
 		"D" = "\\Delta";
-		"Di" = "\\Diamond";
 		"F" = "\\Phi";
-		"Fi" = "\\Finv";
 		"L" = "\\Lambda";
 		"X" = "\\Chi";
 		"P" = "\\Pi";
@@ -478,7 +478,9 @@
 		"smallskip" = "medskip";
 		"medskip" = "bigskip";
 		"bigskip" = "smallskip";
+		"Bk" = "\\Bbbk";
 		"BR" = "\\mathbb{R}";
+		"BH" = "\\mathbb{H}";
 		"BQ" = "\\mathbb{Q}";
 		"BZ" = "\\mathbb{Z}";
 		"BC" = "\\mathbb{C}";
