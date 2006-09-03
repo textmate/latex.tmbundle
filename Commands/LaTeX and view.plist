@@ -22,6 +22,9 @@ FILE=`basename "$M"`
 PDF="${FILE%.*}.pdf"
 CWD="`pwd`/"
 
+# Add our tex directory to the TEXINPUTS variable so e.g. pdfsync is found (even when the user hasn’t installed it)
+export TEXINPUTS="$TM_BUNDLE_SUPPORT/tex//:$(kpsewhich --expand-var '$TEXINPUTS')"
+
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
