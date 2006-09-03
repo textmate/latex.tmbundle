@@ -132,7 +132,10 @@
 	\global\advance\PDFSYNC@rder by 1%
     \fi\relax}%
     \ifPDFSYNCPar\wlog{****  pdfsync.sty: Synchronizing par}%
-	    \global\let\PDFSYNC@par\@@par\gdef\@@par{\PDFSYNC@par\@PDFSYNC}\fi%
+	    \global\let\PDFSYNC@everypar\everypar%
+	    \newtoks\everypar%
+	    \everypar\expandafter{\the\PDFSYNC@everypar}%
+	    \PDFSYNC@everypar{\the\everypar\@PDFSYNC}\fi%
     \ifPDFSYNCMath\wlog{****  pdfsync.sty: Synchronizing math}%
 	    \everymath{\@PDFSYNC\relax}\fi%
     \ifPDFSYNCHBox\wlog{****  pdfsync.sty: Synchronizing hbox}%
