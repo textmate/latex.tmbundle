@@ -75,6 +75,33 @@ The environment variable `TM_LATEX_ERRLVL` controls the behavior of the HTML win
 
 If the document could not be built, then the error messages are always shown regardless of the value of `TM_LATEX_ERRLVL`.
 
+# PDFSync
+
+The [pdfsync package](http://itexmac.sourceforge.net/pdfsync.html) allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of TeXniscope.
+
+You need to perform the following steps to enable synchronization:
+
+ 1. In your LaTeX document add `\usepackage{pdfsync}` (near the top) to enable creation of synchronization data. The required `pdfsync.sty` file is normally not included with tex distributions but is included in the LaTeX bundle.
+
+    If you use the `Typeset & View (PDF)` command (bound to `⌘R` by default) then it will setup `TEXINPUTS` so that the bundled `pdfsync.sty` is found.
+
+    If you typeset your documents from elsewhere, you need to install `pdfsync.sty` e.g. in `~/Library/texmf` (this might depend on your distribution of tex).
+
+ 2. Set the `TM_LATEX_VIEWER` variable to `TeXniscope`. This enables you to use the `Show in TeXniscope (pdfsync)` command bound to `⌃⌥⌘O` by default.
+
+ 3. In TeXniscope go to the preferences. There, set the following two options:
+
+        Editor: mate
+        Editor options: -l %line "%file"
+
+    This assumes that you have installed `mate` (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking (⌘) at a location in the PDF file (as shown in TeXniscope) should take you to the corresponding location in TextMate.
+
+**Note 1:** PDFSync does not work when your filename contains a space.
+
+**Note 2:** The granularity of the synchronization data is generally “per paragraph”, so going from TextMate to TeXniscope or back will generally locate just the paragraph nearest your desired position.
+
+**Note 3:** Problems have been reported with the universal build of TeXniscope. So Intel users may want to run TeXniscope under Rosetta.
+
 # Working With LaTeX
 
 This section describes the various LaTeX tasks, and how they can be accomplished with the commands provided in the bundle. Some of the commands whose behavior is clear from their name (like `Format ⇢ Bold` and friends) are not included here, so you will need to traverse the submenus of the LaTeX bundle to discover them.
@@ -170,21 +197,6 @@ Note further, that the completion commands will recursively search inside `\incl
 LaTeX has particular support for the [Beamer document class](http://latex-beamer.sourceforge.net/). Namely, the “Insert Environment…” and “Insert Command…” commands understand more shortcuts, and also behave intelligently with respect to older shortcuts, adding overlay specifications where appropriate. The same goes for the “Lists ⇢ New Item” command.
 
 In order for all this to work, make sure that the language for the document is set to “LaTeX Beamer” (⌃⇧⌥B).
-
-### PDFSync
-
-Some of the previewers such as TeXniscope and TeXShop work with the [pdfsync package](http://itexmac.sourceforge.net/pdfsync.html). The pdfsync package is great because it allows you to easily hop back and forth between TextMate and the PDF version of your document.
-
-**Note**: The PDF package does not come installed by default. You need to download it and place it in the appropriate place. Follow the instructions in the above link to do that.
-
-We will discuss here how to set TeXniscope to synchronize with TextMate. First of all, you need to install TeXniscope. Even if you are on an Intel machine, you *might need* to install the PowerPC binary of TeXniscope instead of a universal binary. TeXniscope is also a bit picky when it comes to filenames. It does not work if the filename of the TeX file contains spaces.
-
-Once you have told TextMate to use TeXniscope as a previewer, via the `TM_LATEX_VIEWER`, and you have used the command `\usepackage{pdfsync}` in your LaTeX file, you already have set things up so that using the `Find in TeXniscope` command in TextMate takes you close to the place in the PDF file corresponding to the caret's location. In order to go the other way (i.e. go from PDF to LaTeX source), open TeXniscope, and go to the preferences. There, set the following two options:
-
-		Editor: mate
-		Editor options: -l %line "%file"
-
-This assumes you have `mate` installed (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking at a location in the PDF file should take you to the corresponding location in TextMate.
 
 ### Drag and Drop
 
