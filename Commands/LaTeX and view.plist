@@ -58,12 +58,17 @@ if [ -s "${PDF}" -a "$PDF" -nt "$FILE" ]; then
 			else redirect "${WEB_LOC}"
 		fi
 	else
-		if [[ "$V" == TeXniscope ]]; then
-			SCRIPT="$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh"
-			[[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
+		V=${V%.app} # strip potential .app extension
+		if find_app &gt;/dev/null "$V.app"; then
+			open -a "$V" "$PDF"
+			if [[ "$V" == TeXniscope &amp;&amp; -f "${PDF}sync" ]]; then
+				SCRIPT=$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh
+				[[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
+			fi
+			if (($RC &lt;= $EL)); then exit_discard; fi
+		else
+			strong "Error locating external viewer: $V"
 		fi
-		open -a "$V" "$PDF"
-		if (($RC &lt;= $EL)); then exit_discard; fi
 	fi
 else
 	strong "Error: PDF file not written to disk"
