@@ -7,16 +7,17 @@
 	<key>command</key>
 	<string># Source some support functions we need.
 . "${TM_SUPPORT_PATH}/lib/html.sh"
+. "${TM_SUPPORT_PATH}/lib/webpreview.sh"
 
 # Get the viewer program. Any program (that works with open -a &lt;name&gt;) can be used,
 # except 'html' which is reserved to mean the internal HTML window. This is also the
 # default option.
-V=${TM_LATEX_VIEWER:=html}
+V=${TM_LATEX_VIEWER:-html}
 
 # Set up some variables we need.
-TEX=${TM_LATEX_COMPILER:=pdflatex}
-EL=${TM_LATEX_ERRLVL:=1}
-M=${TM_LATEX_MASTER:=$TM_FILEPATH}
+TEX=${TM_LATEX_COMPILER:-pdflatex}
+EL=${TM_LATEX_ERRLVL:-1}
+M=${TM_LATEX_MASTER:-$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`
 PDF="${FILE%.*}.pdf"
@@ -30,8 +31,8 @@ cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
 
 # Prepare output window.
-htmlHeader "Compiling LaTeX (file $FILE)"
-echo '&lt;h1&gt;Compiling LaTeX...&lt;/h1&gt;'
+html_header 'Typeset &amp;amp; View' "$FILE"
+echo '&lt;h2&gt;Compiling LaTeX...&lt;/h2&gt;'
 
 # Check if we actually have a tex compiler
 require_cmd "$TEX" "You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt; variable to the full path of your LaTeX compiler (e.g. &lt;tt&gt;/opt/local/bin/pdflatex&lt;/tt&gt; or set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;pdflatex&lt;/tt&gt;."
@@ -73,7 +74,7 @@ if [ -s "${PDF}" -a "$PDF" -nt "$FILE" ]; then
 else
 	strong "Error: PDF file not written to disk"
 fi
-htmlFooter
+html_footer
 </string>
 	<key>dontFollowNewOutput</key>
 	<false/>
