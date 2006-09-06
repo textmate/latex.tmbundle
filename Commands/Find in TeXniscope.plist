@@ -16,7 +16,7 @@ FILE="$TM_LATEX_MASTER"
 SCRIPT="$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh"
 
 if [[ -x "$SCRIPT" ]]; then
-	"$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "${FILE%.tex}.pdf"
+	"$SCRIPT" &amp;&gt;/dev/console "$TM_LINE_NUMBER" "$TM_FILEPATH" "${FILE%.tex}.pdf"
 	open -a TeXniscope.app
 else
 	echo "Unable to locate TeXniscope."

@@ -32,7 +32,7 @@ cd "$DIR"
 
 # Prepare output window.
 html_header 'Typeset &amp;amp; View' "$FILE"
-echo '&lt;h2&gt;Compiling LaTeX...&lt;/h2&gt;'
+echo '&lt;h2&gt;Compiling LaTeX…&lt;/h2&gt;'
 
 # Check if we actually have a tex compiler
 require_cmd "$TEX" "You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt; variable to the full path of your LaTeX compiler (e.g. &lt;tt&gt;/opt/local/bin/pdflatex&lt;/tt&gt; or set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;pdflatex&lt;/tt&gt;."
