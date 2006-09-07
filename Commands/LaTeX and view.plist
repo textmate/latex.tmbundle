@@ -13,15 +13,19 @@
 # except 'html' which is reserved to mean the internal HTML window. This is also the
 # default option.
 V=${TM_LATEX_VIEWER:-html}
-
-# Set up some variables we need.
-TEX=${TM_LATEX_COMPILER:-pdflatex}
 EL=${TM_LATEX_ERRLVL:-1}
 M=${TM_LATEX_MASTER:-$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`
 PDF="${FILE%.*}.pdf"
 CWD="`pwd`/"
+
+# Set up TeX compiler, fallback to xelatex if document indicates it
+if grep -Esq '\\usepackage{.*(xunicode|fontspec)|program=xelatex' "$M"
+	then DEF_TEX=xelatex
+	else DEF_TEX=pdflatex
+fi
+TEX=${TM_LATEX_COMPILER:-$DEF_TEX}
 
 # Add our tex directory to the TEXINPUTS variable so e.g. pdfsync is found (even when the user hasn’t installed it)
 export TEXINPUTS="$TM_BUNDLE_SUPPORT/tex//:$(kpsewhich --expand-var '$TEXINPUTS')"
