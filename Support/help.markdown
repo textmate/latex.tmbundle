@@ -1,13 +1,17 @@
-
 # Installing LaTeX
 
-Before using LaTeX, you need a working version of LaTeX installed. We recommend that you use the [i-installer][1] program to install the necessary packages. If you feel comfortable with the command line, you may use [DarwinPorts](http://darwinports.opendarwin.org/) or [Fink](http://fink.sourceforge.net/) if you prefer.
+Before using LaTeX, you need a working version of LaTeX installed. We recommend that you use the [MacTeX][] package to install the necessary parts. The package will also install for you some very useful applications. (If you feel comfortable with the command line, you may use [MacPorts][] (previously Darwinports) or [Fink][] if you prefer.)
 
-No matter which method you use, make sure that the [`PATH` variable](http://macromates.com/textmate/manual/shell_commands#search_path) contains a path to the various latex executables, particularly `pdflatex`. For instance it might contain something like this:
+No matter which method you use, make sure that the [`PATH` variable][path-var] contains a path to the various latex executables, particularly `pdflatex`. For instance it might contain something like this:
 
     /usr/local/teTeX/bin/powerpc-apple-darwin-current
 
 Note: The i-installer should automatically create this setup in `/etc/profile`.
+
+[mactex]: http://www.tug.org/~koch/
+[macports]: http://www.macports.org/
+[fink]: http://fink.sourceforge.net/
+[path-var]: http://macromates.com/textmate/manual/shell_commands#search_path
 
 # Building a LaTeX File
 
@@ -21,17 +25,19 @@ Depending on the settings of the environment variable `TM_LATEX_ERRLVL`, this wi
 
 Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` in-between. The `latexmk.pl` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk.pl` when compiling, you have to set the environment variable `TM_LATEX_COMPILER` to have value `latexmk.pl`.
 
-See [9.2 Static Variables](http://macromates.com/textmate/manual/environment_variables#static_variables) in the TextMate manual for how to setup environment variables.
+See [9.2 Static Variables][static-vars] in the TextMate manual for how to setup environment variables.
 
 Note further, that if you have some other complicated compiling system, using a makefile for example, you can use that instead of `latexmk.pl`. You can use the variable `TM_LATEX_OPTIONS` to set command line options for your script.
 
 TODO: Update this section if a new command is created for `latexmk.pl`
 
+[static-vars]: http://macromates.com/textmate/manual/environment_variables#static_variables
+
 ## Using a Master File
 
-If you work on a large project, you would want to use TextMate's [support for projects](http://macromates.com/textmate/manual/working_with_multiple_files#working_with_multiple_files), and split your project in chapters, using a master file that then includes the various chapters via `\include`.
+If you work on a large project, you would want to use TextMate's [support for projects][projects], and split your project in chapters, using a master file that then includes the various chapters via `\include`.
 
-If you have created a project file, then you can set *project specific environment variables* via the project info button on the bottom right of the project drawer. You should set such a variable with a name of `TM_LATEX_MASTER` and the full path to the master tex file as value. If you are instead using a scratch folder, you can use the trick explained [here](http://lists.macromates.com/pipermail/textmate/2006-July/012151.html). Effectively, if a folder has a file called `.textmate_init`, then whatever shell code is specified there will be executed right before any command that is ran for a file located in this folder. So for instance this file could contain a line like this:
+If you have created a project file, then you can set *project specific environment variables* via the project info button on the bottom right of the project drawer. You should set such a variable with a name of `TM_LATEX_MASTER` and the full path to the master tex file as value. If you are instead using a scratch folder, you can use the trick explained [here][scratch-folder]. Effectively, if a folder has a file called `.textmate_init`, then whatever shell code is specified there will be executed right before any command that is ran for a file located in this folder. So for instance this file could contain a line like this:
 
     export TM_LATEX_MASTER=master_file_or_whatever
 
@@ -39,9 +45,13 @@ This allows, among other things, creating folder specific variables for scratch 
 
 When the `TM_LATEX_MASTER` variable is set, then all LaTeX commands use the master file pointed to by this variable as their basis. In particular, the `Typeset & View` command will typeset the master file, instead of whatever the currently active file is. So you can freely edit whatever chapter you are working on, and when you want to see the result you just press `⌘R` without having to worry about switching to the master file. The error window that may show up is arranged so that clicking any of the errors opens up the corresponding `\include`'d file where the error occurred, and places the caret at the appropriate location.
 
-There is a way to arrange it so that the individual chapters can be compiled by themselves, and still work fine when included via the `\include` command. If that is something that might interest you, then [this thread from the mailing list](http://thread.gmane.org/gmane.editors.textmate.general/10474/focus=10481) might interest you. 
+There is a way to arrange it so that the individual chapters can be compiled by themselves, and still work fine when included via the `\include` command. If that is something that might interest you, then [this thread from the mailing list][included-chapters] might interest you. 
 
 TODO: Mention that `TM_LATEX_MATER` can be relative to the project directory (or directory of current file) -- this way one can set it in the global preferences if one always use the same name of the master file.
+
+[projects]: http://macromates.com/textmate/manual/working_with_multiple_files#working_with_multiple_files
+[scratch-folder]: http://lists.macromates.com/pipermail/textmate/2006-July/012151.html
+[included-chapters]: http://thread.gmane.org/gmane.editors.textmate.general/10474/focus=10481
 
 # Previewing a LaTeX File
 
@@ -53,17 +63,22 @@ Since Tiger, HTML windows can show PDF files. This is the standard behavior. The
 
 ## Installing PDF Browser Plug-In
 
-An alternative to the default PDF viewing capability of Tiger is [Schubert’s PDF Browser Plugin](http://www.schubert-it.com/pluginpdf/). This has some nice additional features such as allowing you to print the PDF directly from the window and it works on Panther as well.
+An alternative to the default PDF viewing capability of Tiger is [Schubert’s PDF Browser Plugin][pdf-browser]. This has some nice additional features such as allowing you to print the PDF directly from the window and it works on Panther as well.
 
 Note: If you have the Adobe Reader installed then you might have the problem that this installs a handler for PDF files which in the worst-case can cause TextMate to crash when displaying PDF files.
 
 To avoid this open the preferences for Adobe Reader and go to the Internet category. There uncheck “Display in PDF browser using:” and “Check browser settings when starting Reader” — if the latter is not unchecked, it will take over again when it gets a chance. You may need to relaunch TextMate afterwards.
 
+[pdf-browser]: http://www.schubert-it.com/pluginpdf/
+
 ## External Previewers
 
-You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview, [TeXShop][2], and [TeXniscope][3].
+You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview, [TeXShop][], and [TeXniscope][].
 
 To use one of these previewers, you must set the `TM_LATEX_VIEWER` environment variable to the name of the previewer. For example for TeXniscope, you would set the variable to have a value of `TeXniscope`.
+
+[texshop]: http://www.uoregon.edu/~koch/texshop/
+[texniscope]: http://www.ing.unipi.it/~d9615/homepage/texniscope.html
 
 ## Preview Options
 
@@ -77,7 +92,9 @@ If the document could not be built, then the error messages are always shown reg
 
 # PDFSync
 
-The [pdfsync package](http://itexmac.sourceforge.net/pdfsync.html) allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of TeXniscope.
+The [pdfsync][] package allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of TeXniscope.
+
+[pdfsync]: http://itexmac.sourceforge.net/pdfsync.html
 
 You need to perform the following steps to enable synchronization:
 
@@ -114,26 +131,30 @@ Writing LaTeX often requires typing some amount of standard commands and environ
 
 The LaTeX bundle contains two commands that, if you type a lot of LaTeX, will become your best friends. They are `Insert Environment Based on Current Word`, bound by default to `⌃⌘{`, and `Insert Command Based on Current Word`, bound by default to `⌃⌘}`. They create an environment/command based on the current word, or with a default editable text in the absence of a current word. They are smart enough to understand a number of “standard” shortcuts, also called triggers. For instance, typing `thm` and then calling the `Insert Environment Based on Current Word` command creates:
 
-		\begin{theorem}
-			| ← insertion point
-		\end{theorem}
+        \begin{theorem}
+            | ← insertion point
+        \end{theorem}
 
 Similarly, typing `fig` followed by calling the `Insert Environment Based on Current Word` command creates a lot of the standard text required in a figure environment. You can further customize these commands.
 
 These two commands understand a series of shortcuts, and use the current word if they don't recognize it as a shortcut. You can customize what these shortcuts are by editing the *LaTeX Configuration File*. This file is originally kept in the LaTeX bundle. When you first use the `Edit Configuration File` command, this file is copied to the file `~/Library/Preferences/com.macromates.textmate.latex_config.plist`. You can then edit this file whenever you want by executing this command, or delete it to return to the default settings.
 
-This file follows the [Property List Format](http://macromates.com/textmate/manual/appendix#property_list_format). It consists of a top-level dictionary with six entries:
+This file follows the [Property List Format][plist]. It consists of a top-level dictionary with six entries:
 
-  * commands
-  * commands\_beamer
-  * environments
-  * labeled\_environments
-  * environments\_beamer
-  * labeled\_environments\_beamer
+[plist]: http://macromates.com/textmate/manual/appendix#property_list_format
 
-The versions with the word “beamer” added are the *extra* shortcuts/words that get recognized in LaTeX Beamer, *in addition to the non-beamer ones*. The commands and commands\_beamer entries are dictionaries consisting of pairs, where the key is the shortcut to be recognized, and the value is the  text to be inserted when the shortcut is found. **All inserted text, for both commands and environments, is interpreted as a [Snippet](http://macromates.com/textmate/manual/snippets#snippets)**.
+  * `commands`
+  * `commands_beamer`
+  * `environments`
+  * `labeled_environments`
+  * `environments_beamer`
+  * `labeled_environments_beamer`
 
-The four environment dictionaries are a bit different. They have key-value pairs, where the key is the *name* of the environment, i.e. the text to be placed inside the braces in `\begin{}`. The value is itself a dictionary with two entries:
+The versions with the word `beamer` added are the *extra* shortcuts/words that get recognized in LaTeX Beamer, *in addition to the non-beamer ones*. The `commands` and `commands_beamer` entries are dictionaries consisting of pairs, where the key is the shortcut to be recognized, and the value is the  text to be inserted when the shortcut is found. **All inserted text, for both commands and environments, is interpreted as a [Snippet][]**.
+
+[snippet]: http://macromates.com/textmate/manual/snippets#snippets
+
+The four `environment` dictionaries are a bit different. They have key-value pairs, where the key is the *name* of the environment, i.e. the text to be placed inside the braces in `\begin{}`. The value is itself a dictionary with two entries:
 
   * `triggers` is the list of shortcuts/words that will trigger this environments to be inserted.
   * `content` is a string representing the text to be inserted inside the environment. If the environment is in one of the two `labeled\_environments` groups, then this text is inserted right after the closing brace in `\begin{env}`, so as to allow for the addition of labels. Otherwise, it is inserted starting on the next line.
@@ -194,9 +215,11 @@ Note further, that the completion commands will recursively search inside `\incl
 
 ### LaTeX Beamer
 
-LaTeX has particular support for the [Beamer document class](http://latex-beamer.sourceforge.net/). Namely, the “Insert Environment…” and “Insert Command…” commands understand more shortcuts, and also behave intelligently with respect to older shortcuts, adding overlay specifications where appropriate. The same goes for the “Lists ⇢ New Item” command.
+LaTeX has particular support for the [Beamer document class][beamer]. Namely, the “Insert Environment…” and “Insert Command…” commands understand more shortcuts, and also behave intelligently with respect to older shortcuts, adding overlay specifications where appropriate. The same goes for the “Lists ⇢ New Item” command.
 
 In order for all this to work, make sure that the language for the document is set to “LaTeX Beamer” (⌃⇧⌥B).
+
+[beamer]: http://latex-beamer.sourceforge.net/
 
 ### Drag and Drop
 
@@ -226,17 +249,3 @@ The other system is specific to the LaTeX bundle, and it is triggered via the co
 There were at least two or possibly three versions of a LaTeX bundle floating around in the early days of TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and Andrew Ellis At some point, January 2005, Eric Hsu pulled together the threads into one package. From then on there have been contributions by Sune Foldager, Brad Miller, Allan Odgaard, Jeroen van der Ham, and Haris Skiadas. The Generic Completion package was written by Marcin. 
 
 Happy LaTeXing!
-
-[1]: http://ii2.sourceforge.net/
-[2]: http://www.uoregon.edu/~koch/texshop/
-[3]: http://www.ing.unipi.it/~d9615/homepage/texniscope.html
-[4]: http://bibdesk.sourceforge.net/
-[5]: http://people.ict.usc.edu/~leuski/cocoaspell/home.html
-[6]: #commands
-[7]: #macros
-[8]: #draganddropcommands
-[9]: #snippets
-[10]: #templates
-[11]: #environmentvariables
-[12]: #relatedcommands
-[13]: #credits
