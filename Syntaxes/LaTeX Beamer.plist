@@ -7,9 +7,9 @@
 	<key>firstLineMatch</key>
 	<string>^\\documentclass(\[.*\])?\{beamer\}</string>
 	<key>foldingStartMarker</key>
-	<string>\\begin\{.*\}</string>
+	<string>\\begin\{.*\}|%.*\(fold\)\s*$</string>
 	<key>foldingStopMarker</key>
-	<string>\\end\{.*\}</string>
+	<string>\\end\{.*\}|%.*\(end\)\s*$</string>
 	<key>keyEquivalent</key>
 	<string>^~B</string>
 	<key>name</key>
