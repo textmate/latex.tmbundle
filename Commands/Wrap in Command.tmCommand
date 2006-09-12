@@ -19,7 +19,7 @@ print "\\\\${1:text${2:bf}}{#{if s = ENV['TM_SELECTED_TEXT'] then e_sn(s) else '
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>C3C8F3A3-C90E-4DA3-8AB3-DB7BDA73355C</string>
 </dict>

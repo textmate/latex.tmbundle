@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Miscellaneous (BibTeX)</string>
 	<key>scope</key>
-	<string>source.bibtex</string>
+	<string>text.bibtex</string>
 	<key>settings</key>
 	<dict>
 		<key>highlightPairs</key>

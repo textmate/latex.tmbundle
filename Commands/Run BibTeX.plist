@@ -21,14 +21,12 @@ bibtex "$FILE"|pre
 </string>
 	<key>input</key>
 	<string>none</string>
-	<key>keyEquivalent</key>
-	<string></string>
 	<key>name</key>
 	<string>Run BibTeX</string>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>4C05FB6C-AA32-4217-8788-D840D49E82CD</string>
 </dict>

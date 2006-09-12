@@ -11,7 +11,7 @@
 	<key>name</key>
 	<string>Display Math — \[ … \]</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>tabTrigger</key>
 	<string>$$</string>
 	<key>uuid</key>

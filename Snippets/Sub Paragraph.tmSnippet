@@ -9,7 +9,7 @@ ${0:$TM_SELECTED_TEXT}
 	<key>name</key>
 	<string>Sub Paragraph</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>tabTrigger</key>
 	<string>subp</string>
 	<key>uuid</key>

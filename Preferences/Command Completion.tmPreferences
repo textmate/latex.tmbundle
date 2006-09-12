@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Command Completion</string>
 	<key>scope</key>
-	<string>text.latex meta.space-after-command.latex, text.latex support.function.general.tex</string>
+	<string>text.tex.latex meta.space-after-command.latex, text.tex.latex support.function.general.tex</string>
 	<key>settings</key>
 	<dict>
 		<key>completionCommand</key>

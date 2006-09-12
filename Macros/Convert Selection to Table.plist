@@ -47,7 +47,7 @@ print "\\\\\n".$hline."\\end{tabular}\n"; </string>
 				<key>output</key>
 				<string>replaceSelectedText</string>
 				<key>scope</key>
-				<string>text.latex</string>
+				<string>text.tex.latex</string>
 				<key>uuid</key>
 				<string>271ADC35-A39B-4152-9016-D00F1B574CF7</string>
 			</dict>
@@ -60,7 +60,7 @@ print "\\\\\n".$hline."\\end{tabular}\n"; </string>
 	<key>name</key>
 	<string>Convert Selection to Table</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>scopeType</key>
 	<string>local</string>
 	<key>uuid</key>

@@ -18,7 +18,7 @@ echo "\\\\include{$filename}"</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>5C321350-C9CD-11D9-B88C-000A95C0F626</string>
 </dict>

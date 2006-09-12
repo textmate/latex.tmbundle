@@ -9,7 +9,7 @@
 	<key>name</key>
 	<string>\begin{}…\end{}</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>tabTrigger</key>
 	<string>begin</string>
 	<key>uuid</key>

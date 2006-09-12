@@ -39,7 +39,7 @@ echo "Done Cleaning up"</string>
 	<key>output</key>
 	<string>showAsTooltip</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
 </dict>

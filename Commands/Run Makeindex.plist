@@ -21,14 +21,12 @@ makeindex "$FILE"
 </string>
 	<key>input</key>
 	<string>none</string>
-	<key>keyEquivalent</key>
-	<string></string>
 	<key>name</key>
 	<string>Run Makeindex</string>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>0A27EDBA-2C7C-44CF-B2B0-1B3B7BF8D7D6</string>
 </dict>

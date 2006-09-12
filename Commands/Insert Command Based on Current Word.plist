@@ -40,7 +40,7 @@ end
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>79EBE164-2318-4563-83E5-F337588AAC73</string>
 </dict>

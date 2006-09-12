@@ -12,7 +12,7 @@ ${TM_SELECTED_TEXT/(\s*).*/$1/m}\end{$1}
 	<key>name</key>
 	<string>Environment — \begin{}…\end{}</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>2D7B6866-400B-4120-9EC1-0397E33169A1</string>
 </dict>

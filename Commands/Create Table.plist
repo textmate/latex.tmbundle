@@ -47,7 +47,7 @@ puts "\\end{tabular}"</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>7190DABA-FE8B-4DC7-9D31-3A727A8647CD</string>
 </dict>

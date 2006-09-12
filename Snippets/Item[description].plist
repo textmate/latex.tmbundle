@@ -7,7 +7,7 @@
 	<key>name</key>
 	<string>\item[description]</string>
 	<key>scope</key>
-	<string>text.latex meta.environment.list</string>
+	<string>text.tex.latex meta.function.environment.list</string>
 	<key>tabTrigger</key>
 	<string>itd</string>
 	<key>uuid</key>

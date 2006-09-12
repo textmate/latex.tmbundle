@@ -17,7 +17,7 @@ open txmt://open?url=file://$AccountFile</string>
 	<key>output</key>
 	<string>discard</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>D10F1CAC-BF1D-456D-B1E5-6AA5E3DD40ED</string>
 </dict>

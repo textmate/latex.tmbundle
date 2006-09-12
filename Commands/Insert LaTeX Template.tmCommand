@@ -32,7 +32,7 @@ end</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>tabTrigger</key>
 	<string>temp</string>
 	<key>uuid</key>

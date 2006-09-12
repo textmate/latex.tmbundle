@@ -59,7 +59,7 @@ end
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>521C9FC0-0B61-48C8-A76B-60A4AE8DF449</string>
 </dict>

@@ -17,7 +17,7 @@
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>4F91DE78-EA89-48A0-98E4-7A1CB64C7D87</string>
 </dict>

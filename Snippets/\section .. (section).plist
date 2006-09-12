@@ -9,7 +9,7 @@ ${0:$TM_SELECTED_TEXT}
 	<key>name</key>
 	<string>Section</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>tabTrigger</key>
 	<string>sec</string>
 	<key>uuid</key>

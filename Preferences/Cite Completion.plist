@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Cite Completion</string>
 	<key>scope</key>
-	<string>text.latex meta.cite.latex</string>
+	<string>text.tex.latex meta.cite.latex</string>
 	<key>settings</key>
 	<dict>
 		<key>completionCommand</key>

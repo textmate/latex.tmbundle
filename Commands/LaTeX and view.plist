@@ -91,7 +91,7 @@ html_footer
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
 </dict>

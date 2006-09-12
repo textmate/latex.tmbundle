@@ -9,7 +9,7 @@
 	<key>name</key>
 	<string>Math Mode — \( … \)</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>445F9B97-7D25-4262-A715-03F9D688856A</string>
 </dict>

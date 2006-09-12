@@ -9,7 +9,7 @@
 	<key>name</key>
 	<string>Brackets — \left…\right</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>2BCB6911-2FE8-4D28-9E9C-4AE5F54F6E72</string>
 </dict>

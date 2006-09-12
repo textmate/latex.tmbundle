@@ -76,7 +76,7 @@ html_footer</string>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>37B43A9E-AD5E-11D9-97B0-000D93B6E43C</string>
 </dict>

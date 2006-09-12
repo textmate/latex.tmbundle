@@ -9,7 +9,7 @@
 	<key>name</key>
 	<string>Double Quotes</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>903B133A-B073-40C2-83DD-7B1E6D435A26</string>
 </dict>

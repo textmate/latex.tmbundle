@@ -59,7 +59,7 @@
 	<key>name</key>
 	<string>Convert ASCII Symbol to LaTeX Command</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>scopeType</key>
 	<string>local</string>
 	<key>uuid</key>

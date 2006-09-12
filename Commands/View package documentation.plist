@@ -28,7 +28,7 @@ PyTeXdoc.py</string>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>1A12B844-4074-4655-A45C-18AC8D943267</string>
 </dict>

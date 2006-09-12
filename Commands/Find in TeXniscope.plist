@@ -31,7 +31,7 @@ fi
 	<key>output</key>
 	<string>showAsTooltip</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
 </dict>

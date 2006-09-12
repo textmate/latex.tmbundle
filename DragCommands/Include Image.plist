@@ -27,7 +27,7 @@ echo "\\\\begin{figure}[\${1:htbp}]
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>2C5B80BC-C9C8-11D9-B88C-000A95C0F626</string>
 </dict>
