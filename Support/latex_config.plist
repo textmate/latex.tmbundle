@@ -15,8 +15,10 @@
 		sec = '\\section{$1}';
 		sub = '\\subsection{$1}';
 		ssub = '\\subsubsection{$1}';
+		subs = '\\subsubsection{$1}';
 		cha = '\\chapter{$1}';
-		par = '\\part{$1}';
+		par = '\\paragraph{$1}';
+		subp = '\\subparagraph{$1}';
 
 		dc = '\\documentclass{${1:article}}\n';
 		nc = '\\newcommand{$1}{$2}';

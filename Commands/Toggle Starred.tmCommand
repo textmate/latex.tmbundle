@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+lines = STDIN.readlines
+[lines.first,lines.last].each do |l| l.sub!(/(\\(?:begin|end)\{\w+)(\*?)\}/) do |m|
+  $1 + (if ($2=="") then "*" else "" end) + "\}"
+end
+end
+print lines
+</string>
+	<key>fallbackInput</key>
+	<string>scope</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^*</string>
+	<key>name</key>
+	<string>Toggle Starred</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>text.tex meta.function.environment</string>
+	<key>uuid</key>
+	<string>37C520F9-A379-4BBC-AF62-22F7C0B63955</string>
+</dict>
+</plist>

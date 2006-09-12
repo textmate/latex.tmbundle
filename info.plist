@@ -31,6 +31,7 @@
 			<string>DBEC7344-772D-43DE-8863-341768063F73</string>
 			<string>EFFA2693-C5B2-405D-A913-176F165F1389</string>
 			<string>------------------------------------</string>
+			<string>36C623C5-4F91-48FF-A648-910681D1D35D</string>
 			<string>B6CFC0AB-E9F1-4A8A-A1F2-AB129ACEDBF0</string>
 			<string>C51902AD-667E-4AFB-9BF6-A7A993473892</string>
 			<string>02459F02-DB4A-4439-B9FE-BAF4040ED287</string>
@@ -55,6 +56,16 @@
 				</array>
 				<key>name</key>
 				<string>Lists</string>
+			</dict>
+			<key>36C623C5-4F91-48FF-A648-910681D1D35D</key>
+			<dict>
+				<key>items</key>
+				<array>
+					<string>37C520F9-A379-4BBC-AF62-22F7C0B63955</string>
+					<string>06BAABEC-B819-4778-94FF-C744CF5DD7CD</string>
+				</array>
+				<key>name</key>
+				<string>Environments</string>
 			</dict>
 			<key>B6CFC0AB-E9F1-4A8A-A1F2-AB129ACEDBF0</key>
 			<dict>
@@ -135,6 +146,8 @@
 	<string>LaTeX</string>
 	<key>ordering</key>
 	<array>
+		<string>37C520F9-A379-4BBC-AF62-22F7C0B63955</string>
+		<string>06BAABEC-B819-4778-94FF-C744CF5DD7CD</string>
 		<string>0E901597-FFB6-4D81-A57D-821A9B5089A5</string>
 		<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
 		<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
@@ -159,6 +172,7 @@
 		<string>37B43A9E-AD5E-11D9-97B0-000D93B6E43C</string>
 		<string>7190DABA-FE8B-4DC7-9D31-3A727A8647CD</string>
 		<string>5C321350-C9CD-11D9-B88C-000A95C0F626</string>
+		<string>85C7E4F1-F834-45F5-A2C0-8F320AB00506</string>
 		<string>2C5B80BC-C9C8-11D9-B88C-000A95C0F626</string>
 		<string>DDF6786A-A88D-48A2-A9C7-474236A7DFE2</string>
 		<string>3B6A7039-C276-4C96-B896-B7B487401280</string>
