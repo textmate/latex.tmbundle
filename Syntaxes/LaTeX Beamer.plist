@@ -18,13 +18,52 @@
 	<array>
 		<dict>
 			<key>begin</key>
-			<string>((\\(?:(?:sub)*section|chapter|paragraph|part))(\*?)(?:(\[)[^\[]*?(\]))??(\{))</string>
-			<key>captures</key>
+			<string>(?x)
+				(													# Capture 1
+					(\\)											# Marker
+					(?:
+						(?:sub){0,2}section							# Functions
+					  | (?:sub)?paragraph
+					  | chapter|part
+					)
+					(?:\*)?											# Optional Unnumbered
+				)
+				(?:
+					(\[)([^\[]*?)(\])								# Optional Title
+				)??
+				(\{)												# Opening Bracket
+				</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.section.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.end.latex</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -32,14 +71,22 @@
 			<key>contentName</key>
 			<string>entity.name.section.latex</string>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
-			<string>meta.section.latex</string>
+			<string>meta.function.section.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>include</key>
-					<string>source.tex</string>
+					<string>text.tex</string>
 				</dict>
 			</array>
 		</dict>
@@ -54,20 +101,30 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
 				</dict>
 			</dict>
 			<key>comment</key>
 			<string>These two patterns match the \begin{document} and \end{document} commands, so that the environment matching pattern following them will ignore those commands.</string>
 			<key>match</key>
-			<string>(\\begin\{)(document)(\})</string>
+			<string>((\\)begin)(\{)(document)(\})</string>
 			<key>name</key>
-			<string>meta.begin-document.latex</string>
+			<string>meta.function.begin-document.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -80,22 +137,32 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>(\\end\{)(document)(\})</string>
+			<string>((\\)end)(\{)(document)(\})</string>
 			<key>name</key>
-			<string>meta.end-document.latex</string>
+			<string>meta.function.end-document.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\begin\{)(frame)(\})</string>
+			<string>((\\)begin)(\{)(frame)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -106,18 +173,28 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.be.latex</string>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\\end\{)(frame)(\})</string>
+			<string>((\\)end)(\{)(frame)(\})</string>
 			<key>name</key>
-			<string>meta.frame.latex</string>
+			<string>meta.function.frame.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -126,27 +203,47 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
+							<string>support.function.with-arg.latex</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.function.latex</string>
+						</dict>
+						<key>3</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.arguments.begin.latex</string>
+						</dict>
+						<key>4</key>
+						<dict>
+							<key>name</key>
 							<string>entity.name.function.frame.latex</string>
+						</dict>
+						<key>5</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.arguments.end.latex</string>
 						</dict>
 					</dict>
 					<key>match</key>
-					<string>\\frametitle\{(.*)\}</string>
+					<string>((\\)frametitle)(\{)(.*)(\})</string>
 					<key>name</key>
 					<string>support.function.with-arg.latex</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>text.latex</string>
+					<string>text.tex.latex</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
 			<key>include</key>
-			<string>source.tex</string>
+			<string>text.tex</string>
 		</dict>
 	</array>
 	<key>scopeName</key>
-	<string>text.latex.beamer</string>
+	<string>text.tex.latex.beamer</string>
 	<key>uuid</key>
 	<string>2ACA20AA-B008-469B-A04A-6DE232973ED8</string>
 </dict>
