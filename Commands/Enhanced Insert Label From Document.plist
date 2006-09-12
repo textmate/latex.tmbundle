@@ -59,7 +59,7 @@ fi</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
-	<string>text.tex.latex meta.label.reference</string>
+	<string>text.tex.latex meta.reference.label</string>
 	<key>uuid</key>
 	<string>9A3FE182-40AB-4980-AB6C-32DDA22DE41D</string>
 </dict>

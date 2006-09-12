@@ -72,7 +72,7 @@ echo -n $res
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
-	<string>meta.cite.latex</string>
+	<string>meta.citation.latex</string>
 	<key>uuid</key>
 	<string>F80F9C22-ABB8-11D9-957A-000D93589AF6</string>
 </dict>

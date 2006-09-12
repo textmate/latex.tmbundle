@@ -408,6 +408,8 @@
 					<string>punctuation.definition.marginpar.begin.latex</string>
 				</dict>
 			</dict>
+			<key>contentName</key>
+			<string>meta.paragraph.margin.latex</string>
 			<key>end</key>
 			<string>\}</string>
 			<key>endCaptures</key>
@@ -418,8 +420,6 @@
 					<string>punctuation.definition.marginpar.end.latex</string>
 				</dict>
 			</dict>
-			<key>name</key>
-			<string>meta.function.paragraph.margin.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -449,6 +449,8 @@
 					<string>punctuation.definition.footnote.begin.latex</string>
 				</dict>
 			</dict>
+			<key>contentName</key>
+			<string>meta.footnote.latex</string>
 			<key>end</key>
 			<string>\}</string>
 			<key>endCaptures</key>
@@ -459,8 +461,6 @@
 					<string>punctuation.definition.footnote.end.latex</string>
 				</dict>
 			</dict>
-			<key>name</key>
-			<string>meta.function.footnote.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -727,14 +727,14 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>name</key>
-			<string>meta.cite.latex</string>
+			<string>meta.citation.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>match</key>
 					<string>[\w:.]+</string>
 					<key>name</key>
-					<string>entity.name.type.entry-keyvariable.parameter.cite.latex</string>
+					<string>constant.other.reference.citation.latex</string>
 				</dict>
 			</array>
 		</dict>
@@ -770,14 +770,14 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>name</key>
-			<string>meta.label.reference.latex</string>
+			<string>meta.reference.label.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>match</key>
 					<string>[a-zA-Z,:0-9]+</string>
 					<key>name</key>
-					<string>variable.parameter.label.reference.latex</string>
+					<string>constant.other.reference.label.latex</string>
 				</dict>
 			</array>
 		</dict>
