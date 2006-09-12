@@ -727,7 +727,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>name</key>
-			<string>meta.citation.latex</string>
+			<string>meta.cite.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -813,14 +813,14 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>name</key>
-			<string>meta.label.definition.latex</string>
+			<string>meta.definition.label.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>match</key>
 					<string>[a-zA-Z,:0-9]+</string>
 					<key>name</key>
-					<string>variable.parameter.label.definition.latex</string>
+					<string>variable.parameter.definition.label.latex</string>
 				</dict>
 			</array>
 		</dict>
