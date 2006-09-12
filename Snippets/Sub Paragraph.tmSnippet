@@ -3,16 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\subsection{${1:subsection name}}\label{sub:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}} % (fold)
+	<string>\subparagraph{${1:subparagraph name}}\label{ssub:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g/}}} % (fold)
 ${0:$TM_SELECTED_TEXT}
-% subsection (end)</string>
+% subparagraph (end)</string>
 	<key>name</key>
-	<string>Sub Section</string>
+	<string>Sub Paragraph</string>
 	<key>scope</key>
 	<string>text.latex</string>
 	<key>tabTrigger</key>
-	<string>sub</string>
+	<string>subp</string>
 	<key>uuid</key>
-	<string>4B41348F-BE2C-11D9-8F93-000D93589AF6</string>
+	<string>1475649F-2577-4BF0-A392-DD8D4B64DA91</string>
 </dict>
 </plist>
