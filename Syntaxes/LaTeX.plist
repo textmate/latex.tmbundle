@@ -26,18 +26,53 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(?:\\(?:(?:sub)*section|chapter|paragraph|part|addpart|addchap|addsec|minisec))(?:\*?)(?:(?:\[)([^\[]*?)(?:\]))??(\{)</string>
-			<key>captures</key>
+			<string>(?x)
+				(													# Capture 1
+					(\\)											# Marker
+					(?:
+						(?:sub){0,2}section							# Functions
+					  | (?:sub)?paragraph
+					  | chapter|part|addpart
+					  | addchap|addsec|minisec
+					)
+					(?:\*)?											# Optional Unnumbered
+				)
+				(?:
+					(\[)([^\[]*?)(\])								# Optional Title
+				)??
+				(\{)												# Opening Bracket
+				</string>
+			<key>beginCaptures</key>
 			<dict>
-				<key>0</key>
+				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.section.latex</string>
 				</dict>
-				<key>1</key>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.begin.latex</string>
+				</dict>
+				<key>4</key>
 				<dict>
 					<key>name</key>
 					<string>entity.name.section.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.end.latex</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -46,48 +81,73 @@
 			<string>entity.name.section.latex</string>
 			<key>end</key>
 			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
-			<string>meta.section.latex</string>
+			<string>meta.function.section.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>include</key>
-					<string>source.tex</string>
+					<string>text.tex</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\begin\{)(lstlisting)(\})(\[(.*)\])?</string>
+			<string>((\\)begin)(\{)(lstlisting)(\})(?:(\[).*(\]))?(\s*\n)?</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>punctuation.definition.arguments.begin.latex</string>
 				</dict>
 				<key>4</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.begin.latex</string>
+				</dict>
+				<key>7</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.end.latex</string>
 				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Put the lstlisting match before the more general environment listing. Someday it would be nice to make this rule general enough to figure out which language is inside the lstlisting environment rather than my own personal use for python. --Brad</string>
+			<key>contentName</key>
+			<string>source.python.embedded</string>
 			<key>end</key>
-			<string>(\\end\{)(lstlisting)(\})</string>
+			<string>(?:^\s*)?((\\)end)(\{)(lstlisting)(\})</string>
 			<key>name</key>
-			<string>source.python.embedded.latex</string>
+			<string>meta.function.embedded.python.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -98,31 +158,41 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\begin\{)(verbatim)(\})</string>
+			<string>((\\)begin)(\{)(verbatim)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
 				</dict>
 			</dict>
 			<key>contentName</key>
 			<string>markup.raw.verbatim.latex</string>
 			<key>end</key>
-			<string>(\\end\{)(verbatim)(\})</string>
+			<string>((\\)end)(\{)(verbatim)(\})</string>
 			<key>name</key>
-			<string>meta.verbatim.latex</string>
+			<string>meta.function.verbatim.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -130,25 +200,35 @@
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
 				</dict>
 			</dict>
 			<key>comment</key>
 			<string>These two patterns match the \begin{document} and \end{document} commands, so that the environment matching pattern following them will ignore those commands.</string>
 			<key>match</key>
-			<string>(\\begin\{)(document)(\})</string>
+			<string>((\\)begin)(\{)(document)(\})</string>
 			<key>name</key>
-			<string>meta.begin-document.latex</string>
+			<string>meta.function.begin-document.latex</string>
 		</dict>
 		<dict>
 			<key>captures</key>
@@ -156,27 +236,51 @@
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.latex</string>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>(\\end\{)(document)(\})</string>
+			<string>((\\)end)(\{)(document)(\})</string>
 			<key>name</key>
-			<string>meta.end-document.latex</string>
+			<string>meta.function.end-document.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(?:\s*)(\\begin\{)((?:align|equation|eqnarray|multline|aligned|alignat|split|gather|gathered)[*]?)(\})</string>
+			<string>(?x)
+					(?:\s*)										# Optional whitespace
+					((\\)begin)									# Marker - Function
+					(\{)										# Open Bracket
+						(
+							(?:
+								align|equation|eqnarray			# Argument
+							  | multline|aligned|alignat
+							  | split|gather|gathered
+							)
+							(?:\*)?								# Optional Unnumbered
+						)
+					(\})										# Close Bracket
+					(\s*\n)?				# Match to end of line absent of content
+				</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -187,31 +291,48 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.be.latex</string>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
 				</dict>
 			</dict>
+			<key>contentName</key>
+			<string>string.other.math.block.environment.latex</string>
 			<key>end</key>
-			<string>(\\end\{)(\2)(\})(?:\s*\n)?</string>
+			<string>(?x)
+					(?:\s*)										# Optional whitespace
+					((\\)end)									# Marker - Function
+					(\{)										# Open Bracket
+						(\4)				# Previous capture from begin
+					(\})										# Close Bracket
+					(?:\s*\n)?				# Match to end of line absent of content
+				</string>
 			<key>name</key>
-			<string>string.quoted.other.environment.math.latex</string>
+			<string>meta.function.environment.math.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>include</key>
-					<string>source.math.tex</string>
-					<key>name</key>
-					<string>string.other.math.latex</string>
+					<string>text.tex.math</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(?:\s*)(\\begin\{)(\w+[*]?)(\})</string>
+			<string>(?:\s*)((\\)begin)(\{)(\w+[*]?)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -222,41 +343,83 @@
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>variable.parameter.function.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>support.function.be.latex</string>
+					<string>punctuation.definition.arguments.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.latex</string>
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\\end\{)(\2)(\})(?:\s*\n)?</string>
+			<string>((\\)end)(\{)(\4)(\})(?:\s*\n)?</string>
 			<key>name</key>
-			<string>meta.environment.list.latex</string>
+			<string>meta.function.environment.list.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>include</key>
-					<string>text.latex</string>
+					<string>text.tex.latex</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
-			<key>begin</key>
-			<string>(\\marginpar\{)</string>
 			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\\)(newcommand|renewcommand)\b</string>
+			<key>name</key>
+			<string>storage.type.function.latex</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>((\\)marginpar)(\{)</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.marginpar.latex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.marginpar.begin.latex</string>
+				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.marginpar.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
-			<string>meta.paragraph.margin.latex</string>
+			<string>meta.function.paragraph.margin.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -267,19 +430,37 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\footnote\{)</string>
-			<key>captures</key>
+			<string>((\\)footnote)(\{)</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.footnote.latex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.footnote.begin.latex</string>
+				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.footnote.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
-			<string>meta.footnote.latex</string>
+			<string>meta.function.footnote.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -290,21 +471,39 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\emph\{)</string>
-			<key>captures</key>
+			<string>((\\)emph)(\{)</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.emph.latex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.emph.begin.latex</string>
+				</dict>
 			</dict>
 			<key>contentName</key>
 			<string>markup.italic.emph.latex</string>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.emph.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
-			<string>meta.emph.latex</string>
+			<string>meta.function.emph.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -315,13 +514,23 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\textit\{)</string>
+			<string>((\\)textit)(\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>support.function.textit.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.textit.begin.latex</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -331,9 +540,17 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<key>contentName</key>
 			<string>markup.italic.textit.latex</string>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.textit.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
-			<string>meta.textit.latex</string>
+			<string>meta.function.textit.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -344,7 +561,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\textbf\{)</string>
+			<string>((\\)textbf)(\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -352,13 +569,31 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<key>name</key>
 					<string>support.function.textbf.latex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.textbf.begin.latex</string>
+				</dict>
 			</dict>
 			<key>contentName</key>
 			<string>markup.bold.textbf.latex</string>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.textbf.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
-			<string>meta.textbf.latex</string>
+			<string>meta.function.textbf.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -369,7 +604,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\texttt\{)</string>
+			<string>((\\)texttt)(\{)</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -377,13 +612,31 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<key>name</key>
 					<string>support.function.texttt.latex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.texttt.begin.latex</string>
+				</dict>
 			</dict>
 			<key>contentName</key>
 			<string>markup.raw.texttt.latex</string>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.texttt.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
-			<string>meta.texttt.latex</string>
+			<string>meta.function.texttt.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -400,15 +653,31 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<key>name</key>
 					<string>keyword.other.item.latex</string>
 				</dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.keyword.latex</string>
+				</dict>
 			</dict>
 			<key>match</key>
-			<string>\\item\b</string>
+			<string>(\\)item\b</string>
 			<key>name</key>
 			<string>meta.scope.item.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\(foot)?(full)?cite(al)?(t|p|author|year(par)?|title)?\*?(\[[^\]]*\]){,2}\{)</string>
+			<string>(?x)
+					(
+						(\\)										# Marker
+						(?:foot)?(?:full)?							# Function Name
+						cite
+						(?:al)?(?:t|p|author|year(?:par)?|title)?
+						\*?											# Optional Unabreviated
+					)
+					(?:(\[)[^\]]*(\]))?								# Optional
+					(?:(\[)[^\]]*(\]))?								#   Arguments
+					(\{)											# Opening Bracket
+				</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -416,9 +685,47 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<key>name</key>
 					<string>keyword.control.cite.latex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.keyword.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.end.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.begin.latex</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.optional.end.latex</string>
+				</dict>
+				<key>7</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.latex</string>
+				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>meta.cite.latex</string>
 			<key>patterns</key>
@@ -427,23 +734,41 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 					<key>match</key>
 					<string>[\w:.]+</string>
 					<key>name</key>
-					<string>variable.parameter.cite.latex</string>
+					<string>entity.name.type.entry-keyvariable.parameter.cite.latex</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\(?:\w*[r|R]ef\*?)\{)</string>
-			<key>captures</key>
+			<string>((\\)(?:\w*[r|R]ef\*?))(\{)</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>keyword.control.ref.latex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.keyword.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>meta.label.reference.latex</string>
 			<key>patterns</key>
@@ -458,17 +783,35 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(\\label\{)</string>
-			<key>captures</key>
+			<string>((\\)label)(\{)</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>keyword.control.label.latex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.keyword.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
 			</dict>
 			<key>end</key>
-			<string>(\})</string>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>meta.label.definition.latex</string>
 			<key>patterns</key>
@@ -492,29 +835,50 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.operator.delimiter.latex</string>
+					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
 				<dict>
 					<key>name</key>
-					<string>markup.raw.verb.latex</string>
+					<string>punctuation.definition.verb.latex</string>
 				</dict>
 				<key>4</key>
 				<dict>
 					<key>name</key>
-					<string>keyword.operator.delimiter.latex</string>
+					<string>markup.raw.verb.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.verb.latex</string>
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>(\\verb[\*]?)(\S)(.*?)(\2|$)</string>
+			<string>((\\)verb[\*]?)(\S)(.*?)(\3|$)</string>
 			<key>name</key>
-			<string>meta.verb.latex</string>
+			<string>meta.function.verb.latex</string>
 		</dict>
 		<dict>
 			<key>begin</key>
 			<string>``</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.begin.latex</string>
+				</dict>
+			</dict>
 			<key>end</key>
 			<string>''|"</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.quoted.double.latex</string>
 			<key>patterns</key>
@@ -526,12 +890,28 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</array>
 		</dict>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.begin.latex</string>
+				</dict>
+			</dict>
 			<key>match</key>
 			<string>`</string>
 			<key>name</key>
 			<string>string.quoted.single.open.latex</string>
 		</dict>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.end.latex</string>
+				</dict>
+			</dict>
 			<key>match</key>
 			<string>'</string>
 			<key>name</key>
@@ -540,30 +920,62 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		<dict>
 			<key>begin</key>
 			<string>\\\(</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.begin.latex</string>
+				</dict>
+			</dict>
 			<key>end</key>
 			<string>\\\)</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.other.math.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>include</key>
-					<string>source.math.tex</string>
+					<string>text.tex.math</string>
 				</dict>
 			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
 			<string>\\\[</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.begin.latex</string>
+				</dict>
+			</dict>
 			<key>end</key>
 			<string>\\\]</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.end.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.other.math.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>include</key>
-					<string>source.math.tex</string>
+					<string>text.tex.math</string>
 				</dict>
 			</array>
 		</dict>
@@ -602,18 +1014,26 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>invalid.illegal.string.quoted.double.latex</string>
 		</dict>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.constant.latex</string>
+				</dict>
+			</dict>
 			<key>match</key>
-			<string>\\\b(textquotestraightbase|textquotestraightdblbase|texttwelveudash|textthreequartersemdash|textleftarrow|textrightarrow|textblank|textdollar|textquotesingle|textasteriskcentered|textdblhyphen|textfractionsolidus|textzerooldstyle|textoneoldstyle|texttwooldstyle|textthreeoldstyle|textfouroldstyle|textfiveoldstyle|textsixoldstyle|textsevenoldstyle|texteightoldstyle|textnineoldstyle|textlangle|textminus|textrangle|textmho|textbigcircle|textohm|textlbrackdbl|textrbrackdbl|textuparrow|textdownarrow|textasciigrave|textborn|textdivorced|textdied|textleaf|textmarried|textmusicalnote|texttildelow|textdblhyphenchar|textasciibreve|textasciicaron|textgravedbl|textacutedbl|textdagger|textdaggerdbl|textbardbl|textperthousand|textbullet|textcelsius|textdollaroldstyle|textcentoldstyle|textflorin|textcolonmonetary|textwon|textnaira|textguarani|textpeso|textlira|textrecipe|textinterrobang|textinterrobangdown|textdong|texttrademark|textpertenthousand|textpilcrow|textbaht|textnumero|textdiscount|textestimated|textopenbullet|textservicemark|textlquill|textrquill|textcent|textsterling|textcurrency|textyen|textbrokenbar|textsection|textasciidieresis|textcopyright|textordfeminine|textcopyleft|textlnot|textcircledP|textregistered|textasciimacron|textdegree|textpm|texttwosuperior|textthreesuperior|textasciiacute|textmu|textparagraph|textperiodcentered|textreferencemark|textonesuperior|textordmasculine|textsurd|textonequarter|textonehalf|textthreequarters|texteuro|texttimes|textdiv)\b</string>
+			<string>(\\)(text(s(terling|ixoldstyle|urd|e(ction|venoldstyle|rvicemark))|yen|n(ineoldstyle|umero|aira)|c(ircledP|o(py(left|right)|lonmonetary)|urrency|e(nt(oldstyle)?|lsius))|t(hree(superior|oldstyle|quarters(emdash)?)|i(ldelow|mes)|w(o(superior|oldstyle)|elveudash)|rademark)|interrobang(down)?|zerooldstyle|o(hm|ne(superior|half|oldstyle|quarter)|penbullet|rd(feminine|masculine))|d(i(scount|ed|v(orced)?)|o(ng|wnarrow|llar(oldstyle)?)|egree|agger(dbl)?|blhyphen(char)?)|uparrow|p(ilcrow|e(so|r(t(housand|enthousand)|iodcentered))|aragraph|m)|e(stimated|ightoldstyle|uro)|quotes(traight(dblbase|base)|ingle)|f(iveoldstyle|ouroldstyle|lorin|ractionsolidus)|won|l(not|ira|e(ftarrow|af)|quill|angle|brackdbl)|a(s(cii(caron|dieresis|acute|grave|macron|breve)|teriskcentered)|cutedbl)|r(ightarrow|e(cipe|ferencemark|gistered)|quill|angle|brackdbl)|g(uarani|ravedbl)|m(ho|inus|u(sicalnote)?|arried)|b(igcircle|orn|ullet|lank|a(ht|rdbl)|rokenbar)))\b</string>
 			<key>name</key>
 			<string>constant.character.latex</string>
 		</dict>
 		<dict>
 			<key>include</key>
-			<string>source.tex</string>
+			<string>text.tex</string>
 		</dict>
 	</array>
 	<key>scopeName</key>
-	<string>text.latex</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>3BEEA00C-6B1D-11D9-B8AD-000D93589AF6</string>
 </dict>
