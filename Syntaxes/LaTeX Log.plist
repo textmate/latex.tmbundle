@@ -94,8 +94,24 @@
 		<dict>
 			<key>begin</key>
 			<string>(&lt;)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.begin.log.latex</string>
+				</dict>
+			</dict>
 			<key>end</key>
 			<string>(&gt;)</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.end.log.latex</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.unquoted.other.filename.log.latex</string>
 			<key>patterns</key>
@@ -118,7 +134,7 @@
 		</dict>
 	</array>
 	<key>scopeName</key>
-	<string>source.log.error.latex</string>
+	<string>text.log.latex</string>
 	<key>uuid</key>
 	<string>F68ACE95-7DB3-4DFB-AA8A-89988B116B5C</string>
 </dict>
