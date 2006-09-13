@@ -727,7 +727,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>name</key>
-			<string>meta.cite.latex</string>
+			<string>meta.citation.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
