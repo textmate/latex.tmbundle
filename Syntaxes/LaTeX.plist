@@ -393,7 +393,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(?:\s*)((\\)begin)(\{)(\w+[*]?)(\})</string>
+			<string>(?:\s*)((\\)begin)(\{)(itemize|enumerate|description|list)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -426,6 +426,49 @@
 			<string>((\\)end)(\{)(\4)(\})(?:\s*\n)?</string>
 			<key>name</key>
 			<string>meta.function.environment.list.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>text.tex.latex</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(?:\s*)((\\)begin)(\{)(\w+[*]?)(\})</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.be.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.function.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.latex</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>((\\)end)(\{)(\4)(\})(?:\s*\n)?</string>
+			<key>name</key>
+			<string>meta.function.environment.general.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
