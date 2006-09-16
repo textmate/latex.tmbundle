@@ -88,6 +88,9 @@
 				<array>
 					<string>7190DABA-FE8B-4DC7-9D31-3A727A8647CD</string>
 					<string>DDF6786A-A88D-48A2-A9C7-474236A7DFE2</string>
+					<string>0E817E24-DC11-42A5-BBBD-EEF1FD282B2F</string>
+					<string>F59D0C3A-B5AC-40D6-AB07-05CE8CB784A9</string>
+					<string>DE9EAA9B-066B-4677-84AA-98B7D52F6223</string>
 				</array>
 				<key>name</key>
 				<string>Tables</string>
@@ -146,6 +149,9 @@
 	<string>LaTeX</string>
 	<key>ordering</key>
 	<array>
+		<string>F59D0C3A-B5AC-40D6-AB07-05CE8CB784A9</string>
+		<string>DE9EAA9B-066B-4677-84AA-98B7D52F6223</string>
+		<string>0E817E24-DC11-42A5-BBBD-EEF1FD282B2F</string>
 		<string>37C520F9-A379-4BBC-AF62-22F7C0B63955</string>
 		<string>06BAABEC-B819-4778-94FF-C744CF5DD7CD</string>
 		<string>0E901597-FFB6-4D81-A57D-821A9B5089A5</string>

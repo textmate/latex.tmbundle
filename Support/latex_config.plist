@@ -12,6 +12,10 @@
 		ds = '\\displaystyle';
 		displaystyle = '\\displaystyle';
 		
+		hf = '\\hfill';
+		vf = '\\vfill';
+		usep = '\\usepackage';
+		
 		sec = '\\section{$1}';
 		sub = '\\subsection{$1}';
 		ssub = '\\subsubsection{$1}';
