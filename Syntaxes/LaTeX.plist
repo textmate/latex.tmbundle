@@ -338,8 +338,6 @@
 					(\{)										# Open Bracket
 						(array|tabular[xy*]?)
 					(\})										# Close Bracket
-					(\s*)
-					(\{)
 					(\s*\n)?				# Match to end of line absent of content
 				</string>
 			<key>captures</key>
