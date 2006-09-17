@@ -8,7 +8,7 @@ $0${TM_CURRENT_LINE/^[^&amp;]+|[^&amp;]+$|([^&amp;]+)/ (?1: )/g}</string>
 	<key>keyEquivalent</key>
 	<string></string>
 	<key>name</key>
-	<string>New Line</string>
+	<string>Add Row</string>
 	<key>scope</key>
 	<string>text.tex.latex meta.function.environment.tabular.latex</string>
 	<key>uuid</key>

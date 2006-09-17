@@ -8,11 +8,11 @@
 			<key>argument</key>
 			<dict>
 				<key>action</key>
-				<string>findNext</string>
+				<string>findPrevious</string>
 				<key>findInProjectIgnoreCase</key>
 				<true/>
 				<key>findString</key>
-				<string>(?&lt;=&amp; )|(&lt;=&amp;)(?! )|(?&lt;=\n)|(?&lt;=\\end\{[^}]\})</string>
+				<string>^|(?&lt;=&amp; )|(?&lt;=&amp;)(?! )|(?=\\begin\{(?:tabular|array))</string>
 				<key>ignoreCase</key>
 				<false/>
 				<key>regularExpression</key>
@@ -29,12 +29,12 @@
 		</dict>
 	</array>
 	<key>keyEquivalent</key>
-	<string>^	</string>
+	<string>^</string>
 	<key>name</key>
-	<string>Next Cell</string>
+	<string>Previous Cell</string>
 	<key>scope</key>
 	<string>text.tex.latex meta.cell.environment.tabular.latex</string>
 	<key>uuid</key>
-	<string>DE9EAA9B-066B-4677-84AA-98B7D52F6223</string>
+	<string>00C8CABF-24A3-4EB0-BC86-B670F3CC95D6</string>
 </dict>
 </plist>
