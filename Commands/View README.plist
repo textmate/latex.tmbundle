@@ -34,7 +34,7 @@ class TreeNode
     @next = TreeNode.new(@parent, @count + 1)
   end
   def new_heading
-    "&lt;h#{@level}&gt;&lt;a name='sect_#{index.join '.'}'&gt;#{index.join '.'}&lt;/span&gt; #{@heading}&lt;/h#{@level}&gt;"
+    "&lt;h#{@level}&gt;&lt;a name='sect_#{index.join '.'}'&gt;#{index.join '.'}&lt;/a&gt; #{@heading}&lt;/h#{@level}&gt;"
   end
 end
 
