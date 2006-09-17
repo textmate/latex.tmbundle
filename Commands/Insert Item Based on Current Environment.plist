@@ -60,7 +60,7 @@ end</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.tex.latex meta.function.environment</string>
+	<string>text.tex.latex meta.function.environment.list.latex</string>
 	<key>uuid</key>
 	<string>948DDCF2-0EB5-46A3-B970-09597D268BAF</string>
 </dict>
