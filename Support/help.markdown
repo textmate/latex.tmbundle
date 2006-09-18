@@ -129,7 +129,7 @@ Writing LaTeX often requires typing some amount of standard commands and environ
 
 ### Completing Commands and Environments
 
-The LaTeX bundle contains two commands that, if you type a lot of LaTeX, will become your best friends. They are `Insert Environment Based on Current Word`, bound by default to `⌃⌘{`, and `Insert Command Based on Current Word`, bound by default to `⌃⌘}`. They create an environment/command based on the current word, or with a default editable text in the absence of a current word. They are smart enough to understand a number of “standard” shortcuts, also called triggers. For instance, typing `thm` and then calling the `Insert Environment Based on Current Word` command creates:
+The LaTeX bundle contains two commands that, if you type a lot of LaTeX, will become your best friends. They are `Insert Environment Based on Current Word`, bound by default to `⌘{`, and `Insert Command Based on Current Word`, bound by default to `⌃⌘}`. They create an environment/command based on the current word, or with a default editable text in the absence of a current word. They are smart enough to understand a number of “standard” shortcuts, also called triggers. For instance, typing `thm` and then calling the `Insert Environment Based on Current Word` command creates:
 
         \begin{theorem}
             | ← insertion point
