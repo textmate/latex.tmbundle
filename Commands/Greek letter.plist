@@ -6,16 +6,9 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
-require "#{ENV['TM_SUPPORT_PATH']}/lib/plist"
 require "#{ENV['TM_SUPPORT_PATH']}/lib/exit_codes"
-file = File.expand_path('~/Library/Preferences/com.macromates.textmate.latex_config.plist')
-if !FileTest.exist?(file) then
-  file = ENV['TM_BUNDLE_SUPPORT'] + "/latex_config.plist"
-end
-
-File.open(file) do |f|
-  @plist = PropertyList::load(f)
-end
+require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/config_helper.rb"
+@plist = Config.load
 shortcutHash = @plist['symbols']
 currentWord = STDIN.read
 if (shortcutHash.has_key?(currentWord)) then

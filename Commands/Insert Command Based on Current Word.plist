@@ -6,16 +6,8 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
-require "#{ENV['TM_SUPPORT_PATH']}/lib/plist"
-file = File.expand_path('~/Library/Preferences/com.macromates.textmate.latex_config.plist')
-if !FileTest.exist?(file) then
-  file = ENV['TM_BUNDLE_SUPPORT'] + "/latex_config.plist"
-end
-
-File.open(file) do |f|
-  # puts f.read
-  @plist = PropertyList::load(f)
-end
+require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/config_helper.rb"
+@plist = Config.load
 shortcuts = @plist['commands']
 if ENV['TM_SCOPE'].match('beamer') then
   shortcuts.update(@plist['commands_beamer'])
