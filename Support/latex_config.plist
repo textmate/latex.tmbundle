@@ -5,16 +5,22 @@
 		tt = '\\texttt{$1} ';
 		sf = '\\textsf{$1} ';
 		sc = '\\textsc{$1} ';
+		e  = '\\emph{$1} ';
 		em = '\\emph{$1} ';
 		fc = '\\footcite{$1} ';
 		fn = '\\footnote{$1} ';
 		cli = '\\lstinline{$1} ';
 		ds = '\\displaystyle';
-		displaystyle = '\\displaystyle';
+		dis = '\\displaystyle';
 		
 		hf = '\\hfill';
 		vf = '\\vfill';
-		usep = '\\usepackage';
+		
+		dc = '\\documentclass{${1:article}}\n';
+		nc = '\\newcommand{$1}{$2}';
+		rnc = '\\renewcommand{$1}{$2}';
+		usep = '\\usepackage{$1}';
+		geo = '\\usepackage[left=${1:2cm},right=${2:2cm},top=${3:1cm},bottom=${4:2cm}]{geometry}';
 		
 		sec = '\\section{$1}';
 		sub = '\\subsection{$1}';
@@ -24,9 +30,6 @@
 		par = '\\paragraph{$1}';
 		subp = '\\subparagraph{$1}';
 
-		dc = '\\documentclass{${1:article}}\n';
-		nc = '\\newcommand{$1}{$2}';
-		rnc = '\\renewcommand{$1}{$2}';
 		
 		fr = '\\frac{${1:num}}{$0}';
 		frac = '\\frac{${1:num}}{$0}';

@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
 require ENV['TM_SUPPORT_PATH'] +'/lib/escape.rb'
-print "\\\\${1:text${2:bf}}{#{if s = ENV['TM_SELECTED_TEXT'] then e_sn(s) else '$3' end}}"</string>
+print "\\\\${1:emph}{#{if s = ENV['TM_SELECTED_TEXT'] then e_sn(s) else '$2' end}}"</string>
 	<key>fallbackInput</key>
 	<string>word</string>
 	<key>input</key>
