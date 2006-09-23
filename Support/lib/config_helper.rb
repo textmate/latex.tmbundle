@@ -31,7 +31,7 @@ module Config
         default_list
       when default_list.is_a?(Hash) && user_list.is_a?(Hash)
         new_hash = Hash.new
-        (default_list.keys + user_list.keys).uniq.each do |key|
+        (user_list.keys + default_list.keys ).uniq.each do |key|
           new_hash[key] = merge_plists(default_list[key],user_list[key])
         end
         new_hash

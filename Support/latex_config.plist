@@ -76,7 +76,7 @@
 			triggers = ( eq, eqn, equation );
 		};
 		eqnarray = {
-			triggers = ( eqa, equation );
+			triggers = ( eqa, eqnarray );
 		};
 
 		questions = {
