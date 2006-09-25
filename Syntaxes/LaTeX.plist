@@ -813,7 +813,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>(?x)
 					(
 						(\\)										# Marker
-						(?:foot)?(?:full)?							# Function Name
+						(?:foot)?(?:full)?(?:no)?				# Function Name
 						cite
 						(?:al)?(?:t|p|author|year(?:par)?|title)?
 						\*?											# Optional Unabreviated
