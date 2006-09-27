@@ -1,16 +1,12 @@
 # Installing LaTeX
 
-Before using LaTeX, you need a working version of LaTeX installed. We recommend that you use the [MacTeX][] package to install the necessary parts. The package will also install for you some very useful applications. (If you feel comfortable with the command line, you may use [MacPorts][] (previously Darwinports) or [Fink][] if you prefer.)
+To use `Typeset & View` and other commands from the LaTeX bundle you will need to install a TeX package separately.
 
-No matter which method you use, make sure that the [`PATH` variable][path-var] contains a path to the various latex executables, particularly `pdflatex`. For instance it might contain something like this:
+We recommend that you use [MacTeX][] to install the necessary parts as it comes with a standard “no questions asked” installer.
 
-    /usr/local/teTeX/bin/powerpc-apple-darwin-current
-
-Note: The i-installer should automatically create this setup in `/etc/profile`.
+As of this writing, the installer also takes care of updating your [`PATH` variable][path-var] (by modifying `/etc/profile`) so TextMate will be able to find the installed `pdflatex`. If you are using another distribution you may need to setup the path manually.
 
 [mactex]: http://www.tug.org/~koch/
-[macports]: http://www.macports.org/
-[fink]: http://fink.sourceforge.net/
 [path-var]: http://macromates.com/textmate/manual/shell_commands#search_path
 
 # Building a LaTeX File
