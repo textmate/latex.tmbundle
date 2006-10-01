@@ -13,7 +13,7 @@ def escape(str)
   end
 end
 # First we change all space sequences of length $TM_TAB_SIZE to tabs.
-data=STDIN.read.gsub(/ {#{ENV['TM_TAB_SIZE'].to_i}}/,"\t").split("\n")
+data=STDIN.read.strip.gsub(/ {#{ENV['TM_TAB_SIZE'].to_i}}/,"\t").split("\n")
 first_line = data.shift
 count=first_line.scan(/\t/).length+1;
 result=["\\begin{tabular}{#{"c" * count}}"];
