@@ -19,7 +19,7 @@ count=first_line.scan(/\t/).length+1;
 result=["\\begin{tabular}{#{"c" * count}}"];
 hl = "\\hline"
 result &lt;&lt; hl &lt;&lt; escape(first_line) &lt;&lt; hl 
-result += data.map{|line| escape(line)}
+result += data.map{|line| escape(line.strip)}
 result &lt;&lt; hl &lt;&lt; "\\end{tabular}"
 puts result.join("\n")</string>
 	<key>input</key>
