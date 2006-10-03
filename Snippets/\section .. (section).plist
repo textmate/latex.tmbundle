@@ -5,7 +5,7 @@
 	<key>content</key>
 	<string>\section{${1:section name}}\label{sec:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}} % (fold)
 ${0:$TM_SELECTED_TEXT}
-% section (end)</string>
+% section $2 (end)</string>
 	<key>name</key>
 	<string>Section</string>
 	<key>scope</key>

@@ -5,7 +5,7 @@
 	<key>content</key>
 	<string>\paragraph{${1:paragraph name}}\label{ssub:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g/}}} % (fold)
 ${0:$TM_SELECTED_TEXT}
-% paragraph (end)</string>
+% paragraph $2 (end)</string>
 	<key>name</key>
 	<string>Paragraph</string>
 	<key>scope</key>
