@@ -39,15 +39,18 @@ if (results)
     end
   }
   envName = theArray.pop
-  puts("")
+  str_to_add = "\n"
   if (/\\begin\{/.match(textArray[linesbefore]))
-    print "\t"
+    str_to_add &lt;&lt; "\t"
   end
   if (toInsert.has_key?(envName))
-    print(toInsert[envName])
+    str_to_add &lt;&lt; toInsert[envName]
+  elsif ["cases","align","aligned","gather","gathered","split"].include?(envName)
+    str_to_add = "\\\\\\\\" + str_to_add
   else
-    print("\\item ")
+    str_to_add &lt;&lt; "\\item "
   end
+  print str_to_add
 else
   print("\n")
 end</string>
@@ -60,7 +63,7 @@ end</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.tex.latex meta.function.environment.list.latex</string>
+	<string>text.tex.latex meta.function.environment</string>
 	<key>uuid</key>
 	<string>948DDCF2-0EB5-46A3-B970-09597D268BAF</string>
 </dict>
