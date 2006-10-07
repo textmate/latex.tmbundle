@@ -3,18 +3,27 @@
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>if [[ -z $TM_DIRECTORY ]]
-	then filename=$TM_DROPPED_FILE
-	else 
-		filename=${TM_DROPPED_FILE#${TM_DIRECTORY}}
-fi
-echo "\\\\begin{figure}[\${1:htbp}]
-	\\\\begin{center}
-		\\\\includegraphics[height=\${2:3in}]{$filename}
-	\\\\end{center}
-	\\\\caption{\${4:caption}}
-	\\\\label{fig:\${5:label}}
-\\\\end{figure}"</string>
+	<string>#!/usr/bin/env ruby
+require 'pathname'
+filename = Pathname.new(ENV['TM_DROPPED_FILE'])
+dir = ENV['TM_DIRECTORY'] || ""
+filename = filename.relative_path_from(Pathname.new(dir)) if dir != ""
+case ENV['TM_MODIFIER_FLAGS']
+when /OPTION/
+	puts ["\\\\begin{center}",
+	" \\\\includegraphics[height=\${1:3in}]{#{filename}}",
+"\\\\end{center}"].join("\n")
+when /SHIFT/
+  puts "\\\\includegraphics[height=\${1:3in}]{#{filename}}"
+else
+  puts ["\\\\begin{figure}[\${1:htbp}]",
+"	\\\\begin{center}",
+"		\\\\includegraphics[height=\${2:3in}]{#{filename}}",
+"	\\\\end{center}",
+"	\\\\caption{\${4:caption}}",
+"	\\\\label{fig:\${5:label}}",
+"\\\\end{figure}"].join("\n")
+end</string>
 	<key>draggedFileExtensions</key>
 	<array>
 		<string>jpg</string>
