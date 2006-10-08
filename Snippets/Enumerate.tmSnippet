@@ -3,16 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\[
-	$0
-\\</string>
-	<key>keyEquivalent</key>
-	<string>^[</string>
+	<string>\\begin{enumerate}
+	\item $0
+\\end{enumerate}</string>
 	<key>name</key>
-	<string>Unnumbered Equation</string>
+	<string>Enumerate</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
+	<key>tabTrigger</key>
+	<string>enum</string>
 	<key>uuid</key>
-	<string>7F7578B0-58F3-44B3-9278-1CBEA9C58208</string>
+	<string>03F30619-2739-447F-953D-DB225185E4D2</string>
 </dict>
 </plist>

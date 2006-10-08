@@ -3,16 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\\[
-	$0
-\\</string>
-	<key>keyEquivalent</key>
-	<string>^[</string>
+	<string>\\begin{description}
+	\item[$1] $0
+\\end{description}</string>
 	<key>name</key>
-	<string>Unnumbered Equation</string>
+	<string>Description</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
+	<key>tabTrigger</key>
+	<string>desc</string>
 	<key>uuid</key>
-	<string>7F7578B0-58F3-44B3-9278-1CBEA9C58208</string>
+	<string>2F926912-E5E6-4965-8E50-0603765DD0E6</string>
 </dict>
 </plist>

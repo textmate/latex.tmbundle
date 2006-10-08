@@ -33,7 +33,7 @@
 	<key>name</key>
 	<string>Next Cell</string>
 	<key>scope</key>
-	<string>text.tex.latex meta.cell.environment.tabular.latex</string>
+	<string>text.tex.latex meta.row.environment.tabular.latex</string>
 	<key>uuid</key>
 	<string>DE9EAA9B-066B-4677-84AA-98B7D52F6223</string>
 </dict>
