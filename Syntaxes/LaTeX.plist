@@ -101,7 +101,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>((\\)begin)(\{)(lstlisting)(\})(?:(\[).*(\]))?(\s*\n)?</string>
+			<string>(?:\s*)((\\)begin)(\{)(lstlisting)(\})(?:(\[).*(\]))?(\s*\n)?</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -145,7 +145,7 @@
 			<key>contentName</key>
 			<string>source.python.embedded</string>
 			<key>end</key>
-			<string>(?:^\s*)?((\\)end)(\{)(lstlisting)(\})</string>
+			<string>((\\)end)(\{)(lstlisting)(\})</string>
 			<key>name</key>
 			<string>meta.function.embedded.python.latex</string>
 			<key>patterns</key>
@@ -158,7 +158,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>((\\)begin)(\{)(verbatim)(\})</string>
+			<string>(?:\s*)((\\)begin)(\{)(verbatim)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -226,7 +226,7 @@
 			<key>comment</key>
 			<string>These two patterns match the \begin{document} and \end{document} commands, so that the environment matching pattern following them will ignore those commands.</string>
 			<key>match</key>
-			<string>((\\)begin)(\{)(document)(\})</string>
+			<string>(?:\s*)((\\)begin)(\{)(document)(\})</string>
 			<key>name</key>
 			<string>meta.function.begin-document.latex</string>
 		</dict>
@@ -260,7 +260,7 @@
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>((\\)end)(\{)(document)(\})</string>
+			<string>(?:\s*)((\\)end)(\{)(document)(\})</string>
 			<key>name</key>
 			<string>meta.function.end-document.latex</string>
 		</dict>
