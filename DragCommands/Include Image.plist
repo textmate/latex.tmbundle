@@ -5,7 +5,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
 require 'pathname'
-filename = Pathname.new(ENV['TM_DROPPED_FILE'])
+filename = Pathname.new(ENV['TM_DROPPED_FILE']).realpath
 dir = ENV['TM_DIRECTORY'] || ""
 filename = filename.relative_path_from(Pathname.new(dir)) if dir != ""
 case ENV['TM_MODIFIER_FLAGS']
