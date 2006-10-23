@@ -33,7 +33,7 @@ TODO: Update this section if a new command is created for `latexmk.pl`
 
 If you work on a large project, you would want to use TextMate's [support for projects][projects], and split your project in chapters, using a master file that then includes the various chapters via `\include`.
 
-If you have created a project file, then you can set *project specific environment variables* via the project info button on the bottom right of the project drawer. You should set such a variable with a name of `TM_LATEX_MASTER` and the full path to the master tex file as value. If you are instead using a scratch folder, you can use the trick explained [here][scratch-folder]. Effectively, if a folder has a file called `.textmate_init`, then whatever shell code is specified there will be executed right before any command that is ran for a file located in this folder. So for instance this file could contain a line like this:
+If you have created a project file, then you can set *project specific environment variables* via the project info button on the bottom right of the project drawer. You should set such a variable with a name of `TM_LATEX_MASTER` and the **absolute path to the master tex file** as value. If you are instead using a scratch folder, you can use the trick explained [here][scratch-folder]. Effectively, if a folder has a file called `.textmate_init`, then whatever shell code is specified there will be executed right before any command that is ran for a file located in this folder. So for instance this file could contain a line like this:
 
     export TM_LATEX_MASTER=master_file_or_whatever
 
