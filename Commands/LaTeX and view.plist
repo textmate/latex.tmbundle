@@ -28,7 +28,7 @@ fi
 TEX=${TM_LATEX_COMPILER:-$DEF_TEX}
 
 # Add our tex directory to the TEXINPUTS variable so e.g. pdfsync is found (even when the user hasn’t installed it)
-export TEXINPUTS="$TM_BUNDLE_SUPPORT/tex//:$(kpsewhich --expand-var '$TEXINPUTS')"
+export TEXINPUTS="$TM_BUNDLE_SUPPORT/tex//:$(kpsewhich -progname "$TEX" --expand-var '$TEXINPUTS')"
 
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"
