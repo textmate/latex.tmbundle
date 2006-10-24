@@ -19,6 +19,7 @@
 		<key>items</key>
 		<array>
 			<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
+			<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
 			<string>------------------------------------</string>
 			<string>0A27EDBA-2C7C-44CF-B2B0-1B3B7BF8D7D6</string>
 			<string>4C05FB6C-AA32-4217-8788-D840D49E82CD</string>
@@ -188,6 +189,7 @@
 	<string>LaTeX</string>
 	<key>ordering</key>
 	<array>
+		<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
 		<string>FB412036-2D62-41A3-BDFA-F897933132AA</string>
 		<string>E70BB4A8-2654-4ED3-A187-9BFD024870E7</string>
 		<string>6E70284B-1694-46F5-BA99-FC3CC22705C6</string>
