@@ -18,11 +18,17 @@ M=${TM_LATEX_MASTER:-$TM_FILEPATH}
 DIR=`dirname "$M"`
 FILE=`basename "$M"`
 PDF="${FILE%.*}.pdf"
+DVI="${FILE%.*}.dvi"
+PS="${FILE%.*}.ps"
 CWD="`pwd`/"
 
-# Set up TeX compiler, fallback to xelatex if document indicates it
+# Set up TeX compiler, fallback to xelatex if document indicates it, 
 if grep -Esq '\\usepackage{.*(xunicode|fontspec)|program=xelatex' "$M"
 	then DEF_TEX=xelatex
+# or to latex+dvi2ps if pstricks is there
+elif grep -Esq '\\usepackage{.*pstricks}' "$M"
+  then DEF_TEX=latex
+  TEX_PSTRICKS=1
 	else DEF_TEX=pdflatex
 fi
 TEX=${TM_LATEX_COMPILER:-$DEF_TEX}
@@ -52,7 +58,9 @@ fi
 # Compile.
 run_tex "$FILE" 2&gt;&amp;1| latexErrWarnHtml.py -v
 RC=$?
-
+if (($TEX_PSTRICKS == 1)); then
+  dvips "$DVI" -o "$PS" &amp;&amp; ps2pdf "$PS"
+fi
 # If there is output and it's newer than the current document, then we go directly to preview or link to it.
 if [ -s "${PDF}" -a "$PDF" -nt "$FILE" ]; then
 	if [[ "$V" == html ]]; then
