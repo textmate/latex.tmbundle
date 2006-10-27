@@ -58,7 +58,7 @@ fi
 # Compile.
 run_tex "$FILE" 2&gt;&amp;1| latexErrWarnHtml.py -v
 RC=$?
-if (($TEX_PSTRICKS == 1)); then
+if [[ $TEX_PSTRICKS ]]; then
   dvips "$DVI" -o "$PS" &amp;&amp; ps2pdf "$PS"
 fi
 # If there is output and it's newer than the current document, then we go directly to preview or link to it.
