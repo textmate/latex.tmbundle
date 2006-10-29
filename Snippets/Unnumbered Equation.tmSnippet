@@ -5,7 +5,7 @@
 	<key>content</key>
 	<string>\\[
 	$0
-\\</string>
+\\]</string>
 	<key>keyEquivalent</key>
 	<string>^[</string>
 	<key>name</key>
