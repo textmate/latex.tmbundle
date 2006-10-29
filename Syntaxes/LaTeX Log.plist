@@ -58,7 +58,7 @@
 			<key>match</key>
 			<string>.*Info.*</string>
 			<key>name</key>
-			<string>comment.documentation</string>
+			<string>comment.block.documentation</string>
 		</dict>
 		<dict>
 			<key>match</key>
