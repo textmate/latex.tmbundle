@@ -7,66 +7,9 @@
 	<key>command</key>
 	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
 html_header "LaTeX Bundle Help" "LaTeX"
-
-ruby -w &lt;&lt;'RUBY'
-class TreeNode
-  attr_accessor :heading, :parent, :level, :count
-  def initialize(parent = nil, count = 1)
-    @parent = parent
-    @level = parent ? parent.level + 1 : 0
-    @count = count
-    @child = @next = nil
-    @heading = nil
-  end
-  def index
-    @parent ? [@parent.index, @count].flatten : []
-  end
-  def to_s
-    child = @child ? "\n&lt;ul style='list-style: none'&gt;\n#{@child}&lt;/ul&gt;\n" : ''
-    entry = @heading ? "&lt;li&gt;#{index.join '.'} &lt;a href='#sect_#{index.join '.'}'&gt;#{@heading}&lt;/a&gt;#{child}&lt;/li&gt;\n" : child
-    @next ? entry.to_s + @next.to_s : entry.to_s
-  end
-  def new_child
-    abort "Already has child" if @child
-    @child = TreeNode.new(self)
-  end
-  def new_sibling
-    @next = TreeNode.new(@parent, @count + 1)
-  end
-  def new_heading
-    "&lt;h#{@level}&gt;&lt;a name='sect_#{index.join '.'}'&gt;#{index.join '.'}&lt;/a&gt; #{@heading}&lt;/h#{@level}&gt;"
-  end
-end
-
-file = "#{ENV['TM_BUNDLE_SUPPORT']}/help.markdown"
-#file = File.expand_path '~/Library/tm/Bundles/Latex.tmbundle/Support/help.markdown'
-IO.popen("Markdown.pl|SmartyPants.pl", "r+") do |io|
-
-  Thread.new { io &lt;&lt; IO.read(file); io.close_write }
-
-  root = tree_node = TreeNode.new
-  contents = ''
-  io.each_line do |line|
-    if line =~ %r{^&lt;h(.)&gt;(.*)&lt;/h.&gt;$} then
-      level = $1.to_i
-      tree_node = tree_node.parent while tree_node.level &gt; level
-      tree_node = tree_node.new_child while tree_node.level &lt; level
-      tree_node = tree_node.new_sibling if tree_node.heading
-      tree_node.heading = $2
-
-      contents &lt;&lt; "\n&lt;hr /&gt;\n" if level == 1
-      line = tree_node.new_heading
-    end
-    contents &lt;&lt; line
-  end
-
-  puts "&lt;h2&gt;Table of Contents&lt;/h2&gt;"
-  puts root
-  puts contents
-end
-RUBY
-
-html_footer</string>
+"$TM_SUPPORT_PATH/lib/markdown_to_help.rb" "$TM_BUNDLE_SUPPORT/help.markdown"
+html_footer
+</string>
 	<key>dontFollowNewOutput</key>
 	<true/>
 	<key>input</key>
