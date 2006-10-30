@@ -68,7 +68,6 @@
 			triggers = ( 'desc', 'description');
 			content = "\t\\item[$1] $0";
 		};
-
 		document = {
 			triggers = ( doc, document );
 		};
@@ -91,16 +90,13 @@
 		
 		table = {
 			triggers = ( tbl, table);
-			content = "	
-	
-			\\begin{center}
-		\\begin{tabular}{${3:c}}
-			${4}
-		\\end{tabular}
+			content = "\t\\begin{center}
+	\\begin{tabular}{${3:c}}
+		${4}
+	\\end{tabular}
 	\\end{center}
 	\\caption{${1:caption}}
-	\\label{${2:label}}"
-			;
+	\\label{${2:label}}";
 		};
 	};
 	labeled_environments = {
