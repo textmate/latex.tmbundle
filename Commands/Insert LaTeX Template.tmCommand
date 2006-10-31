@@ -12,6 +12,7 @@
 # http://macromates.com/textmate/manual/snippets#snippets for what this implies.
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/dialog.rb'
+require ENV['TM_SUPPORT_PATH'] + '/lib/escape.rb'
 path = ENV['HOME'] + '/Library/Application Support/LaTeX/Templates/'
 unless FileTest.directory?(path) then
   TextMate.exit_show_tool_tip "You need to create the directory #{path} first and\n populate it with your favorite LaTeX template files before using this command."
@@ -20,9 +21,7 @@ else
   TextMate.exit_tool_tip "You need to populate the template directory with some template files!" if files.empty?
   file_choice = Dialog.request_item(:title =&gt; "Inserting LaTeX Template", :prompt =&gt; "Please select a template file to insert", :items =&gt; files)
   unless file_choice.nil? then
-    File.open(path + file_choice) do |f|
-      print f.read
-    end
+    print(e_sn(File.read(path + file_choice)))
   end
 end</string>
 	<key>input</key>
