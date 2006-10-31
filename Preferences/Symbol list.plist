@@ -18,6 +18,7 @@
 		s/^\\subsection\*?(?:\[[^]]*\])?\{(.+)\}/   $1/; # \section
 		s/^\\subsubsection\*?(?:\[[^]]*\])?\{(.+)\}/    $1/; # \section
 		s/^\\paragraph\*?(?:\[[^]]*\])?\{(.+)\}/     $1/; # \paragraph
+		s/^\\subparagraph\*?(?:\[[^]]*\])?\{(.+)\}/      $1/; # \paragraph
 		s/^\\.*\{(.+)\}/$1/;     # take care of everything else
 	</string>
 	</dict>
