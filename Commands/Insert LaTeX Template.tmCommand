@@ -19,10 +19,10 @@ unless FileTest.directory?(path) then
 else
   files = `ls "#{path}"`.split("\n")
   TextMate.exit_tool_tip "You need to populate the template directory with some template files!" if files.empty?
-  file_choice = Dialog.request_item(:title =&gt; "Inserting LaTeX Template", :prompt =&gt; "Please select a template file to insert", :items =&gt; files)
-  unless file_choice.nil? then
-    print(e_sn(File.read(path + file_choice)))
-  end
+  file_choice = Dialog.menu(files)
+	# Need to fix this exit call here. It should not remove the "temp" part.
+  TextMate.exit_discard if file_choice.nil?
+  print(e_sn(File.read(path + files[file_choice])))
 end</string>
 	<key>input</key>
 	<string>none</string>
