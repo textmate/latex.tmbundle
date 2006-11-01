@@ -12,8 +12,6 @@ if s.empty? then
   print "\\#{style}{$1}"
 elsif s =~ /^\\#{Regexp.escape style}\{(.*)\}$/ then
   print "${1:#{esc $1}}"
-elsif ENV.has_key? 'TM_SELECTED_TEXT'
-  print "${1:\\#{style}{#{esc s}\\}}"
 else
   print "\\#{style}{#{e_sn s}}"
 end
