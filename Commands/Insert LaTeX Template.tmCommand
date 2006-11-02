@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/ruby
 # This command is meant to be used for quick insertion of your LaTeX template files. They should be placed
-# in the directory ~/Library/Application Support/LaTeX/Temmlates. A pop-up is provided, letting you pick
+# in the directory ~/Library/Application Support/LaTeX/Templates. A pop-up is provided, letting you pick
 # the template file you want inserted, and then it gets inserted as a snippet. See
 # http://macromates.com/textmate/manual/snippets#snippets for what this implies.
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
@@ -20,7 +20,6 @@ else
   files = `ls "#{path}"`.split("\n")
   TextMate.exit_tool_tip "You need to populate the template directory with some template files!" if files.empty?
   file_choice = Dialog.menu(files)
-	# Need to fix this exit call here. It should not remove the "temp" part.
   TextMate.exit_discard if file_choice.nil?
   print(e_sn(File.read(path + files[file_choice])))
 end</string>
