@@ -4,7 +4,7 @@
 <dict>
 	<key>content</key>
 	<string>\begin{${1:itemize}}
-${TM_SELECTED_TEXT/^((.*):\s*)?(.+)$/\n\t\item(?1: [ $2 ]) $3/g}
+${TM_SELECTED_TEXT/^(([^\\]*):\s*)?(.+)$/\n\t\item(?1: [ $2 ]) $3/g}
 \end{${1:itemize}}
 </string>
 	<key>keyEquivalent</key>
