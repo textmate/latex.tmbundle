@@ -12,10 +12,14 @@ phrase = STDIN.read
 CMD = '"$TM_SUPPORT_PATH/bin"/LatexCitekeys.rb -full=true ' + (phrase == "" ? "" : "-p=#{phrase} " ) + '"$TM_LATEX_BIB" "$TM_LATEX_MASTER" "$TM_FILEPATH"'
 res = `#{CMD}`
 TextMate.exit_discard if res == ""
-items = res.scan(/'(.*?)',/).map{|i| i[0]}
-choice = Dialog.menu(items)
-TextMate.exit_discard if choice.nil?
-print items[choice].slice(/^[^%]+/).strip
+items = res.scan(/'(.*?)'(,|\z)/).map{|i| i[0]}
+choice = items[0]
+if items.length &gt; 1
+	choice = Dialog.menu(items)
+	TextMate.exit_discard if choice.nil?
+	choice = items[choice]
+end
+print choice.slice(/^[^%]+/).strip
 </string>
 	<key>fallbackInput</key>
 	<string>word</string>
