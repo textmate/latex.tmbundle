@@ -62,7 +62,7 @@ if [[ $TEX_PSTRICKS ]]; then
   dvips "$DVI" -o "$PS" &amp;&amp; ps2pdf "$PS"
 fi
 # If there is output and it's newer than the current document, then we go directly to preview or link to it.
-if [ -s "${PDF}" -a "$PDF" -nt "$FILE" ]; then
+if [ -s "${PDF}" -a ! "$PDF" -ot "$FILE" ]; then
 	if [[ "$V" == html ]]; then
 		WEB_LOC="tm-file://${DIR}/${PDF}"
 		WEB_LOC="${WEB_LOC//\\#/%23}"
