@@ -27,10 +27,12 @@ numWarns = 0
 numErrs = 0
 numRuns = 0
 inbibidx = False
+isFatal = False
 
 print '<pre>'
 line = sys.stdin.readline()
 while line:
+    line = line.rstrip("\n")
     # print out first line
     if re.match('^This is',line):
         print line[:-1]
@@ -56,6 +58,18 @@ while line:
         print line
         print '</div>'
         numErrs = numErrs + 1
+    if re.match('^Error: pdflatex', line):
+        numErrs = numErrs + 1
+        print '<div class="error">'
+        print line
+        line = sys.stdin.readline()
+        if line and re.match('^ ==> Fatal error occurred', line):
+            print line.rstrip("\n")
+            print '</div>'
+            isFatal = True
+        else:
+            print '</div>'
+            continue
 
     le = re.match('([^:]*):(\d+): LaTeX Error:(.*)',line)
     if le:
@@ -126,7 +140,9 @@ while line:
 eCode = 0
 if numWarns > 0 or numErrs > 0:
     print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings in " + str(numRuns) + " runs"
-    if numErrs > 0:
+    if isFatal:
+        eCode = 3
+    elif numErrs > 0:
         eCode = 2
     else:
         eCode = 1
