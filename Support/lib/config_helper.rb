@@ -19,7 +19,7 @@ module Config
       load_file(user_file)
     end
     def load_default_file
-      default_file = ENV['TM_BUNDLE_SUPPORT'] + "/latex_config.plist"
+      default_file = ENV['TM_BUNDLE_SUPPORT'] + "/latex.config"
       load_file(default_file)
     end
     # Merges the two data structures read from plists. The structures should consist of hashes, arrays and strings only. User_list takes precedence in case of ties.
