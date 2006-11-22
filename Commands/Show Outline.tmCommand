@@ -10,7 +10,7 @@ require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/escape.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
 html_header "LaTeX Document Outline", "LaTeX"
-REGEX = /\\(part|chapter|section|subsection|subsubsection|paragraph|subparagraph)\*?\{([^}]*)\}/
+REGEX = /\\(part|chapter|section|subsection|subsubsection|paragraph|subparagraph)\*?(?:\[([^\]]*)\]|\{([^\}]*)\})/
 INCLUDE_REGEX = /\\(?:input|include)\{([^}]*)\}/
 class String
   def adjust_end(new_piece)
@@ -38,7 +38,7 @@ def outline_points(filename)
     name = ""
   end
   data.split("\n").each_with_index do |line, i|
-    points &lt;&lt; [name,i+1,$1,$2] if line.match(REGEX)
+    points &lt;&lt; [name,i+1,$1,$2 || $3] if line.match(REGEX)
     points += outline_points(filename.adjust_end($1)) if line.match(INCLUDE_REGEX)
   end
   points
