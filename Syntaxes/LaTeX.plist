@@ -223,7 +223,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(?:\s*)((\\)begin)(\{)(verbatim)(\})</string>
+			<string>(?:\s*)((\\)begin)(\{)((?:V|v)erbatim)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -255,7 +255,7 @@
 			<key>contentName</key>
 			<string>markup.raw.verbatim.latex</string>
 			<key>end</key>
-			<string>((\\)end)(\{)(verbatim)(\})</string>
+			<string>((\\)end)(\{)(\4)(\})</string>
 			<key>name</key>
 			<string>meta.function.verbatim.latex</string>
 		</dict>
