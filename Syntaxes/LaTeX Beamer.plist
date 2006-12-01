@@ -18,7 +18,7 @@
 	<array>
 		<dict>
 			<key>begin</key>
-			<string>((\\)begin)(\{)(frame)(\})</string>
+			<string>(?:\s*)((\\)begin)(\{)(frame)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
