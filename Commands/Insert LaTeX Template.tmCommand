@@ -21,7 +21,15 @@ else
   TextMate.exit_tool_tip "You need to populate the template directory with some template files!" if files.empty?
   file_choice = Dialog.menu(files)
   TextMate.exit_discard if file_choice.nil?
-  print(e_sn(File.read(path + files[file_choice])))
+  text = File.read(path + files[file_choice]).scan(/\n|.+\n?/)
+  first_line = text[0]
+# The user can force the template to be interpreted as a snippet, by
+# adding this line: #!TEX style=snippet
+  if first_line.match(/^%!TEX\s+style\s*=\s*snippet\s*/) then
+    print text[1..-1]
+  else
+    print(e_sn(text.join("")))
+  end
 end</string>
 	<key>input</key>
 	<string>none</string>
