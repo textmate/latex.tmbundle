@@ -50,7 +50,7 @@
 			<key>end</key>
 			<string>((\\)end)(\{)(frame)(\})</string>
 			<key>name</key>
-			<string>meta.function.frame.latex</string>
+			<string>meta.function.environment.frame.latex</string>
 			<key>patterns</key>
 			<array>
 				<dict>
