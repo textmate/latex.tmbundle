@@ -19,7 +19,7 @@
 		<key>items</key>
 		<array>
 			<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
-			<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
+			<string>AED3E04B-6881-44F8-9229-AE534D36CD6B</string>
 			<string>------------------------------------</string>
 			<string>0A27EDBA-2C7C-44CF-B2B0-1B3B7BF8D7D6</string>
 			<string>4C05FB6C-AA32-4217-8788-D840D49E82CD</string>
@@ -82,6 +82,16 @@
 				</array>
 				<key>name</key>
 				<string>Environments</string>
+			</dict>
+			<key>AED3E04B-6881-44F8-9229-AE534D36CD6B</key>
+			<dict>
+				<key>items</key>
+				<array>
+					<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
+					<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
+				</array>
+				<key>name</key>
+				<string>Project Management</string>
 			</dict>
 			<key>B6CFC0AB-E9F1-4A8A-A1F2-AB129ACEDBF0</key>
 			<dict>
@@ -189,6 +199,7 @@
 	<string>LaTeX</string>
 	<key>ordering</key>
 	<array>
+		<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
 		<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
 		<string>FB412036-2D62-41A3-BDFA-F897933132AA</string>
 		<string>E70BB4A8-2654-4ED3-A187-9BFD024870E7</string>
@@ -258,6 +269,7 @@
 		<string>47F30BA1-6B1D-11D9-9A60-000D93589AF6</string>
 		<string>3BEEA00C-6B1D-11D9-B8AD-000D93589AF6</string>
 		<string>2ACA20AA-B008-469B-A04A-6DE232973ED8</string>
+		<string>D0853B20-ABFF-48AB-8AB9-3D8BA0755C05</string>
 		<string>6BC8DE6F-9360-4C7E-AC3C-971385945346</string>
 		<string>027D6AF4-E9D3-4250-82A1-8A42EEFE4F76</string>
 		<string>F68ACE95-7DB3-4DFB-AA8A-89988B116B5C</string>
@@ -265,6 +277,7 @@
 		<string>C99FA1E9-E535-4CB2-BC31-7157318B67B5</string>
 		<string>76086A65-97AA-48FE-B3C6-026B25E15958</string>
 		<string>678850E6-C630-4EEF-B307-14ADEE2B2994</string>
+		<string>C6B468AE-5BD0-48D1-9D54-F4D09C42C505</string>
 		<string>4830CA58-1F08-421C-9703-BE586DC1FE7A</string>
 		<string>D4961019-E3EF-4D0C-904F-FBE2C74A6DE9</string>
 		<string>73CE04EB-B78D-456A-AB07-CAED9C4E2BDB</string>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+options = STDIN.read.scan(/\\(?:include|input|includegraphics)(?:\[[^\]]*\])?\{([^\}]*)\}/)
+if options.empty?
+	print "Did not find any appropriate item to open in #{ENV['TM_SELECTED_TEXT'] ? "selection" : "current line" }"
+else
+  filepath = `kpsewhich "#{options[0]}"`.chomp
+  `open "#{filepath}"`
+end</string>
+	<key>fallbackInput</key>
+	<string>line</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^@l</string>
+	<key>name</key>
+	<string>Open Included Item</string>
+	<key>output</key>
+	<string>showAsTooltip</string>
+	<key>scope</key>
+	<string>text.tex.latex</string>
+	<key>uuid</key>
+	<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
+</dict>
+</plist>
