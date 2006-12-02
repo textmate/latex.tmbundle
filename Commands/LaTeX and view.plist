@@ -8,6 +8,7 @@
 	<string># Source some support functions we need.
 . "${TM_SUPPORT_PATH}/lib/html.sh"
 . "${TM_SUPPORT_PATH}/lib/webpreview.sh"
+. "${TM_BUNDLE_SUPPORT}/lib/options.sh"
 
 # Get the viewer program. Any program (that works with open -a &lt;name&gt;) can be used,
 # except 'html' which is reserved to mean the internal HTML window. This is also the
@@ -16,6 +17,25 @@ V=${TM_LATEX_VIEWER:-html}
 EL=${TM_LATEX_ERRLVL:-1}
 M=${TM_LATEX_MASTER:-$TM_FILEPATH}
 DIR=`dirname "$M"`
+
+parse_options "$M"
+# Now parse the options from the master file (if any)
+while [[ ${#OPTIONS_root} -gt 0 &amp;&amp; "${OPTIONS_root}" != "$M" ]]; do
+  # this way you can chain master files if you really want
+  # For example, a section file can reference its chapter, which can reference the book
+  # Yes, this means options in master files override options in the individual file
+  # this may not exactly be ideal, but it's easiest. Show me a file structure that this
+  # is a problem for, and I'll show a poorly-designed LaTeX file
+  if [[ "$OPTIONS_root" == /* ]]
+  then M="$OPTIONS_root"
+  else M="$DIR/$OPTIONS_root"
+  fi
+  unset -v OPTIONS_root
+  DIR=`dirname "$M"`
+  parse_options "$M"
+done
+
+# More variables
 FILE=`basename "$M"`
 PDF="${FILE%.*}.pdf"
 DVI="${FILE%.*}.dvi"
@@ -23,13 +43,14 @@ PS="${FILE%.*}.ps"
 CWD="`pwd`/"
 
 # Set up TeX compiler, fallback to xelatex if document indicates it, 
-if grep -Esq '\\usepackage{.*(xunicode|fontspec)|program=xelatex' "$M"
-	then DEF_TEX=xelatex
+if [[ $"OPTIONS_program" == "xelatex" ]] || grep -Esq '\\usepackage{.*(xunicode|fontspec)|program=xelatex' "$M"; then
+  DEF_TEX=xelatex
 # or to latex+dvi2ps if pstricks is there
-elif grep -Esq '\\usepackage{.*pstricks}' "$M"
-  then DEF_TEX=latex
+elif grep -Esq '\\usepackage{.*pstricks}' "$M"; then
+  DEF_TEX=latex
   TEX_PSTRICKS=1
-	else DEF_TEX=pdflatex
+else
+  DEF_TEX=pdflatex
 fi
 TEX=${TM_LATEX_COMPILER:-$DEF_TEX}
 
@@ -51,8 +72,8 @@ require_cmd "$TEX" "You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt
 
 run_tex () {
 if [ "$TEX" != latexmk.pl ]
-	then "$TEX" ${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style} "$1"
-	else "$TEX" -f -r "${TM_BUNDLE_SUPPORT}/latexmkrc" "$1"
+  then "$TEX" ${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style} "$1"
+  else "$TEX" -f -r "${TM_BUNDLE_SUPPORT}/latexmkrc" "$1"
 fi
 }
 
@@ -64,30 +85,30 @@ if [[ $TEX_PSTRICKS ]]; then
 fi
 # If there is output and it's newer than the current document, then we go directly to preview or link to it.
 if [ -s "${PDF}" -a ! "$PDF" -ot "$FILE" ]; then
-	if [[ "$V" == html ]]; then
-		WEB_LOC="tm-file://${DIR}/${PDF}"
-		WEB_LOC="${WEB_LOC//\\#/%23}"
-		if (($RC &lt; 3)); then
-			if (($RC &gt;= $EL))
-				then link "${WEB_LOC}" 'Click Here to Preview'
-				else redirect "${WEB_LOC}"
-			fi
-		fi
-	else
-		V=${V%.app} # strip potential .app extension
-		if find_app &gt;/dev/null "$V.app"; then
-			open -a "$V" "$PDF"
-			if [[ "$V" == TeXniscope &amp;&amp; -f "${PDF}sync" ]]; then
-				SCRIPT=$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh
-				[[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
-			fi
-			if (($RC &lt;= $EL)); then exit_discard; fi
-		else
-			strong "Error locating external viewer: $V"
-		fi
-	fi
+  if [[ "$V" == html ]]; then
+    WEB_LOC="tm-file://${DIR}/${PDF}"
+    WEB_LOC="${WEB_LOC//\\#/%23}"
+    if (($RC &lt; 3)); then
+      if (($RC &gt;= $EL))
+        then link "${WEB_LOC}" 'Click Here to Preview'
+        else redirect "${WEB_LOC}"
+      fi
+    fi
+  else
+    V=${V%.app} # strip potential .app extension
+    if find_app &gt;/dev/null "$V.app"; then
+      open -a "$V" "$PDF"
+      if [[ "$V" == TeXniscope &amp;&amp; -f "${PDF}sync" ]]; then
+        SCRIPT=$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh
+        [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
+      fi
+      if (($RC &lt;= $EL)); then exit_discard; fi
+    else
+      strong "Error locating external viewer: $V"
+    fi
+  fi
 else
-	strong "Error: PDF file not written to disk"
+  strong "Error: PDF file not written to disk"
 fi
 html_footer
 </string>
