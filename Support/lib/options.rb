@@ -24,4 +24,21 @@ module LaTeX
     end
     opts
   end
+  
+  # Returns the root file for the given filepath
+  # If no master exists, return the given filepath
+  # Stop searching after 10 iterations, in case of loop
+  def self.master(filepath)
+    return nil if filepath.nil?
+    master = File.expand_path(filepath)
+    opts = options(master)
+    iter = 0
+    while opts.has_key?('root') and iter < 10
+      new_master = File.expand_path(File.join(File.dirname(master), opts['root']))
+      break if new_master == master
+      master = new_master
+      iter += 1
+    end
+    master
+  end
 end
