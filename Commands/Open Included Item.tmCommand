@@ -5,14 +5,40 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby
-options = STDIN.read.scan(/\\(?:include|input|includegraphics)(?:\[[^\]]*\])?\{([^\}]*)\}/)
+	<string>${TM_RUBY:-ruby} &lt;&lt;"RUBY"
+require "#{ENV['TM_SUPPORT_PATH']}/lib/escape.rb"
+
+# find the root master file, because all include paths will be relative to that
+# Make sure we don't get into a loop, because it's possible. break after 10 iterations
+require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/options"
+master = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']
+unless master.nil?
+  opts = LaTeX.options(ENV['TM_FILEPATH'])
+  iter = 0
+  while opts.has_key?('root') and iter &lt; 10
+    new_master = File.expand_path(File.join(File.dirname(master), opts['root']))
+    break if new_master == master
+    master = new_master
+    opts = LaTeX.options(master)
+    iter += 1
+  end
+end
+
+Dir.chdir(File.dirname(master)) unless master.nil?
+
+input = ENV['TM_SELECTED_TEXT'] || ENV['TM_CURRENT_LINE']
+options = input.scan(/\\(?:include|input|includegraphics|lstinputlisting)(?:%.*\n[ \t]*)?(?&gt;\[.*?\])?(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/)
 if options.empty?
 	print "Did not find any appropriate item to open in #{ENV['TM_SELECTED_TEXT'] ? "selection" : "current line" }"
 else
-  filepath = `kpsewhich "#{options[0]}"`.chomp
-  `open "#{filepath}"`
-end</string>
+  filepath = `kpsewhich #{e_sh options[0]}`.chomp
+  if filepath.empty?
+    print "Could not locate file for path `#{options[0]}'"
+  else
+    `open #{e_sh filepath}`
+  end
+end
+RUBY</string>
 	<key>fallbackInput</key>
 	<string>line</string>
 	<key>input</key>
