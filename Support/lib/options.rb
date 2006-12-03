@@ -4,6 +4,8 @@
 # I'd like to replace options.sh with this, but I'd be doing just as much
 # work in options.sh to parse the output of this script as I'm already doing
 
+require 'pathname'
+
 module LaTeX
   # parse any %!TEX options in the first 20 lines of the file
   # Only use the first 20 lines for compatibility with TeXShop
@@ -30,15 +32,16 @@ module LaTeX
   # Stop searching after 10 iterations, in case of loop
   def self.master(filepath)
     return nil if filepath.nil?
-    master = File.expand_path(filepath)
+    master = Pathname.new(filepath).cleanpath
     opts = options(master)
     iter = 0
     while opts.has_key?('root') and iter < 10
-      new_master = File.expand_path(File.join(File.dirname(master), opts['root']))
+      new_master = (master.parent + Pathname.new(opts['root'])).cleanpath
       break if new_master == master
       master = new_master
+      opts = options(master)
       iter += 1
     end
-    master
+    master.to_s
   end
 end
