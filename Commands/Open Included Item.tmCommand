@@ -14,7 +14,7 @@ master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
 Dir.chdir(File.dirname(master)) unless master.nil?
 
 input = ENV['TM_SELECTED_TEXT'] || ENV['TM_CURRENT_LINE']
-options = input.scan(/\\(?:include|input|includegraphics|lstinputlisting)(?:%.*\n[ \t]*)?(?&gt;\[.*?\])?(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/)
+options = input.scan(/\\(?:include|input|includegraphics|lstinputlisting)(?:%.*\n[ \t]*)?(?&gt;\[.*?\])?(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/m)
 if options.empty?
 	print "Did not find any appropriate item to open in #{ENV['TM_SELECTED_TEXT'] ? "selection" : "current line" }"
 else
