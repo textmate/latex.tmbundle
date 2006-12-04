@@ -14,7 +14,7 @@
 
 trash_aux_files () { # takes 1 arg, path to TeX file
   cd "`dirname "$1"`"
-  FILE="`basename -s.tex "$1"`"
+  FILE="`basename "${1%.*}"`"
   
   rm -f "$FILE".{aux,pdfsync,mtc*,log,bbl,aux,toc,bmt,out,nav,snm,vrb,blg,aux.bak}
 }
