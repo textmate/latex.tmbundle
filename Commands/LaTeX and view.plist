@@ -46,7 +46,7 @@ CWD="`pwd`/"
 if [[ $"OPTIONS_program" == "xelatex" ]] || grep -Esq '\\usepackage{.*(xunicode|fontspec)|program=xelatex' "$M"; then
   DEF_TEX=xelatex
 # or to latex+dvi2ps if pstricks is there
-elif grep -Esq '\\usepackage{.*pstricks}' "$M"; then
+elif grep -Esq '\\usepackage{.*(pstricks|xyling|pst-asr|OTtablx)}' "$M"; then
   DEF_TEX=latex
   TEX_PSTRICKS=1
 else
@@ -73,7 +73,13 @@ require_cmd "$TEX" "You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt
 run_tex () {
 if [ "$TEX" != latexmk.pl ]
   then "$TEX" ${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style} "$1"
-  else "$TEX" -f -r "${TM_BUNDLE_SUPPORT}/latexmkrc" "$1"
+  else
+    if [[ $TEX_PSTRICKS ]]
+      then
+        "$TEX" -f -ps "$1"
+      else
+        "$TEX" -f -r "${TM_BUNDLE_SUPPORT}/latexmkrc" "$1"
+    fi
 fi
 }
 
