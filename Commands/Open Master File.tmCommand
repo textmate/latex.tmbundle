@@ -11,19 +11,10 @@ require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/options"
 
 master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
 
-Dir.chdir(File.dirname(master)) unless master.nil?
-
-input = ENV['TM_SELECTED_TEXT'] || ENV['TM_CURRENT_LINE']
-options = input.scan(/\\(?:include|input|includegraphics|lstinputlisting)(?:%.*\n[ \t]*)?(?&gt;\[.*?\])?(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/m)
-if options.empty?
-	print "Did not find any appropriate item to open in #{ENV['TM_SELECTED_TEXT'] ? "selection" : "current line" }"
+if master
+  `open -a TextMate #{e_sh master}`
 else
-  filepath = `kpsewhich #{e_sh options[0]}`.chomp
-  if filepath.empty?
-    print "Could not locate file for path `#{options[0]}'"
-  else
-    `open #{e_sh filepath}`
-  end
+  echo 'No master file was defined.'
 end
 RUBY
 </string>
@@ -34,12 +25,12 @@ RUBY
 	<key>keyEquivalent</key>
 	<string>^@l</string>
 	<key>name</key>
-	<string>Open Included Item</string>
+	<string>Open Master File</string>
 	<key>output</key>
 	<string>showAsTooltip</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
-	<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
+	<string>BC36A3C7-F9B2-47D4-83FB-2BEB93F14889</string>
 </dict>
 </plist>

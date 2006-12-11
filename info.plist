@@ -89,6 +89,7 @@
 				<array>
 					<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
 					<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
+					<string>BC36A3C7-F9B2-47D4-83FB-2BEB93F14889</string>
 				</array>
 				<key>name</key>
 				<string>Project Management</string>
@@ -201,6 +202,7 @@
 	<key>ordering</key>
 	<array>
 		<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
+		<string>BC36A3C7-F9B2-47D4-83FB-2BEB93F14889</string>
 		<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
 		<string>FB412036-2D62-41A3-BDFA-F897933132AA</string>
 		<string>E70BB4A8-2654-4ED3-A187-9BFD024870E7</string>
