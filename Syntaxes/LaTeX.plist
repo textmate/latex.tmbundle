@@ -95,7 +95,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>text.tex</string>
+					<string>$self</string>
 				</dict>
 			</array>
 		</dict>
