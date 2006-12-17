@@ -12,14 +12,22 @@
 	<string>#!/usr/bin/env ruby
 require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/dialog.rb"
-phrase = STDIN.read
+phrase = STDIN.read.chomp
+
 CMD = '"$TM_SUPPORT_PATH/bin"/LatexLabelCompletions.rb -full=true ' + (phrase == "" ? "" : "-p=#{phrase} " ) + '"$TM_LATEX_BIB" "$TM_LATEX_MASTER" "$TM_FILEPATH"'
 res = `#{CMD}`
 TextMate.exit_discard if res == ""
 items = res.split("\n")
 choice = Dialog.menu(items)
 TextMate.exit_discard if choice.nil?
-print items[choice].slice(/^[^%]+/).strip
+selection = items[choice].slice(/^[^%]+/).strip
+if ENV['TM_SCOPE'].match(/label/) then
+  print selection
+elsif selection.match(/^eq(n)?:/)
+  print "\\\\${1:eqref}\{#{selection}\}"
+else
+  print "\\\\${1:ref}\{#{selection}\}"
+end
 </string>
 	<key>fallbackInput</key>
 	<string>word</string>
@@ -34,9 +42,9 @@ print items[choice].slice(/^[^%]+/).strip
 	<key>name</key>
 	<string>Label From Document…</string>
 	<key>output</key>
-	<string>replaceSelectedText</string>
+	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.tex.latex meta.reference.label</string>
+	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>9A3FE182-40AB-4980-AB6C-32DDA22DE41D</string>
 </dict>
