@@ -17,11 +17,10 @@ when /SHIFT/
   puts "\\\\includegraphics[height=\${1:3in}]{#{filename}}"
 else
   puts ["\\\\begin{figure}[\${1:htbp}]",
-"	\\\\begin{center}",
+"	\\\\centering",
 "		\\\\includegraphics[height=\${2:3in}]{#{filename}}",
-"	\\\\end{center}",
 "	\\\\caption{\${4:caption}}",
-"	\\\\label{fig:\${5:label}}",
+"	\\\\label{fig:\${5:#{filename.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}}",
 "\\\\end{figure}"].join("\n")
 end</string>
 	<key>draggedFileExtensions</key>
