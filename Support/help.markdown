@@ -43,7 +43,7 @@ When the `TM_LATEX_MASTER` variable is set, then all LaTeX commands use the mast
 
 There is a way to arrange it so that the individual chapters can be compiled by themselves, and still work fine when included via the `\include` command. If that is something that might interest you, then [this thread from the mailing list][included-chapters] might interest you. 
 
-TODO: Mention that `TM_LATEX_MATER` can be relative to the project directory (or directory of current file) -- this way one can set it in the global preferences if one always use the same name of the master file.
+TODO: Mention that `TM_LATEX_MASTER` can be relative to the project directory (or directory of current file) -- this way one can set it in the global preferences if one always use the same name of the master file.
 
 [projects]: http://macromates.com/textmate/manual/working_with_multiple_files#working_with_multiple_files
 [scratch-folder]: http://lists.macromates.com/pipermail/textmate/2006-July/012151.html
@@ -69,12 +69,15 @@ To avoid this open the preferences for Adobe Reader and go to the Internet categ
 
 ## External Previewers
 
-You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview, [TeXShop][], and [TeXniscope][].
+You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview, [TeXShop][], and [TeXniscope][]. There is also a new very nice previewer, [PDFView][].
+
+We recommend you use either PDFView, if you are only going to be dealing with pdf files, or TeXniscope if you will also be dealing with dvi files. They both support pdfsync, though TeXniscope is not a universal binary as of this writing.
 
 To use one of these previewers, you must set the `TM_LATEX_VIEWER` environment variable to the name of the previewer. For example for TeXniscope, you would set the variable to have a value of `TeXniscope`.
 
 [texshop]: http://www.uoregon.edu/~koch/texshop/
 [texniscope]: http://www.ing.unipi.it/~d9615/homepage/texniscope.html
+[pdfview]: http://pdfview.sourceforge.net/
 
 ## Preview Options
 
@@ -88,7 +91,7 @@ If the document could not be built, then the error messages are always shown reg
 
 # PDFSync
 
-The [pdfsync][] package allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of TeXniscope.
+The [pdfsync][] package allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of TeXniscope of PDFView.
 
 [pdfsync]: http://itexmac.sourceforge.net/pdfsync.html
 
@@ -106,14 +109,19 @@ You need to perform the following steps to enable synchronization:
 
         Editor: mate
         Editor options: -l %line "%file"
+In PDFView, these are already set by default.
 
-    This assumes that you have installed `mate` (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking (⌘) at a location in the PDF file (as shown in TeXniscope) should take you to the corresponding location in TextMate.
+    This assumes that you have installed `mate` (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking (⌘) at a location in the PDF file (as shown in TeXniscope/PDFView) should take you to the corresponding location in TextMate.
 
 **Note 1:** PDFSync does not work when your filename contains a space.
 
 **Note 2:** The granularity of the synchronization data is generally “per paragraph”, so going from TextMate to TeXniscope or back will generally locate just the paragraph nearest your desired position.
 
-**Note 3:** Problems have been reported with the universal build of TeXniscope. So Intel users may want to run TeXniscope under Rosetta.
+**Note 3:** Problems have been reported with the universal build of TeXniscope. So Intel users may want to run TeXniscope under Rosetta, or use PDFView instead.
+
+**Note 4:** As of this writing, PDFView does not support pdfsync from TextMate to PDFView for projects with a master file.
+
+TODO: Remove Note 4 once this is fixed.
 
 # Working With LaTeX
 
@@ -207,6 +215,8 @@ If there are many matching completions, it is often more convenient to use the p
 
 Note further, that the completion commands will recursively search inside `\include`'d files as well, starting from either the current file or `TM_LATEX_MASTER`, if that is set.
 
+The both the label and bibliography completion commands actually work even when not inside a `\ref{}` or `\cite{}` block. They will then insert the `\ref` or `\cite` for you. You can just start typing the first letters of the label or bibliography data you want, and then press `⌥⎋` to activate the commands.
+
 ## Advanced Tasks
 
 ### LaTeX Beamer
@@ -221,7 +231,7 @@ In order for all this to work, make sure that the language for the document is s
 
 There are two key drag and drop commands in LaTeX: 
 
-* You can drag an image file in to the document and have it surrounded by a complete figure environment.
+* You can drag an image file in to the document and have it surrounded by a complete figure environment. Using the modifier key `⌥` while dragging inserts the image inside a `center` environment. Using `⇧` instead inserts only the `\includegraphics` line.
 * You can drag in another .tex file to have that file added to your document with an `\include` command.
 
 ### Templates
