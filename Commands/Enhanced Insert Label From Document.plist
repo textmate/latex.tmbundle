@@ -44,7 +44,7 @@ end
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.tex.latex</string>
+	<string>text.tex.latex, meta.reference.label.latex</string>
 	<key>uuid</key>
 	<string>9A3FE182-40AB-4980-AB6C-32DDA22DE41D</string>
 </dict>

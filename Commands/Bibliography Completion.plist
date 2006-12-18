@@ -37,7 +37,7 @@ end
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
-	<string>text.tex.latex</string>
+	<string>text.tex.latex, meta.citation.latex</string>
 	<key>uuid</key>
 	<string>65E2109C-4309-4079-BD25-17D8B31F03CD</string>
 </dict>
