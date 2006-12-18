@@ -28,7 +28,7 @@ end
 	<key>keyEquivalent</key>
 	<string>@}</string>
 	<key>name</key>
-	<string>Command Based on Current Word</string>
+	<string>Command Based on Current Word / Selection</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>

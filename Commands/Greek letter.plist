@@ -23,7 +23,7 @@ end</string>
 	<key>keyEquivalent</key>
 	<string>@\</string>
 	<key>name</key>
-	<string>LaTeX Symbol Based on Current Word</string>
+	<string>LaTeX Symbol Based on Current Word / Selection</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>

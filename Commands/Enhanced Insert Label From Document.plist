@@ -40,7 +40,7 @@ end
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
-	<string>Label From Document…</string>
+	<string>Label Based on Current Word / Selection…</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>

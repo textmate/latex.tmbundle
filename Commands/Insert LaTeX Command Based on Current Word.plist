@@ -59,7 +59,7 @@ end
 	<key>keyEquivalent</key>
 	<string>@{</string>
 	<key>name</key>
-	<string>Environment Based on Current Word</string>
+	<string>Environment Based on Current Word / Selection</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
