@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Symbol List</string>
 	<key>scope</key>
-	<string>text.tex.latex meta.function.section.latex</string>
+	<string>text.tex.latex meta.section.latex</string>
 	<key>settings</key>
 	<dict>
 		<key>showInSymbolList</key>
