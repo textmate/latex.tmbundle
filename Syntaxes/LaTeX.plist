@@ -980,13 +980,11 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</dict>
 			<key>name</key>
 			<string>meta.reference.label.latex</string>
-			<key>comment</key>
-			<string>Officially, only letters, digits, and punctiation characters can be part of the label name. However, enumerating these creates a problem with accented characters. So unless you know of a nice way to do that, the "not }" will work...</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>match</key>
-					<string>[^}]+</string>
+					<string>[a-zA-Z0-9\.,:/*!^_-]</string>
 					<key>name</key>
 					<string>constant.other.reference.label.latex</string>
 				</dict>
@@ -1029,9 +1027,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<array>
 				<dict>
 					<key>match</key>
-					<string>[^}]+</string>
-					<key>comment</key>
-					<string>Officially, only letters, digits, and punctiation characters can be part of the label name. However, enumerating these creates a problem with accented characters. So unless you know of a nice way to do that, the "not }" will work...</string>
+					<string>[a-zA-Z0-9\.,:/*!^_-]</string>
 					<key>name</key>
 					<string>variable.parameter.definition.label.latex</string>
 				</dict>
