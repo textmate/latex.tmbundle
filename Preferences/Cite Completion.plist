@@ -9,7 +9,7 @@
 	<key>settings</key>
 	<dict>
 		<key>completionCommand</key>
-		<string>"$TM_SUPPORT_PATH/bin/LatexCiteCompletions.sh"</string>
+		<string>"$TM_SUPPORT_PATH/bin/LatexCiteKeys.rb"</string>
 		<key>disableDefaultCompletion</key>
 		<integer>1</integer>
 	</dict>

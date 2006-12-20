@@ -8,16 +8,18 @@
 	<string>#!/usr/bin/env ruby
 require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/dialog.rb"
+require ENV["TM_SUPPORT_PATH"] + "/lib/LaTeXUtils.rb"
 phrase = STDIN.read.chomp
-CMD = '"$TM_SUPPORT_PATH/bin"/LatexCitekeys.rb -full=true ' + (phrase == "" ? "" : "-p=#{phrase} " ) + '"$TM_LATEX_BIB" "$TM_LATEX_MASTER" "$TM_FILEPATH"'
-res = `#{CMD}`
-TextMate.exit_discard if res == ""
-items = res.scan(/'(.*?)'(,|\z)/).map{|i| i[0]}
-choice = items[0]
+include LaTeX
+items = LaTeX.get_citations.map{|i| i.citekey + "   % "+i.description}
+items = items.grep(/#{phrase}/) if phrase != ""
+TextMate.exit_discard if items.empty?
 if items.length &gt; 1
 	choice = Dialog.menu(items)
 	TextMate.exit_discard if choice.nil?
 	choice = items[choice]
+else
+  choice = items[0]
 end
 selection = choice.slice(/^[^%]+/).strip
 if ENV['TM_SCOPE'].match(/citation/) then
