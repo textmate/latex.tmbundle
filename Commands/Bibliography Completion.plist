@@ -11,21 +11,25 @@ require ENV["TM_SUPPORT_PATH"] + "/lib/dialog.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/LaTeXUtils.rb"
 phrase = STDIN.read.chomp
 include LaTeX
-items = LaTeX.get_citations.map{|i| i.citekey + "   % "+i.description}
-items = items.grep(/#{phrase}/) if phrase != ""
-TextMate.exit_discard if items.empty?
-if items.length &gt; 1
-	choice = Dialog.menu(items)
-	TextMate.exit_discard if choice.nil?
-	choice = items[choice]
-else
-  choice = items[0]
-end
-selection = choice.slice(/^[^%]+/).strip
-if ENV['TM_SCOPE'].match(/citation/) then
-  print selection
-else
-  print "\\\\${1:cite}\{#{selection}\}"
+begin
+	items = LaTeX.get_citations.map{|i| i.citekey + "   % "+i.description}
+  items = items.grep(/#{phrase}/) if phrase != ""
+  TextMate.exit_discard if items.empty?
+  if items.length &gt; 1
+  	choice = Dialog.menu(items)
+  	TextMate.exit_discard if choice.nil?
+  	choice = items[choice]
+  else
+    choice = items[0]
+  end
+  selection = choice.slice(/^[^%]+/).strip
+  if ENV['TM_SCOPE'].match(/citation/) then
+    print selection
+  else
+    TextMate.exit_insert_snippet("\\\\${1:cite}\{#{selection}\}")
+  end
+rescue Exception =&gt; e
+  TextMate.exit_insert_text(e.message)
 end
 </string>
 	<key>fallbackInput</key>
@@ -37,7 +41,7 @@ end
 	<key>name</key>
 	<string>Citation Based on Current Word / Selection…</string>
 	<key>output</key>
-	<string>insertAsSnippet</string>
+	<string>afterSelectedText</string>
 	<key>scope</key>
 	<string>text.tex.latex, meta.citation.latex</string>
 	<key>uuid</key>

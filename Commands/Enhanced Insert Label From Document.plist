@@ -15,23 +15,27 @@ require ENV["TM_SUPPORT_PATH"] + "/lib/dialog.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/LaTeXUtils.rb"
 phrase = STDIN.read.chomp
 include LaTeX
-items = LaTeX.get_labels
-items = items.grep(/#{phrase}/) if phrase != ""
-TextMate.exit_discard if items.empty?
-if items.length &gt; 1 then
-  choice = Dialog.menu(items)
-  TextMate.exit_discard if choice.nil?
-  choice = items[choice]
-else
-  choice = items[0]
-end
-selection = choice.slice(/^[^%]+/).strip
-if ENV['TM_SCOPE'].match(/label/) then
-  print selection
-elsif selection.match(/^eq(n)?:/)
-  print "\\\\${1:eqref}\{#{selection}\}"
-else
-  print "\\\\${1:ref}\{#{selection}\}"
+begin
+  items = LaTeX.get_labels
+  items = items.grep(/#{phrase}/) if phrase != ""
+  TextMate.exit_discard if items.empty?
+  if items.length &gt; 1 then
+    choice = Dialog.menu(items)
+    TextMate.exit_discard if choice.nil?
+    choice = items[choice]
+  else
+    choice = items[0]
+  end
+  selection = choice.slice(/^[^%]+/).strip
+  if ENV['TM_SCOPE'].match(/label/) then
+    print selection
+  elsif selection.match(/^eq(n)?:/)
+    print "\\\\${1:eqref}\{#{selection}\}"
+  else
+    TextMate.exit_insert_snippet("\\\\${1:ref}\{#{selection}\}")
+  end
+rescue Exception =&gt; e
+  TextMate.exit_insert_text(e.message)
 end
 </string>
 	<key>fallbackInput</key>
@@ -47,7 +51,7 @@ end
 	<key>name</key>
 	<string>Label Based on Current Word / Selection…</string>
 	<key>output</key>
-	<string>insertAsSnippet</string>
+	<string>afterSelectedText</string>
 	<key>scope</key>
 	<string>text.tex.latex, meta.reference.label.latex</string>
 	<key>uuid</key>
