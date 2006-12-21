@@ -11,23 +11,37 @@
 # Switch to the right directory
 cd "${TM_PROJECT_DIRECTORY:-$TM_DIRECTORY}"
 cd "$(dirname "$TM_LATEX_MASTER")"
-
-FILE="$TM_LATEX_MASTER"
-SCRIPT="$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh"
-
-if [[ -x "$SCRIPT" ]]; then
-	"$SCRIPT" &amp;&gt;/dev/console "$TM_LINE_NUMBER" "$TM_FILEPATH" "${FILE%.tex}.pdf"
-	open -a TeXniscope.app
-else
-	echo "Unable to locate TeXniscope."
+PDF="${TM_LATEX_MASTER%.tex}.pdf"
+V=${TM_LATEX_VIEWER%.app} # strip potential .app extension
+if find_app &gt;/dev/null "$V.app"; then
+  open -a "$V" "$PDF"
 fi
+if [[ "$V" == TeXniscope ]]; then
+  SCRIPT="$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh"
+  if [[ -x "$SCRIPT" ]]; then
+  	"$SCRIPT" &amp;&gt;/dev/console "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
+  else
+  	echo "Unable to locate $V."
+  fi
+else
+  if [[ "$V" == PDFView ]]; then
+  SCRIPT="$(find_app PDFView.app)/Contents/MacOS/gotoline.sh"
+    if [[ -x "$SCRIPT" ]]; then
+      "$SCRIPT" &amp;&gt;/dev/console "$TM_LINE_NUMBER" "$PDF"
+    else
+      echo "Unable to locate $V."
+    fi
+  fi
+fi
+
+
 </string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
 	<string>^~@o</string>
 	<key>name</key>
-	<string>Show in TeXniscope (pdfsync)</string>
+	<string>Show in PDF Viewer (pdfsync)</string>
 	<key>output</key>
 	<string>showAsTooltip</string>
 	<key>scope</key>
