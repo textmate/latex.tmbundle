@@ -105,8 +105,12 @@ if [ -s "${PDF}" -a ! "$PDF" -ot "$FILE" ]; then
     if find_app &gt;/dev/null "$V.app"; then
       open -a "$V" "$PDF"
       if [[ "$V" == TeXniscope &amp;&amp; -f "${PDF}sync" ]]; then
-        SCRIPT=$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh
+        SCRIPT="$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh"
         [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
+      fi
+      if [[ "$V" == PDFView &amp;&amp; -f "${PDF}sync" ]]; then
+        SCRIPT="$(find_app PDFView.app)/Contents/MacOS/gotoline.sh"
+        [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$DIR/$PDF"
       fi
       if (($RC &lt;= $EL)); then exit_discard; fi
     else
