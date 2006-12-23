@@ -34,7 +34,7 @@ begin
   else
     TextMate.exit_insert_snippet("\\\\${1:ref}\{#{selection}\}")
   end
-rescue Exception =&gt; e
+rescue RuntimeError =&gt; e
   TextMate.exit_insert_text(e.message)
 end
 </string>
@@ -51,7 +51,7 @@ end
 	<key>name</key>
 	<string>Label Based on Current Word / Selection…</string>
 	<key>output</key>
-	<string>afterSelectedText</string>
+	<string>replaceSelectedText</string>
 	<key>scope</key>
 	<string>text.tex.latex, meta.reference.label.latex</string>
 	<key>uuid</key>

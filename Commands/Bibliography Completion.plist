@@ -28,7 +28,7 @@ begin
   else
     TextMate.exit_insert_snippet("\\\\${1:cite}\{#{selection}\}")
   end
-rescue Exception =&gt; e
+rescue RuntimeError =&gt; e
   TextMate.exit_insert_text(e.message)
 end
 </string>
@@ -41,7 +41,7 @@ end
 	<key>name</key>
 	<string>Citation Based on Current Word / Selection…</string>
 	<key>output</key>
-	<string>afterSelectedText</string>
+	<string>replaceSelectedText</string>
 	<key>scope</key>
 	<string>text.tex.latex, meta.citation.latex</string>
 	<key>uuid</key>
