@@ -3,32 +3,133 @@
 import sys
 import os
 import re
+
+# PyTeXDoc
+# Author:  Brad Miller
+# Last Update: 12/27/2006   -- try to make command compatible with multiple tex distros
+#
+# This script is a hacked together set of heuristics to try and bring some
+# order out of the various bits and pieces of documentation that are strewn 
+# around any given LaTeX distro.
+# texdoctk provides a nice list of packages, along with paths to the documents
+# that are relative to one or more roots.  The root for these documents varies.
+# the catalogue/entries directory contains a set of html files for packages from
+# CPAN....  Sometimes the links to the real documentation are inside these html
+# files and are correct and sometimes they are not.
+# So this script attempts to use find the right path to as many bits of documentation
+# that really exist on your system and make it easy for you to get to them.
+# The packages are displayed in two groups:
+# The first group is the set of packages that you use in your document.
+# The second group is the set of packages as organized in the texdoctk.dat file (if you have one)
+# Finally, if you call the command when your curosor is on a word in TextMate this script will
+# attempt to find the best match for that word as a package and open the documentaiton for that
+# package immediately.
+#
+# because good dvi viewers are quite rare on OS X, I also provide a simple viewDoc.sh script. 
+# viewDoc.sh converts a dvi file (using dvipdfm) and opens it in Previewer.
+
+#TODO make the viewing command configurable
 #TODO: modify this script to produce opml
-#Parse current document or TM_LATEX_MASTER to find \usepackage statements
-#Create a special section of my packages
-
-if os.environ.get("TM_LATEX_MASTER",None):
-    myFile = open(os.environ["TM_LATEX_MASTER"],'r')
-else:
-    myFile = open(os.environ["TM_FILEPATH"],'r')
-mList = []
-packMatch = re.compile(r"^\\usepackage(\[.*\])?\{(\w+)\}")
-for line in myFile:
-    g = packMatch.match(line)
-    if g:
-        mList.append(g.group(2))
-
-
-texMFbase = os.environ["TM_LATEX_DOCBASE"]
-docIndex = texMFbase + "texdoctk/texdoctk.dat"
-docBase = texMFbase + "doc/"
-catalogDir = os.environ["TM_LATEX_HELP_CATALOG"]
+#TODO: See if there is a way to simplify all this....
 
 pathDict = {}
 descDict = {}
 headings = {}
 
-docIndexFile = open(docIndex,'r')
+def findBestDoc(myDir):
+    """findBestDoc
+       Given a directory that should contain documentation find the best format
+       of the documentation available.  peferring pdf, then dvi files.
+    """
+    bestDoc = ""
+    for doc in os.listdir(myDir):
+        if doc.find('.pdf') > 0:
+            bestDoc = doc
+        elif bestDoc == "" and doc.find('.dvi') > 0:
+            bestDoc = doc
+        elif bestDoc == "" and doc.find('.txt') > 0:
+            bestDoc = doc
+        elif bestDoc == "" and doc.find('.tex') > 0:
+            bestDoc = doc
+        elif bestDoc == "" and doc.find('.sty') > 0:
+            bestDoc = doc
+        elif bestDoc == "" and doc.find('README') >= 0:
+            bestDoc = doc
+    return myDir + '/' + bestDoc
+
+
+def makeDocList():
+    """getDocList
+       search all directories under the texmf root for dvi or pdf files that
+       might be documentation...
+    """
+    docDict = {}
+    dviPipe = os.popen("find `kpsewhich --expand-path '$TEXMF'  | tr : ' '` -name \*.dvi")
+    dviFiles = dviPipe.readlines()
+    pdfPipe = os.popen("find `kpsewhich --expand-path '$TEXMF'  | tr : ' '` -name \*.pdf")
+    pdfFiles = pdfPipe.readlines()
+    for doc in dviFiles:
+        key = doc[doc.rfind('/')+1:doc.rfind('.dvi')]
+        docDict[key] = doc[:-1]
+    for doc in pdfFiles:
+        key = doc[doc.rfind('/')+1:doc.rfind('.pdf')]
+        docDict[key] = doc[:-1]
+    return docDict
+
+## Part 1
+## Find all the packages included in this file or its inputs
+##
+if os.environ.get("TM_LATEX_MASTER",None):
+    myFile = open(os.environ["TM_LATEX_MASTER"],'r')
+elif os.environ.get("TM_FILEPATH",None):
+    myFile = open(os.environ["TM_FILEPATH"],'r')
+else:
+    myFile = []
+mList = []
+fList = []
+packMatch = re.compile(r"^\\usepackage(\[.*\])?\{(\w+)\}")
+inpMatch = re.compile(r"^\\(input|include)\{(.*)\}")
+# Search the main file for usepackage statements or includes
+for line in myFile:
+    g = packMatch.match(line)
+    h = inpMatch.match(line)
+    if g:
+        mList.append(g.group(2))
+    elif h:
+        fList.append(h.group(2))
+# check files one level deeper for usepackage statements
+for f in fList:
+    myFile = open(f)
+    for line in myFile:
+        g = packMatch.match(line)
+        if g:
+            mList.append(g.group(2))
+    myFile.close()
+
+## Part 2
+## Parse the texdoctk database of packages
+##
+texMFbase = os.environ["TM_LATEX_DOCBASE"]
+docIndex = os.environ["TEXDOCTKDB"]
+
+docBase = texMFbase + "/" #+ "doc/"
+if docBase[-5:].rfind('doc') < 0:
+    docBase = docBase + "doc/"
+
+catalogDir = os.environ["TM_LATEX_HELP_CATALOG"]
+
+texdocs = os.environ["TMTEXDOCDIRS"].split(':')
+myDict = {}
+for p in texdocs:
+    key = p[p.rfind('/')+1:]
+    myDict[key] = p
+
+docDict = makeDocList()
+
+try:
+    docIndexFile = open(docIndex,'r')
+except:
+    docIndexFile = []
 for line in docIndexFile:
     if line[0] == "#":
         continue
@@ -46,24 +147,50 @@ for line in docIndexFile:
             
         headings[currentHeading].append(key)
         if path.rfind('.sty') >= 0:
-            path = texMFbase + "tex/" + path
+            path = docBase + "tex/" + path
         else:
             path = docBase + path
+            if not os.path.exists(path):  # sometimes texdoctk.dat is misleading...
+                altkey = path[path.rfind("/")+1:path.rfind(".")]
+                if key in docDict:
+                    path = docDict[key]
+                elif altkey in docDict:
+                    path = docDict[altkey]
+                else:
+                    if key in myDict:
+                        path = findBestDoc(myDict[key])
+                    
         pathDict[key] = path.strip()
         descDict[key] = desc.strip()
 
-# supplement texdoctk index with the regular texdoc catalog
-for fname in os.listdir(catalogDir):
+## Part 3
+## supplement texdoctk index with the regular texdoc catalog
+##
+try:
+    catList = os.listdir(catalogDir)
+except:
+    catList = []
+for fname in catList:
     key = fname[:fname.rfind('.html')]
     if key not in pathDict:
-        pathDict[key] = catalogDir + fname
+        pathDict[key] = catalogDir + '/' + fname
         descDict[key] = key
-        
+        if key in docDict:
+            pathDict[key] = docDict[key]
+
+## Part 4
+## if a word was selected then view the documentation for that word
+## using the best available version of the doc as determined above
+##
 cwPackage = os.environ.get("TM_CURRENT_WORD",None)
 if cwPackage in pathDict:
-    os.system("open " + pathDict[cwPackage])
+    os.system("viewDoc.sh " + pathDict[cwPackage])
     sys.exit()
 
+## Part 5
+## Print out the results in html/javascript
+## The java script gives us the nifty expand collapse outline look
+##
 print """
 <style type="text/css"><!--
 .save{
@@ -125,7 +252,7 @@ print "<ul>"
 for p in mList:
     print '<div id="mypkg">'
     if p in pathDict:
-        print """<li><a href="javascript:TextMate.system('open %s', null);" >%s</a>
+        print """<li><a href="javascript:TextMate.system('viewDoc.sh %s', null);" >%s</a>
              </li> """%(pathDict[p],descDict[p])
     else:
         print """<li>%s</li>"""%(p)
@@ -140,8 +267,11 @@ for h in headings:
     print '<div class="dspcont">'
     print "<ul>"
     for p in headings[h]:
-        print """<li><a href="javascript:TextMate.system('open %s', null);">%s</a>
-             </li> """%(pathDict[p],descDict[p])
+        if os.path.exists(pathDict[p]):
+            print """<li><a href="javascript:TextMate.system('viewDoc.sh %s', null);">%s</a>
+                </li> """%(pathDict[p],descDict[p])
+        else:
+            print """<li>%s</li>"""%(p)
     print "</ul>"
     print '</div>'
 print "</ul>"
