@@ -43,12 +43,10 @@ PS="${FILE%.*}.ps"
 CWD="`pwd`/"
 
 # Set up TeX compiler, fallback to xelatex if document indicates it, 
-if [[ $"OPTIONS_program" == "xelatex" ]] || grep -Esq '^[^%]*
-\\usepackage{.*(xunicode|fontspec)|program=xelatex' "$M"; then
+if [[ $"OPTIONS_program" == "xelatex" ]] || grep -Esq '^[^%]*\\usepackage{.*(xunicode|fontspec)|program=xelatex' "$M"; then
   DEF_TEX=xelatex
 # or to latex+dvi2ps if pstricks is there
-elif grep -Esq '^[^%]*
-\\usepackage{.*(pstricks|xyling|pst-asr|OTtablx)}' "$M"; then
+elif grep -Esq '^[^%]*\\usepackage{.*(pstricks|xyling|pst-asr|OTtablx)}' "$M"; then
   DEF_TEX=latex
   TEX_PSTRICKS=1
 else
