@@ -13,6 +13,9 @@
 \catcode`\(=2
 \catcode`\"=2
 
+% The following should not start a math mode.
+\newcolumntype{R}{>{$}r<{$}}
+
 % The following four lines should be all math:
 $\sin(x)$
 $$\sin(x)$$
@@ -109,7 +112,7 @@ $D_1=\{x_1^2\}  \foo{bar}$
 \ref{Reference Label}
 
 % the listing environment 
-\begin{lstlisting}[caption=The Vertex Class,label=lst:vertex,float=htbp]
+\begin{lstlisting}[caption=The Vertex Class,label=lst:vertex,float=htbp] % Python
 class Vertex:
     def __init__(self,num):
         self.id = num

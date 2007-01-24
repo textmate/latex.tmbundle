@@ -1018,7 +1018,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>punctuation.definition.arguments.begin.latex</string>
+					<string>punctuation.definition.arguments.end.latex</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -1300,6 +1300,25 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>(\\)(text(s(terling|ixoldstyle|urd|e(ction|venoldstyle|rvicemark))|yen|n(ineoldstyle|umero|aira)|c(ircledP|o(py(left|right)|lonmonetary)|urrency|e(nt(oldstyle)?|lsius))|t(hree(superior|oldstyle|quarters(emdash)?)|i(ldelow|mes)|w(o(superior|oldstyle)|elveudash)|rademark)|interrobang(down)?|zerooldstyle|o(hm|ne(superior|half|oldstyle|quarter)|penbullet|rd(feminine|masculine))|d(i(scount|ed|v(orced)?)|o(ng|wnarrow|llar(oldstyle)?)|egree|agger(dbl)?|blhyphen(char)?)|uparrow|p(ilcrow|e(so|r(t(housand|enthousand)|iodcentered))|aragraph|m)|e(stimated|ightoldstyle|uro)|quotes(traight(dblbase|base)|ingle)|f(iveoldstyle|ouroldstyle|lorin|ractionsolidus)|won|l(not|ira|e(ftarrow|af)|quill|angle|brackdbl)|a(s(cii(caron|dieresis|acute|grave|macron|breve)|teriskcentered)|cutedbl)|r(ightarrow|e(cipe|ferencemark|gistered)|quill|angle|brackdbl)|g(uarani|ravedbl)|m(ho|inus|u(sicalnote)?|arried)|b(igcircle|orn|ullet|lank|a(ht|rdbl)|rokenbar)))\b</string>
 			<key>name</key>
 			<string>constant.character.latex</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.column-specials.begin.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.column-specials.end.latex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(?:&lt;|&gt;)(\{)\$(\})</string>
+			<key>name</key>
+			<string>meta.column-specials.latex</string>
 		</dict>
 		<dict>
 			<key>include</key>
