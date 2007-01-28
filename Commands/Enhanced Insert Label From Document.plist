@@ -30,7 +30,7 @@ begin
   if ENV['TM_SCOPE'].match(/label/) then
     print selection
   elsif selection.match(/^eq(n)?:/)
-    print "\\\\${1:eqref}\{#{selection}\}"
+    TextMate.exit_insert_snippet "\\\\${1:eqref}\{#{selection}\}"
   else
     TextMate.exit_insert_snippet("\\\\${1:ref}\{#{selection}\}")
   end
