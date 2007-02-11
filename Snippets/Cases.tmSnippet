@@ -4,7 +4,7 @@
 <dict>
 	<key>content</key>
 	<string>\begin{cases}
-	${1:equation}, &amp;\text{ if }${2:case}\\
+	${1:equation}, &amp;\text{ if }${2:case}\\\\
 	$0
 \end{cases}</string>
 	<key>name</key>

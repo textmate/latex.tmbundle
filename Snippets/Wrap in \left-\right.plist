@@ -7,7 +7,7 @@
 	<key>keyEquivalent</key>
 	<string>^L</string>
 	<key>name</key>
-	<string>Brackets — \left…\right</string>
+	<string>left…right — \left…\right</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
