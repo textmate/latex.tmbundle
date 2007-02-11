@@ -32,13 +32,13 @@ RUBY
 	<key>input</key>
 	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>^@l</string>
+	<string></string>
 	<key>name</key>
 	<string>Open Included Item</string>
 	<key>output</key>
 	<string>showAsTooltip</string>
 	<key>scope</key>
-	<string>text.tex.latex</string>
+	<string>text.tex.latex meta.include</string>
 	<key>uuid</key>
 	<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
 </dict>

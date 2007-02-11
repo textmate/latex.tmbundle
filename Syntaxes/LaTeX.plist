@@ -26,6 +26,49 @@
 		</dict>
 		<dict>
 			<key>begin</key>
+			<string>((\\)(?:include|input))(\{)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.include.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+			</dict>
+			<key>contentName</key>
+			<string>entity.name.section.latex</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.include.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>$self</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
 			<string>(?x)
 				(													# Capture 1
 					(\\)											# Marker
