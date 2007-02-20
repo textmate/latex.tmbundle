@@ -27,7 +27,8 @@ items = ["c:  \\cite",
 		"a:  \\citeauthor",
 		"    \\citeauthor*",
 		"y:  \\citeyear",
-		"r:  \\citeyearpar"]
+		"r:  \\citeyearpar",
+		"f:  \\footcite"]
 
 if items.length &gt; 1
 	choice = Dialog.menu(items)
@@ -68,7 +69,7 @@ end
 	<key>keyEquivalent</key>
 	<string>^{</string>
 	<key>name</key>
-	<string>Build Citation</string>
+	<string>Citation (Ref-TeX Style)</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
