@@ -1355,22 +1355,6 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</array>
 		</dict>
 		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>meta.escape-character.latex</string>
-				</dict>
-			</dict>
-			<key>comment</key>
-			<string>Not sure if this is the proper classification. This is a catch-all for \&lt;symbol&gt; so that e.g. \" doesn't start an (invalid) string</string>
-			<key>match</key>
-			<string>(\\)[^A-Za-z\n]</string>
-			<key>name</key>
-			<string>constant.character.escape.latex</string>
-		</dict>
-		<dict>
 			<key>match</key>
 			<string>\\$</string>
 			<key>name</key>

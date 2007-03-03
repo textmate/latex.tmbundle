@@ -207,7 +207,7 @@
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>(\\)[A-Za-z]+</string>
+			<string>(\\)[A-Za-z@]+</string>
 			<key>name</key>
 			<string>support.function.general.tex</string>
 		</dict>
@@ -221,9 +221,9 @@
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>(\\)[^a-zA-Z]</string>
+			<string>(\\)[^a-zA-Z@]</string>
 			<key>name</key>
-			<string>keyword.other.general.tex</string>
+			<string>constant.character.escape.tex</string>
 		</dict>
 		<dict>
 			<key>match</key>
