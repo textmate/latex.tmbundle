@@ -1164,7 +1164,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>((\\)verb[\*]?)(\S)(.*?)(\3|$)</string>
+			<string>((\\)verb[\*]?)\s*((?&lt;=\s)\S|[^a-zA-Z])(.*?)(\3|$)</string>
 			<key>name</key>
 			<string>meta.function.verb.latex</string>
 		</dict>
