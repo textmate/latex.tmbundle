@@ -574,7 +574,7 @@
 							<key>begin</key>
 							<string>(?:^|(?&lt;=&amp;))((?!&amp;|\\\\|$))</string>
 							<key>end</key>
-							<string>(?=&amp;|\\\\)|$</string>
+							<string>(?=&amp;|\\\\|\s*\\end\{(?:tabular|array))</string>
 							<key>name</key>
 							<string>meta.cell.environment.tabular.latex</string>
 							<key>patterns</key>
