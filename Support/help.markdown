@@ -21,17 +21,15 @@ Depending on the settings of the environment variable `TM_LATEX_ERRLVL`, this wi
 
 Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` in-between. The `latexmk.pl` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk.pl` when compiling, you have to set the environment variable `TM_LATEX_COMPILER` to have value `latexmk.pl`.
 
-See [9.2 Static Variables][static-vars] in the TextMate manual for how to setup environment variables.
+See [9.2 Static Variables](?static_variables) in the TextMate manual for how to setup environment variables.
 
 Note further, that if you have some other complicated compiling system, using a makefile for example, you can use that instead of `latexmk.pl`. You can use the variable `TM_LATEX_OPTIONS` to set command line options for your script.
 
 TODO: Update this section if a new command is created for `latexmk.pl`
 
-[static-vars]: http://macromates.com/textmate/manual/environment_variables#static_variables
-
 ## Using a Master File
 
-If you work on a large project, you would want to use TextMate's [support for projects][projects], and split your project in chapters, using a master file that then includes the various chapters via `\include`.
+If you work on a large project, you would want to use TextMate's [support for projects](?working_with_multiple_files), and split your project in chapters, using a master file that then includes the various chapters via `\include`.
 
 If you have created a project file, then you can set *project specific environment variables* via the project info button on the bottom right of the project drawer. You should set such a variable with a name of `TM_LATEX_MASTER` and the **absolute path to the master tex file** as value. If you are instead using a scratch folder, you can use the trick explained [here][scratch-folder]. Effectively, if a folder has a file called `.textmate_init`, then whatever shell code is specified there will be executed right before any command that is ran for a file located in this folder. So for instance this file could contain a line like this:
 
@@ -45,7 +43,6 @@ There is a way to arrange it so that the individual chapters can be compiled by 
 
 TODO: Mention that `TM_LATEX_MASTER` can be relative to the project directory (or directory of current file) -- this way one can set it in the global preferences if one always use the same name of the master file.
 
-[projects]: http://macromates.com/textmate/manual/working_with_multiple_files#working_with_multiple_files
 [scratch-folder]: http://lists.macromates.com/pipermail/textmate/2006-July/012151.html
 [included-chapters]: http://thread.gmane.org/gmane.editors.textmate.general/10474/focus=10481
 
@@ -143,9 +140,7 @@ Similarly, typing `fig` followed by calling the `Insert Environment Based on Cur
 
 These two commands understand a series of shortcuts, and use the current word if they don't recognize it as a shortcut. You can customize what these shortcuts are by editing the *LaTeX Configuration File*. This file is originally kept in the LaTeX bundle. When you first use the `Edit Configuration File` command, this file is copied to the file `~/Library/Preferences/com.macromates.textmate.latex_config.plist`. You can then edit this file whenever you want by executing this command, or delete it to return to the default settings.
 
-This file follows the [Property List Format][plist]. It consists of a top-level dictionary with six entries:
-
-[plist]: http://macromates.com/textmate/manual/appendix#property_list_format
+This file follows the [Property List Format](?property_list_format). It consists of a top-level dictionary with six entries:
 
   * `commands`
   * `commands_beamer`
@@ -154,9 +149,7 @@ This file follows the [Property List Format][plist]. It consists of a top-level 
   * `environments_beamer`
   * `labeled_environments_beamer`
 
-The versions with the word `beamer` added are the *extra* shortcuts/words that get recognized in LaTeX Beamer, *in addition to the non-beamer ones*. The `commands` and `commands_beamer` entries are dictionaries consisting of pairs, where the key is the shortcut to be recognized, and the value is the  text to be inserted when the shortcut is found. **All inserted text, for both commands and environments, is interpreted as a [Snippet][]**.
-
-[snippet]: http://macromates.com/textmate/manual/snippets#snippets
+The versions with the word `beamer` added are the *extra* shortcuts/words that get recognized in LaTeX Beamer, *in addition to the non-beamer ones*. The `commands` and `commands_beamer` entries are dictionaries consisting of pairs, where the key is the shortcut to be recognized, and the value is the  text to be inserted when the shortcut is found. **All inserted text, for both commands and environments, is interpreted as a [Snippet](?snippets)**.
 
 The four `environment` dictionaries are a bit different. They have key-value pairs, where the key is the *name* of the environment, i.e. the text to be placed inside the braces in `\begin{}`. The value is itself a dictionary with two entries:
 
