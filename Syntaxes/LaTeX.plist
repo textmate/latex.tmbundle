@@ -20,7 +20,7 @@
 	<array>
 		<dict>
 			<key>match</key>
-			<string>(?=\s)(?&lt;=\\\w|\\\w{2}|\\\w{3}|\\\w{4})\s</string>
+			<string>(?=\s)(?&lt;=\\[\w@]|\\[\w@]{2}|\\[\w@]{3}|\\[\w@]{4}|\\[\w@]{5}|\\[\w@]{6})\s</string>
 			<key>name</key>
 			<string>meta.space-after-command.latex</string>
 		</dict>
@@ -262,7 +262,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(?:\s*)((\\)begin)(\{)(lstlisting)(\})(?:(\[).*(\]))?(\s*%.*\n?)</string>
+			<string>(?:\s*)((\\)begin)(\{)(lstlisting)(\})(?:(\[).*(\]))?(\s*%.*\n?)?</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
