@@ -45,7 +45,11 @@ def outline_points(filename)
   points
 end
 file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-file = STDIN if file.nil?
+if file.nil?
+  file = STDIN
+else
+  file = File.expand_path(file, File.dirname(ENV['TM_FILEPATH']))
+end
 require 'pp'
 points = outline_points(file)
 # sec = Section.new("section")
