@@ -54,7 +54,7 @@
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>((\\)catcode)`\\.(=)(\d+)</string>
+			<string>((\\)catcode)`(?:\\)?.(=)(\d+)</string>
 			<key>name</key>
 			<string>meta.catcode.tex</string>
 		</dict>
