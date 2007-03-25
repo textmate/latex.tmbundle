@@ -3,7 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\part{${1:part name}}\label{prt:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}} % (fold)
+	<string>\part{${1:part name}} % (fold)
+\label{prt:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}}
 ${0:$TM_SELECTED_TEXT}
 % part $2 (end)</string>
 	<key>name</key>

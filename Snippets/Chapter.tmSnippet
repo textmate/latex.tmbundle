@@ -3,7 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\chapter{${1:chapter name}}\label{cha:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}} % (fold)
+	<string>\chapter{${1:chapter name}} % (fold)
+\label{cha:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}}
 ${0:$TM_SELECTED_TEXT}
 % chapter $2 (end)</string>
 	<key>name</key>

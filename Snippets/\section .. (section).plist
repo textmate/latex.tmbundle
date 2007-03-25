@@ -3,7 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>\section{${1:section name}}\label{sec:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}} % (fold)
+	<string>\section{${1:section name}} % (fold)
+\label{sec:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}}
 ${0:$TM_SELECTED_TEXT}
 % section $2 (end)</string>
 	<key>name</key>
