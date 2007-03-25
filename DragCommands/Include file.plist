@@ -3,12 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>if [[ -z $TM_DIRECTORY ]]
-	then filename=$TM_DROPPED_FILE
-	else 
-		filename=${TM_DROPPED_FILE#${TM_DIRECTORY}}
-fi
-echo "\\\\include{$filename}"</string>
+	<string>#!/usr/bin/env ruby
+require 'pathname'
+require 'pp'
+require ENV["TM_BUNDLE_SUPPORT"] + "/lib/options.rb"
+filename = ENV["TM_DROPPED_FILEPATH"]
+relative_to = ENV["TM_DIRECTORY"]
+startfile = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']
+master = Pathname.new(LaTeX.master(startfile))
+unless master.absolute?
+  master = master.expand_path(ENV['TM_PROJECT_DIRECTORY'])
+end
+path = Pathname.new(filename).relative_path_from(master.dirname)
+if ENV["TM_MODIFIER_FLAGS"].match(/OPTION/)
+  print "\\\\input{" + path + "}"
+else
+  print "\\\\include{" + path + "}"
+end</string>
 	<key>draggedFileExtensions</key>
 	<array>
 		<string>tex</string>
