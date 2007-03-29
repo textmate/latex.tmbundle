@@ -5,22 +5,28 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
 require 'pathname'
-filename = Pathname.new(ENV['TM_DROPPED_FILE']).realpath
-dir = ENV['TM_DIRECTORY'] || ""
-filename = filename.relative_path_from(Pathname.new(dir)) if dir != ""
+require ENV["TM_BUNDLE_SUPPORT"] + "/lib/options.rb"
+filename = ENV["TM_DROPPED_FILEPATH"]
+relative_to = ENV["TM_DIRECTORY"]
+startfile = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']
+master = Pathname.new(LaTeX.master(startfile))
+unless master.absolute?
+  master = master.expand_path(ENV['TM_PROJECT_DIRECTORY'])
+end
+path = Pathname.new(filename).relative_path_from(master.dirname)
 case ENV['TM_MODIFIER_FLAGS']
 when /OPTION/
 	puts ["\\\\begin{center}",
-	" \\\\includegraphics[height=\${1:3in}]{#{filename}}",
+	" \\\\includegraphics[height=\${1:3in}]{#{path}}",
 "\\\\end{center}"].join("\n")
 when /SHIFT/
-  puts "\\\\includegraphics[height=\${1:3in}]{#{filename}}"
+  puts "\\\\includegraphics[height=\${1:3in}]{#{path}}"
 else
   puts ["\\\\begin{figure}[\${1:htbp}]",
 "	\\\\centering",
-"		\\\\includegraphics[height=\${2:3in}]{#{filename}}",
+"		\\\\includegraphics[height=\${2:3in}]{#{path}}",
 "	\\\\caption{\${4:caption}}",
-"	\\\\label{fig:\${5:#{filename.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}}",
+"	\\\\label{fig:\${5:#{path.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}}",
 "\\\\end{figure}"].join("\n")
 end</string>
 	<key>draggedFileExtensions</key>
