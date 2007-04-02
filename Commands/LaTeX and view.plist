@@ -114,7 +114,7 @@ if [ -s "${PDF}" -a ! "$PDF" -ot "$FILE" ]; then
       fi
       if (($RC &lt;= $EL)); then exit_discard; fi
     else
-      strong "Error locating external viewer: $V"
+      strong "Error locating external viewer: ‘${V}’"
     fi
   fi
 else
