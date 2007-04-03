@@ -6,8 +6,9 @@ import re
 
 # PyTeXDoc
 # Author:  Brad Miller
-# Last Update: 12/27/2006   -- try to make command compatible with multiple tex distros
-#
+# Last Update: 12/27/2006	-- try to make command compatible with multiple tex distros
+#              3/4/2007		-- removed colours from stylesheet (and added underlines) to
+#								avoid problems with dark themes
 # This script is a hacked together set of heuristics to try and bring some
 # order out of the various bits and pieces of documentation that are strewn 
 # around any given LaTeX distro.
@@ -210,27 +211,20 @@ a.dsphead:hover{
    margin: 0px 20px 0px 20px;} 
 .dspcont a{
     text-decoration: none;
-    color: #000000;
 } 
 .dspcont a:hover{
-    text-decoration:none;
-    color: #FF0C0C; 
-    background-color: lightgray;
+    text-decoration:underline;
 }
 div#mypkg{
    text-decoration:none;
-   color: #AAAAAA;
    font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
 }
 div#mypkg a{
    text-decoration:none;
-   color: #000000;
    font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
 }
 div#mypkg a:hover{
    text-decoration:none;
-    color: #FF0C0C; 
-    background-color: lightgray;
 }
 
 //--></style>
