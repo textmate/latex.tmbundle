@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
 require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
-require ENV["TM_SUPPORT_PATH"] + "/lib/dialog.rb"
+require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/LaTeXUtils.rb"
 phrase = STDIN.read.chomp
 include LaTeX
@@ -16,7 +16,7 @@ begin
   items = items.grep(/#{phrase}/) if phrase != ""
   TextMate.exit_discard if items.empty?
   if items.length &gt; 1
-  	choice = Dialog.menu(items)
+  	choice = TextMate::UI.menu(items)
   	TextMate.exit_discard if choice.nil?
   	choice = items[choice]
   else

@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
 SUPPORT = ENV['TM_BUNDLE_SUPPORT']
-require ENV['TM_SUPPORT_PATH'] + '/lib/dialog'
+require ENV['TM_SUPPORT_PATH'] + '/lib/ui'
 require SUPPORT + '/lib/config_helper.rb'
 @plist = Config.load
 shortcuts = @plist['environments']
@@ -20,7 +20,7 @@ name = STDIN.read
 cmd = nil
 if name == "" then
   arr = ["custom…",nil] + (shortcuts.keys+lshortcuts.keys).sort
-  ind = Dialog.menu(arr)
+  ind = TextMate::UI.menu(arr)
   if ind.nil? || ind == 0 then
 	name = ""
   else

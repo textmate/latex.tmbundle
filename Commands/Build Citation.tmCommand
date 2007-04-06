@@ -10,7 +10,7 @@
 # A reftex-style citation command
 
 require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
-require ENV["TM_SUPPORT_PATH"] + "/lib/dialog.rb"
+require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/LaTeXUtils.rb"
 include LaTeX
 phrase = STDIN.read
@@ -31,7 +31,7 @@ items = ["c:  \\cite",
 		"f:  \\footcite"]
 
 if items.length &gt; 1
-	choice = Dialog.menu(items)
+	choice = TextMate::UI.menu(items)
 	TextMate.exit_discard if choice.nil?
 	choice = items[choice]
 end
@@ -45,7 +45,7 @@ begin
   items = items.grep(/#{phrase}/i) if phrase != ""
   TextMate.exit_discard if items.empty?
   if items.length &gt; 1
-  	choice = Dialog.menu(items)
+  	choice = TextMate::UI.menu(items)
   	TextMate.exit_discard if choice.nil?
   	choice = items[choice]
   else

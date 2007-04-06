@@ -11,7 +11,7 @@
 # the template file you want inserted, and then it gets inserted as a snippet. See
 # http://macromates.com/textmate/manual/snippets#snippets for what this implies.
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
-require ENV['TM_SUPPORT_PATH'] + '/lib/dialog.rb'
+require ENV['TM_SUPPORT_PATH'] + '/lib/ui.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/escape.rb'
 path = ENV['HOME'] + '/Library/Application Support/LaTeX/Templates/'
 unless FileTest.directory?(path) then
@@ -19,7 +19,7 @@ unless FileTest.directory?(path) then
 else
   files = `ls "#{path}"`.split("\n")
   TextMate.exit_tool_tip "You need to populate the template directory with some template files!" if files.empty?
-  file_choice = Dialog.menu(files)
+  file_choice = TextMate::UI.menu(files)
   TextMate.exit_discard if file_choice.nil?
   text = File.read(path + files[file_choice]).scan(/\n|.+\n?/)
   first_line = text[0]
