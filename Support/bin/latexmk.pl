@@ -4,6 +4,19 @@ if 0;
 #!/usr/bin/perl -w
 #!/opt/local/bin/perl -w
 #!/usr/local/bin/perl -w
+# The above code allows this script to be run under UNIX/LINUX without
+# the need to adjust the path to the perl program in a "shebang" line.
+# (The location of perl changes between different installations, and
+# may even be different when several computers running different
+# flavors of UNIX/LINUX share a copy of latex or other scripts.)  The
+# script is started under the default command interpreter sh, and the
+# evals in the first two lines restart the script under perl, and work
+# under various flavors of sh.  The -x switch tells perl to start the
+# script at the first #! line containing "perl".  The "if 0;" on the
+# 3rd line converts the first two lines into a valid perl statement
+# that does nothing.
+#
+# Source of the above: manpage for perlrun
 
 
 # ATTEMPT TO ALLOW FILENAMES WITH SPACES:
@@ -65,17 +78,6 @@ if 0;
 #                2. Convert errors to failure only in calling routine
 #                3. Save first warning/error.
 
-# The above code allows this script to be run under UNIX/LINUX without
-# the need to adjust the path to the perl program in a "shebang" line.
-# (The location of perl changes between different installations, and
-# may even be different when several computers running different
-# flavors of UNIX/LINUX share a copy of latex or other scripts.)  The
-# script is started under the default command interpreter sh, and the
-# evals in the first two lines restart the script under perl, and work
-# under various flavors of sh.  The -x switch tells perl to start the
-# script at the first #! line containing "perl".  The "if 0;" on the
-# 3rd line converts the first two lines into a valid perl statement
-# that does nothing.
 
 # To do: 
 #   Rationalize again handling of include files.
@@ -89,8 +91,8 @@ if 0;
 #   Test for already running previewer gets wrong answer if another
 #     process has the viewed file in its command line
 
-$version_num = '3.08l';
-$version_details = 'latexmk, John Collins, 1 April 2006';
+$version_num = '3.08n';
+$version_details = 'latexmk, John Collins, 26 February 2007';
 
 use Config;
 use File::Copy;
@@ -187,6 +189,45 @@ else {
 ##   Modified 
 ##
 ##
+##      26 Feb 2007, John Collins  Finish the correction on updating viewer
+##                      by signal.  There were two problems:  First is that
+##                      originally latexmk -pvc when it started a viewer found
+##                      the process number of the program it started, which
+##                      may be a script that spawns the actual viewer, not the
+##                      actual viewer.  I fixed that. The second problem is 
+##                      that there are multiple processes with the 
+##                      characteristics looked for by find_process_id.  The 
+##                      routine gave the first found.  I switched it to find
+##                      the one with the highest ID number, most likely the
+##                      last to be run and therefore the viewer.
+##                   Change unix et al default ps previewer back to 
+##                      unadorned gv, with watch-file method assumed
+##                      for update (configured by user).  This overcomes
+##                      the problem that different gv programs (regular
+##                      and GNU) have incompatible command line options
+##                      -watch v. --watch, etc.
+##      25 Feb 2007, John Collins  Try to correct incorrect update by signal
+##      16 Feb 2007, John Collins  Deal with problem that in preview 
+##                      continuous mode, latexmk does not start a new
+##                      viewer if a previous one is detected viewing
+##                      the same file, but that the viewer could be
+##                      be viewing a file of the same NAME but in a
+##                      DIFFERENT directory.
+##                      Solution 1: option for unconditional view in -pvc
+##       3 Nov 2006, John Collins  Correction
+##      30 Oct 2006, John Collins  Update method by running command
+##                     (from patch by Tom Goodale)
+##       8 Jun 2006, John Collins  Small correction in diagnostics
+##       3 Jun 2006, John Collins  Correct diagnostics on rc file
+##                     There's a problem on gluon2, but I think it is a bug
+##                     in the perl installation.  It gives errors in opening 
+##                     and closing files, without apparent bad
+##                     effects.  I work around it in my .latexmkrc
+##                     file. 
+##      24 May 2006, John Collins  Improve diagnostics on rc file
+##      16 Apr 2006, John Collins  Remove diagnostic
+##      12 Apr 2006, John Collins  Correct error message in rc file
+##       3 Apr 2006, John Collins  Small changes in comments.
 ##       1 Apr 2006, John Collins
 ##         Nix that.  For consistency, always pass single command to system
 ##             and to exec.  This forces perl to send the command line
@@ -194,6 +235,11 @@ else {
 ##         Otherwise quoting a filename will be wrong under UNIX whenever
 ##             a direct call to a binary is made: \" is a legal character
 ##             in a UNIX filename
+##         Still need to fix to get command-line and initialization-file 
+##             specified filenames and patterns that contain spaces to 
+##             work under MSWin.  (Some care with quoting needed.)  Results
+##             of globbing seems to be fine as is the use of quotes in calls
+##             to system and exec.
 ##      31 Mar 2006, John Collins
 ##         Not correct: need to fix Run to use array of arguments
 ##      30 Mar 2006, John Collins
@@ -565,6 +611,14 @@ $dvi_update_signal = undef;
 $ps_update_signal = undef;
 $pdf_update_signal = undef;
 
+$dvi_update_command = undef;
+$ps_update_command = undef;
+$pdf_update_command = undef;
+
+$new_viewer_always = 0;     # If 1, always open a new viewer in pvc mode.
+                            # If 0, only open a new viewer if no previous
+                            #     viewer for the same file is detected.
+
 #########################################################################
 
 ################################################################
@@ -809,6 +863,8 @@ else {
     #                         $ps_update_signal, $pdf_update_signal
     #    3 => viewer can't update, because it locks the file and the file 
     #         cannot be updated.  (acroread under MSWIN)
+    #    4 => Run command to update.  Command in $dvi_update_command, 
+    #    $ps_update_command, $pdf_update_command.
     $dvi_previewer  = 'start xdvi';
     $dvi_previewer_landscape = 'start xdvi -paper usr';
     if ( defined $dvi_update_signal ) { 
@@ -816,15 +872,20 @@ else {
     } else {
         $dvi_update_method = 1;  
     }
-    if ( defined $ps_update_signal ) { 
-        $ps_update_method = 2;  # dv responds to signal to update
-        $ps_previewer  = 'start gv -nowatch';
-        $ps_previewer_landscape  = 'start gv -swap -nowatch';
-    } else {
-        $ps_update_method = 0;  # gv -watch watches the ps file
-        $ps_previewer  = 'start gv -watch';
-        $ps_previewer_landscape  = 'start gv -swap -watch';
-    }
+#    if ( defined $ps_update_signal ) { 
+#        $ps_update_method = 2;  # gv responds to signal to update
+#        $ps_previewer  = 'start gv -nowatch';
+#        $ps_previewer_landscape  = 'start gv -swap -nowatch';
+#    } else {
+#        $ps_update_method = 0;  # gv -watch watches the ps file
+#        $ps_previewer  = 'start gv -watch';
+#        $ps_previewer_landscape  = 'start gv -swap -watch';
+#    }
+    # Turn off the fancy options for gv.  Regular gv likes -watch etc
+    #   GNU gv likes --watch etc.  User must configure
+    $ps_update_method = 0;  # gv -watch watches the ps file
+    $ps_previewer  = 'start gv';
+    $ps_previewer_landscape  = 'start gv -swap';
     $pdf_previewer = 'start acroread';
     $pdf_update_method = 1;  # acroread under unix needs manual update
     $lpr = 'lpr';         # Assume lpr command prints postscript files correctly
@@ -1075,6 +1136,12 @@ while ($_ = $ARGV[0])
   elsif (/^-I-$/)    { $force_generate_and_save_includes = 0; }
   elsif (/^-diagnostics/) { $diagnostics = 1; }
   elsif (/^-l$/)     { $landscape_mode = 1; }
+  elsif (/^-new-viewer$/) {
+                       $new_viewer_always = 1; 
+  }
+  elsif (/^-new-viewer-$/) {
+                       $new_viewer_always = 0; 
+  }
   elsif (/^-l-$/)    { $landscape_mode = 0; }
   elsif (/^-p$/)     { $printout_mode = 1; 
                        $preview_continuous_mode = 0; # to avoid conflicts
@@ -2863,6 +2930,7 @@ sub make_preview_continuous
   # How do we persuade viewer to update.  Default is to do nothing.
   my $viewer_update_method = 0;
   my $viewer_update_signal = undef;
+  my $viewer_update_command = undef;
   # Extension of file:
   my $ext;
   # Command to run viewer.  '' for none
@@ -2873,6 +2941,10 @@ sub make_preview_continuous
      $viewer = $dvi_previewer;
      $viewer_update_method = $dvi_update_method;
      $viewer_update_signal = $dvi_update_signal;
+     if (defined $dvi_update_command)
+     {
+         $viewer_update_command = $dvi_update_command;
+     }
      $ext = '.dvi';
      if ( length($dvi_filter) != 0 )
      {
@@ -2890,6 +2962,10 @@ sub make_preview_continuous
      $viewer = $ps_previewer;
      $viewer_update_method = $ps_update_method;
      $viewer_update_signal = $ps_update_signal;
+     if (defined $ps_update_command)
+     {
+         $viewer_update_command = $ps_update_command;
+     }
      $ext = '.ps';
      if ( length($ps_filter) != 0 )
      {
@@ -2898,9 +2974,13 @@ sub make_preview_continuous
   }
   elsif ( $view eq 'pdf' )
   {
+     $viewer = $pdf_previewer;
      $viewer_update_method = $pdf_update_method;
      $viewer_update_signal = $pdf_update_signal;
-     $viewer = $pdf_previewer;
+     if (defined $pdf_update_command)
+     {
+         $viewer_update_command = $pdf_update_command;
+     }
      $ext = '.pdf';
   }
   else
@@ -2915,15 +2995,23 @@ sub make_preview_continuous
   my $viewer_running = 0;    # No viewer running yet
   my $view_file = "$root_filename$ext";  
   my $viewer_process = 0;    # default: no viewer process number known
+  my $need_to_get_viewer_process = 0;
+       # This will be used when we start a viewer that will be updated
+       # by use of a signal.  The process number returned by the startup
+       # of the viewer may not be that of the viewer, but may, for example,
+       # be that of a script that starts the viewer.  But the startup time
+       # may be signficant, so we will wait until the next needed update before
+       # determining the process number of the viewer.
 
-  if ( -e $view_file && ($viewer ne '') ) {
+  if ( -e $view_file && ($viewer ne '') && !$new_viewer_always ) {
       # Is a viewer already running?
       #    (We'll save starting up another viewer.)
-      $viewer_process = &find_process_id(  $view_file );
+      $viewer_process = &find_process_id( $view_file );
       if ( $viewer_process ) {
           warn "Latexmk: Previewer is already running\n" 
               if !$silent;
           $viewer_running = 1;
+          $need_to_get_viewer_process = 0;
       }
   }
   # Loop forever, rebuilding .dvi and .ps as necessary.
@@ -2943,6 +3031,8 @@ CHANGE:
 
      make_files($go_mode && $first_time);
 
+##     warn "=========Viewer PID = $viewer_process; updated=$updated\n";
+
      if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
         $SIG{BREAK} = $SIG{INT} = 'DEFAULT';
      }
@@ -2956,8 +3046,12 @@ CHANGE:
      }
      elsif ( $updated && ($viewer_process != 0) )
      {
-        # Get viewer to update screen if we have to do it:
+         # Get viewer to update screen if we have to do it:
 	 if ($viewer_update_method == 2) {
+	    if ($need_to_get_viewer_process ) {
+               $viewer_process = &find_process_id(  $view_file );
+               $need_to_get_viewer_process = 0;
+	    }
             if (defined $viewer_update_signal) {
                print "Latexmk: signalling viewer, process ID $viewer_process\n"
                   if $diagnostics ;
@@ -2967,12 +3061,35 @@ CHANGE:
                warn "Latexmk: viewer is supposed to be sent a signal\n",
                     "  but no signal is defined.  Misconfiguration or bug?\n";
             }
-         }
-     }
-     if ( (!$viewer_running) && (-e $view_file) && ($viewer ne '') ) {
-        warn "Latexmk: I have not found a previewer that is already running. \n",
-	"   So I will start it: $viewer $view_file\n------------\n";
-#              unless $silent;
+	 }
+         elsif ($viewer_update_method == 4) {
+            if (defined $viewer_update_command) {
+		warn "RUN $viewer_update_command";
+ 	       my ($update_pid, $update_retcode) 
+                  = &Run_msg( $viewer_update_command );
+               if ($update_retcode != 0) {
+		   warn "Latexmk: I could not run command to update viewer\n";
+	       }
+	    }
+            else {
+               warn "Latexmk: viewer is supposed to be updated by running a command,\n",
+                    "  but no command is defined.  Misconfiguration or bug?\n";
+            }
+	}
+      }
+      if ( (!$viewer_running) && (-e $view_file) && ($viewer ne '') ) {
+	if ( !$silent ) {
+            if ($new_viewer_always) {
+              warn "Latexmk: starting previewer: $viewer $view_file\n",
+                   "------------\n";
+	    }
+            else {
+              warn "Latexmk: I have not found a previewer that ",
+                           "is already running. \n",
+                   "   So I will start it: $viewer $view_file\n",
+                   "------------\n";
+	  }
+	}
         my $retcode;
         ($viewer_process, $retcode) 
               = &Run ("start $viewer \"$root_filename$ext\"");
@@ -2986,6 +3103,15 @@ CHANGE:
         }
         else {
            $viewer_running = 1;
+           if ($viewer_update_method == 2) {
+               # If viewer will be update by sending it a signal,
+               #   then tell myself to get the viewer's true process
+               #   number later.  
+               # Just at this moment the process started above, that has 
+               #   process number $viewer_process, may just be a startup
+               #   script and not the viewer itself.
+               $need_to_get_viewer_process = 1;
+	   }
 	} # end analyze result of trying to run viewer
      } # end start viewer
      if ( $first_time || $updated || $failure ) {
@@ -3028,18 +3154,33 @@ sub process_rc_file {
     # The return value from the do is not useful, since it is the value of 
     #    the last expression evaluated, which could be anything.
     # The correct test of errors is on the values of $! and $@.
+
+# This is not entirely correct.  On gluon2:
+#      rc_file does open of file, and $! has error, apparently innocuous
+#      See ~/proposal/06/latexmkrc-effect
+
+    my $OK = 1;
     if ( $! ) {
-	$! = 11;
-        die "Latexmk: Initialization file '$rc_file' could not be read\n";
+        # Get both numeric error and its string, by forcing numeric and 
+        #   string contexts:
+        my $err_no = $!+0;
+        my $err_string = "$!";
+        warn "Latexmk: Initialization file '$rc_file' could not be read,\n",
+             "   or it gave some other problem. Error code \$! = $err_no.\n",
+             "   Error string = '$err_string'\n";
+	$! = 256;
+        $OK = 0;
     }
     if ( $@ ) {
-	$! = 11;
+	$! = 256;
         # Indent the error message to make it easier to locate
         my $indented = prefix( $@, "    " );
         $@ = "";
-        die "Latexmk: Initialization file '$rc_file' gave an error:\n",
+        warn "Latexmk: Initialization file '$rc_file' gave an error:\n",
             "$indented";
+        $OK = 0;
     }
+    if ( ! $OK ) { die "Latexmkrc: Stopping because of problem with rc file\n"; }
 } #end process_rc_file
 
 #************************************************************
@@ -3236,6 +3377,8 @@ sub print_help
   "   -I-    - Turn off -I\n",
   "   -l     - force landscape mode\n",
   "   -l-    - turn off -l\n",
+  "   -new-viewer   - in -pvc mode, always start a new viewer\n",
+  "   -new-viewer-  - in -pvc mode, start a new viewer only if needed\n",
   "   -pdf   - generate pdf by pdflatex\n",
   "   -pdfdvi - generate pdf by dvipdf\n",
   "   -pdfps - generate pdf by ps2pdf\n",
@@ -4817,13 +4960,13 @@ sub Run {
         return (0, 1);
     }
     if ( $cmd_line =~ /^start +/ ) {
-        print "Before: '$cmd_line'\n";
+        #warn "Before: '$cmd_line'\n";
         # Run detached.  How to do this depends on the OS
         # But first remove extra starts (which may have been inserted
         # to force a command to be run detached, when the command
 	# already contained a "start").
         while ( $cmd_line =~ s/^start +// ) {}
-        print "After: '$cmd_line'\n";
+        #warn "After: '$cmd_line'\n";
         return &Run_Detached( $cmd_line );
     }
     elsif ( $cmd_line =~ /^NONE/ ) {
@@ -4920,15 +5063,32 @@ sub find_process_id {
     my $looking_for = $_[0];
     my @ps_output = `$pscmd`;
 
+# There may be multiple processes.  Find only latest, 
+#   almost surely the one with the highest process number
+# This will deal with cases like xdvi where a script is used to 
+#   run the viewer and both the script and the actual viewer binary
+#   have running processes.
+    my @found = ();
+
     shift(@ps_output);  # Discard the header line from ps
     foreach (@ps_output)   {
 	next unless ( /$looking_for/ ) ;
         my @ps_line = split (' ');
-        return($ps_line[$pid_position]);
+# OLD       return($ps_line[$pid_position]);
+        push @found, $ps_line[$pid_position];
     }
 
-    # No luck in finding the specified process.
-    return(0);
+    if ($#found < 0) {
+       # No luck in finding the specified process.
+       return(0);
+    }
+    @found = reverse sort @found;
+    if ($diagnostics) {
+       print "Found the following processes concerning '$looking_for'\n",
+             "   @found\n",
+             "   I will use $found[0]\n";
+    }
+    return $found[0];
 }
 
 #************************************************************
