@@ -8,6 +8,7 @@
 	<string>#!/usr/bin/env ruby
 SUPPORT = ENV['TM_BUNDLE_SUPPORT']
 require ENV['TM_SUPPORT_PATH'] + '/lib/ui'
+require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes'
 require SUPPORT + '/lib/config_helper.rb'
 @plist = Config.load
 shortcuts = @plist['environments']
@@ -21,7 +22,8 @@ cmd = nil
 if name == "" then
   arr = ["custom…",nil] + (shortcuts.keys+lshortcuts.keys).sort
   ind = TextMate::UI.menu(arr)
-  if ind.nil? || ind == 0 then
+  TextMate.exit_discard if ind.nil?
+  if ind == 0 then
 	name = ""
   else
      name = arr[ind]
