@@ -77,13 +77,22 @@ def makeDocList():
         docDict[key] = doc[:-1]
     return docDict
 
+def openIncludedFile(fname):
+    if os.path.exists(fname):
+        return open(fname,'r')
+    elif os.path.exists(fname+'.tex'):
+        return open(fname+'.tex','r')
+    else:
+        print "Error:  Cannot open included file " + fname
+        return None
+
 ## Part 1
 ## Find all the packages included in this file or its inputs
 ##
 if os.environ.get("TM_LATEX_MASTER",None):
-    myFile = open(os.environ["TM_LATEX_MASTER"],'r')
+    myFile = openIncludedFile(os.environ["TM_LATEX_MASTER"])
 elif os.environ.get("TM_FILEPATH",None):
-    myFile = open(os.environ["TM_FILEPATH"],'r')
+    myFile = openIncludedFile(os.environ["TM_FILEPATH"])
 else:
     myFile = []
 mList = []
@@ -100,12 +109,13 @@ for line in myFile:
         fList.append(h.group(2))
 # check files one level deeper for usepackage statements
 for f in fList:
-    myFile = open(f)
-    for line in myFile:
-        g = packMatch.match(line)
-        if g:
-            mList.append(g.group(2))
-    myFile.close()
+    myFile = openIncludedFile(f)
+    if myFile:  # guard against a non existant included file
+        for line in myFile:
+            g = packMatch.match(line)
+            if g:
+                mList.append(g.group(2))
+        myFile.close()
 
 ## Part 2
 ## Parse the texdoctk database of packages
