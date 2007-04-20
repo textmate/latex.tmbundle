@@ -18,7 +18,7 @@ unless FileTest.directory?(path) then
   TextMate.exit_show_tool_tip "You need to create the directory #{path} first and\n populate it with your favorite LaTeX template files before using this command."
 else
   files = `ls "#{path}"`.split("\n")
-  TextMate.exit_tool_tip "You need to populate the template directory with some template files!" if files.empty?
+  TextMate.exit_show_tool_tip "You need to populate the template directory with some template files!" if files.empty?
   file_choice = TextMate::UI.menu(files)
   TextMate.exit_discard if file_choice.nil?
   text = File.read(path + files[file_choice]).scan(/\n|.+\n?/)
