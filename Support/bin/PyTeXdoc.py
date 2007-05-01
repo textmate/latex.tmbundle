@@ -78,6 +78,7 @@ def makeDocList():
     return docDict
 
 def openIncludedFile(fname):
+    fname = os.path.expanduser(fname) # Added
     if os.path.exists(fname):
         return open(fname,'r')
     elif os.path.exists(fname+'.tex'):
