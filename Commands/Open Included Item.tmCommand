@@ -18,6 +18,7 @@ options = input.scan(/\\(?:include|input|includegraphics|lstinputlisting)(?:%.*\
 if options.empty?
 	print "Did not find any appropriate item to open in #{ENV['TM_SELECTED_TEXT'] ? "selection" : "current line" }"
 else
+  options[0].each{|el| el.gsub!(/(^\")?(\"$)?/, '')} 
   filepath = `kpsewhich #{e_sh options[0]}`.chomp
   if filepath.empty?
     print "Could not locate file for path `#{options[0]}'"
