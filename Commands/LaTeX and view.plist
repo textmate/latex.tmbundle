@@ -112,6 +112,10 @@ if [ -s "${PDF}" -a ! "$PDF" -ot "$FILE" ]; then
         SCRIPT="$(find_app PDFView.app)/Contents/MacOS/gotoline.sh"
         [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$DIR/$PDF"
       fi
+      if [[ "$V" == Skim &amp;&amp; -f "${PDF}sync" ]]; then
+        SCRIPT="$(find_app Skim.app)/Contents/Resources/displayline"
+        [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$PDF" "$TM_FILEPATH"
+      fi
       if (($RC &lt;= $EL)); then exit_discard; fi
     else
       strong "Error locating external viewer: ‘${V}’"
