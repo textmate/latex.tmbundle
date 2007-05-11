@@ -25,9 +25,17 @@ if [[ "$V" == TeXniscope ]]; then
   fi
 else
   if [[ "$V" == PDFView ]]; then
-  SCRIPT="$(find_app PDFView.app)/Contents/MacOS/gotoline.sh"
+  SCRIPT="$(find_app PDFView.app)/Contents/Resources/forward-search.sh"
     if [[ -x "$SCRIPT" ]]; then
-      "$SCRIPT" &amp;&gt;/dev/console "$TM_LINE_NUMBER" "$PDF"
+      "$SCRIPT" &amp;&gt;/dev/console "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
+    else
+      echo "Unable to locate $V."
+    fi
+  fi
+  if [[ "$V" == Skim ]]; then
+  SCRIPT="$(find_app Skim.app)/Contents/Resources/displayline"
+    if [[ -x "$SCRIPT" ]]; then
+      "$SCRIPT" &amp;&gt;/dev/console "$TM_LINE_NUMBER" "$PDF" "$TM_FILEPATH"
     else
       echo "Unable to locate $V."
     fi
