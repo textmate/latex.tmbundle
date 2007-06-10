@@ -9,7 +9,7 @@
    TM_USERNAME=`niutil -readprop / /users/\$USER realname` \
    AUTHOR_ADDR=$(ruby &lt;&lt;"EOF" -rplist
 file = "#{ENV['HOME']}/Library/Preferences/AddressBookMe.plist"
-plist = PropertyList::load(File.new(file))
+plist = OSX::PropertyList.load(File.new(file))
 print plist['StreetAddr1'] + '\\\\'
 print plist['StreetAddr2'] + '\\\\' unless plist['StreetAddr2'].empty?
 print plist['ZipPostal'] + " " + plist['City'] + '\\\\'

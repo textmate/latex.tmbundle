@@ -10,7 +10,7 @@ module Config
     def load_file(filename)
       return nil if !FileTest.exist?(filename)
       File.open(filename) do |f|
-        plist = PropertyList::load(f)
+        plist = OSX::PropertyList.load(f)
         return plist
       end
     end
