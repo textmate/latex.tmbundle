@@ -4,7 +4,7 @@
 <dict>
 	<key>content</key>
 	<string>\section{${1:section name}} % (fold)
-\label{sec:${2:${1/(\w+)|\W+/(?1:\L$0:_)/g}}}
+\label{sec:${2:${1/\\\w+\{(.*?)\}|\\(.)|(\w+)|([^\w\\]+)/(?4:_:\L$1$2$3)/g}}}
 ${0:$TM_SELECTED_TEXT}
 % section $2 (end)</string>
 	<key>name</key>
