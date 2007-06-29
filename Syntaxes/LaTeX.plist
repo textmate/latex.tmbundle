@@ -1135,6 +1135,59 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</array>
 		</dict>
 		<dict>
+			<key>begin</key>
+			<string>((\\)verb[\*]?)\s*((\\)scantokens)(\{)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.verb.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.verb.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.verb.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.begin.latex</string>
+				</dict>
+			</dict>
+			<key>contentName</key>
+			<string>markup.raw.verb.latex</string>
+			<key>end</key>
+			<string>(\})</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.end.latex</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.function.verb.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>$self</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
