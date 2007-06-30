@@ -4,7 +4,7 @@
 <dict>
 	<key>content</key>
 	<string>\paragraph{${1:paragraph name}} % (fold)
-\label{ssub:${2:${1/\\\w+\{(.*?)\}|\\(.)|(\w+)|([^\w\\]+)/(?4:_:\L$1$2$3)/g}}}
+\label{par:${2:${1/\\\w+\{(.*?)\}|\\(.)|(\w+)|([^\w\\]+)/(?4:_:\L$1$2$3)/g}}}
 ${0:$TM_SELECTED_TEXT}
 % paragraph $2 (end)</string>
 	<key>name</key>
