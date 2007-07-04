@@ -12,8 +12,8 @@ file = "#{ENV['HOME']}/Library/Preferences/AddressBookMe.plist"
 plist = OSX::PropertyList.load(File.new(file))
 puts plist['FirstName'] + " " + plist['LastName'] + '\\\\'
 puts plist['StreetAddr1'] + '\\\\'
-puts plist['StreetAddr2'] + '\\\\'
-puts plist['ZipPostal'] + " " + plist['City'] + '\\\\'
+#puts plist['StreetAddr2'] + '\\\\'
+puts plist['City'] + ", " +  plist['StateProv'] + " " + plist['ZipPostal'] +  '\\\\'
 puts plist['Email'] + '\\\\'
 puts "http://www.xxx.yyy/mysite.html"
 EOF) \
