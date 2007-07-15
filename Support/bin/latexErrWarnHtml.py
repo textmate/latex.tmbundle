@@ -19,10 +19,19 @@ errPat = re.compile('^([\.\/\w\x7f-\xff]+\.tex):(\d+):.*')
 incPat = re.compile('.*\<use (.*?)\>');
 miscWarnPat = re.compile('LaTeX Warning:.*')
 
-if sys.argv[0] == '-v':
+verbose = False
+if len(sys.argv) > 1 and sys.argv[1] == '-v':
     verbose = True
+    sys.argv[1:] = sys.argv[2:]
+if len(sys.argv) == 3:
+    texCommand = sys.argv[1]
+    fileName = sys.argv[2]
 else:
-    verbose = False
+    sys.stderr.write("Usage: "+argv[0]+" [-v] tex-command file.tex")
+    sys.exit(255)
+
+tex = os.popen(texCommand+" "+fileName)
+
 numWarns = 0
 numErrs = 0
 numRuns = 0
@@ -30,7 +39,7 @@ inbibidx = False
 isFatal = False
 
 print '<pre>'
-line = sys.stdin.readline()
+line = tex.readline()
 while line:
     line = line.rstrip("\n")
     # print out first line
@@ -136,13 +145,22 @@ while line:
     else:
         if verbose:
             print line[:-1]
-    line = sys.stdin.readline()
+    line = tex.readline()
+texStatus = tex.close()
 eCode = 0
-if numWarns > 0 or numErrs > 0:
+if texStatus != None or numWarns > 0 or numErrs > 0:
     print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings in " + str(numRuns) + " runs"
+    if texStatus != None:
+        signal = (texStatus & 255)
+        returnCode = texStatus >> 8
+        if signal != 0:
+            print "TeX killed by signal " + str(signal)
+        else:
+            print "TeX exited with error code " + str(returnCode)
+
     if isFatal:
         eCode = 3
-    elif numErrs > 0:
+    elif numErrs > 0 or texStatus != None:
         eCode = 2
     else:
         eCode = 1

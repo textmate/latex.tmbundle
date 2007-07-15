@@ -4,6 +4,8 @@
 <dict>
 	<key>beforeRunningCommand</key>
 	<string>saveModifiedFiles</string>
+	<key>bundleUUID</key>
+	<string>46788DCE-6227-11D9-BFB1-000D93589AF6</string>
 	<key>command</key>
 	<string># Source some support functions we need.
 . "${TM_SUPPORT_PATH}/lib/html.sh"
@@ -13,10 +15,10 @@
 # Get the viewer program. Any program (that works with open -a &lt;name&gt;) can be used,
 # except 'html' which is reserved to mean the internal HTML window. This is also the
 # default option.
-V=${TM_LATEX_VIEWER:-html}
-EL=${TM_LATEX_ERRLVL:-1}
-M=${TM_LATEX_MASTER:-$TM_FILEPATH}
-DIR=`dirname "$M"`
+V="${TM_LATEX_VIEWER:-html}"
+EL="${TM_LATEX_ERRLVL:-1}"
+M="${TM_LATEX_MASTER:-$TM_FILEPATH}"
+DIR="$(dirname "$M")"
 
 parse_options "$M"
 # Now parse the options from the master file (if any)
@@ -31,28 +33,41 @@ while [[ ${#OPTIONS_root} -gt 0 &amp;&amp; "${OPTIONS_root}" != "$M" ]]; do
   else M="$DIR/$OPTIONS_root"
   fi
   unset -v OPTIONS_root
-  DIR=`dirname "$M"`
+  DIR="$(dirname "$M")"
   parse_options "$M"
 done
 
+# Support the legacy TEX_PSTRICKS setting
+if [[ -z "$TM_LATEX_PROGRAM" &amp;&amp; "$TEX_PSTRICKS" == 1 ]]; then
+	TM_LATEX_PROGRAM=latex
+fi
+
+# Allow per-file setting to over-ride global default
+# (Make an exception for latexmk, for backwards compatibility.)
+if [ "$TM_LATEX_PROGRAM" != "latexmk.pl" ]; then
+    TM_LATEX_PROGRAM="${OPTIONS_program:-${TM_LATEX_PROGRAM:-pdflatex}}"
+fi
+
 # More variables
-FILE=`basename "$M"`
+FILE="$(basename "$M")"
 PDF="${FILE%.*}.pdf"
 DVI="${FILE%.*}.dvi"
 PS="${FILE%.*}.ps"
 CWD="`pwd`/"
 
 # Set up TeX compiler, fallback to xelatex if document indicates it, 
-if [[ "$OPTIONS_program" == "xelatex" ]] || grep -Esq '^[^%]*\\usepackage.*(xunicode|fontspec)|program=xelatex' "$M"; then
+if [[ "$TM_LATEX_PROGRAM" == "xelatex" ]] || grep -Esq '^[^%]*\\usepackage.*(xunicode|fontspec)|program=xelatex' "$M"; then
   DEF_TEX=xelatex
 # or to latex+dvi2ps if document indicates it, or if pstricks is there
-elif [[ "$OPTIONS_program" == "latex" ]] || grep -Esq '^[^%]*\\usepackage.*(pstricks|xyling|pst-asr|OTtablx)' "$M"; then
+elif [[ "$TM_LATEX_PROGRAM" == "latex" ]] || grep -Esq '^[^%]*\\usepackage.*(pstricks|xyling|pst-asr|OTtablx)' "$M"; then
   DEF_TEX=latex
-  TEX_PSTRICKS=1
 else
-  DEF_TEX=pdflatex
+  # If we don't recognise the setting, try it anyway
+  DEF_TEX="$TM_LATEX_PROGRAM"
 fi
-TEX=${TM_LATEX_COMPILER:-$DEF_TEX}
+
+# Allow TM_LATEX_COMPILER to over-ride everything (e.g. for latexmk)
+TEX="${TM_LATEX_COMPILER:-$DEF_TEX}"
 
 # Add our tex directory to the TEXINPUTS variable so e.g. pdfsync is found (even when the user hasn’t installed it)
 # preceeding colon stands for default search paths. Search them first so if user installed pdfsync it'll use that one
@@ -61,32 +76,32 @@ export TEXINPUTS="$(kpsewhich -progname "$TEX" --expand-var '$TEXINPUTS'):$TM_BU
 # Switch to the right directory.
 cd "$TM_PROJECT_DIRECTORY"
 cd "$DIR"
+echo "&lt;!-- $DIR / $(pwd) --&gt;"
 
 # Prepare output window.
 html_header 'Typeset &amp;amp; View' "$FILE"
 echo '&lt;h2&gt;Compiling LaTeX…&lt;/h2&gt;'
 
 # Check if we actually have a tex compiler
-require_cmd "$TEX" "You can either set the &lt;tt&gt;TM_LATEX_COMPILER&lt;/tt&gt; variable to the full path of your LaTeX compiler (e.g. &lt;tt&gt;/opt/local/bin/pdflatex&lt;/tt&gt; or set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;pdflatex&lt;/tt&gt;."
+require_cmd "$TEX" "You can set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;$TM_LATEX_PROGRAM&lt;/tt&gt;."
 
-
-run_tex () {
+tex_command () {
 if [ "$TEX" != latexmk.pl ]
-  then "$TEX" ${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style} "$1"
+  then echo "'$TEX' ${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style}"
   else
-    if [[ $TEX_PSTRICKS ]]
+    if [[ "$TM_LATEX_PROGRAM" == latex ]]
       then
-        "$TEX" -f -ps "$1"
+        echo "'$TEX' -f -ps"
       else
-        "$TEX" -f -r "${TM_BUNDLE_SUPPORT}/latexmkrc" "$1"
+        echo "'$TEX' -f -r '${TM_BUNDLE_SUPPORT}/latexmkrc'"
     fi
 fi
 }
 
 # Compile.
-run_tex "$FILE" 2&gt;&amp;1| latexErrWarnHtml.py -v
+latexErrWarnHtml.py "$(tex_command)" "$FILE"
 RC=$?
-if [[ $TEX_PSTRICKS ]]; then
+if [[ "$TM_LATEX_PROGRAM" == latex ]]; then
   dvips "$DVI" -o "$PS" &amp;&amp; ps2pdf "$PS"
 fi
 # If there is output and it's newer than the current document, then we go directly to preview or link to it.
@@ -94,14 +109,14 @@ if [ -s "${PDF}" -a ! "$PDF" -ot "$FILE" ]; then
   if [[ "$V" == html ]]; then
     WEB_LOC="tm-file://${DIR}/${PDF}"
     WEB_LOC="${WEB_LOC//\\#/%23}"
-    if (($RC &lt; 3)); then
-      if (($RC &gt;= $EL))
+    if (("$RC" &lt; 3)); then
+      if (("$RC" &gt;= "$EL"))
         then link "${WEB_LOC}" 'Click Here to Preview'
         else redirect "${WEB_LOC}"
       fi
     fi
   else
-    V=${V%.app} # strip potential .app extension
+    V="${V%.app}" # strip potential .app extension
     if find_app &gt;/dev/null "$V.app"; then
       open -a "$V" "$PDF"
       if [[ "$V" == TeXniscope &amp;&amp; -f "${PDF}sync" ]]; then
@@ -116,7 +131,7 @@ if [ -s "${PDF}" -a ! "$PDF" -ot "$FILE" ]; then
         SCRIPT="$(find_app Skim.app)/Contents/Resources/displayline"
         [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$PDF" "$TM_FILEPATH"
       fi
-      if (($RC &lt; $EL)); then exit_discard; fi
+      if (("$RC" &lt; "$EL")); then exit_discard; fi
     else
       strong "Error locating external viewer: ‘${V}’"
     fi

@@ -16,12 +16,12 @@ module LaTeX
       File.open(filepath, "r") do |file|
         1.upto(20) do
           line = file.readline
-          if line =~ /^%!TEX (?>(.*?) )= (.*?) *$/
+          if line =~ /^%!TEX (\S*) =\s*(.*)\s*$/
             opts[$1] = $2
           end
         end
       end
-    rescue EOFError, Errno::ENOENT
+    rescue EOFError
       # Don't do anything
     end
     opts
