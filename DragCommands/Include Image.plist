@@ -35,6 +35,7 @@ end</string>
 		<string>jpeg</string>
 		<string>pdf</string>
 		<string>eps</string>
+		<string>png</string>
 	</array>
 	<key>name</key>
 	<string>Include Image</string>
