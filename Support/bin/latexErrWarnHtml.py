@@ -31,7 +31,6 @@ else:
     sys.stderr.write("Usage: "+sys.argv[0]+" [-v] tex-command file.tex")
     sys.exit(255)
 
-print sys.argv
 texin,tex = os.popen4(texCommand+" "+"'"+fileName+"'")
 
 numWarns = 0

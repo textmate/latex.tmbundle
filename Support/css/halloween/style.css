@@ -1,0 +1,13 @@
+.halloween div.bibtex  {
+    background-color: #999;
+    color: black;
+}
+
+.halloween a.warning {
+    color: #FF7F00;
+}
+
+
+.halloween div.error a {
+    color: red;
+}

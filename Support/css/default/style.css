@@ -1,0 +1,16 @@
+.warning {
+ color: #FF7F00;
+}
+a.warning {
+ color: #FF7F00;
+}
+.bibtex {
+ background-color: #CBF4EF;
+}
+.error {
+ color: red;
+}
+a.error {
+ color: red;
+}
+

@@ -1,0 +1,13 @@
+.dark div.bibtex  {
+    background-color: #999;
+    color: black;
+}
+
+.dark a.warning {
+    color: #FF7F00;
+}
+
+
+.dark div.error a {
+    color: red;
+}
