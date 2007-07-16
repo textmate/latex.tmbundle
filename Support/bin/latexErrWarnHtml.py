@@ -31,7 +31,8 @@ else:
     sys.stderr.write("Usage: "+sys.argv[0]+" [-v] tex-command file.tex")
     sys.exit(255)
 
-texin,tex = os.popen4(texCommand+" "+fileName)
+print sys.argv
+texin,tex = os.popen4(texCommand+" "+"'"+fileName+"'")
 
 numWarns = 0
 numErrs = 0
@@ -42,27 +43,6 @@ isFatal = False
 fileLineErrors = False
 usingLatexmk = False
 
-# for some reason the coloring for error and warning only seem to work in the default style.
-# The following lines fix that.  The bibtex style works OK for light colored styles but not
-# for dark, I'm not sure how to handle that at the moment.
-print """<style>
-.warning {
-    color: orange;
-}
-a.warning {
-    color: orange;
-}
-.bibtex {
-    background-color: #CBF4EF;
-}
-.error {
-    color: red;
-}
-a.error {
-    color: red;
-}
-</style>
-"""
 
 print '<pre>'
 line = tex.readline()
