@@ -9,7 +9,7 @@
 # see Help / Shell Variables for the full list
 M=${TM_LATEX_MASTER:=$TM_FILEPATH}
 DIR=`dirname "$M"`
-FILE=`basename -s.tex "$M"`
+FILE=`basename "$M" .tex`
 PDF="${FILE%.tex}.pdf"
 CWD="`pwd`/"
 
