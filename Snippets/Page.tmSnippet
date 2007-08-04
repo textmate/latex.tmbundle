@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>page~\pageref{$1}$0
+	<string>${1:page}~\pageref{$2}$0
 </string>
 	<key>name</key>
 	<string>Page</string>

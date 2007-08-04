@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>Table~\ref{${1:tab:}}$0</string>
+	<string>${1:Table}~\ref{${2:tab:}}$0</string>
 	<key>name</key>
 	<string>Table</string>
 	<key>scope</key>

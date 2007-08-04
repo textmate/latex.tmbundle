@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>Section~\ref{${1:sec:}}$0
+	<string>${1:Section}~\ref{${2:sec:}}$0
 </string>
 	<key>name</key>
 	<string>Section</string>

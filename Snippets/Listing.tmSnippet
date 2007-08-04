@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>Listing~\ref{${1:lst:}}$0
+	<string>${1:Listing}~\ref{${2:lst:}}$0
 </string>
 	<key>name</key>
 	<string>Listing</string>

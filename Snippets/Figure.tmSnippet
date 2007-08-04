@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>Figure~\ref{${1:fig:}}$0</string>
+	<string>${1:Figure}~\ref{${2:fig:}}$0</string>
 	<key>name</key>
 	<string>Figure</string>
 	<key>scope</key>

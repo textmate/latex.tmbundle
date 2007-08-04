@@ -93,9 +93,9 @@ def findViewerPath(viewer,pdfFile,fileName):
     vp = os.popen('find_app ' + viewer + '.app').read()
     syncPath = None
     if viewer == 'Skim' and vp:
-        syncPath = vp + '/Contents/Resources/displayline ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile + ' ' + fileName
+        syncPath = vp + '/Contents/Resources/displayline ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile + ' ' + os.getenv('TM_FILEPATH')
     elif viewer == 'TeXniscope' and vp:
-        syncPath = vp + '/Contents/Resources/forward-search.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + fileName + ' ' + pdfFile
+        syncPath = vp + '/Contents/Resources/forward-search.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + os.getenv('TM_FILEPATH') + ' ' + pdfFile
     elif viewer == 'PDFView' and vp:
         syncPath = '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
     return vp, syncPath
@@ -134,12 +134,14 @@ def determine_ts_directory(tsDirectives):
 
     if 'root' in tsDirectives:
         masterPath = os.path.dirname(os.path.normpath(tsDirectives['root']))
+        return masterPath
     if master:
         masterPath = os.path.dirname(master)
         if masterPath == '' or masterPath[0] != '/':
             masterPath = os.path.normpath(startDir+'/'+masterPath)
     else:
         masterPath = startDir
+
     return masterPath
 
 def findTexPackages(fileName):
