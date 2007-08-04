@@ -6,24 +6,19 @@
 	<string>nop</string>
 	<key>command</key>
 	<string># just to remind you of some useful environment variables
-# see Help / Shell Variables for the full list
-. "${TM_SUPPORT_PATH}/lib/html.sh"
-. "${TM_SUPPORT_PATH}/lib/webpreview.sh"
-
-# Prepare output window.
-html_header 'Run MakeIndex'
-
-texMate.py index 1
-</string>
+# see Help / Environment Variables for the full list
+configure.py</string>
 	<key>input</key>
 	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>~@,</string>
 	<key>name</key>
-	<string>Run Makeindex</string>
+	<string>Preferences…</string>
 	<key>output</key>
-	<string>showAsHTML</string>
+	<string>showAsTooltip</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
-	<string>0A27EDBA-2C7C-44CF-B2B0-1B3B7BF8D7D6</string>
+	<string>8F41368E-4E01-41A9-8FCF-19D4A4032AE2</string>
 </dict>
 </plist>

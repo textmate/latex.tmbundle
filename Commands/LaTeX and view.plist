@@ -10,137 +10,15 @@
 	<string># Source some support functions we need.
 . "${TM_SUPPORT_PATH}/lib/html.sh"
 . "${TM_SUPPORT_PATH}/lib/webpreview.sh"
-. "${TM_BUNDLE_SUPPORT}/lib/options.sh"
-
-# Get the viewer program. Any program (that works with open -a &lt;name&gt;) can be used,
-# except 'html' which is reserved to mean the internal HTML window. This is also the
-# default option.
-V="${TM_LATEX_VIEWER:-html}"
-EL="${TM_LATEX_ERRLVL:-1}"
-M="${TM_LATEX_MASTER:-$TM_FILEPATH}"
-DIR="$(dirname "$M")"
-
-parse_options "$M"
-# Now parse the options from the master file (if any)
-while [[ ${#OPTIONS_root} -gt 0 &amp;&amp; "${OPTIONS_root}" != "$M" ]]; do
-  # this way you can chain master files if you really want
-  # For example, a section file can reference its chapter, which can reference the book
-  # Yes, this means options in master files override options in the individual file
-  # this may not exactly be ideal, but it's easiest. Show me a file structure that this
-  # is a problem for, and I'll show a poorly-designed LaTeX file
-  if [[ "$OPTIONS_root" == /* ]]
-  then M="$OPTIONS_root"
-  else M="$DIR/$OPTIONS_root"
-  fi
-  unset -v OPTIONS_root
-  DIR="$(dirname "$M")"
-  parse_options "$M"
-done
-
-# Support the legacy TEX_PSTRICKS setting
-if [[ -z "$TM_LATEX_PROGRAM" &amp;&amp; "$TEX_PSTRICKS" == 1 ]]; then
-	TM_LATEX_PROGRAM=latex
-fi
-
-# Allow per-file setting to over-ride global default
-# (Make an exception for latexmk, for backwards compatibility.)
-if [ "$TM_LATEX_PROGRAM" != "latexmk.pl" ]; then
-    TM_LATEX_PROGRAM="${OPTIONS_program:-${TM_LATEX_PROGRAM:-pdflatex}}"
-fi
-
-# More variables
-FILE="$(basename "$M")"
-PDF="${FILE%.*}.pdf"
-DVI="${FILE%.*}.dvi"
-PS="${FILE%.*}.ps"
-CWD="`pwd`/"
-
-# Set up TeX compiler, fallback to xelatex if document indicates it, 
-if [[ "$TM_LATEX_PROGRAM" == "xelatex" ]] || grep -Esq '^[^%]*\\usepackage.*(xunicode|fontspec)|program=xelatex' "$M"; then
-  DEF_TEX=xelatex
-# or to latex+dvi2ps if document indicates it, or if pstricks is there
-elif [[ "$TM_LATEX_PROGRAM" == "latex" ]] || grep -Esq '^[^%]*\\usepackage.*(pstricks|xyling|pst-asr|OTtablx)' "$M"; then
-  DEF_TEX=latex
-else
-  # If we don't recognise the setting, try it anyway
-  DEF_TEX="$TM_LATEX_PROGRAM"
-fi
-
-# Allow TM_LATEX_COMPILER to over-ride everything (e.g. for latexmk)
-TEX="${TM_LATEX_COMPILER:-$DEF_TEX}"
-
-# Add our tex directory to the TEXINPUTS variable so e.g. pdfsync is found (even when the user hasn’t installed it)
-# preceeding colon stands for default search paths. Search them first so if user installed pdfsync it'll use that one
-export TEXINPUTS="$(kpsewhich -progname "$TEX" --expand-var '$TEXINPUTS'):$TM_BUNDLE_SUPPORT/tex//"
-
-# Switch to the right directory.
-cd "$TM_PROJECT_DIRECTORY"
-cd "$DIR"
-echo "&lt;!-- $DIR / $(pwd) --&gt;"
 
 # Prepare output window.
 html_header 'Typeset &amp;amp; View' "$FILE"
-echo '&lt;h2&gt;Compiling LaTeX…&lt;/h2&gt;'
-
-# Check if we actually have a tex compiler
-require_cmd "$TEX" "You can set the &lt;tt&gt;PATH&lt;/tt&gt; variable to include the path of &lt;tt&gt;$TM_LATEX_PROGRAM&lt;/tt&gt;."
-
-tex_command () {
-if [ "$TEX" != latexmk.pl ]
-  then echo "'$TEX' ${TM_LATEX_OPTIONS:=-interaction=nonstopmode -file-line-error-style}"
-  else
-    if [[ "$TM_LATEX_PROGRAM" == latex ]]
-      then
-        echo "'$TEX' -f -ps"
-      else
-        echo "'$TEX' -f -r '${TM_BUNDLE_SUPPORT}/latexmkrc'"
-    fi
-fi
-}
 
 # Compile.
-latexErrWarnHtml.py "$(tex_command)" "$FILE"
+texMate.py latex 1
 RC=$?
-if [[ "$TM_LATEX_PROGRAM" == latex ]]; then
-  dvips "$DVI" -o "$PS" &amp;&amp; ps2pdf "$PS"
-fi
-# If there is output and it's newer than the current document, then we go directly to preview or link to it.
-if [ -s "${PDF}" -a ! "$PDF" -ot "$FILE" ]; then
-  if [[ "$V" == html ]]; then
-    WEB_LOC="tm-file://${DIR}/${PDF}"
-    WEB_LOC="${WEB_LOC//\\#/%23}"
-    if (("$RC" &lt; 3)); then
-      if (("$RC" &gt;= "$EL"))
-        then link "${WEB_LOC}" 'Click Here to Preview'
-        else redirect "${WEB_LOC}"
-      fi
-    fi
-  else
-    V="${V%.app}" # strip potential .app extension
-    if find_app &gt;/dev/null "$V.app"; then
-      open -a "$V" "$PDF"
-      if [[ "$V" == TeXniscope &amp;&amp; -f "${PDF}sync" ]]; then
-        SCRIPT="$(find_app TeXniscope.app)/Contents/Resources/forward-search.sh"
-        [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$TM_FILEPATH" "$PDF"
-      fi
-      if [[ "$V" == PDFView &amp;&amp; -f "${PDF}sync" ]]; then
-        SCRIPT="$(find_app PDFView.app)/Contents/MacOS/gotoline.sh"
-        [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$DIR/$PDF"
-      fi
-      if [[ "$V" == Skim &amp;&amp; -f "${PDF}sync" ]]; then
-        SCRIPT="$(find_app Skim.app)/Contents/Resources/displayline"
-        [[ -x "$SCRIPT" ]] &amp;&amp; "$SCRIPT" "$TM_LINE_NUMBER" "$PDF" "$TM_FILEPATH"
-      fi
-      if (("$RC" &lt; "$EL")); then exit_discard; fi
-    else
-      strong "Error locating external viewer: ‘${V}’"
-    fi
-  fi
-else
-  strong "Error: PDF file not written to disk"
-fi
 html_footer
-</string>
+exit $RC</string>
 	<key>dontFollowNewOutput</key>
 	<false/>
 	<key>input</key>
@@ -152,7 +30,7 @@ html_footer
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>
-	<string>text.tex.latex</string>
+	<string>text.tex</string>
 	<key>uuid</key>
 	<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
 </dict>

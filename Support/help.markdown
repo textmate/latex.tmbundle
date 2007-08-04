@@ -14,19 +14,23 @@ As of this writing, the installer also takes care of updating your `PATH` variab
 
 Most of the time you will want to typeset the currently selected file. This is accomplished by the command `Typeset & View`, bound to `⌘R`. TextMate shows you, in its HTML output window, progress on the compile, as well as any errors that may occur.
 
-Depending on the settings of the environment variable `TM_LATEX_ERRLVL`, this window may stay open, and you can click on any of the errors encountered, which will take you to the corresponding location in the LaTeX file, where that error is reported to have occurred. Keep in mind, that LaTeX occasionally reports errors very far from where the actual problem occurs. So compile often, so that you have less new text to worry about when looking for errors.
+Depending on the setting of the Keep log window open preference, this window may stay open, and you can click on any of the errors encountered, which will take you to the corresponding location in the LaTeX file, where that error is reported to have occurred. Keep in mind, that LaTeX occasionally reports errors very far from where the actual problem occurs. So compile often, so that you have less new text to worry about when looking for errors.
 
-## Using `latexmk.pl`
+## Typsetting Multiple Passes
 
-Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` in-between. The `latexmk.pl` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk.pl` when compiling, you have to set the environment variable `TM_LATEX_COMPILER` to have value `latexmk.pl`.
+Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` in-between. You can re-run LaTeX on the same file by clicking on the Run Latex button at the bottom of the Typeset & View window.  You will also find buttons there to allow you to run BibTeX or MakeIndex on the current file.
+
+In addition, The `latexmk.pl` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk.pl` when compiling, you have to check the `Use Latexmk.pl`.
 
 See [9.2 Static Variables](?static_variables) in the TextMate manual for how to setup environment variables.
 
-Note further, that if you have some other complicated compiling system, using a makefile for example, you can use that instead of `latexmk.pl`. You can use the variable `TM_LATEX_OPTIONS` to set command line options for your script.
+<!-- Note further, that if you have some other complicated compiling system, using a makefile for example, you can use that instead of `latexmk.pl`. You can use the variable `TM_LATEX_OPTIONS` to set command line options for your script. -->
 
 TODO: Update this section if a new command is created for `latexmk.pl`
 
 ## Using a Master File
+
+### Using the `TM_LATEX_MASTER` Environment Variable
 
 If you work on a large project, you would want to use TextMate's [support for projects](?working_with_multiple_files), and split your project in chapters, using a master file that then includes the various chapters via `\include`.
 
@@ -45,9 +49,13 @@ TODO: Mention that `TM_LATEX_MASTER` can be relative to the project directory (o
 [scratch-folder]: http://lists.macromates.com/pipermail/textmate/2006-July/012151.html
 [included-chapters]: http://thread.gmane.org/gmane.editors.textmate.general/10474/focus=10481
 
+### Using the %!TEX root directive
+
+TextMate also supports embedded directives in your TeX file by placing a line at the beginning of your document that looks like the following `%!TEX root = my_root`  This allows you to specify a master file without using the `TM_LATEX_MASTER` environment variable.  The files you specify using the `root = ` directive can be either absolute or relative.
+
 # Previewing a LaTeX File
 
-The `Typeset & View` command has a second component, the `View` one. After a successful build, TextMate proceeds to show you the PDF file created. There are a number of possibilities at this point which will be explained in the following sections.
+The `Typeset & View` command has a second component, the `View` one. After a successful build, TextMate proceeds to show you the PDF file created if you have checked the `Show pdf automatically` checkbox in the preferences.  This preference is on by default.  If the preference is not checked, you can still view the file on demand by clicking the View button at the bottom of the `Typeset & View` window.  There are a number of possibilities at this point which will be explained in the following sections.
 
 ## Default Preview
 
@@ -65,25 +73,22 @@ To avoid this open the preferences for Adobe Reader and go to the Internet categ
 
 ## External Previewers
 
-You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview, [TeXShop][], and [TeXniscope][]. There is also a new very nice previewer, [PDFView][].
+You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview,  [TeXniscope][], or [Skim][].  Skim is a very nice viewer that that is under active development.
 
-We recommend you use either PDFView, if you are only going to be dealing with pdf files, or TeXniscope if you will also be dealing with dvi files. They both support pdfsync, though TeXniscope is not a universal binary as of this writing.
+We recommend you use either Skim, if you are only going to be dealing with pdf files, or TeXniscope if you will also be dealing with dvi files. They both support pdfsync, though TeXniscope is not a universal binary as of this writing.
 
 To use one of these previewers, you must set the `TM_LATEX_VIEWER` environment variable to the name of the previewer. For example for TeXniscope, you would set the variable to have a value of `TeXniscope`.
 
 [texshop]: http://www.uoregon.edu/~koch/texshop/
 [texniscope]: http://www.ing.unipi.it/~d9615/homepage/texniscope.html
 [pdfview]: http://pdfview.sourceforge.net/
+[skim]: http://skim-app.sourceforge.net/
 
 ## Preview Options
 
-The environment variable `TM_LATEX_ERRLVL` controls the behavior of the HTML window in the absence of critical errors in the typesetting step. It has three possible values:
+Preview options are somewhat complicated depending on the viewer you choose.  There are really two main cases.  If you chose to use the previewer built in to webkit then the keep log window open preference has the following effect.  If there are no errors or warnings, the `Typeset & View` window will immediately switch to showing you the pdf file.   If there are no errors but some warnings then if the keep log window open preference is checked you will see the warning messages, and you must click the `View in TextMate` button to see the pdf.  If the keep log window open preference is not checked then the warning messages will be ignored and you will see the pdf.
 
-* **2**: If a document was successfully built, it will jump directly to the preview. This is the default.
-* **1**: If there are any warnings, these are shown, together with a link to the preview.
-* **0**: Halt on any errors or warnings, a link to the preview is only included if the document was built.
-
-If the document could not be built, then the error messages are always shown regardless of the value of `TM_LATEX_ERRLVL`.
+If you use an external viewer then the `Typeset & View` window will automatically close if there are no errors or warnings, unless the keep log window open preference is checked.
 
 # PDFSync
 

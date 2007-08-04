@@ -5,18 +5,20 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>texMate.py view 1</string>
+	<string>toggle_style.rb -style=verb</string>
+	<key>fallbackInput</key>
+	<string>word</string>
 	<key>input</key>
-	<string>none</string>
+	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>^~@o</string>
+	<string>~@k</string>
 	<key>name</key>
-	<string>Show in PDF Viewer (pdfsync)</string>
+	<string>Verb</string>
 	<key>output</key>
-	<string>discard</string>
+	<string>insertAsSnippet</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
-	<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
+	<string>6B5C138A-1951-4AD2-BE95-52E498661029</string>
 </dict>
 </plist>

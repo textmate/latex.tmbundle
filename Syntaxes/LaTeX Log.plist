@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>firstLineMatch</key>
-	<string>This is (pdfe)?TeXk?, Version </string>
+	<string>This is (pdf|pdfe)?TeXk?, Version </string>
 	<key>foldingStartMarker</key>
 	<string>/\*\*|\(\s*$</string>
 	<key>foldingStopMarker</key>

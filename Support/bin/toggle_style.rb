@@ -10,10 +10,18 @@ style = $style || 'texttt'
 # The following line might be problematic if the command is used elsewhere
 style = style.sub(/^text/,'math').sub(/^emph$/,'mathit') if is_math
 s = STDIN.read
+# All the formatting commands except for \verb us {}  \verb can use any delimeter as long as
+# the opening delimiter matches the closing.
+oc = '{'
+cc = '}'
+if style == 'verb'
+  oc = '!'
+  cc = '!'
+end
 if s.empty? then
-  print "\\#{style}{$1}"
+  print "\\#{style}"+oc+"$1"+cc
 elsif s =~ /^\\#{Regexp.escape style}\{(.*)\}$/ then
   print "${1:#{esc $1}}"
 else
-  print "\\#{style}{#{e_sn s}}"
+  print "\\#{style}"+oc+"#{e_sn s}"+cc
 end

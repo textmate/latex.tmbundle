@@ -11,3 +11,9 @@
 .shiny div.error a {
     color: red;
 }
+
+
+.shiny div#commandOutput {
+    background-color: rgb(40,40,40);
+    padding: 5px;
+}

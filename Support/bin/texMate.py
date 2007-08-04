@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding: utf-8
 
 # This is a rewrite of latexErrWarn.py
 # Goals:
@@ -22,246 +23,410 @@
 #       7/17/07  -- Brad Miller
 #       Implemented  TexParse, BibTexParser, and LaTexParser classes
 #       see the TODO's sprinkled in the code below
+#       7/24/07  -- Brad Miller
+#       Spiffy new configuration window added
+#       pushbutton interface at the end of the latex output is added
+#       the confusing mass of code that was Typeset & View has been replaced by this one
 #
 #   Future:
 # 
-#       I think that the typeset and veiw window could have some buttons at the top to enable a user
-#       to run latex, bibtex and makeindex
-#       With the processing for each command stream nicely separated it would not be possible to
-#       think about replacing latexmk.pl with a simpler python version.
+#       think about replacing latexmk.pl with a simpler python version.  If only rubber worked reliably..
 #
 
 import sys
 import re
 from os.path import basename
 import os
+import tmprefs
+from urllib import quote
 from struct import *
+from texparser import *
 
+# 
 
-
-numRuns = 0
-
-def percent_escape(str):
-	return re.sub('[\x80-\xff /&]', lambda x: '%%%02X' % unpack('B', x.group(0))[0], str)
-
-def make_link(file, line):
-	return 'txmt://open?url=file:%2F%2F' + percent_escape(file) + '&line=' + line
-
-def shell_quote(string):
-	return '"' + re.sub(r'([`$\\"])', r'\\\1', string) + '"'
-
-
-class TexParser(object):
-    """Master Class for Parsing Tex Typsetting Streams"""
-    def __init__(self, input_stream, verbose):
-        super(TexParser, self).__init__()
-        self.input_stream = input_stream
-        self.done = False
-        self.verbose = verbose
-        self.numErrs = 0
-        self.numWarns = 0
-        self.isFatal = False
-        
-    def parseStream(self):
-        """docstring for parseStream"""
-        line = self.input_stream.readline()
-
-        while line and not self.done:
-            line = line.rstrip("\n")
-            foundMatch = False
-
-            # process matching patterns until we find one
-            for pat in self.patterns.keys():
-                myMatch = pat.match(line)
-                if myMatch:
-                    self.patterns[pat](myMatch,line)
-                    foundMatch = True
-                    break
-            
-            if self.verbose and not foundMatch:
-                print line
-            
-            line = self.input_stream.readline()
-
-        return self.isFatal, self.numErrs, self.numWarns
-
-    def info(self,m,line):
-        print line
-    
-    def error(self,m,line):
-        print '<div class="error">'
-        print line
-        print '</div>'
-        self.numErrs += 1
-
-    def warning(self,m,line):
-        print '<div class="warning">'
-        print line
-        print '</div>'
-        self.numWarns += 1
-
-class BibTexParser(TexParser):
-    """Parse and format Error Messages from bibtex"""
-    def __init__(self, btex, verbose):
-        super(BibTexParser, self).__init__(btex,verbose)
-        self.patterns = { 
-            re.compile("Warning--I didn't find a database entry") : self.warning,
-            re.compile(r'I found no \\\w+ command') : self.error,            
-            re.compile('---') : self.finishRun
-        }
-    
-    def finishRun(self,m,line):
-        self.done = True
-        print '</div>'
-
-class LaTexParser(TexParser):
-    """Parse Output From Latex"""
-    def __init__(self, input_stream, verbose):
-        super(LaTexParser, self).__init__(input_stream,verbose)
-        self.patterns = {
-            re.compile('^This is') : self.info,
-            re.compile('^Document Class') : self.info,
-            re.compile('^Latexmk') : self.info,
-            re.compile('Run number') : self.newRun,
-            re.compile('.*\((\.\/.*\.tex)') : self.detectNewFile,
-            re.compile('^\s+file:line:error style messages enabled') : self.detectFileLineErr,
-            re.compile('.*\<use (.*?)\>') : self.detectInclude,
-            re.compile('^Output written') : self.info,
-            re.compile('LaTeX Warning.*?input line (\d+).$') : self.handleWarning,
-            re.compile('LaTeX Warning:.*') : self.warning,
-            re.compile('^([\.\/\w\x7f-\xff ]+\.tex):(\d+):(.*)') : self.handleError,
-            re.compile('([^:]*):(\d+): LaTeX Error:(.*)') : self.handleError,
-            re.compile('([^:]*):(\d+): (Emergency stop)') : self.handleError,
-            re.compile('Transcript written on (.*).$') : self.linkToLog,
-            re.compile("Running 'bibtex") : self.startBibtex,
-            re.compile('This is BibTeX,') : self.startBibtex,            
-            re.compile("Running 'makeindex") : self.startBibtex,    # TODO: implement real MakeIndexParser
-            re.compile("This is makeindex") : self.startBibtex,            
-            re.compile('^Error: pdflatex') : self.pdfLatexError,
-            re.compile('\!.*') : self.handleOldStyleErrors
-        }
-                
-
-    def newRun(self,m,line):
-        global numRuns
-        print '<hr />'
-        print '<p>', self.numErrs, 'Errors', self.numWarns, 'Warnings', 'in this run.', '</p>'
-        self.numWarns = 0
-        self.numErrs = 0
-        numRuns += 1
-        print '<hr />'
-
-    def detectNewFile(self,m,line):
-        self.currentFile = m.group(1)
-        print "<h3>Typesetting: " + self.currentFile + "</h3>"
-
-    def detectFileLineErr(self,m,line):
-        self.fileLineErrors = True
-
-    def detectInclude(self,m,line):
-        print "    Including: " + m.group(1)
-
-    def handleWarning(self,m,line):
-        print '<a class="warning" href="' + make_link(os.getcwd()+self.currentFile[1:], m.group(1)) + '">'+line+"</a>"
-        self.numWarns += 1
-    
-    def handleError(self,m,line):
-        print '<div class="error">'
-        latexErrorMsg = 'Latex Error: <a class="error" href="' + make_link(os.getcwd()+'/'+m.group(1),m.group(2)) +  '">' + m.group(1)+":"+m.group(2) + '</a> '+m.group(3)
-        line = self.input_stream.readline()
-        while len(line) > 1:
-            latexErrorMsg = latexErrorMsg+line
-            line = self.input_stream.readline()
-        print latexErrorMsg+'</div>'
-        self.numErrs += 1
-
-    def linkToLog(self,m,line):
-        print '<div class="error">'
-        print '<a class="error" href="' + make_link(os.getcwd()+'/'+m.group(1),'1') +  '">' + m.group(1) + '</a>'
-        print '</div>'
-
-    def startBibtex(self,m,line):
-        print '<div class="bibtex">'
-        print '<h3>' + line[:-1] + '</h3>'
-        bp = BibTexParser(self.input_stream,self.verbose)
-        self.input_stream.readline() # swallow the following line of '---'
+def run_bibtex(bibfile=None,verbose=False,texfile=None):
+    """Determine Targets and run bibtex"""
+    # find all the aux files.
+    fatal,err,warn = 0,0,0
+    if texfile:
+        basename = texfile[:texfile.find('.tex')]
+    if bibfile == None:
+        auxfiles = [f for f in os.listdir('.') if re.search('.aux$',f) > 0]
+        auxfiles = [f for f in auxfiles if re.match(r'('+ basename +r'\.aux|bu\d+\.aux)',f)]
+    else:
+        auxfiles = [bibfile]
+    for bib in auxfiles:
+        print '<h4>Processing: %s </h4>' % bib
+        texin,tex = os.popen4('bibtex'+" "+shell_quote(bib))
+        bp = BibTexParser(tex,verbose)
         f,e,w = bp.parseStream()
-        self.numErrs += e
-        self.numWarns += w
+        fatal+=f
+        err+=e
+        warn+=w
+        stat = tex.close()
+    return stat,fatal,err,warn
+        
+def run_latex(ltxcmd,texfile,verbose=False):
+    """Run the flavor of latex specified by ltxcmd on texfile"""
+    # TODO: I have no idea if this works with texexec for context
+    global numRuns
+    texin,tex = os.popen4(ltxcmd+" "+shell_quote(texfile))    
+    lp = LaTexParser(tex,verbose)
+    f,e,w = lp.parseStream()
+    stat = tex.close()
+    numRuns += 1
+    return stat,f,e,w
 
-    def handleOldStyleErrors(self,m,line):
-        if re.match('\! LaTeX Error:', line):
-            print '<div class="error">'
-            print line
-            print '</div>'
-            self.numErrs += 1
+def run_makeindex(fileName,idxfile=None):
+    """Run the makeindex command"""
+    idxFile = fileName.replace('.tex','.idx')
+    texin,tex = os.popen4('makeindex ' + idxFile)
+    ip = TexParser(tex,True)
+    f,e,w = ip.parseStream()
+    stat = tex.close()
+    return stat,f,e,w
+
+def findViewerPath(viewer,pdfFile,fileName):
+    """Use the find_app command to ensure that the viewer is installed in the system
+       For apps that support pdfsync search in pdf set up the command to go to the part of
+       the page in the document the user was writing."""
+    vp = os.popen('find_app ' + viewer + '.app').read()
+    syncPath = None
+    if viewer == 'Skim' and vp:
+        syncPath = vp + '/Contents/Resources/displayline ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile + ' ' + fileName
+    elif viewer == 'TeXniscope' and vp:
+        syncPath = vp + '/Contents/Resources/forward-search.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + fileName + ' ' + pdfFile
+    elif viewer == 'PDFView' and vp:
+        syncPath = '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
+    return vp, syncPath
+
+def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
+    """If the viewer is textmate, then setup the proper urls and/or redirects to show the
+       pdf file in the html output window.
+       If the viewer is an external viewer then ensure that it is installed and display the pdf"""
+    stat = 0
+    if viewer != 'TextMate':
+        pdfFile = shell_quote(fileName[:fileName.rfind('.tex')]+'.pdf')
+        cmdPath,syncPath = findViewerPath(viewer,pdfFile,fileName)
+        if cmdPath:
+            viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfFile
+            stat = os.system(viewCmd)
         else:
-            print '<div class="warning">'
-            print line
-            print '</div>'
-            self.numWarns += 1
+            print '<strong class="error">', viewer, ' does not appear to be installed on your system.</strong>'
+        if syncPath and usePdfSync:
+            os.system(syncPath)
+        elif not syncPath and usePdfSync:
+            print 'pdfsync is not supported for this viewer'
+    else:
+        pdfFile = fileName.replace('.tex','.pdf')
+        tmHref = '<p><a href="tm-file://'+quote(filePath+'/'+pdfFile)+'">Click Here to View</a></p>'
+        if (numErrs < 1 and numWarns < 1) or (numErrs < 1 and numWarns > 0 and not force):
+            print '<script type="text/javascript">'
+            print 'window.location="tm-file://'+quote(filePath+'/'+pdfFile)+'"'
+            print '</script>'
+    return stat
 
-    def pdfLatexError(self,m,line):
-        """docstring for pdfLatexError"""
-        self.numErrs += 1
-        print '<div class="error">'
-        print line
-        line = self.input_stream.readline()
-        if line and re.match('^ ==> Fatal error occurred', line):
-            print line.rstrip("\n")
-            print '</div>'
-            self.isFatal = True
-        else:
-            print '</div>'
+def determine_ts_directory(tsDirectives):
+    """Determine the proper directory to use for typesetting the current document"""
+    master = os.getenv('TM_LATEX_MASTER')
+    texfile = os.getenv('TM_FILEPATH')
+    startDir = os.path.dirname(texfile)
 
+    if 'root' in tsDirectives:
+        masterPath = os.path.dirname(os.path.normpath(tsDirectives['root']))
+    if master:
+        masterPath = os.path.dirname(master)
+        if masterPath == '' or masterPath[0] != '/':
+            masterPath = os.path.normpath(startDir+'/'+masterPath)
+    else:
+        masterPath = startDir
+    return masterPath
 
-# TODO: detect that we are running latexmk right away and make multiple calls to a latexparsestream
-# TODO: Add ParseLatexMk class
+def findTexPackages(fileName):
+    """Find all packages included by the master file.
+       or any file included from the master.  We should not have to go
+       more than one level deep for preamble stuff.
+    """
+    try:
+        texString = open(fileName).read()
+    except:
+        print '<p class="error">Error: Could not open %s to check for packages</p>' % fileName
+        print '<p class="error">This is most likely a problem with TM_LATEX_MASTER</p>'
+        sys.exit(1)
+    incFiles = [x[1] for x in re.findall(r'(\\input|\\include)\{([\w /\.\-]+)\}',texString)]
+    myList = [x[1] for x in re.findall(r'\\usepackage(\[[\w, \-]+\])?\{([\w\-]+)\}',texString)]
+    for ifile in incFiles:
+        if ifile.find('.tex') < 0:
+            ifile += '.tex'
+        try:
+            myList += [x[1] for x in re.findall(r'\\usepackage(\[[\w, \-]+\])?\{([\w\-]+)\}',open(ifile).read()) ]
+        except:
+            print 'Error: Could not open %s to check for packages' % ifile
+            sys.exit(1)            
+    return myList
 
-#
-# Start of main program...
-#
+def find_TEX_directives():
+    """build a dictionary of %!TEX directives
+       the main ones we are concerned with are
+       root : which specifies a root file to run tex on for this subsidiary
+       TS-program : which tells us which latex program to run
+       TS-options : options to pass to TS-program
+       encoding  :  file encoding
+       """
+    texfile = os.getenv('TM_FILEPATH')
+    startDir = os.path.dirname(texfile)
+    done = False    
+    tsDirectives = {}
+    while not done:
+        f = open(texfile)
+        foundNewRoot = False
+        for i in range(20):
+            line = f.readline()
+            m =  re.match(r'^%!TEX\s+([\w-]+)\s?=\s?(.*)',line)
+            if m:
+                if m.group(1) == 'root':
+                    foundNewRoot = True
+                    if m.group(2)[0] == '/':
+                        tsDirectives['root'] = m.group(2).rstrip()
+                    else:                           # new root is relative or in same directory
+                        texfile = startDir + '/' + m.group(2).rstrip()
+                        tsDirectives['root'] = texfile
+                else:
+                    tsDirectives[m.group(1)] = m.group(2).rstrip()
+        f.close()
+        if foundNewRoot == False:
+            done = True
+
+    return tsDirectives
+
+def findFileToTypeset(tsDirectives):
+    """determine which file to typeset.  Using the following rules:
+       + %!TEX root directive
+       + using the TM_LATEX_MASTER environment variable
+       + Using TM_FILEPATH
+       Once the file is decided return the name of the file and the normalized absolute path to the
+       file as a tuple.
+    """
+    if  'root' in tsDirectives:
+        f = tsDirectives['root']
+    elif os.getenv('TM_LATEX_MASTER'):
+        f = os.getenv('TM_LATEX_MASTER')
+    else:
+        f = os.getenv('TM_FILEPATH')
+    master = os.path.basename(f)
+
+    return master,determine_ts_directory(tsDirectives)
+
+def constructEngineOptions(tsDirectives,tmPrefs):
+    """Construct a string of command line options to pass to the typesetting engine
+    Options can come from:
+    +  %!TEX TS-options directive in the file
+    + Preferences
+    In any case nonstopmode is set as is file-line-error-style.
+    """
+    opts = "-interaction=nonstopmode -file-line-error-style"
+    if 'TS-options' in tsDirectives:
+        opts += " " + tsDirectives['TS-options']
+    else:
+        opts += " " + tmPrefs['latexEngineOptions']
+    return opts
+
+def usesOnePackage(testPack, allPackages):
+    for p in testPack:
+        if p in allPackages:
+            return True
+    return False
+
+def constructEngineCommand(tsDirectives,tmPrefs,packages):
+    """This function decides which engine to run using 
+       + %!TEX directives from the tex file
+       + Preferences
+       + or by detecting certain packages
+       The default is pdflatex.  But it may be modified
+       to be one of
+          latex
+          xelatex
+          texexec  -- although I'm not sure how compatible context is with any of this
+    """
+    engine = "pdflatex"
+
+    latexIndicators = ['pstricks' , 'xyling' , 'pst-asr' , 'OTtablx' , 'epsfig' ]
+    xelatexIndicators = ['xunicode', 'fontspec']
+
+    if 'TS-program' in tsDirectives:
+        engine = tsDirectives['TS-program']
+    elif usesOnePackage(latexIndicators,packages):
+        engine = 'latex'
+    elif usesOnePackage(xelatexIndicators,packages):
+        engine = 'xelatex'
+    else:
+        engine = tmPrefs['latexEngine']
+    stat = os.system('/usr/bin/type '+engine+" > /dev/null")
+    if stat != 0:
+        print 'Error: %s is not found' % engine
+        sys.exit(1)
+    return engine
+
+###############################################################
+#                                                             #
+#                 Start of main program...                    #
+#                                                             #
+###############################################################
+
 if __name__ == '__main__':
     verbose = False
+    numRuns = 0
+    stat = 0
+    texStatus = None
+    numErrs = 0
+    numWarns = 0
+    firstRun = False
 
-    # Parse command line parameters...
-    if len(sys.argv) > 1 and sys.argv[1] == '-v':
-        verbose = True
-        sys.argv[1:] = sys.argv[2:]
-    if len(sys.argv) == 3:
+#
+# Parse command line parameters...
+#
+    if len(sys.argv) > 2:
+        firstRun = True         ## A little hack to make the buttons work nicer.
+    if len(sys.argv) > 1:
         texCommand = sys.argv[1]
-        fileName = sys.argv[2]
     else:
-        sys.stderr.write("Usage: "+sys.argv[0]+" [-v] tex-command file.tex\n")
+        sys.stderr.write("Usage: "+sys.argv[0]+" tex-command firstRun\n")
         sys.exit(255)
 
-    # run the command passed to us
-    texin,tex = os.popen4(texCommand+" "+shell_quote(fileName))
+#
+# Get preferences from TextMate or local directives
+#
+    tmPrefs = tmprefs.Preferences()
+    tsDirs = find_TEX_directives()
 
-    print '<pre>'
+    os.chdir(determine_ts_directory(tsDirs))
+    
+#
+# Set up some configuration variables
+#
+    if tmPrefs['latexVerbose'] == 1:
+        verbose = True
 
-    lp = LaTexParser(tex,verbose)
-    isFatal, numErrs, numWarns = lp.parseStream()
+    useLatexMk = tmPrefs['latexUselatexmk']
+    if useLatexMk:
+        texCommand = 'latexmk'
+    
+    if tmPrefs['latexEngine'] == 'builtin':
+        texCommand = 'builtin'
 
-    # cleanup and process error codes
-    texStatus = tex.close()
+    fileName,filePath = findFileToTypeset(tsDirs);
+
+    ltxPackages = findTexPackages(fileName)
+        
+    viewer = tmPrefs['latexViewer']
+    engine = constructEngineCommand(tsDirs,tmPrefs,ltxPackages)
+    pcmd = os.popen("kpsewhich -progname %s --expand-var '$TEXINPUTS':%s/tex//" % (engine,os.getenv('TM_BUNDLE_SUPPORT')))
+    os.putenv('TEXINPUTS',pcmd.read())
+#
+# print out header information to begin the run
+#
+    if not firstRun:
+        print '<hr>'
+    print '<h2>Running %s on %s</h2>' % (engine,fileName)
+    print '<div id="commandOutput"><div id="preText">'
+
+#
+# Run the command passed on the command line or modified by preferences
+#
+    if texCommand == 'latexmk':
+        texCommand = 'latexmk.pl -f -r ' + shell_quote(os.getenv('TM_BUNDLE_SUPPORT'))+'/latexmkrc'
+        print texCommand
+        texin,tex = os.popen4(texCommand+" "+shell_quote(fileName))
+        commandParser = ParseLatexMk(tex,verbose)
+        isFatal,numErrs,numWarns = commandParser.parseStream()
+        texStatus = tex.close()
+        if tmPrefs['latexAutoView'] and numErrs < 1:
+            stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
+
+    elif texCommand == 'bibtex':
+        texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
+        
+    elif texCommand == 'index':
+        texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
+        
+    elif texCommand == 'builtin':
+        # the latex, bibtex, index, latex, latex sequence should cover 80% of the cases that latexmk does
+        texCommand =  engine + " " + constructEngineOptions(tsDirs,tmPrefs)
+        texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
+        texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
+        if os.path.exists(fileName.replace('.tex','.idx')):
+            texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
+        texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
+        texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
+        
+    elif texCommand =='latex':
+        texCommand = engine + " " + constructEngineOptions(tsDirs,tmPrefs)
+        texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
+        if engine == 'latex':
+            psFile = fileName.replace('.tex','.ps')
+            os.system('dvips ' + fileName.replace('.tex','.dvi') + ' -o ' + psFile)
+            os.system('ps2pdf ' + psFile)
+        if tmPrefs['latexAutoView'] and numErrs < 1:
+            stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
+        
+    elif texCommand == 'view':
+        stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
+#    
+# Check status of running the viewer
+#
+    if stat != 0:
+        print '<p class="error"><strong>error number %d opening viewer</strong></p>' % stat
+
+#
+# Check the status of any runs...
+#
     eCode = 0
     if texStatus != None or numWarns > 0 or numErrs > 0:
-        print "Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings in " + str(numRuns) + " runs"
+        print "<p class='info'>Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings in " + str(numRuns) + " runs</p>"
         if texStatus != None:
             signal = (texStatus & 255)
             returnCode = texStatus >> 8
             if signal != 0:
-                print "TeX killed by signal " + str(signal)
+                print "<p class='error'>TeX killed by signal %s</p>" % str(signal) 
             else:
-                print "TeX exited with error code " + str(returnCode)
-
-        if isFatal:
-            eCode = 3
-        elif numErrs > 0 or texStatus != None:
-            eCode = 2
+                print "<p class='error'>TeX exited with error code %s</p> " % str(returnCode)
+#
+# Decide what to do with the Latex & View log window   
+#
+    if not tmPrefs['latexKeepLogWin']:
+        if numErrs == 0 and numWarns == 0 and viewer != 'TextMate':
+            eCode = 200
         else:
-            eCode = 1
+            eCode = 0
+    else:
+        eCode = 0
 
-    print '</pre>'
+    print '</div></div>'  # closes <pre> and <div id="commandOutput"> 
+
+#
+# Output buttons at the bottom of the window
+#
+    if firstRun:
+        # only need to include the javascript library once
+        js = os.getenv('TM_BUNDLE_SUPPORT') + '/bin/texlib.js'
+        js = quote(js)
+        print """
+         <script src="file://%s"    type="text/javascript" charset="utf-8"></script>
+         """ % js
+
+        print '<div id="texActions">'
+        print '<input type="button" value="Re-Run %s" onclick="runLatex(); return false" />' % engine
+        print '<input type="button" value="Run BibTeX" onclick="runBibtex(); return false" />'
+        print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
+        if viewer == 'TextMate':
+            pdfFile = fileName.replace('.tex','.pdf')
+            print """<input type="button" value="view in TextMate" onclick="window.location='""" + 'tm-file://' + quote(filePath+'/'+pdfFile) +"""'"/>"""
+        else:
+            print '<input type="button" value="View in %s" onclick="runView(); return false" />' % viewer
+        print '<input type="button" value="Preferences…" onclick="runConfig(); return false" />'
+        print '<p>'
+        print '<input type="checkbox" id="hv_warn" name="fmtWarnings" onclick="makeFmtWarnVisible(); return false" />'
+        print '<label for="hv_warn">Show hbox,vbox Warnings </label>'            
+        print '</div>'
+
     sys.exit(eCode)
