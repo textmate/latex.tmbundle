@@ -310,10 +310,10 @@ if __name__ == '__main__':
         verbose = True
 
     useLatexMk = tmPrefs['latexUselatexmk']
-    if useLatexMk:
+    if texCommand == 'latex' and useLatexMk:
         texCommand = 'latexmk'
     
-    if tmPrefs['latexEngine'] == 'builtin':
+    if texCommand == 'latex' and tmPrefs['latexEngine'] == 'builtin':
         texCommand = 'builtin'
 
     fileName,filePath = findFileToTypeset(tsDirs);

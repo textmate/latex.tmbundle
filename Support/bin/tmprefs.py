@@ -9,7 +9,7 @@ class Preferences(object):
             'latexAutoView' : 1, 
             'latexEngine' : "pdflatex",
             'latexEngineOptions' : "",
-            'latexVerbose' : 1,
+            'latexVerbose' : 0,
             'latexUselatexmk' : 0,
             'latexViewer' : "TextMate",
             'latexKeepLogWin' : 1
