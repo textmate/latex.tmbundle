@@ -189,10 +189,10 @@ def find_TEX_directives():
                 if m.group(1) == 'root':
                     foundNewRoot = True
                     if m.group(2)[0] == '/':
-                        tsDirectives['root'] = m.group(2).rstrip()
+                        texfile = m.group(2).rstrip()
                     else:                           # new root is relative or in same directory
                         texfile = startDir + '/' + m.group(2).rstrip()
-                        tsDirectives['root'] = texfile
+                    tsDirectives['root'] = texfile
                 else:
                     tsDirectives[m.group(1)] = m.group(2).rstrip()
         f.close()
@@ -300,7 +300,6 @@ if __name__ == '__main__':
 #
     tmPrefs = tmprefs.Preferences()
     tsDirs = find_TEX_directives()
-
     os.chdir(determine_ts_directory(tsDirs))
     
 #
