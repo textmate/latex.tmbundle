@@ -52,6 +52,8 @@ class TexParser(object):
                 print line
             
             line = self.input_stream.readline()
+        if self.done == False:
+            self.badRun()
         return self.isFatal, self.numErrs, self.numWarns
 
     def info(self,m,line):
@@ -75,7 +77,16 @@ class TexParser(object):
         print '<p class="fmtWarning">'
         print line
         print '</p>'
+        
+    def fatal(self,m,line):
+        print '<p class="error">'
+        print line
+        print '</p>'
+        self.isFatal = True
 
+    def badRun(self):
+        """docstring for finishRun"""
+        pass
         
 class BibTexParser(TexParser):
     """Parse and format Error Messages from bibtex"""
@@ -102,7 +113,7 @@ class LaTexParser(TexParser):
             (re.compile('.*?\((\.\/[^\)]*?\.tex( |$))') , self.detectNewFile),
             (re.compile('.*\<use (.*?)\>') , self.detectInclude),
             (re.compile('^Output written') , self.info),
-            (re.compile('LaTeX Warning:.*?input line (\d+)\.$') , self.handleWarning),
+            (re.compile('LaTeX Warning:.*?input line (\d+)(\.|$)') , self.handleWarning),
             (re.compile('LaTeX Warning:.*') , self.warning),
             (re.compile('LaTeX Font Warning:.*') , self.warning),            
             (re.compile('Overfull.*wide') , self.warn2),
@@ -110,9 +121,10 @@ class LaTexParser(TexParser):
             (re.compile('^([\.\/\w\x7f-\xff ]+\.tex):(\d+):(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): LaTeX Error:(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): (Emergency stop)') , self.handleError),
-            (re.compile('Transcript written on (.*).$') , self.finishRun),
+            (re.compile('Transcript written on (.*)\.$') , self.finishRun),
             (re.compile('^Error: pdflatex') , self.pdfLatexError),
-            (re.compile('\!.*') , self.handleOldStyleErrors)
+            (re.compile('\!.*') , self.handleOldStyleErrors),
+            (re.compile('^\s+==>') , self.fatal)
         ]
                 
 
@@ -140,13 +152,14 @@ class LaTexParser(TexParser):
         self.numErrs += 1
         
     def finishRun(self,m,line):
-        print '<p class="error">'
-        print '<a href="' + make_link(os.getcwd()+'/'+m.group(1),'1') +  '">' + m.group(1) + '</a>'
+        logFile = m.group(1).strip('"')
+        print '<p>  Complete transcript is in '
+        print '<a class="error" href="' + make_link(os.getcwd()+'/'+logFile,'1') +  '">' + logFile + '</a>'
         print '</p>'
         self.done = True
         
     def handleOldStyleErrors(self,m,line):
-        if re.match('\! LaTeX Error:', line):
+        if re.search('[Ee]rror', line):
             print '<p class="error">'
             print line
             print '</p>'
@@ -163,14 +176,22 @@ class LaTexParser(TexParser):
         print '<p class="error">'
         print line
         line = self.input_stream.readline()
-        if line and re.match('^ ==> Fatal error occurred', line):
+        if line and re.match('^ ==> Fatal error occurred', line):  
             print line.rstrip("\n")
             print '</p>'
             self.isFatal = True
         else:
             print '</p>'
         sys.stdout.flush()
-        
+    
+    def badRun(self):
+        """docstring for finishRun"""
+        print '<p class="error">A fatal error occured, log file is in '
+        logFile = os.path.basename(os.getenv('TM_FILEPATH'))
+        logFile = logFile.replace('.tex','.log')
+        print '<a href="' + make_link(os.getcwd()+'/'+logFile,'1') +  '">' + logFile + '</a>'        
+        print '</p>'
+
 class ParseLatexMk(TexParser):
     """docstring for ParseLatexMk"""
     def __init__(self, input_stream, verbose):
