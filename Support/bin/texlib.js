@@ -18,15 +18,12 @@ function displayIncrementalOutput(id,className,mess) {
         var entry = document.createElement("div");
         entry.innerHTML += mess
         c.appendChild(entry);
-		TextMate.log('after changing document');
 	}
 }
 
 function runCommand(theCmd){
 	cmd  = 'cd "${TM_PROJECT_DIRECTORY:-$TM_DIRECTORY}"; '
-    TextMate.log(cmd);
 	cmd += '"$TM_BUNDLE_SUPPORT"/bin/texMate.py ' + theCmd;
-	TextMate.log(cmd);
 	TextMate.isBusy = true;
 	myCommand = TextMate.system(cmd, function(task) { TextMate.isBusy = false; } );
 	myCommand.onreadoutput = latexReadOutput;
