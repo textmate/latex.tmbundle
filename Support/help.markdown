@@ -77,7 +77,7 @@ You can also setup an external previewer for showing the PDF output. Focus will 
 
 We recommend you use either Skim, if you are only going to be dealing with pdf files, or TeXniscope if you will also be dealing with dvi files. They both support pdfsync, though TeXniscope is not a universal binary as of this writing.
 
-To use one of these previewers, you must set the `TM_LATEX_VIEWER` environment variable to the name of the previewer. For example for TeXniscope, you would set the variable to have a value of `TeXniscope`.
+To use one of these previewers, you must set the Viewer preference in the Preferences panel.
 
 [texshop]: http://www.uoregon.edu/~koch/texshop/
 [texniscope]: http://www.ing.unipi.it/~d9615/homepage/texniscope.html
@@ -104,25 +104,22 @@ You need to perform the following steps to enable synchronization:
 
     If you typeset your documents from elsewhere, you need to install `pdfsync.sty` e.g. in `~/Library/texmf` (this might depend on your distribution of tex).
 
- 2. Set the `TM_LATEX_VIEWER` variable to `TeXniscope`. This enables you to use the `Show in TeXniscope (pdfsync)` command bound to `⌃⌥⌘O` by default.
+ 2. Set your viewer to `Skim`. This enables you to use the `Show in PDFViewer (pdfsync)` command bound to `⌃⌥⌘O` by default.
 
  3. In TeXniscope go to the preferences. There, set the following two options:
 
         Editor: mate
         Editor options: -l %line "%file"
-In PDFView, these are already set by default.
+In Skim or PDFView, these are already set by default.
 
-    This assumes that you have installed `mate` (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking (⌘) at a location in the PDF file (as shown in TeXniscope/PDFView) should take you to the corresponding location in TextMate.
+    This assumes that you have installed `mate` (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking (⌘) at a location in the PDF file (as shown in TeXniscope/Skim) should take you to the corresponding location in TextMate.
 
 **Note 1:** PDFSync does not work when your filename contains a space.
 
 **Note 2:** The granularity of the synchronization data is generally “per paragraph”, so going from TextMate to TeXniscope or back will generally locate just the paragraph nearest your desired position.
 
-**Note 3:** Problems have been reported with the universal build of TeXniscope. So Intel users may want to run TeXniscope under Rosetta, or use PDFView instead.
+**Note 3:** Problems have been reported with the universal build of TeXniscope. So Intel users may want to run TeXniscope under Rosetta, or use Skim instead.
 
-**Note 4:** As of this writing, PDFView does not support pdfsync from TextMate to PDFView for projects with a master file.
-
-TODO: Remove Note 4 once this is fixed.
 
 # Working With LaTeX
 
@@ -247,8 +244,39 @@ The other system is specific to the LaTeX bundle, and it is triggered via the co
 * Use arrows/keys/mouse to select template file and press return
 * Start working on your masterpiece
 
+# Preferences
+## Global Preferences
+You can bring up the Preferences panel for LaTeX by running the Preferences command or typing `⌥⌘,` in any LaTeX window.  The Preferences window allows you to set options for typesetting and viewing.  For typesetting you can set the following options:
+* Default Engine:  You can choose a typesetting engine from the dropdown list.  Note:  This engine is the fallback engine.  The LaTeX `Typeset & View` command can override the default in two ways:
+  + If you use a `%!TEX TS-program = ` directive in your source file. (See below)
+  + If you include packages that indicate you should use plain LaTeX, or xeLaTeX
+  
+* Options:  If you have specific options that you will usually want to pass to the engine you have selected you can set them here.  Note:  If you have options that are specific to a single file you are better off to use the `%!TEX TS-options = ` directive at the top of your source file.
+
+* Use Latexmk.pl:   TextMate includes the popular latexmmk.pl script which automatically runs latex, bibtex, and makeindex as many times as needed to resolve all cross references and citations in your file.  To use latexmk.pl just check this box.
+
+* Verbose TeX output:  If you want to see the raw LaTeX log file in real time, check this box.
+
+For Viewing the typeset file you can set the following options:
+* View in:  Select from the viewers that are supported.  I recommend you install and use Skim.
+* Show pdf automatically:  If you want the viewer started automatically after typesetting check this box.
+* Keep log window open:  If you want the log window to stay open so you can check on any errors or warnings check this box.
+
+When using TextMate as the viewer you should keep the following in mind:  Show pdf automatically will not bring up the pdf file if there are any errors or warnings if `Keep log window open` is checked.  If keep log window open is not checked then the pdf file will automatically replace the log if there are no errors.  In this case any warnings you see will be ignored.
+
+## Local Preferences
+When working with Latex there are three local options that you can set on a per file basis.  As mentioned above these options will override the preferences that you set using the preferences interface.
+
+The best way to set local options is to use the `%!TEX` directives.  They are as follows:
+
+* `root`  This allows you to set a master file.  When you are working on a project where you have a master file that \inputs or \includes several other files you can set the master file using `%!TEX root = mymaster.tex`.  There is also a handy Bundle command that allows you to select the file you want to use as master.  In addition to the root directive you could also choose to set the `TM_LATEX_MASTER` environment variable.  This is a bit handier if you are working on a project and want to set the master file just once.
+
+* `TS-program`  To override the typesetting engine for a particular file you can use this directive.  This can be a standard LaTeX typesetting engine like `xelatex`, `pdflatex`, or `latex` or this could refer to your own custom typesetting script.  For example `%!TEX TS-program = xelatex`
+
+* `TS-options`  To add specific options that you want for your this particular file you can set them here.  Note:  Whatever options you choose to set using this directive will come after the built in options of `"-interaction=nonstopmode -file-line-error-style"`
+
 # Credits
 
-There were at least two or possibly three versions of a LaTeX bundle floating around in the early days of TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and Andrew Ellis At some point, January 2005, Eric Hsu pulled together the threads into one package. From then on there have been contributions by Sune Foldager, Brad Miller, Allan Odgaard, Jeroen van der Ham, and Haris Skiadas. The Generic Completion package was written by Marcin. 
+There were at least two or possibly three versions of a LaTeX bundle floating around in the early days of TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and Andrew Ellis At some point, January 2005, Eric Hsu pulled together the threads into one package. From then on there have been contributions by Sune Foldager, Brad Miller, Allan Odgaard, Jeroen van der Ham, Robin Houston and Haris Skiadas. 
 
 Happy LaTeXing!
