@@ -68,7 +68,6 @@ def run_bibtex(bibfile=None,verbose=False,texfile=None):
         
 def run_latex(ltxcmd,texfile,verbose=False):
     """Run the flavor of latex specified by ltxcmd on texfile"""
-    # TODO: I have no idea if this works with texexec for context
     global numRuns
     texin,tex = os.popen4(ltxcmd+" "+shell_quote(texfile))    
     lp = LaTexParser(tex,verbose)
@@ -321,8 +320,13 @@ if __name__ == '__main__':
         
     viewer = tmPrefs['latexViewer']
     engine = constructEngineCommand(tsDirs,tmPrefs,ltxPackages)
-    pcmd = os.popen("kpsewhich -progname %s --expand-var '$TEXINPUTS':%s/tex//" % (engine,os.getenv('TM_BUNDLE_SUPPORT')))
-    os.putenv('TEXINPUTS',pcmd.read())
+
+    # Make sure that the bundle_support/tex directory is added
+    #pcmd = os.popen("kpsewhich -progname %s --expand-var '$TEXINPUTS':%s/tex//" % (engine,bundle_support))
+    #using the output of kpsewhich fails to work properly.  The simpler method below works fine
+    texinputs = ".::%s/tex//" % os.getenv('TM_BUNDLE_SUPPORT')
+    os.putenv('TEXINPUTS',texinputs)
+
 #
 # print out header information to begin the run
 #
