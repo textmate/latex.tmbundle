@@ -154,7 +154,7 @@ class LaTexParser(TexParser):
     def finishRun(self,m,line):
         logFile = m.group(1).strip('"')
         print '<p>  Complete transcript is in '
-        print '<a class="error" href="' + make_link(os.getcwd()+'/'+logFile,'1') +  '">' + logFile + '</a>'
+        print '<a href="' + make_link(os.getcwd()+'/'+logFile,'1') +  '">' + logFile + '</a>'
         print '</p>'
         self.done = True
         
