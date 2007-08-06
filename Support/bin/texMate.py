@@ -323,8 +323,13 @@ if __name__ == '__main__':
 
     # Make sure that the bundle_support/tex directory is added
     #pcmd = os.popen("kpsewhich -progname %s --expand-var '$TEXINPUTS':%s/tex//" % (engine,bundle_support))
+    #texinputs = pcmd.read()
     #using the output of kpsewhich fails to work properly.  The simpler method below works fine
-    texinputs = ".::%s/tex//" % os.getenv('TM_BUNDLE_SUPPORT')
+    if os.getenv('TEXINPUTS'):
+        texinputs = os.getenv('TEXINPUTS') + ':'
+    else:
+        texinputs = ".::"
+    texinputs += "%s/tex//" % os.getenv('TM_BUNDLE_SUPPORT')
     os.putenv('TEXINPUTS',texinputs)
 
 #
