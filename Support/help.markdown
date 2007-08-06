@@ -247,20 +247,22 @@ The other system is specific to the LaTeX bundle, and it is triggered via the co
 # Preferences
 ## Global Preferences
 You can bring up the Preferences panel for LaTeX by running the Preferences command or typing `⌥⌘,` in any LaTeX window.  The Preferences window allows you to set options for typesetting and viewing.  For typesetting you can set the following options:
-* Default Engine:  You can choose a typesetting engine from the dropdown list.  Note:  This engine is the fallback engine.  The LaTeX `Typeset & View` command can override the default in two ways:
+
+* *Default Engine:*  You can choose a typesetting engine from the dropdown list.  Note:  This engine is the fallback engine.  The LaTeX `Typeset & View` command can override the default in two ways:
   + If you use a `%!TEX TS-program = ` directive in your source file. (See below)
   + If you include packages that indicate you should use plain LaTeX, or xeLaTeX
   
-* Options:  If you have specific options that you will usually want to pass to the engine you have selected you can set them here.  Note:  If you have options that are specific to a single file you are better off to use the `%!TEX TS-options = ` directive at the top of your source file.
+* *Options:*  If you have specific options that you will usually want to pass to the engine you have selected you can set them here.  Note:  If you have options that are specific to a single file you are better off to use the `%!TEX TS-options = ` directive at the top of your source file.
 
-* Use Latexmk.pl:   TextMate includes the popular latexmmk.pl script which automatically runs latex, bibtex, and makeindex as many times as needed to resolve all cross references and citations in your file.  To use latexmk.pl just check this box.
+* *Use Latexmk.pl:*   TextMate includes the popular latexmmk.pl script which automatically runs latex, bibtex, and makeindex as many times as needed to resolve all cross references and citations in your file.  To use latexmk.pl just check this box.
 
-* Verbose TeX output:  If you want to see the raw LaTeX log file in real time, check this box.
+* *Verbose TeX output:*  If you want to see the raw LaTeX log file in real time, check this box.
 
 For Viewing the typeset file you can set the following options:
-* View in:  Select from the viewers that are supported.  I recommend you install and use Skim.
-* Show pdf automatically:  If you want the viewer started automatically after typesetting check this box.
-* Keep log window open:  If you want the log window to stay open so you can check on any errors or warnings check this box.
+
+* *View in:*  Select from the viewers that are supported.  I recommend you install and use Skim.
+* *Show pdf automatically:*  If you want the viewer started automatically after typesetting check this box.
+* *Keep log window open:*  If you want the log window to stay open so you can check on any errors or warnings check this box.
 
 When using TextMate as the viewer you should keep the following in mind:  Show pdf automatically will not bring up the pdf file if there are any errors or warnings if `Keep log window open` is checked.  If keep log window open is not checked then the pdf file will automatically replace the log if there are no errors.  In this case any warnings you see will be ignored.
 
