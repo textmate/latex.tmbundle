@@ -157,6 +157,12 @@
 			<string>constant.character.newline.tex</string>
 		</dict>
 		<dict>
+			<key>match</key>
+			<string>\$(\\\$|[^$])*\n</string>
+			<key>name</key>
+			<string>invalid.illegal.math.tex</string>
+		</dict>
+		<dict>
 			<key>begin</key>
 			<string>\$</string>
 			<key>beginCaptures</key>
