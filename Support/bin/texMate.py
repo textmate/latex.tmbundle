@@ -261,9 +261,9 @@ def constructEngineCommand(tsDirectives,tmPrefs,packages):
         engine = 'xelatex'
     else:
         engine = tmPrefs['latexEngine']
-    stat = os.system('/usr/bin/type '+engine+" > /dev/null")
+    stat = os.system('type '+engine+' > /dev/null')
     if stat != 0:
-        print 'Error: %s is not found' % engine
+        print '<p class="error">Error: %s is not found, you need to install LaTeX or be sure that your PATH is setup properly.</p>' % engine
         sys.exit(1)
     return engine
 
