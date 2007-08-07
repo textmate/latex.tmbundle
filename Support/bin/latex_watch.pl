@@ -19,107 +19,225 @@
 
 use strict;
 use warnings;
-use POSIX;
+use POSIX ();
 use File::Copy 'copy';
 use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
+
 
 #############
 # Configure #
 #############
 
-# Add MacTeX and teTeX paths (in that order)
-$ENV{PATH} .= ":/usr/texbin";
-$ENV{PATH} .= ":/usr/local/teTeX/bin/".`/usr/local/teTeX/bin/highesttexbin.pl`
-	if -x "/usr/local/teTeX/bin/highesttexbin.pl";
-
-# If TM_SUPPORT_PATH is undefined, make a plausible guess.
-# (Useful for running this script from outside TextMate.)
-$ENV{TM_SUPPORT_PATH} = "/Applications/TextMate.app/Contents/SharedSupport/Support"
-	if !defined $ENV{TM_SUPPORT_PATH};
-
-# Add TextMate support paths
-$ENV{PATH} .= ":$ENV{TM_SUPPORT_PATH}/bin";
-$ENV{PATH} .= ":$ENV{TM_BUNDLE_SUPPORT}/bin"
-	if defined $ENV{TM_BUNDLE_SUPPORT};
-
-# Location of CocoaDialog binary
-my $CocoaDialog = "$ENV{TM_SUPPORT_PATH}/bin/CocoaDialog.app/Contents/MacOS/CocoaDialog";
-
-# Include the bundle's tex tree in the search path: we have a local copy of pdfsync.sty.
-$ENV{TEXINPUTS} = `kpsewhich -progname latex --expand-var '\$TEXINPUTS'`;
-chomp $ENV{TEXINPUTS};
-$ENV{TEXINPUTS} .= ":$ENV{TM_BUNDLE_SUPPORT}/tex//";
-
-# Parse command-line options
-my ($DEBUG, $textmate_pid, $progressbar_pid, $viewer_preference, $viewer, @tex, $base_format);
-my $mode="PDF";
-
 print "Latex Watch $VERSION: ", (join$", map {/\s/ ? qq('$_') : $_} @ARGV), "\n";
-GetOptions('debug|d|debug-to-console' => \$DEBUG,
-	'textmate-pid=i' => \$textmate_pid,
-	'progressbar-pid=i' => \$progressbar_pid,
-	'ps'	=> sub { $mode = "PS" },
-	'pdf'	=> sub { $mode = "PDF" },
-	'viewer=s' => \$viewer_preference,
-)
-	or fail("Failed to process command-line options", "Check the console for details");
+init_environment();
 
-if ($mode eq "PS") {
-	# Set $DISPLAY to a sensible default, it it's unset
-	$ENV{DISPLAY} = ":0"
-		if !defined $ENV{DISPLAY};
+my ($DEBUG, $textmate_pid, $progressbar_pid)
+	= parse_command_line_options();
+my ($filepath, $wd, $name, $dotname, $absolute_wd)
+	= parse_file_path();
 
-	# Add Fink path
-	$ENV{PATH} .= ":/sw/bin";
-
-	@tex = qw(etex);
-	$base_format = "latex";
-
-	select_postscript_viewer();
-}
-else {
-	$base_format="pdflatex";
-	@tex = qw(pdfetex -output-format pdf);
-	$viewer = select_pdf_viewer($viewer_preference);
-}
-
-my $filepath = shift;
-fail("File not saved", "You must save the file before it can be watched")
-	if !length($filepath);
-
-# Parse and verify file path
-my ($wd, $name, $dotname, $absolute_wd);
-if ($filepath =~ m!(.*)/!) {
-	$wd = $1;
-	my $fullname = $';
-	if ($fullname =~ /\.tex\z/) {
-		$name = $`;
-		$dotname = ".$name";
-		$dotname =~ y/\01-\040"\\$%&/_/;    # Any other chars that cause problems?
-	}
-	else {
-		fail("Filename doesn't end in .tex",
-			"The filename ($fullname) does not end with the .tex extension");
-	}
-}
-else {
-	fail("Path does not contain /", "The file path ($filepath) does not contain a '/'");
-}
-if (! -W $wd) {
-	fail("Directory not writeable", "I can't write to the directory $wd");
-}
-
-# Use a relative path, because TeX has problems with special characters in the pathname
-chdir($absolute_wd = $wd);
-$wd = ".";
-
+my %prefs = get_prefs();
+my ($mode, $viewer_option, $viewer, $base_format, @tex);
+	if ($prefs{engine} eq 'latex') {
+		$mode = "PS";
 		
+		# Set $DISPLAY to a sensible default, it it's unset
+		$ENV{DISPLAY} = ":0"
+			if !defined $ENV{DISPLAY};
+		
+		applescript('tell application "X11" to launch');
+
+		# Add Fink path
+		$ENV{PATH} .= ":/sw/bin";
+
+		@tex = qw(etex);
+		$base_format = "latex";
+
+		select_postscript_viewer();
+	}
+	elsif ($prefs{engine} eq "pdflatex") {
+		$mode = "PDF";
+		
+		$base_format="pdflatex";
+		@tex = qw(pdfetex -output-format pdf);
+
+		if ($prefs{viewer} eq 'TextMate') {
+			print "Latex Watch: Cannot use TextMate to preview. Using default viewer instead.\n";
+			$viewer = select_pdf_viewer();
+		}
+		else {
+			$viewer = select_pdf_viewer($prefs{viewer});
+		}
+	}
+
+
 # Remove the 'hide extension' attribute, or else ping_pdf_viewer_texshop will fail
 fail_unless_system("SetFile", "-a", "e", "$name.tex")
     if $viewer eq "TeXShop";
 
+init_cleanup();
+main_loop();
+
+##################
+# TextMate prefs #
+##################
+
+{
+	my ($prefs_file, $prefs);
+	
+	sub init_prefs {
+		eval { require Foundation };
+		if ($@ ne "") {
+			fail("Couldn't load Foundation.pm",
+				"The Perl module Foundation.pm could not be loaded. If you have been foolish enough to remove the default Perl interpreter (/usr/bin/perl), you must install PerlObjCBridge manually.\n\n$@\0");
+		}
+	
+	    $prefs_file = "$ENV{HOME}/Library/Preferences/com.macromates.textmate.plist";
+	    $prefs = NSDictionary->dictionaryWithContentsOfFile_($prefs_file);
+	}
+
+    sub getPreference {
+        my ($prefName, $default) = @_;
+		init_prefs() unless defined $prefs;
+		
+        my $pref = $prefs->objectForKey_($prefName);
+        return ( ref($pref) eq 'NSCFString'
+            ? $pref->UTF8String()
+            : $default)
+    }
+}
+
+sub get_prefs {
+	return (
+		engine  => getPreference(latexEngine => "pdflatex"),
+		options => getPreference(latexEngineOptions => ""),
+		viewer  => getPreference(latexViewer => "TextMate"),
+	);
+}
+
+##################
+# Setup routines #
+##################
+
+sub init_environment {
+	# Add MacTeX and teTeX paths (in that order)
+	$ENV{PATH} .= ":/usr/texbin";
+	$ENV{PATH} .= ":/usr/local/teTeX/bin/".`/usr/local/teTeX/bin/highesttexbin.pl`
+		if -x "/usr/local/teTeX/bin/highesttexbin.pl";
+
+	# If TM_SUPPORT_PATH is undefined, make a plausible guess.
+	# (Useful for running this script from outside TextMate.)
+	$ENV{TM_SUPPORT_PATH} = "/Applications/TextMate.app/Contents/SharedSupport/Support"
+		if !defined $ENV{TM_SUPPORT_PATH};
+
+	# Add TextMate support paths
+	$ENV{PATH} .= ":$ENV{TM_SUPPORT_PATH}/bin";
+	$ENV{PATH} .= ":$ENV{TM_BUNDLE_SUPPORT}/bin"
+		if defined $ENV{TM_BUNDLE_SUPPORT};
+
+	# Location of CocoaDialog binary
+	init_CocoaDialog("$ENV{TM_SUPPORT_PATH}/bin/CocoaDialog.app/Contents/MacOS/CocoaDialog");
+
+	# Include the bundle's tex tree in the search path: we have a local copy of pdfsync.sty.
+	$ENV{TEXINPUTS} = `kpsewhich -progname latex --expand-var '\$TEXINPUTS'`;
+	chomp $ENV{TEXINPUTS};
+
+	$ENV{TEXINPUTS} .= ":$ENV{TM_BUNDLE_SUPPORT}/tex//"
+		if defined $ENV{TM_BUNDLE_SUPPORT};
+}
+
+sub parse_command_line_options {
+	my ($DEBUG, $textmate_pid, $progressbar_pid);
+
+	GetOptions(
+		'debug|d|debug-to-console' => \$DEBUG,
+		'textmate-pid=i' => \$textmate_pid,
+		'progressbar-pid=i' => \$progressbar_pid,
+	)
+		or fail("Failed to process command-line options", "Check the console for details");
+	
+	return ($DEBUG, $textmate_pid, $progressbar_pid);
+}
+
+sub parse_file_path {
+	my $filepath = shift(@ARGV);
+	fail("File not saved", "You must save the file before it can be watched")
+		if !defined($filepath) or $filepath eq "";
+
+	# Parse and verify file path
+	my ($wd, $name, $dotname, $absolute_wd);
+	if ($filepath =~ m!(.*)/!) {
+		$wd = $1;
+		my $fullname = $';
+		if ($fullname =~ /\.tex\z/) {
+			$name = $`;
+			$dotname = ".$name";
+			$dotname =~ y/\01-\040"\\$%&/_/;    # Any other chars that cause problems?
+		}
+		else {
+			fail("Filename doesn't end in .tex",
+				"The filename ($fullname) does not end with the .tex extension");
+		}
+	}
+	else {
+		fail("Path does not contain /", "The file path ($filepath) does not contain a '/'");
+	}
+	if (! -W $wd) {
+		fail("Directory not writeable", "I can't write to the directory $wd");
+	}
+
+	# Use a relative path, because TeX has problems with special characters in the pathname
+	chdir($absolute_wd = $wd);
+	$wd = ".";
+	
+	return ($filepath, $wd, $name, $dotname, $absolute_wd);
+}
+
+
 # Persistent state
 my ($preamble, $bogus_preamble, %preamble_mtimes, %body_mtimes, $cleanup_viewer, $ping_viewer);
+
+
+#############
+# Main loop #
+#############
+
+sub main_loop {
+	my $ping_counter = 10;
+	while(1) {
+		if (document_has_changed()) {
+			debug_msg("Reloading file");
+			reload();
+			compile() and view();
+			if (defined ($progressbar_pid)) {
+				debug_msg("Closing progress bar window ($progressbar_pid)");
+				kill(15, $progressbar_pid) or fail("Failed to close progress bar window: $!");
+				undef $progressbar_pid;
+			}
+		}
+
+		# Every 5 times through the loop, check if viewer and/or TextMate are still open
+		if (defined($ping_viewer) and 0 == $ping_counter--) {
+			$ping_counter = 5;
+			if (not $ping_viewer->()) {
+				debug_msg("Viewer appears to have been closed. Exiting.");
+				exit;
+			}
+
+			process_is_running($textmate_pid)
+				or do {
+					debug_msg("Textmate appears to have been closed. Exiting.");
+					exit
+				};
+		}
+
+		select(undef, undef, undef, 0.5); # Sleep for 0.5 seconds
+	}
+}
+
+####################
+# Cleanup routines #
+####################
 
 # Clean up if we're interrupted or die
 sub clean_up {
@@ -137,47 +255,13 @@ sub clean_up {
 	}
 }
 END { clean_up() }
-$SIG{INT} = $SIG{TERM} = sub { exit(0) };
-
-
-#############
-# Main loop #
-#############
-
-my $ping_counter = 10;
-while(1) {
-	if (document_has_changed()) {
-		debug_msg("Reloading file");
-		reload();
-		compile() and view();
-		if (defined ($progressbar_pid)) {
-			debug_msg("Closing progress bar window ($progressbar_pid)");
-			kill(15, $progressbar_pid) or fail("Failed to close progress bar window: $!");
-			undef $progressbar_pid;
-		}
-	}
-
-	# Every 5 times through the loop, check if viewer and/or TextMate are still open
-	if (defined($ping_viewer) and 0 == $ping_counter--) {
-		$ping_counter = 5;
-		if (not $ping_viewer->()) {
-			debug_msg("Viewer appears to have been closed. Exiting.");
-			exit;
-		}
-
-		process_is_running($textmate_pid)
-			or do {
-				debug_msg("Textmate appears to have been closed. Exiting.");
-				exit
-			};
-	}
-
-	select(undef, undef, undef, 0.5); # Sleep for 0.5 seconds
+sub init_cleanup {
+	$SIG{INT} = $SIG{TERM} = sub { exit(0) };
 }
 
-###############
-# Subroutines #
-###############
+######################
+# Main loop routines #
+######################
 
 sub process_is_running {
 	my ($pid) = @_;
@@ -530,7 +614,7 @@ sub cleanup_postscript_viewer {
 }
 
 sub ping_postscript_viewer {
-	if (defined $viewer_id and waitpid($viewer_id, POSIX::WNOHANG)) {
+	if ( defined $viewer_id and waitpid($viewer_id, POSIX::WNOHANG()) ) {
 		my $r = $?;
 		if ($r & 127) {
 			fail("Viewer failed",
@@ -678,22 +762,12 @@ sub cleanup_pdf_viewer {
 
 # Explain what's happening (if we're debugging)
 sub debug_msg {
-	return unless $DEBUG;
+	print "Latex Watch INFO: @_\n" if $DEBUG;
+}
 
-	# if ($DEBUG eq "console") {
-		print "Latex Watch INFO: @_\n";
-		# return;
-	# }
-
-	# my $text = shift;
-	# my @info = ();
-	# @info = ("--informative-text", "@_") if @_;
-	# 
-	# system($CocoaDialog, "msgbox",
-	# 	"--title"  => "LaTeX Watch INFO",
-	# 	"--button1" => "OK",
-	# 	"--text" => $text,
-	# 	@info)
+my $CocoaDialog;
+sub init_CocoaDialog {
+	($CocoaDialog) = @_;
 }
 
 # Display an error dialog and exit with exit-code 1
@@ -916,8 +990,7 @@ Changes
 	  that I won't go into here.
 
 2.6:
-    Suppress warnings when no viewer is explicitly selected; make sure the
-    'hide extension' attribute is removed in that case too.
-
-Note to self:
-	hdiutil create -srcdir LaTeX\ Watch.tmbundle LaTeX\ Watch\ 2.5.dmg
+    - Suppress warnings when no viewer is explicitly selected; make sure the
+      'hide extension' attribute is removed in that case too.
+	- Integrate with Brad's new version of the LaTeX bundle: use the new prefs
+	  system.
