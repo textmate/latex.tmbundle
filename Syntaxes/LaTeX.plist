@@ -421,6 +421,40 @@
 				<key>1</key>
 				<dict>
 					<key>name</key>
+					<string>support.function.url.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>markup.underline.link.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(?:\s*)((\\)url)(\{)([^}]*)(\})</string>
+			<key>name</key>
+			<string>meta.function.link.url.latex</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
 					<string>support.function.be.latex</string>
 				</dict>
 				<key>2</key>
