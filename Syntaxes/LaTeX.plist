@@ -379,7 +379,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>(?:\s*)((\\)begin)(\{)((?:V|v)erbatim)(\})</string>
+			<string>(?:\s*)((\\)begin)(\{)((?:V|v)erbatim|alltt)(\})</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
