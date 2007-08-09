@@ -35,6 +35,15 @@ Urls should be marked as they usually are, and be used as links:   \url{http://w
   \sin(x)
 \end{align*}
 
+% The alltt environment allows for a verbatim type environment, where slashes and braces are still active characters. For now we treat it as verbatim, though we should likely fix that, which would involve moving the rules for matching all sorts of commands and environments to a repository rule (ouch).
+\begin{alltt}
+  <"problem"> This should not be matched as a string!
+  Math is allowed here. So are commands like \textbf{Hi there!}
+  \[
+    sin(x)
+  \]
+\end{alltt}
+
 % 6/14/05  many of the commands below are functions with arguments.  When recursion is in place these should work nicely.
 
 \foo[f]{bar}{$10 + 20$} Here is a simple single function with several parameters
