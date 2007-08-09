@@ -114,7 +114,7 @@ class LaTexParser(TexParser):
             (re.compile('.*\<use (.*?)\>') , self.detectInclude),
             (re.compile('^Output written') , self.info),
             (re.compile('LaTeX Warning:.*?input line (\d+)(\.|$)') , self.handleWarning),
-            (re.compile('LaTeX Warning:.*') , self.warning),
+            (re.compile('LaTeX Warning:.*') , self.partWarning),
             (re.compile('LaTeX Font Warning:.*') , self.warning),            
             (re.compile('Overfull.*wide') , self.warn2),
             (re.compile('Underfull.*badness') , self.warn2),                        
@@ -140,6 +140,19 @@ class LaTexParser(TexParser):
     def handleWarning(self,m,line):
         print '<p class="warning"><a href="' + make_link(os.getcwd()+self.currentFile[1:], m.group(1)) + '">'+line+"</a></p>"
         self.numWarns += 1
+    
+    def partWarning(self,m,line):
+        """Sometimes TeX breaks up warning output with hard linebreaks.  This is annoying
+           Looking ahead one line seems perfectly safe.  In all the logs I have examined a warning
+           always has a blank line after it.  So I'm pretty confident that eating an additional line is
+           not going to unintentionally hide an important error.
+        """
+        newLine = line + self.input_stream.readline()
+        newMatch = re.match('LaTeX Warning:.*?input line (\d+)(\.|$)',newLine)
+        if newMatch:
+            self.handleWarning(newMatch,newLine)
+        else:
+            self.warning(m,line)
     
     def handleError(self,m,line):
         print '<p class="error">'
