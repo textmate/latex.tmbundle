@@ -16,17 +16,17 @@ Most of the time you will want to typeset the currently selected file. This is a
 
 Depending on the setting of the Keep log window open preference, this window may stay open, and you can click on any of the errors encountered, which will take you to the corresponding location in the LaTeX file, where that error is reported to have occurred. Keep in mind, that LaTeX occasionally reports errors very far from where the actual problem occurs. So compile often, so that you have less new text to worry about when looking for errors.
 
-## Typsetting Multiple Passes
+## Typesetting Multiple Passes
 
-Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` in-between. You can re-run LaTeX on the same file by clicking on the Run Latex button at the bottom of the Typeset & View window.  You will also find buttons there to allow you to run BibTeX or MakeIndex on the current file.
+Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` in-between. You can re-run LaTeX on the same file by clicking on the Run LaTeX button at the bottom of the Typeset & View window.  You will also find buttons there to allow you to run BibTeX or MakeIndex on the current file.
 
 In addition, The `latexmk.pl` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk.pl` when compiling, you have to check the `Use Latexmk.pl`.
 
-See [9.2 Static Variables](?static_variables) in the TextMate manual for how to setup environment variables.
+<!-- NOT NECESSARY ANY MORE: See [9.2 Static Variables](?static_variables) in the TextMate manual for how to setup environment variables. -->
 
 <!-- Note further, that if you have some other complicated compiling system, using a makefile for example, you can use that instead of `latexmk.pl`. You can use the variable `TM_LATEX_OPTIONS` to set command line options for your script. -->
 
-TODO: Update this section if a new command is created for `latexmk.pl`
+<!-- Probably not relevant any more: TODO: Update this section if a new command is created for `latexmk.pl` -->
 
 ## Using a Master File
 
@@ -73,7 +73,7 @@ To avoid this open the preferences for Adobe Reader and go to the Internet categ
 
 ## External Previewers
 
-You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview,  [TeXniscope][], or [Skim][].  Skim is a very nice viewer that that is under active development.
+You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview,  [TeXniscope][], or [Skim][].  Skim is a very nice viewer that is under active development.
 
 We recommend you use either Skim, if you are only going to be dealing with pdf files, or TeXniscope if you will also be dealing with dvi files. They both support pdfsync, though TeXniscope is not a universal binary as of this writing.
 
@@ -86,9 +86,12 @@ To use one of these previewers, you must set the Viewer preference in the Prefer
 
 ## Preview Options
 
-Preview options are somewhat complicated depending on the viewer you choose.  There are really two main cases.  If you chose to use the previewer built in to webkit then the keep log window open preference has the following effect.  If there are no errors or warnings, the `Typeset & View` window will immediately switch to showing you the pdf file.   If there are no errors but some warnings then if the keep log window open preference is checked you will see the warning messages, and you must click the `View in TextMate` button to see the pdf.  If the keep log window open preference is not checked then the warning messages will be ignored and you will see the pdf.
+Preview options are somewhat complicated depending on the viewer you choose.  There are really two main cases:
 
-If you use an external viewer then the `Typeset & View` window will automatically close if there are no errors or warnings, unless the keep log window open preference is checked.
+1. If you chose to use the previewer built in to WebKit then the “keep log window open preference” has the following effect:
+    * If there are no errors or warnings, the `Typeset & View` window will immediately switch to showing you the pdf file.
+    * If there are no errors but some warnings then, if the “keep log window open” preference is checked you will see the warning messages, and you must click the `View in TextMate` button to see the pdf.  If the keep log window open preference is not checked then the warning messages will be ignored and you will see the pdf.
+2. If you use an external viewer then the `Typeset & View` window will automatically close if there are no errors or warnings, unless the “keep log window open” preference is checked.
 
 # PDFSync
 
@@ -120,6 +123,7 @@ In Skim or PDFView, these are already set by default.
 
 **Note 3:** Problems have been reported with the universal build of TeXniscope. So Intel users may want to run TeXniscope under Rosetta, or use Skim instead.
 
+**Note 4:** In Skim, you need to shift-command-click, instead of command-clicking, to be taken back to TextMate.
 
 # Working With LaTeX
 
@@ -260,14 +264,14 @@ You can bring up the Preferences panel for LaTeX by running the Preferences comm
 
 For Viewing the typeset file you can set the following options:
 
-* *View in:*  Select from the viewers that are supported.  I recommend you install and use Skim.
+* *View in:*  Select from the viewers that are supported. We recommend you install and use Skim.
 * *Show pdf automatically:*  If you want the viewer started automatically after typesetting check this box.
 * *Keep log window open:*  If you want the log window to stay open so you can check on any errors or warnings check this box.
 
-When using TextMate as the viewer you should keep the following in mind:  Show pdf automatically will not bring up the pdf file if there are any errors or warnings if `Keep log window open` is checked.  If keep log window open is not checked then the pdf file will automatically replace the log if there are no errors.  In this case any warnings you see will be ignored.
+When using TextMate as the viewer, instead of an external viewer like Skim, you should keep the following in mind:  “Show pdf automatically” will not bring up the pdf file if there are any errors or warnings if “Keep log window open” is checked.  If “keep log window open” is not checked then the pdf file will automatically replace the log if there are no errors.  In this case any warnings you see will be ignored.
 
 ## Local Preferences
-When working with Latex there are three local options that you can set on a per file basis.  As mentioned above these options will override the preferences that you set using the preferences interface.
+When working with LaTeX there are three local options that you can set on a per file basis.  As mentioned above these options will override the preferences that you set using the preferences interface.
 
 The best way to set local options is to use the `%!TEX` directives.  They are as follows:
 
