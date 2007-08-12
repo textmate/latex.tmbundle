@@ -6,7 +6,7 @@
 	<string>#!/usr/bin/env ruby
 require 'pathname'
 require 'pp'
-require ENV["TM_BUNDLE_SUPPORT"] + "/lib/options.rb"
+require "#{ENV['TM_SUPPORT_PATH']}/lib/LaTexUtils.rb"
 filename = ENV["TM_DROPPED_FILEPATH"]
 relative_to = ENV["TM_DIRECTORY"]
 startfile = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']

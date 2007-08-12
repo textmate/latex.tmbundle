@@ -9,7 +9,7 @@
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/escape.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
-require ENV['TM_BUNDLE_SUPPORT'] + '/lib/options.rb'
+require "#{ENV['TM_SUPPORT_PATH']}/lib/LaTexUtils.rb"
 html_header "LaTeX Document Outline", "LaTeX"
 REGEX = /\\(part|chapter|section|subsection|subsubsection|paragraph|subparagraph)\*?(?:%.*\n[ \t]*)?(?:(?&gt;\[(.*?)\])|\{([^{}]*(?:\{[^}]*\}[^}]*?)*)\})/
 INCLUDE_REGEX = /\\(?:input|include)(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/
