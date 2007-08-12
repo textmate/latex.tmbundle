@@ -29,7 +29,7 @@ begin
     TextMate.exit_insert_snippet("\\\\${1:cite}\{#{selection}\}")
   end
 rescue RuntimeError =&gt; e
-  TextMate.exit_insert_text(e.message)
+  TextMate.exit_show_tool_tip(e.message)
 end
 </string>
 	<key>fallbackInput</key>
