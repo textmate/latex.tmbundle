@@ -85,7 +85,7 @@
 					<key>match</key>
 					<string>((\\)frametitle)(\{)(.*)(\})</string>
 					<key>name</key>
-					<string>support.function.with-arg.latex</string>
+					<string>support.function.with-arg.frametitle.latex</string>
 				</dict>
 				<dict>
 					<key>include</key>
