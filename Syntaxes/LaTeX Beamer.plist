@@ -54,44 +54,44 @@
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>captures</key>
-					<dict>
-						<key>1</key>
-						<dict>
-							<key>name</key>
-							<string>support.function.with-arg.latex</string>
-						</dict>
-						<key>2</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.definition.function.latex</string>
-						</dict>
-						<key>3</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.definition.arguments.begin.latex</string>
-						</dict>
-						<key>4</key>
-						<dict>
-							<key>name</key>
-							<string>entity.name.function.frame.latex</string>
-						</dict>
-						<key>5</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.definition.arguments.end.latex</string>
-						</dict>
-					</dict>
-					<key>match</key>
-					<string>((\\)frametitle)(\{)(.*)(\})</string>
-					<key>name</key>
-					<string>support.function.with-arg.frametitle.latex</string>
-				</dict>
-				<dict>
 					<key>include</key>
 					<string>$self</string>
 				</dict>
 			</array>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.frametitle.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.begin.latex</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.function.frame.latex</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.arguments.end.latex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>((\\)frametitle)(\{)(.*)(\})</string>
+			<key>name</key>
+			<string>meta.function.frametitle.latex</string>
 		</dict>
 		<dict>
 			<key>include</key>

@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Beamer Symbol List</string>
 	<key>scope</key>
-	<string>text.tex.latex.beamer support.function.with-arg.frametitle.latex</string>
+	<string>text.tex.latex.beamer meta.function.frametitle.latex</string>
 	<key>settings</key>
 	<dict>
 		<key>showInSymbolList</key>
