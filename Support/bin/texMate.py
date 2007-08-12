@@ -137,7 +137,7 @@ def determine_ts_directory(tsDirectives):
     if master:
         masterPath = os.path.dirname(master)
         if masterPath == '' or masterPath[0] != '/':
-            masterPath = os.path.normpath(startDir+'/'+masterPath)
+            masterPath = os.path.normpath(os.path.join(startDir,masterPath))
     else:
         masterPath = startDir
 
@@ -189,7 +189,8 @@ def find_TEX_directives():
                     if m.group(2)[0] == '/':
                         texfile = m.group(2).rstrip()
                     else:                           # new root is relative or in same directory
-                        texfile = startDir + '/' + m.group(2).rstrip()
+                        texfile = os.path.realpath(os.path.join(startDir,m.group(2).rstrip()))
+                    startDir = os.path.dirname(texfile)
                     tsDirectives['root'] = texfile
                 else:
                     tsDirectives[m.group(1)] = m.group(2).rstrip()
