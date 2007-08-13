@@ -143,7 +143,13 @@ class Vertex:
 \subsection{Subsection one}\label{sec:testLabel}
 This is a paragraph with some math $ \sin{3.1415} * \cos{3.1415} \angle  $.  This is an ordinary sentence after the math.  This works just fine with math mode including a rule for a bunch of math symbols.
 
-A runaway dollar sign should be indicated as illegal and matched until the end of the line: $ This is very \$ illegal.
+We would want the following to be matched as illegal:
+
+$\cos(x)
+
+$
+
+Because you can't have a paragraph break in a math environment. However, there is no easy way to make the grammar match two consecutive newlines, so this will have to wait. In the meantime, this means that runaway dollar signs will end up highlighting everything after them as math.
 
 \section[Optional title]{section 1}
 
