@@ -73,6 +73,12 @@
 			<string>comment.line.percentage.semicolon.texshop.tex</string>
 		</dict>
 		<dict>
+			<key>match</key>
+			<string>^%!TEX (\S*) =\s*(.*)\s*$</string>
+			<key>name</key>
+			<string>comment.line.percentage.directive.texshop.tex</string>
+		</dict>
+		<dict>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
