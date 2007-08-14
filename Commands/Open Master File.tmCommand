@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>${TM_RUBY:-ruby} &lt;&lt;"RUBY"
 require "#{ENV['TM_SUPPORT_PATH']}/lib/escape.rb"
-require "#{ENV['TM_SUPPORT_PATH']}/lib/LaTexUtils.rb"
+require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/LaTeXUtils.rb"
 
 master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
 

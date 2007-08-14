@@ -11,7 +11,7 @@
 
 require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
-require ENV["TM_SUPPORT_PATH"] + "/lib/LaTeXUtils.rb"
+require ENV["TM_BUNDLE_SUPPORT"] + "/lib/LaTeXUtils.rb"
 include LaTeX
 phrase = STDIN.read
 scope = String.new(ENV["TM_SCOPE"])

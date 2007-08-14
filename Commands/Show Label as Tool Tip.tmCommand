@@ -12,7 +12,7 @@
 	<string>#!/usr/bin/env ruby
 require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
-require ENV["TM_SUPPORT_PATH"] + "/lib/LaTeXUtils.rb"
+require ENV["TM_BUNDLE_SUPPORT"] + "/lib/LaTeXUtils.rb"
 phrase = STDIN.read.chomp
 TextMate.exit_show_tool_tip("No current ref found") if phrase == ""
 include LaTeX
