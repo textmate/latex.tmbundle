@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.3
 # encoding: utf-8
 
 # This is a rewrite of latexErrWarn.py
@@ -177,6 +177,7 @@ def find_TEX_directives():
     startDir = os.path.dirname(texfile)
     done = False    
     tsDirectives = {}
+    rootChain = [texfile]
     while not done:
         f = open(texfile)
         foundNewRoot = False
@@ -187,9 +188,17 @@ def find_TEX_directives():
                 if m.group(1) == 'root':
                     foundNewRoot = True
                     if m.group(2)[0] == '/':
-                        texfile = m.group(2).rstrip()
+                        newtf = m.group(2).rstrip()
                     else:                           # new root is relative or in same directory
-                        texfile = os.path.realpath(os.path.join(startDir,m.group(2).rstrip()))
+                        newtf = os.path.realpath(os.path.join(startDir,m.group(2).rstrip()))
+                    if newtf in rootChain:
+                        print "<p class='error'> There is a loop in your '%!TEX root =' directives.</p>"
+                        print "<p class='error'> chain = ",rootChain, "</p>"
+                        print "<p class='error'> exiting.</p>"                        
+                        sys.exit(-1)
+                    else:
+                        texfile = newtf
+                        rootChain.append(newtf)
                     startDir = os.path.dirname(texfile)
                     tsDirectives['root'] = texfile
                 else:
