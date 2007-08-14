@@ -1498,12 +1498,6 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>\\$</string>
-			<key>name</key>
-			<string>meta.escape-character.latex</string>
-		</dict>
-		<dict>
-			<key>match</key>
 			<string>(?&lt;!\S)'.*?'</string>
 			<key>name</key>
 			<string>invalid.illegal.string.quoted.single.latex</string>
