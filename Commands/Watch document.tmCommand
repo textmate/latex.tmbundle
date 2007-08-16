@@ -4,9 +4,10 @@
 <dict>
 	<key>beforeRunningCommand</key>
 	<string>saveActiveFile</string>
+	<key>bundleUUID</key>
+	<string>46788DCE-6227-11D9-BFB1-000D93589AF6</string>
 	<key>command</key>
-	<string>LATEX_WATCH_VERSION=2.5
-#  see the end of latex_watch.pl for changelog
+	<string>#  See the end of $watch_script (defined below) for changelog and version information.
 
 watch_script="$TM_BUNDLE_SUPPORT"/bin/latex_watch.pl
 

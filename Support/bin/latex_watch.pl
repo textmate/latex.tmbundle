@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-	our $VERSION = "2.6";
+	our $VERSION = "2.7";
 #	- by Robin Houston, March-August 2007.
 
 # Usage: latex_watch.pl [ options ] file.tex
@@ -709,18 +709,20 @@ sub cleanup_pdf_viewer_texshop {
 # TeXniscope
 
 sub start_pdf_viewer_texniscope {
-	debug_msg("Starting PDF viewer (TeXniscope)", "Opening file: $compiled_document");
+	my $doc = $compiled_document;
+	$doc =~ s!^\./!POSIX::getcwd() . "/"!e;
+	debug_msg("Starting PDF viewer (TeXniscope)", "Opening file: $doc");
 	applescript (
 		qq(tell application "TeXniscope").
-		qq{ to open file ((POSIX file }.quote_applescript($compiled_document).
-			qq{)) as string});
+		qq{ to open file ((POSIX file }.quote_applescript($doc).
+			qq{) as string)});
 	$viewer_id = "TeXniscope";
 }
 
 sub refresh_pdf_viewer_texniscope {
 	debug_msg("Refreshing PDF viewer (TeXniscope)");
 	applescript(
-		qq(tell document ).quote_applescript($compiled_document).
+		qq(tell document ).quote_applescript("$name.pdf").
 		qq( of application "TeXniscope" to refresh))
 }
 
@@ -994,3 +996,6 @@ Changes
       'hide extension' attribute is removed in that case too.
 	- Integrate with Brad's new version of the LaTeX bundle: use the new prefs
 	  system.
+
+2.7:
+	- Fix TeXniscope support.
