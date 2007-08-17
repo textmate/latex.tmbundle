@@ -376,30 +376,42 @@ sub parse_file_list {
 	open(my $f, "<", "$wd/$dotname.fls")
 		or fail("Failed to open file list", "I couldn't open the file '$wd/$dotname.fls': $!");
 	local $/ = "\n";
+	
+	my %updated_files;
 	while (<$f>) {
-		if (/^INPUT (.*)/) {
-			my $f = $1;
+		if (/^(INPUT|OUTPUT) (.*)/) {
+			my ($t, $f) = ($1, $2);
+			
 			next if $f =~ m!\.(?:fd|tfm|aux|ini)$!; # Skip font files, .aux and .ini files
 			$f =~ s/(^|\Q$wd\E\/)\Q$dotname.\E(tex|bbl|aux)/$1$name.$2/;
 			$f = "$wd/$f" if $f !~ m(/);
 			
 			my $mtime = -M($f);
-			if (defined $mtime) {
-				if (!exists $hash->{$f}) {
-					debug_msg("[x] $f");
-					$hash->{$f} = $mtime
+			if ($t eq 'INPUT') {
+				if (defined $mtime) {
+					if (!exists $hash->{$f}) {
+						debug_msg("[x] $f");
+						$hash->{$f} = $mtime
+					}
+				}
+				else {
+					# Probably the file no longer exists. Warn but continue.
+					print("[LaTeX Watch] ",
+						"Failed to find the modification time of the file '$f'".
+						" while parsing the file list: $!\n");
 				}
 			}
-			else {
-				# Probably the file no longer exists. Warn but continue.
-				print("[LaTeX Watch] ",
-					"Failed to find the modification time of the file '$f'".
-					" while parsing the file list: $!\n");
+			else {	# $t eq 'OUTPUT'
+				$updated_files{$f} = $mtime;
 			}
 		}
-		elsif (!/^(OUTPUT|PWD) /) {
+		elsif (!/^PWD /) {
 			debug_msg("Unrecognised line in file list: $_")
 		}
+	}
+	
+	while (my ($f, $mtime) = each %updated_files) {
+		$hash->{$f} = $mtime if exists $hash->{$f} and defined $mtime;
 	}
 	debug_msg("Parsed file list: found ".keys(%$hash)." files");
 }
@@ -440,9 +452,6 @@ sub compile {
 	});
 	
 	parse_file_list(\%body_mtimes);
-	# $body_mtimes{$filepath} = -M($filepath)
-	# 	or fail("Failed to get modification time",
-	# 		"I failed to find the modification time of the file '$filepath': $!");
 	
 	# Do this even in PDF mode, so that bibtex picks it up
 	rename("$wd/$dotname.aux", "$wd/$name.aux") unless $error;
@@ -999,3 +1008,5 @@ Changes
 
 2.7:
 	- Fix TeXniscope support.
+	- Deal more robustly with files that are written as well as read during processing
+	  (previously this could cause an infinite update loop)
