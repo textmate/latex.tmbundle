@@ -19,7 +19,7 @@ myStr &lt;&lt; textArray[linesbefore].slice(0..columns-1)
 theArray = Array.new
 theRegexp = Regexp.new('(\\\begin\{|\\\end\{)(\w+[*]?)(\})')
 toInsertNoBeamer = { "itemize" =&gt; "\\item $1", "enumerate" =&gt; "\\item $1", "description" =&gt; "\\item[${1:label}] ${2:description}", "parts" =&gt; "\\part $1", "questions" =&gt; "\\question $1" }
-toInsertBeamer = { "itemize" =&gt; "\\item&lt;${1:+-}&gt; $2", "enumerate" =&gt; "\\item&lt;${1:+-}&gt; $2", "description" =&gt; "\\item&lt;+-&gt;[${1:label}] ${2:description}" }
+toInsertBeamer = { "itemize" =&gt; "\\item&lt;${1:+-}&gt; $2", "enumerate" =&gt; "\\item&lt;${1:+-}&gt; $2", "description" =&gt; "\\item&lt;+-&gt;[${1:label}] ${2:description}", "overprint" =&gt; "\\onslide&lt;${1:+}&gt;\n\t$2", "overlayarea" =&gt; "\\only&lt;${1:+}&gt; $2" }
 toInsert = /beamer/.match(ENV['TM_SCOPE'].to_s) ? toInsertBeamer : toInsertNoBeamer
 results = myStr.scan(theRegexp)
 if (results)
