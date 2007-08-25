@@ -41,7 +41,7 @@ end
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
-	<string>Command Based on Current Word / Selection…</string>
+	<string>Command Completion</string>
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
