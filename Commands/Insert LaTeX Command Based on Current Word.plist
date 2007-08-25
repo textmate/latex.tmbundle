@@ -29,25 +29,31 @@ if name == "" then
      name = arr[ind]
   end
 end
+options = Array.new
 for key in shortcuts.keys do
   if shortcuts[key]['triggers'].index(name) then
-    cmd = key
-    setting = :no_label
-    dict = shortcuts
+    options &lt;&lt; {:cmd =&gt; key, :setting =&gt; :no_label, :content =&gt; shortcuts[key]['content']}
   end
 end
 for key in lshortcuts.keys do
   if lshortcuts[key]['triggers'].index(name) then
-    cmd = key
-    setting = :label
-    dict = lshortcuts
+    options &lt;&lt; {:cmd =&gt; key, :setting =&gt; :label, :content =&gt; lshortcuts[key]['content']}
   end
 end
-if !cmd.nil? then
-  print "\\begin{#{cmd}}"
-  print "\n" if setting == :no_label
-  print dict[cmd]["content"] || "\t$0"
-  print "\n\\end{#{cmd}}"
+opt = case options.length
+when 0
+  nil
+when 1
+  options[0]
+else
+  ind = TextMate::UI.menu(options.map { |opt| opt[:cmd] })
+  ind.nil? ? nil : options[ind]
+end
+if !opt.nil? then
+  print "\\begin{#{opt[:cmd]}}"
+  print "\n" if opt[:setting] == :no_label
+  print opt[:content] || "\t$0"
+  print "\n\\end{#{opt[:cmd]}}"
 elsif name == ""
   print "\\begin{${1:env}}\n\t$0\n\\end{${1:env}}"
 else
