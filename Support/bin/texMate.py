@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.3
+#!/usr/bin/env python
 # encoding: utf-8
 
 # This is a rewrite of latexErrWarn.py
