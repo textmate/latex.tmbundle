@@ -115,10 +115,11 @@ class LaTexParser(TexParser):
             (re.compile('^Output written') , self.info),
             (re.compile('LaTeX Warning:.*?input line (\d+)(\.|$)') , self.handleWarning),
             (re.compile('LaTeX Warning:.*') , self.partWarning),
+            (re.compile('.*pdfTeX warning.*') , self.warning),            
             (re.compile('LaTeX Font Warning:.*') , self.warning),            
             (re.compile('Overfull.*wide') , self.warn2),
             (re.compile('Underfull.*badness') , self.warn2),                        
-            (re.compile('^([\.\/\w\x7f-\xff ]+\.tex):(\d+):(.*)') , self.handleError),
+            (re.compile('^([\.\/\w\x7f-\xff\- ]+\.tex):(\d+):(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): LaTeX Error:(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): (Emergency stop)') , self.handleError),
             (re.compile('Transcript written on (.*)\.$') , self.finishRun),
@@ -126,7 +127,7 @@ class LaTexParser(TexParser):
             (re.compile('\!.*') , self.handleOldStyleErrors),
             (re.compile('^\s+==>') , self.fatal)
         ]
-                
+        self.blankLine = re.compile(r'^\s*$')        
 
 
     def detectNewFile(self,m,line):
@@ -158,7 +159,7 @@ class LaTexParser(TexParser):
         print '<p class="error">'
         latexErrorMsg = 'Latex Error: <a class="error" href="' + make_link(os.getcwd()+'/'+m.group(1),m.group(2)) +  '">' + m.group(1)+":"+m.group(2) + '</a> '+m.group(3)
         line = self.input_stream.readline()
-        while len(line) > 1:
+        while self.blankLine.match(line) != None:
             latexErrorMsg = latexErrorMsg+line
             line = self.input_stream.readline()
         print latexErrorMsg+'</p>'
