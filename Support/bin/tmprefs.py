@@ -34,15 +34,17 @@ class Preferences(object):
         # decent in Python without requiring the PyObjC module.  I would prefer to use popen but
         # plutil apparently tries to do something to /dev/stdout which causes an error message to be appended
         # to the output.
+        #
         plDict = {}
-        os.system("plutil -convert xml1 $HOME/Library/Preferences/com.macromates.textmate.plist -o /tmp/tmltxprefs.plist")
+        os.system("plutil -convert xml1 $HOME/Library/Preferences/com.macromates.textmate.plist -o /tmp/tmltxprefs1.plist")
+        os.system(" cat /tmp/tmltxprefs1.plist | tr -d '\\000'-'\\011''\\013''\\014''\\016'-'\\037''\\200'-'\\377' > /tmp/tmltxprefs.plist" )
         pl = open('/tmp/tmltxprefs.plist')
         try:
             plDict = plistlib.readPlist(pl)
         except:
             print '<p class="error">There was a problem reading the preferences file, continuing with defaults</p>'
         pl.close()
-        os.system("rm /tmp/tmltxprefs.plist")
+        os.system("rm /tmp/tmltxprefs*.plist")
         return plDict
         
     def toDefString(self):
