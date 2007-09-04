@@ -95,6 +95,7 @@ class BibTexParser(TexParser):
         self.patterns += [ 
             (re.compile("Warning--I didn't find a database entry") , self.warning),
             (re.compile(r'I found no \\\w+ command') , self.error),
+            (re.compile(r"I couldn't open style file"), self.error),
             (re.compile('This is BibTeX') , self.info),
             (re.compile('---') , self.finishRun)
         ]
@@ -105,12 +106,14 @@ class BibTexParser(TexParser):
 
 class LaTexParser(TexParser):
     """Parse Output From Latex"""
-    def __init__(self, input_stream, verbose):
+    def __init__(self, input_stream, verbose, fileName):
         super(LaTexParser, self).__init__(input_stream,verbose)
+        self.suffix = fileName[fileName.rfind('.')+1:]
+        self.currentFile = fileName
         self.patterns += [
             (re.compile('^This is') , self.info),
             (re.compile('^Document Class') , self.info),
-            (re.compile('.*?\((\.\/[^\)]*?\.tex( |$))') , self.detectNewFile),
+            (re.compile('.*?\((\.\/[^\)]*?\.(tex|'+self.suffix+')( |$))') , self.detectNewFile),
             (re.compile('.*\<use (.*?)\>') , self.detectInclude),
             (re.compile('^Output written') , self.info),
             (re.compile('LaTeX Warning:.*?input line (\d+)(\.|$)') , self.handleWarning),
@@ -119,16 +122,15 @@ class LaTexParser(TexParser):
             (re.compile('LaTeX Font Warning:.*') , self.warning),            
             (re.compile('Overfull.*wide') , self.warn2),
             (re.compile('Underfull.*badness') , self.warn2),                        
-            (re.compile('^([\.\/\w\x7f-\xff\- ]+\.tex):(\d+):(.*)') , self.handleError),
-            (re.compile('([^:]*):(\d+): LaTeX Error:(.*)') , self.handleError),
-            (re.compile('([^:]*):(\d+): (Emergency stop)') , self.handleError),
+            (re.compile('^([\.\/\w\x7f-\xff\- ]+(\.tex|\.'+self.suffix+')?):(\d+):\s+(.*)') , self.handleError),
+            (re.compile('([^:]*)(:)(\d+): LaTeX Error:(.*)') , self.handleError),
+            (re.compile('([^:]*)(:)(\d+): (Emergency stop)') , self.handleError),
             (re.compile('Transcript written on (.*)\.$') , self.finishRun),
             (re.compile('^Error: pdflatex') , self.pdfLatexError),
             (re.compile('\!.*') , self.handleOldStyleErrors),
             (re.compile('^\s+==>') , self.fatal)
         ]
         self.blankLine = re.compile(r'^\s*$')        
-
 
     def detectNewFile(self,m,line):
         self.currentFile = m.group(1).rstrip()
@@ -157,7 +159,7 @@ class LaTexParser(TexParser):
     
     def handleError(self,m,line):
         print '<p class="error">'
-        latexErrorMsg = 'Latex Error: <a class="error" href="' + make_link(os.getcwd()+'/'+m.group(1),m.group(2)) +  '">' + m.group(1)+":"+m.group(2) + '</a> '+m.group(3)
+        latexErrorMsg = 'Latex Error: <a  href="' + make_link(os.getcwd()+'/'+m.group(1),m.group(3)) +  '">' + m.group(1)+":"+m.group(3) + '</a> '+m.group(4)
         line = self.input_stream.readline()
         while self.blankLine.match(line) != None:
             latexErrorMsg = latexErrorMsg+line
@@ -202,7 +204,7 @@ class LaTexParser(TexParser):
         """docstring for finishRun"""
         print '<p class="error">A fatal error occured, log file is in '
         logFile = os.path.basename(os.getenv('TM_FILEPATH'))
-        logFile = logFile.replace('.tex','.log')
+        logFile = logFile.replace(self.suffix,'log')
         print '<a href="' + make_link(os.getcwd()+'/'+logFile,'1') +  '">' + logFile + '</a>'        
         print '</p>'
 

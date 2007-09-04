@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.3
 # encoding: utf-8
 
 # This is a rewrite of latexErrWarn.py
@@ -49,7 +49,7 @@ def run_bibtex(bibfile=None,verbose=False,texfile=None):
     # find all the aux files.
     fatal,err,warn = 0,0,0
     if texfile:
-        basename = texfile[:texfile.find('.tex')]
+        basename = texfile[:texfile.rfind('.')]
     if bibfile == None:
         auxfiles = [f for f in os.listdir('.') if re.search('.aux$',f) > 0]
         auxfiles = [f for f in auxfiles if re.match(r'('+ basename +r'\.aux|bu\d+\.aux)',f)]
@@ -70,7 +70,7 @@ def run_latex(ltxcmd,texfile,verbose=False):
     """Run the flavor of latex specified by ltxcmd on texfile"""
     global numRuns
     texin,tex = os.popen4(ltxcmd+" "+shell_quote(texfile))    
-    lp = LaTexParser(tex,verbose)
+    lp = LaTexParser(tex,verbose,texfile)
     f,e,w = lp.parseStream()
     stat = tex.close()
     numRuns += 1
@@ -78,7 +78,8 @@ def run_latex(ltxcmd,texfile,verbose=False):
 
 def run_makeindex(fileName,idxfile=None):
     """Run the makeindex command"""
-    idxFile = fileName.replace('.tex','.idx')
+    fileNoSuffix = getFileNameWithoutExtension(fileName)
+    idxFile = fileNoSuffix+'.idx'
     texin,tex = os.popen4('makeindex ' + idxFile)
     ip = TexParser(tex,True)
     f,e,w = ip.parseStream()
@@ -104,8 +105,9 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
        pdf file in the html output window.
        If the viewer is an external viewer then ensure that it is installed and display the pdf"""
     stat = 0
+    fileNoSuffix = getFileNameWithoutExtension(fileName)
     if viewer != 'TextMate':
-        pdfFile = shell_quote(fileName[:fileName.rfind('.tex')]+'.pdf')
+        pdfFile = shell_quote(fileNoSuffix+'.pdf')
         cmdPath,syncPath = findViewerPath(viewer,pdfFile,fileName)
         if cmdPath:
             viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfFile
@@ -117,7 +119,7 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
         elif not syncPath and usePdfSync:
             print 'pdfsync is not supported for this viewer'
     else:
-        pdfFile = fileName.replace('.tex','.pdf')
+        pdfFile = fileNoSuffix+'.pdf'
         tmHref = '<p><a href="tm-file://'+quote(filePath+'/'+pdfFile)+'">Click Here to View</a></p>'
         if (numErrs < 1 and numWarns < 1) or (numErrs < 1 and numWarns > 0 and not force):
             print '<script type="text/javascript">'
@@ -277,6 +279,16 @@ def constructEngineCommand(tsDirectives,tmPrefs,packages):
         sys.exit(1)
     return engine
 
+def getFileNameWithoutExtension(fileName):
+    """Return filename upto the . or full filename if no ."""
+    suffStart = fileName.rfind(".")
+    if suffStart > 0:
+        fileNoSuffix = fileName[:suffStart]
+    else:
+        fileNoSuffix = fileName
+    return fileNoSuffix
+    
+    
 ###############################################################
 #                                                             #
 #                 Start of main program...                    #
@@ -324,7 +336,8 @@ if __name__ == '__main__':
         texCommand = 'builtin'
 
     fileName,filePath = findFileToTypeset(tsDirs);
-
+    fileNoSuffix = getFileNameWithoutExtension(fileName)
+    
     ltxPackages = findTexPackages(fileName)
         
     viewer = tmPrefs['latexViewer']
@@ -348,6 +361,9 @@ if __name__ == '__main__':
         print '<hr>'
     print '<h2>Running %s on %s</h2>' % (engine,fileName)
     print '<div id="commandOutput"><div id="preText">'
+    
+    if fileName == fileNoSuffix:
+        print "<h2 class='warning'>Warning:  Latex file has no extension.  See log for errors/warnings</h2>"
 
 #
 # Run the command passed on the command line or modified by preferences
@@ -373,7 +389,7 @@ if __name__ == '__main__':
         texCommand =  engine + " " + constructEngineOptions(tsDirs,tmPrefs)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
         texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
-        if os.path.exists(fileName.replace('.tex','.idx')):
+        if os.path.exists(fileNoSuffix+'.idx'):
             texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
@@ -382,8 +398,8 @@ if __name__ == '__main__':
         texCommand = engine + " " + constructEngineOptions(tsDirs,tmPrefs)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
         if engine == 'latex':
-            psFile = fileName.replace('.tex','.ps')
-            os.system('dvips ' + fileName.replace('.tex','.dvi') + ' -o ' + psFile)
+            psFile = fileNoSuffix+'.ps'
+            os.system('dvips ' + fileNoSuffix+'.dvi' + ' -o ' + psFile)
             os.system('ps2pdf ' + psFile)
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
@@ -438,7 +454,7 @@ if __name__ == '__main__':
         print '<input type="button" value="Run BibTeX" onclick="runBibtex(); return false" />'
         print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
         if viewer == 'TextMate':
-            pdfFile = fileName.replace('.tex','.pdf')
+            pdfFile = fileNoSuffix+'.pdf'
             print """<input type="button" value="view in TextMate" onclick="window.location='""" + 'tm-file://' + quote(filePath+'/'+pdfFile) +"""'"/>"""
         else:
             print '<input type="button" value="View in %s" onclick="runView(); return false" />' % viewer
