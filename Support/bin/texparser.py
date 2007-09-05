@@ -210,9 +210,9 @@ class LaTexParser(TexParser):
 
 class ParseLatexMk(TexParser):
     """docstring for ParseLatexMk"""
-    def __init__(self, input_stream, verbose):
+    def __init__(self, input_stream, verbose,filename):
         super(ParseLatexMk, self).__init__(input_stream,verbose)
-
+        self.fileName = filename
         self.patterns += [
             (re.compile('This is (pdfTeXk|latex2e|latex|XeTeXk)') , self.startLatex),
             (re.compile('This is BibTeX') , self.startBibtex),
@@ -234,7 +234,7 @@ class ParseLatexMk(TexParser):
         print '<div class="latex">'
         print '<hr>'
         print '<h3>' + line[:-1] + '</h3>'
-        bp = LaTexParser(self.input_stream,self.verbose)
+        bp = LaTexParser(self.input_stream,self.verbose,self.fileName)
         f,e,w = bp.parseStream()
         self.numErrs += e
         self.numWarns += w
@@ -250,7 +250,7 @@ class ParseLatexMk(TexParser):
 if __name__ == '__main__':
     # test
     stream = open('../tex/test.log')
-    lp = LaTexParser(stream,False)
+    lp = LaTexParser(stream,False,"test.tex")
     f,e,w = lp.parseStream()
     
 

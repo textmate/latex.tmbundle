@@ -372,7 +372,7 @@ if __name__ == '__main__':
         texCommand = 'latexmk.pl -f -r ' + shell_quote(os.getenv('TM_BUNDLE_SUPPORT'))+'/latexmkrc'
         print texCommand
         texin,tex = os.popen4(texCommand+" "+shell_quote(fileName))
-        commandParser = ParseLatexMk(tex,verbose)
+        commandParser = ParseLatexMk(tex,verbose,fileName)
         isFatal,numErrs,numWarns = commandParser.parseStream()
         texStatus = tex.close()
         if tmPrefs['latexAutoView'] and numErrs < 1:
