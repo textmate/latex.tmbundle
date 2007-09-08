@@ -44,7 +44,11 @@ class Preferences(object):
         except:
             print '<p class="error">There was a problem reading the preferences file, continuing with defaults</p>'
         pl.close()
-        os.system("rm /tmp/tmltxprefs*.plist")
+        try:
+            os.remove("/tmp/tmltxprefs.plist")
+            os.remove("/tmp/tmltxprefs1.plist")
+        except:
+            print '<p class="error">Problem removing temporary prefs file</p>'
         return plDict
         
     def toDefString(self):

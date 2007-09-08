@@ -288,6 +288,12 @@ def getFileNameWithoutExtension(fileName):
         fileNoSuffix = fileName
     return fileNoSuffix
     
+def writeLatexmkRc(engine,eOpts):
+    """Create a latexmkrc file that uses the proper engine and arguments"""
+    rcFile = open("/tmp/latexmkrc",'w')
+    opts = "$latex = '%s -interaction=nonstopmode -file-line-error-style %s ';" % (engine, eOpts)
+    rcFile.write(opts)
+    rcFile.close()
     
 ###############################################################
 #                                                             #
@@ -369,12 +375,14 @@ if __name__ == '__main__':
 # Run the command passed on the command line or modified by preferences
 #
     if texCommand == 'latexmk':
-        texCommand = 'latexmk.pl -f -r ' + shell_quote(os.getenv('TM_BUNDLE_SUPPORT'))+'/latexmkrc'
+        writeLatexmkRc(engine,constructEngineOptions(tsDirs,tmPrefs))
+        texCommand = 'latexmk.pl -f -r /tmp/latexmkrc'
         print texCommand
         texin,tex = os.popen4(texCommand+" "+shell_quote(fileName))
         commandParser = ParseLatexMk(tex,verbose,fileName)
         isFatal,numErrs,numWarns = commandParser.parseStream()
         texStatus = tex.close()
+        os.remove("/tmp/latexmkrc")
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
 
