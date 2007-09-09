@@ -81,7 +81,6 @@ To use one of these previewers, you must set the Viewer preference in the Prefer
 
 [texshop]: http://www.uoregon.edu/~koch/texshop/
 [texniscope]: http://www.ing.unipi.it/~d9615/homepage/texniscope.html
-[pdfview]: http://pdfview.sourceforge.net/
 [skim]: http://skim-app.sourceforge.net/
 
 ## Preview Options
@@ -93,9 +92,12 @@ Preview options are somewhat complicated depending on the viewer you choose.  Th
     * If there are no errors but some warnings then, if the “keep log window open” preference is checked you will see the warning messages, and you must click the `View in TextMate` button to see the pdf.  If the keep log window open preference is not checked then the warning messages will be ignored and you will see the pdf.
 2. If you use an external viewer then the `Typeset & View` window will automatically close if there are no errors or warnings, unless the “keep log window open” preference is checked.
 
+## Refreshing the Viewer
+The `Typeset & View (PDF)` command uses a short Applescript to tell Skim, TeXniscope, or the TeXShop viewers to reload the pdf file once ALL the typesetting is complete.  This is more efficient than enabling the auto-refresh feature in the viewers because it often takes more than one run of LaTeX before the document is really ready to view.  In that case most viewers would try to reload the pdf multiple times.
+
 # PDFSync
 
-The [pdfsync][] package allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of TeXniscope of PDFView.
+The [pdfsync][] package allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of TeXniscope or Skim.
 
 [pdfsync]: http://itexmac.sourceforge.net/pdfsync.html
 
@@ -113,7 +115,7 @@ You need to perform the following steps to enable synchronization:
 
         Editor: mate
         Editor options: -l %line "%file"
-In Skim or PDFView, these are already set by default.
+In Skim these are already set by default.
 
     This assumes that you have installed `mate` (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking (⌘) at a location in the PDF file (as shown in TeXniscope/Skim) should take you to the corresponding location in TextMate.
 
@@ -259,6 +261,8 @@ You can bring up the Preferences panel for LaTeX by running the Preferences comm
 * *Options:*  If you have specific options that you will usually want to pass to the engine you have selected you can set them here.  Note:  If you have options that are specific to a single file you are better off to use the `%!TEX TS-options = ` directive at the top of your source file.
 
 * *Use Latexmk.pl:*   TextMate includes the popular latexmmk.pl script which automatically runs latex, bibtex, and makeindex as many times as needed to resolve all cross references and citations in your file.  To use latexmk.pl just check this box.
+
+Latexmk.pl will use the engine and any options you specify in the preferences window, or any `%!TEX` directives in an individual file.
 
 * *Verbose TeX output:*  If you want to see the raw LaTeX log file in real time, check this box.
 

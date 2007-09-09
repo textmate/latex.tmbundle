@@ -100,6 +100,16 @@ def findViewerPath(viewer,pdfFile,fileName):
         syncPath = '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
     return vp, syncPath
 
+def refreshViewer(viewer,pdfFile):
+    """Use Applescript to tell the viewer to reload"""
+    print '<p class="info">Telling %s to Refresh %s...</p>'%(viewer,pdfFile)
+    if viewer == 'Skim':
+        os.system("/usr/bin/osascript -e " + """'tell application "Skim" to revert document %s' """%pdfFile)
+    elif viewer == 'TeXniscope':
+        os.system("/usr/bin/osascript -e " + """'tell document %s of application "TeXniscope" to refresh' """%pdfFile)
+    elif viewer == 'TeXShop':
+        os.system("/usr/bin/osascript -e " + """'tell document %s of application "TeXShop" to refreshpdf' """%pdfFile)
+
 def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
     """If the viewer is textmate, then setup the proper urls and/or redirects to show the
        pdf file in the html output window.
@@ -112,12 +122,15 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
         if cmdPath:
             viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfFile
             stat = os.system(viewCmd)
+            refreshViewer(viewer,pdfFile)            
         else:
             print '<strong class="error">', viewer, ' does not appear to be installed on your system.</strong>'
         if syncPath and usePdfSync:
             os.system(syncPath)
         elif not syncPath and usePdfSync:
             print 'pdfsync is not supported for this viewer'
+
+
     else:
         pdfFile = fileNoSuffix+'.pdf'
         tmHref = '<p><a href="tm-file://'+quote(filePath+'/'+pdfFile)+'">Click Here to View</a></p>'
