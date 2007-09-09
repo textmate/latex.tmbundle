@@ -13,6 +13,7 @@ require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/LaTeXUtils.rb"
 html_header "LaTeX Document Outline", "LaTeX"
 REGEX = /\\(part|chapter|section|subsection|subsubsection|paragraph|subparagraph)\*?(?:%.*\n[ \t]*)?(?:(?&gt;\[(.*?)\])|\{([^{}]*(?:\{[^}]*\}[^}]*?)*)\})/
 INCLUDE_REGEX = /\\(?:input|include)(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/
+NON_COMMENT_REGEX = /^((?:[^%]|\\%)*)(?=%|$)/
 class String
   def adjust_end(new_piece)
     new_form = self.sub(/[^\/]*$/,new_piece)
@@ -39,6 +40,8 @@ def outline_points(filename)
     name = ""
   end
   data.split("\n").each_with_index do |line, i|
+    line.match(NON_COMMENT_REGEX)
+    line = $1 || ""
     points &lt;&lt; [name,i+1,$1,$2 || $3] if line.match(REGEX)
     points += outline_points(filename.adjust_end($1)) if line.match(INCLUDE_REGEX)
   end
