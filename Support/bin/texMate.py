@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.3
+#!/usr/bin/env python
 # encoding: utf-8
 
 # This is a rewrite of latexErrWarn.py
@@ -77,6 +77,7 @@ def run_latex(ltxcmd,texfile,verbose=False):
     return stat,f,e,w
 
 def run_makeindex(fileName,idxfile=None):
+    ## TODO foreach \makeindex[(.*)] run makeindex on $1, plus the master file.
     """Run the makeindex command"""
     fileNoSuffix = getFileNameWithoutExtension(fileName)
     idxFile = fileNoSuffix+'.idx'
@@ -120,9 +121,12 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
         pdfFile = shell_quote(fileNoSuffix+'.pdf')
         cmdPath,syncPath = findViewerPath(viewer,pdfFile,fileName)
         if cmdPath:
-            viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfFile
-            stat = os.system(viewCmd)
-            refreshViewer(viewer,pdfFile)            
+            stat = os.system("check_open %s %s"%(viewer,pdfFile))
+            if stat != 0:
+                viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfFile
+                stat = os.system(viewCmd)
+            else:
+                refreshViewer(viewer,pdfFile)            
         else:
             print '<strong class="error">', viewer, ' does not appear to be installed on your system.</strong>'
         if syncPath and usePdfSync:
@@ -304,8 +308,12 @@ def getFileNameWithoutExtension(fileName):
 def writeLatexmkRc(engine,eOpts):
     """Create a latexmkrc file that uses the proper engine and arguments"""
     rcFile = open("/tmp/latexmkrc",'w')
-    opts = "$latex = '%s -interaction=nonstopmode -file-line-error-style %s ';" % (engine, eOpts)
-    rcFile.write(opts)
+    rcFile.write("""$latex = 'latex -interaction=nonstopmode -file-line-error-style %s "%%S" ';\n""" % eOpts)
+    rcFile.write("""$pdflatex = '%s -interaction=nonstopmode -file-line-error-style %s "%%S"';\n""" % (engine, eOpts))
+    rcFile.write("""$bibtex = 'bibtex "%%B"';\n""")
+    rcFile.write("""$dvips = 'dvips %O "%S" -o "%D"';\n""")
+    rcFile.write("""$dvipdf = 'dvipdf %O "%S" "%D"';\n""")
+    rcFile.write("""$clean_full_ext = "maf mtc mtc1 mtc2 mtc3";\n""")
     rcFile.close()
     
 ###############################################################
@@ -378,7 +386,7 @@ if __name__ == '__main__':
 #
     if not firstRun:
         print '<hr>'
-    print '<h2>Running %s on %s</h2>' % (engine,fileName)
+    print '<h2>Running %s on %s</h2>' % (texCommand,fileName)
     print '<div id="commandOutput"><div id="preText">'
     
     if fileName == fileNoSuffix:
@@ -389,9 +397,16 @@ if __name__ == '__main__':
 #
     if texCommand == 'latexmk':
         writeLatexmkRc(engine,constructEngineOptions(tsDirs,tmPrefs))
-        texCommand = 'latexmk.pl -f -r /tmp/latexmkrc'
+        if engine == 'latex':
+            texCommand = 'latexmk.pl -pdfps -f -r /tmp/latexmkrc ' 
+        else:
+            texCommand = 'latexmk.pl -pdf -f -r /tmp/latexmkrc '
+#        if ' ' in fileName:
+#            texCommand += shell_quote(shell_quote(fileName))
+#        else:
+        texCommand += shell_quote(fileName)
         print texCommand
-        texin,tex = os.popen4(texCommand+" "+shell_quote(fileName))
+        texin,tex = os.popen4(texCommand)
         commandParser = ParseLatexMk(tex,verbose,fileName)
         isFatal,numErrs,numWarns = commandParser.parseStream()
         texStatus = tex.close()
@@ -404,6 +419,11 @@ if __name__ == '__main__':
         
     elif texCommand == 'index':
         texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
+    
+    elif texCommand == 'clean':
+        texCommand = 'latexmk.pl -CA '
+        texin,tex = os.popen4(texCommand)
+        commandParser = ParseLatexMk(tex,True,fileName)
         
     elif texCommand == 'builtin':
         # the latex, bibtex, index, latex, latex sequence should cover 80% of the cases that latexmk does
@@ -474,6 +494,7 @@ if __name__ == '__main__':
         print '<input type="button" value="Re-Run %s" onclick="runLatex(); return false" />' % engine
         print '<input type="button" value="Run BibTeX" onclick="runBibtex(); return false" />'
         print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
+        print '<input type="button" value="Clean up" onclick="runClean(); return false" />'        
         if viewer == 'TextMate':
             pdfFile = fileNoSuffix+'.pdf'
             print """<input type="button" value="view in TextMate" onclick="window.location='""" + 'tm-file://' + quote(filePath+'/'+pdfFile) +"""'"/>"""
@@ -482,7 +503,7 @@ if __name__ == '__main__':
         print '<input type="button" value="Preferences…" onclick="runConfig(); return false" />'
         print '<p>'
         print '<input type="checkbox" id="hv_warn" name="fmtWarnings" onclick="makeFmtWarnVisible(); return false" />'
-        print '<label for="hv_warn">Show hbox,vbox Warnings </label>'            
+        print '<label for="hv_warn">Show hbox,vbox Warnings </label></p>'            
         print '</div>'
 
     sys.exit(eCode)

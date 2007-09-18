@@ -38,6 +38,10 @@ function runBibtex(){
     runCommand('bibtex')
 };
 
+function runClean(){
+    runCommand('clean')
+};
+
 function runMakeIndex(){
     runCommand('index')
 };

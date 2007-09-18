@@ -184,6 +184,14 @@ Chapter 7.
 (./book.mtc7) [171] [172] (./bu3.aux)
 \openout3 = `bu3.aux'.
 
+./pozdniakov-segerer.tex:38: Undefined control sequence.
+l.38 \bikkkk
+
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <10> not available

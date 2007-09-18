@@ -5,44 +5,21 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string># Delete aux files from TM_FILEPATH, it's master (if any), and it's master (if any), recursively
-# Honestly, I'd be surprised if anybody has a file with a master with a master, but it's easy enough to do
+	<string>. "${TM_SUPPORT_PATH}/lib/html.sh"
+. "${TM_SUPPORT_PATH}/lib/webpreview.sh"
 
-# If TM_LATEX_MASTER is set and the current file has the %!TEX root comment, the comment overrides TM_LATEX_MASTER
+# Prepare output window.
+html_header 'Clean Auxiliary files'
 
-. "${TM_BUNDLE_SUPPORT}/lib/options.sh"
-
-trash_aux_files () { # takes 1 arg, path to TeX file
-  cd "`dirname "$1"`"
-  FILE="`basename "${1%.*}"`"
-  
-  rm -f "$FILE".{aux,pdfsync,mtc*,log,bbl,aux,toc,bmt,out,nav,snm,vrb,blg,aux.bak}
-}
-
-# sets TM_LATEX_MASTER to the master for arg 1
-get_master () {
-  unset -v OPTIONS_root TM_LATEX_MASTER
-  parse_options "`basename "$1"`"
-  TM_LATEX_MASTER="$OPTIONS_root"
-}
-
-LATEX_FILE="$TM_FILEPATH"
-while [[ ${#LATEX_FILE} -gt 0 ]]; do
-  trash_aux_files "$LATEX_FILE"
-  get_master "$LATEX_FILE"
-  LATEX_FILE="$TM_LATEX_MASTER"
-done
-
-echo 'Done cleaning files'
-</string>
+texMate.py clean 1</string>
 	<key>input</key>
-	<string>selection</string>
+	<string>none</string>
 	<key>keyEquivalent</key>
 	<string>^~</string>
 	<key>name</key>
 	<string>Trash aux Files</string>
 	<key>output</key>
-	<string>showAsTooltip</string>
+	<string>showAsHTML</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
