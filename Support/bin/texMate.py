@@ -60,7 +60,7 @@ def run_bibtex(bibfile=None,verbose=False,texfile=None):
         texin,tex = os.popen4('bibtex'+" "+shell_quote(bib))
         bp = BibTexParser(tex,verbose)
         f,e,w = bp.parseStream()
-        fatal+=f
+        fatal|=f
         err+=e
         warn+=w
         stat = tex.close()
@@ -79,13 +79,27 @@ def run_latex(ltxcmd,texfile,verbose=False):
 def run_makeindex(fileName,idxfile=None):
     ## TODO foreach \makeindex[(.*)] run makeindex on $1, plus the master file.
     """Run the makeindex command"""
+    try:
+        texString = open(fileName).read()
+    except:
+        print '<p class="error">Error: Could not open %s to check for makeindex</p>' % fileName
+        print '<p class="error">This is most likely a problem with TM_LATEX_MASTER</p>'
+        sys.exit(1)
+    myList = [x[2] for x in re.findall(r'([^%]|^)\\makeindex(\[([\w]+)\])?',texString) if x[2] ]
+    
     fileNoSuffix = getFileNameWithoutExtension(fileName)
     idxFile = fileNoSuffix+'.idx'
-    texin,tex = os.popen4('makeindex ' + idxFile)
-    ip = TexParser(tex,True)
-    f,e,w = ip.parseStream()
-    stat = tex.close()
-    return stat,f,e,w
+    myList.append(idxFile)
+    fatal, error, warning = 0,0,0
+    for idxFile in myList:
+        texin,tex = os.popen4('makeindex ' + idxFile)
+        ip = TexParser(tex,True)
+        f,e,w = ip.parseStream()
+        fatal |= f
+        error += e
+        warning += w
+        stat = tex.close()
+    return stat,fatal,error,warning
 
 def findViewerPath(viewer,pdfFile,fileName):
     """Use the find_app command to ensure that the viewer is installed in the system
