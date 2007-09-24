@@ -322,12 +322,12 @@ def getFileNameWithoutExtension(fileName):
 def writeLatexmkRc(engine,eOpts):
     """Create a latexmkrc file that uses the proper engine and arguments"""
     rcFile = open("/tmp/latexmkrc",'w')
-    rcFile.write("""$latex = 'latex -interaction=nonstopmode -file-line-error-style %s "%%S" ';\n""" % eOpts)
-    rcFile.write("""$pdflatex = '%s -interaction=nonstopmode -file-line-error-style %s "%%S"';\n""" % (engine, eOpts))
-    rcFile.write("""$bibtex = 'bibtex "%%B"';\n""")
-    rcFile.write("""$dvips = 'dvips %O "%S" -o "%D"';\n""")
-    rcFile.write("""$dvipdf = 'dvipdf %O "%S" "%D"';\n""")
-    rcFile.write("""$clean_full_ext = "maf mtc mtc1 mtc2 mtc3";\n""")
+    rcFile.write("""$latex = 'latex -interaction=nonstopmode -file-line-error-style %s  ';\n""" % eOpts)
+    rcFile.write("""$pdflatex = '%s -interaction=nonstopmode -file-line-error-style %s ';\n""" % (engine, eOpts))
+#    rcFile.write("""$bibtex = 'bibtex "%%B"';\n""")
+#    rcFile.write("""$dvips = 'dvips %O "%S" -o "%D"';\n""")
+#    rcFile.write("""$dvipdf = 'dvipdf %O "%S" "%D"';\n""")
+#    rcFile.write("""$clean_full_ext = "maf mtc mtc1 mtc2 mtc3";\n""")
     rcFile.close()
     
 ###############################################################
@@ -427,7 +427,8 @@ if __name__ == '__main__':
         os.remove("/tmp/latexmkrc")
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
-
+        numRuns = commandParser.numRuns
+        
     elif texCommand == 'bibtex':
         texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
         

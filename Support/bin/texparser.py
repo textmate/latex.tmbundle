@@ -97,6 +97,8 @@ class BibTexParser(TexParser):
             (re.compile(r'I found no \\\w+ command') , self.error),
             (re.compile(r"I couldn't open style file"), self.error),
             (re.compile('This is BibTeX') , self.info),
+            (re.compile('The style') , self.info),            
+            (re.compile('Database') , self.info),                        
             (re.compile('---') , self.finishRun)
         ]
     
@@ -217,7 +219,7 @@ class ParseLatexMk(TexParser):
             (re.compile('This is (pdfTeXk|latex2e|latex|XeTeXk)') , self.startLatex),
             (re.compile('This is BibTeX') , self.startBibtex),
             (re.compile('This is makeindex') , self.startBibtex),
-            (re.compile('^Latexmk') , self.info),
+            (re.compile('^Latexmk') , self.ltxmk),
             (re.compile('Run number') , self.newRun)
         ]
         self.numRuns = 0
@@ -240,11 +242,15 @@ class ParseLatexMk(TexParser):
         self.numWarns += w
 
     def newRun(self,m,line):
-        print '<hr />'
-        print '<p>', self.numErrs, 'Errors', self.numWarns, 'Warnings', 'in this run.', '</p>'
+        if self.numRuns > 0:
+            print '<hr />'
+            print '<p>', self.numErrs, 'Errors', self.numWarns, 'Warnings', 'in this run.', '</p>'
         self.numWarns = 0
         self.numErrs = 0
         self.numRuns += 1
+        
+    def ltxmk(self,m,line):
+        print '<p class="ltxmk">%s</p>'%line
 
 
 if __name__ == '__main__':

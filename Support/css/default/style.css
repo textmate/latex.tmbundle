@@ -16,6 +16,9 @@
  color: red;
 }
 
+.ltxmk {
+    color: green;
+}
 .default div#commandOutput {
     background-color: rgb(240,240,240);
     padding: 5px;
