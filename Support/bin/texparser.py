@@ -1,9 +1,8 @@
 import sys
 import re
-from os.path import basename
+import os.path
 import os
 import tmprefs
-from urllib import quote
 from struct import *
 
 
@@ -11,7 +10,7 @@ def percent_escape(str):
 	return re.sub('[\x80-\xff /&]', lambda x: '%%%02X' % unpack('B', x.group(0))[0], str)
 
 def make_link(file, line):
-	return 'txmt://open?url=file:%2F%2F' + percent_escape(file) + '&line=' + line
+	return 'txmt://open?url=file:%2F%2F' + percent_escape(file) + '&amp;line=' + line
 
 def shell_quote(string):
 	return '"' + re.sub(r'([`$\\"])', r'\\\1', string) + '"'
@@ -30,12 +29,29 @@ class TexParser(object):
         self.isFatal = False
         self.fileStack = []  #TODO: long term - can improve currentFile handling by keeping track of (xxx and )
 
+    def getRewrappedLine(self):
+        """Sometimes TeX breaks up lines with hard linebreaks.  This is annoying.
+           Even more annoying is that it sometime does not break line, for two distinct 
+           warnings. This function attempts to return a single statement."""
+        statement = ""
+        while True:
+            line = self.input_stream.readline()
+            if not line:
+                if statement: 
+                    return statement
+                else:
+                    return ""
+            statement += line.rstrip("\n")
+            if len(line) != 80: # including line break
+                break
+        return statement+"\n"
+    
     def parseStream(self):
         """Process the input_stream one line at a time, matching against
            each pattern in the patterns dictionary.  If a pattern matches
            call the corresponding method in the dictionary.  The dictionary
            is organized with patterns as the keys and methods as the values."""
-        line = self.input_stream.readline()
+        line = self.getRewrappedLine()
         while line and not self.done:
             line = line.rstrip("\n")
             foundMatch = False
@@ -51,7 +67,7 @@ class TexParser(object):
             if self.verbose and not foundMatch:
                 print line
             
-            line = self.input_stream.readline()
+            line = self.getRewrappedLine()
         if self.done == False:
             self.badRun()
         return self.isFatal, self.numErrs, self.numWarns
@@ -119,14 +135,15 @@ class LaTexParser(TexParser):
             (re.compile('.*\<use (.*?)\>') , self.detectInclude),
             (re.compile('^Output written') , self.info),
             (re.compile('LaTeX Warning:.*?input line (\d+)(\.|$)') , self.handleWarning),
-            (re.compile('LaTeX Warning:.*') , self.partWarning),
+            (re.compile('LaTeX Warning:.*') , self.warning),
+            (re.compile('^([^:]*):(\d+):\s+(pdfTeX warning.*)') , self.handleFileLineWarning),            
             (re.compile('.*pdfTeX warning.*') , self.warning),            
             (re.compile('LaTeX Font Warning:.*') , self.warning),            
             (re.compile('Overfull.*wide') , self.warn2),
             (re.compile('Underfull.*badness') , self.warn2),                        
-            (re.compile('^([\.\/\w\x7f-\xff\- ]+(\.tex|\.'+self.suffix+')?):(\d+):\s+(.*)') , self.handleError),
-            (re.compile('([^:]*)(:)(\d+): LaTeX Error:(.*)') , self.handleError),
-            (re.compile('([^:]*)(:)(\d+): (Emergency stop)') , self.handleError),
+            (re.compile('^([\.\/\w\x7f-\xff\- ]+(?:\.tex|\.'+self.suffix+')):(\d+):\s+(.*)') , self.handleError),
+            (re.compile('([^:]*):(\d+): LaTeX Error:(.*)') , self.handleError),
+            (re.compile('([^:]*):(\d+): (Emergency stop)') , self.handleError),
             (re.compile('Transcript written on (.*)\.$') , self.finishRun),
             (re.compile('^Error: pdflatex') , self.pdfLatexError),
             (re.compile('\!.*') , self.handleOldStyleErrors),
@@ -143,36 +160,23 @@ class LaTexParser(TexParser):
         print "</li></ul>"
 
     def handleWarning(self,m,line):
-        print '<p class="warning"><a href="' + make_link(os.getcwd()+self.currentFile[1:], m.group(1)) + '">'+line+"</a></p>"
+        print '<p class="warning"><a href="' + make_link(os.path.join(os.getcwd(),self.currentFile), m.group(1)) + '">'+line+"</a></p>"
         self.numWarns += 1
     
-    def partWarning(self,m,line):
-        """Sometimes TeX breaks up warning output with hard linebreaks.  This is annoying
-           Looking ahead one line seems perfectly safe.  In all the logs I have examined a warning
-           always has a blank line after it.  So I'm pretty confident that eating an additional line is
-           not going to unintentionally hide an important error.
-        """
-        newLine = line + self.input_stream.readline()
-        newMatch = re.match('LaTeX Warning:.*?input line (\d+)(\.|$)',newLine)
-        if newMatch:
-            self.handleWarning(newMatch,newLine)
-        else:
-            self.warning(m,line)
+    def handleFileLineWarning(self,m,line):
+        """Display warning. match m should contain file, line, warning message"""
+        print '<p class="warning"><a href="' + make_link(os.path.join(os.getcwd(), m.group(1)),m.group(2)) + '">' + m.group(3) + "</a></p>"
+        self.numWarns += 1
     
     def handleError(self,m,line):
         print '<p class="error">'
-        latexErrorMsg = 'Latex Error: <a  href="' + make_link(os.getcwd()+'/'+m.group(1),m.group(3)) +  '">' + m.group(1)+":"+m.group(3) + '</a> '+m.group(4)
-        line = self.input_stream.readline()
-        while self.blankLine.match(line) != None:
-            latexErrorMsg = latexErrorMsg+line
-            line = self.input_stream.readline()
-        print latexErrorMsg+'</p>'
+        print 'Latex Error: <a  href="' + make_link(os.path.join(os.getcwd(),m.group(1)),m.group(2)) +  '">' + m.group(1)+":"+m.group(2) + '</a> '+m.group(3)+'</p>'
         self.numErrs += 1
         
     def finishRun(self,m,line):
         logFile = m.group(1).strip('"')
         print '<p>  Complete transcript is in '
-        print '<a href="' + make_link(os.getcwd()+'/'+logFile,'1') +  '">' + logFile + '</a>'
+        print '<a href="' + make_link(os.path.join(os.getcwd(),logFile),'1') +  '">' + logFile + '</a>'
         print '</p>'
         self.done = True
         
@@ -207,7 +211,7 @@ class LaTexParser(TexParser):
         print '<p class="error">A fatal error occured, log file is in '
         logFile = os.path.basename(os.getenv('TM_FILEPATH'))
         logFile = logFile.replace(self.suffix,'log')
-        print '<a href="' + make_link(os.getcwd()+'/'+logFile,'1') +  '">' + logFile + '</a>'        
+        print '<a href="' + make_link(os.path.join(os.getcwd(),logFile),'1') +  '">' + logFile + '</a>'        
         print '</p>'
 
 class ParseLatexMk(TexParser):
@@ -218,6 +222,7 @@ class ParseLatexMk(TexParser):
         self.patterns += [
             (re.compile('This is (pdfTeXk|latex2e|latex|XeTeXk)') , self.startLatex),
             (re.compile('This is BibTeX') , self.startBibtex),
+            (re.compile('^Latexmk: All targets \(.*?\) are up-to-date') , self.finishRun),
             (re.compile('This is makeindex') , self.startBibtex),
             (re.compile('^Latexmk') , self.ltxmk),
             (re.compile('Run number') , self.newRun)
@@ -248,7 +253,11 @@ class ParseLatexMk(TexParser):
         self.numWarns = 0
         self.numErrs = 0
         self.numRuns += 1
-        
+
+    def finishRun(self,m,line):
+        self.ltxmk(m,line)
+        self.done = True
+
     def ltxmk(self,m,line):
         print '<p class="ltxmk">%s</p>'%line
 
