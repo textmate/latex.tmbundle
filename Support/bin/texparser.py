@@ -261,6 +261,27 @@ class ParseLatexMk(TexParser):
     def ltxmk(self,m,line):
         print '<p class="ltxmk">%s</p>'%line
 
+class ChkTeXParser(TexParser):
+    """Parse the output from chktex"""
+    def __init__(self, input_stream, verbose, filename):
+        super(ChkTeXParser, self).__init__(input_stream,verbose)
+        self.fileName = filename
+        self.patterns += [
+            (re.compile('^ChkTeX') , self.info),
+            (re.compile('Warning \d+ in (.*.tex) line (\d+):(.*)') , self.handleWarning),
+            (re.compile('Error \d+ in (.*.tex) line (\d+):(.*)') , self.handleError),
+        ]
+        self.numRuns = 0
+
+    def handleWarning(self,m,line):
+        """Display warning. match m should contain file, line, warning message"""
+        print '<p class="warning">Warning: <a href="' + make_link(os.path.join(os.getcwd(), m.group(1)),m.group(2)) + '">' + m.group(1)+ ": "+m.group(2)+":</a>"+m.group(3)+"</p>"
+        self.numWarns += 1
+
+    def handleError(self,m,line):
+        print '<p class="error">'
+        print 'Error: <a  href="' + make_link(os.path.join(os.getcwd(),m.group(1)),m.group(2)) +  '">' + m.group(1)+":"+m.group(2) + ':</a> '+m.group(3)+'</p>'
+        self.numErrs += 1
 
 if __name__ == '__main__':
     # test

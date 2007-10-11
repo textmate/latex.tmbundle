@@ -125,6 +125,16 @@ def refreshViewer(viewer,pdfFile):
     elif viewer == 'TeXShop':
         os.system("/usr/bin/osascript -e " + """'tell document %s of application "TeXShop" to refreshpdf' """%pdfFile)
 
+# TODO refactor run_viewer and sync_viewer to work together better
+def sync_viewer(viewer,fileName,filePath):
+    fileNoSuffix = getFileNameWithoutExtension(fileName)
+    pdfFile = shell_quote(fileNoSuffix+'.pdf')
+    cmdPath,syncPath = findViewerPath(viewer,pdfFile,fileName)
+    if syncPath:
+        os.system(syncPath)
+    else:
+        print 'pdfsync is not supported for this viewer'
+    
 def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
     """If the viewer is textmate, then setup the proper urls and/or redirects to show the
        pdf file in the html output window.
@@ -419,7 +429,6 @@ if __name__ == '__main__':
 #            texCommand += shell_quote(shell_quote(fileName))
 #        else:
         texCommand += shell_quote(fileName)
-        print texCommand
         texin,tex = os.popen4(texCommand)
         commandParser = ParseLatexMk(tex,verbose,fileName)
         isFatal,numErrs,numWarns = commandParser.parseStream()
@@ -462,6 +471,20 @@ if __name__ == '__main__':
         
     elif texCommand == 'view':
         stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
+        
+    elif texCommand == 'sync':
+        if 'pdfsync' in ltxPackages:
+            stat = sync_viewer(viewer,fileName,filePath)
+        else:
+            print "<p class='error'>pdfsync.sty must be included to use this command</p>"
+            
+    elif texCommand == 'chktex':
+        texCommand += ' '
+        texCommand += shell_quote(fileName)
+        texin,tex = os.popen4(texCommand)
+        commandParser = ChkTeXParser(tex,verbose,fileName)
+        isFatal,numErrs,numWarns = commandParser.parseStream()
+        texStatus = tex.close()
 #    
 # Check status of running the viewer
 #

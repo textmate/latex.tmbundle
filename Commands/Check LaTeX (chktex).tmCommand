@@ -5,18 +5,28 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>texMate.py sync 1</string>
+	<string># Source some support functions we need.
+. "${TM_SUPPORT_PATH}/lib/html.sh"
+. "${TM_SUPPORT_PATH}/lib/webpreview.sh"
+
+# Prepare output window.
+html_header 'ChkTeX' "$FILE"
+
+texMate.py chktex 1
+
+html_footer
+</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
-	<string>^~@o</string>
+	<string>^V</string>
 	<key>name</key>
-	<string>Show in PDF Viewer (pdfsync)</string>
+	<string>Check LaTeX (chktex)</string>
 	<key>output</key>
-	<string>discard</string>
+	<string>showAsHTML</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
-	<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
+	<string>B345876F-1B84-4FF5-A19C-A62ADF121EC8</string>
 </dict>
 </plist>

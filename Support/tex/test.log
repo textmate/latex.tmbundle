@@ -7,6 +7,11 @@ entering extended mode
 
 ConTeXt  ver: 2007.01.12 15:56 MKII  fmt: 2007.2.11  int: english/english
 
+
+/usr/local/texlive/2007/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex:
+847: Package pgfsys Error: Driver file ``pgfsys-xetex.def'' not found..
+
+
 language        : language en is active
 system          : cont-new loaded
 (/usr/local/texlive/2007/texmf-dist/tex/context/base/cont-new.tex
@@ -200,5 +205,7 @@ LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <10> not available
 
 [44] <PIChapter/Figures/archimedesblackbox.pdf, id=414, 238.8925pt x 76.285pt>
 File: PIChapter/Figures/archimedesblackbox.pdf Graphic file (type pdf)
+
+
 
 
