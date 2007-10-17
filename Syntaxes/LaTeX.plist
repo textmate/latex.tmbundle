@@ -445,7 +445,7 @@
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>(?:\s*)((\\)url)(\{)([^}]*)(\})</string>
+			<string>(?:\s*)((\\)(?:url|href))(\{)([^}]*)(\})</string>
 			<key>name</key>
 			<string>meta.function.link.url.latex</string>
 		</dict>
