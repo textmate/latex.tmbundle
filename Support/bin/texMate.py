@@ -108,9 +108,9 @@ def findViewerPath(viewer,pdfFile,fileName):
     vp = os.popen('find_app ' + viewer + '.app').read()
     syncPath = None
     if viewer == 'Skim' and vp:
-        syncPath = vp + '/Contents/Resources/displayline ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile + ' ' + os.getenv('TM_FILEPATH')
+        syncPath = vp + '/Contents/Resources/displayline ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile + ' ' + shell_quote(os.getenv('TM_FILEPATH'))
     elif viewer == 'TeXniscope' and vp:
-        syncPath = vp + '/Contents/Resources/forward-search.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + os.getenv('TM_FILEPATH') + ' ' + pdfFile
+        syncPath = vp + '/Contents/Resources/forward-search.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + shell_quote(os.getenv('TM_FILEPATH')) + ' ' + pdfFile
     elif viewer == 'PDFView' and vp:
         syncPath = '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
     return vp, syncPath
@@ -131,9 +131,10 @@ def sync_viewer(viewer,fileName,filePath):
     pdfFile = shell_quote(fileNoSuffix+'.pdf')
     cmdPath,syncPath = findViewerPath(viewer,pdfFile,fileName)
     if syncPath:
-        os.system(syncPath)
+        stat = os.system(syncPath)
     else:
         print 'pdfsync is not supported for this viewer'
+    return stat
     
 def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
     """If the viewer is textmate, then setup the proper urls and/or redirects to show the
