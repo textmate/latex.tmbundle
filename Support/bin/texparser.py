@@ -276,11 +276,17 @@ class ChkTeXParser(TexParser):
     def handleWarning(self,m,line):
         """Display warning. match m should contain file, line, warning message"""
         print '<p class="warning">Warning: <a href="' + make_link(os.path.join(os.getcwd(), m.group(1)),m.group(2)) + '">' + m.group(1)+ ": "+m.group(2)+":</a>"+m.group(3)+"</p>"
+        warnDetail = self.input_stream.readline()
+        if len(warnDetail) > 2:
+            print '<pre>',warnDetail[:-1]
+            print self.input_stream.readline()[:-1], '</pre>'
         self.numWarns += 1
 
     def handleError(self,m,line):
         print '<p class="error">'
         print 'Error: <a  href="' + make_link(os.path.join(os.getcwd(),m.group(1)),m.group(2)) +  '">' + m.group(1)+":"+m.group(2) + ':</a> '+m.group(3)+'</p>'
+        print '<pre>', self.input_stream.readline()[:-1]
+        print self.input_stream.readline()[:-1], '</pre>'
         self.numErrs += 1
 
 if __name__ == '__main__':

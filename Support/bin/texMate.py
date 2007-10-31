@@ -509,7 +509,7 @@ if __name__ == '__main__':
 # Decide what to do with the Latex & View log window   
 #
     if not tmPrefs['latexKeepLogWin']:
-        if numErrs == 0 and numWarns == 0 and viewer != 'TextMate':
+        if numErrs == 0 and viewer != 'TextMate':
             eCode = 200
         else:
             eCode = 0

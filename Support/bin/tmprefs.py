@@ -1,5 +1,10 @@
 import os
 import newplistlib as plistlib
+try:
+    from Foundation import *
+    haspyobjc = True
+except:
+    haspyobjc = False
 
 class Preferences(object):
     """docstring for Preferences"""
@@ -36,19 +41,22 @@ class Preferences(object):
         # to the output.
         #
         plDict = {}
-        os.system("plutil -convert xml1 $HOME/Library/Preferences/com.macromates.textmate.plist -o /tmp/tmltxprefs1.plist")
-        os.system(" cat /tmp/tmltxprefs1.plist | tr -d '\\000'-'\\011''\\013''\\014''\\016'-'\\037''\\200'-'\\377' > /tmp/tmltxprefs.plist" )
-        pl = open('/tmp/tmltxprefs.plist')
-        try:
-            plDict = plistlib.readPlist(pl)
-        except:
-            print '<p class="error">There was a problem reading the preferences file, continuing with defaults</p>'
-        pl.close()
-        try:
-            os.remove("/tmp/tmltxprefs.plist")
-            os.remove("/tmp/tmltxprefs1.plist")
-        except:
-            print '<p class="error">Problem removing temporary prefs file</p>'
+        if haspyobjc:
+            plDict = NSDictionary.dictionaryWithContentsOfFile_(os.environ["HOME"]+"/Library/Preferences/com.macromates.textmate.plist")
+        else:   # TODO remove all this once everyone is on leopard
+            os.system("plutil -convert xml1 $HOME/Library/Preferences/com.macromates.textmate.plist -o /tmp/tmltxprefs1.plist")
+            os.system(" cat /tmp/tmltxprefs1.plist | tr -cd '[:print:]' > /tmp/tmltxprefs.plist" )
+            pl = open('/tmp/tmltxprefs.plist')
+            try:
+                plDict = plistlib.readPlist(pl)
+            except:
+                print '<p class="error">There was a problem reading the preferences file, continuing with defaults</p>'
+            pl.close()
+            try:
+                os.remove("/tmp/tmltxprefs.plist")
+                os.remove("/tmp/tmltxprefs1.plist")
+            except:
+                print '<p class="error">Problem removing temporary prefs file</p>'
         return plDict
         
     def toDefString(self):
