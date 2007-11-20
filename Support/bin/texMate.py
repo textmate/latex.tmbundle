@@ -43,11 +43,15 @@ from struct import *
 from texparser import *
 
 # 
+def expandName(fn,program='pdflatex'):
+    sys.stdout.flush()
+    return os.popen('kpsewhich -progname="%s" "%s"' % (program, fn)).read().strip()
 
 def run_bibtex(bibfile=None,verbose=False,texfile=None):
     """Determine Targets and run bibtex"""
     # find all the aux files.
     fatal,err,warn = 0,0,0
+    auxfiles = []
     if texfile:
         basename = texfile[:texfile.rfind('.')]
     if bibfile == None:
@@ -193,9 +197,10 @@ def findTexPackages(fileName):
        more than one level deep for preamble stuff.
     """
     try:
-        texString = open(fileName).read()
+        realfn = expandName(fileName)
+        texString = open(realfn).read()
     except:
-        print '<p class="error">Error: Could not open %s to check for packages</p>' % fileName
+        print '<p class="error">Error: Could not open %s to check for packages</p>' % realfn
         print '<p class="error">This is most likely a problem with TM_LATEX_MASTER</p>'
         sys.exit(1)
     incFiles = [x[3] for x in re.findall(r'((^|\n)[^%]*?)(\\input|\\include)\{([\w /\.\-]+)\}',texString)]
@@ -204,7 +209,8 @@ def findTexPackages(fileName):
         if ifile.find('.tex') < 0:
             ifile += '.tex'
         try:
-            myList += [x[3] for x in re.findall(r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}',open(ifile).read()) ]
+            realif = expandName(ifile)
+            myList += [x[3] for x in re.findall(r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}',open(realif).read()) ]
         except:
             print '<p class="warning">Warning: Could not open %s to check for packages</p>' % ifile
     newList = []
