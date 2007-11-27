@@ -44,7 +44,7 @@ class Preferences(object):
         if haspyobjc:
             plDict = NSDictionary.dictionaryWithContentsOfFile_(os.environ["HOME"]+"/Library/Preferences/com.macromates.textmate.plist")
         else:   # TODO remove all this once everyone is on leopard
-            os.system("plutil -convert xml1 $HOME/Library/Preferences/com.macromates.textmate.plist -o /tmp/tmltxprefs1.plist")
+            os.system("plutil -convert xml1 \"$HOME/Library/Preferences/com.macromates.textmate.plist\" -o /tmp/tmltxprefs1.plist")
             os.system(" cat /tmp/tmltxprefs1.plist | tr -cd '[:print:]' > /tmp/tmltxprefs.plist" )
             pl = open('/tmp/tmltxprefs.plist')
             try:
