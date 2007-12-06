@@ -69,11 +69,12 @@ module LaTeX
     # Returns the path to the TeX binaries, or raises an exception if it can't find them.
     def tex_path
       # First try directly
-      return "" unless `which kpsewhich`.match(/^no kpsewhich/)
+      return "" if ENV['PATH'].split(':').find { |dir| File.exists? File.join(dir, 'kpsewhich') }
       # Then try some specific paths
       locs = ["/usr/texbin/",
               "/usr/local/teTeX/bin/powerpc-apple-darwin-current/",
-              "/usr/local/teTeX/bin/i386-darwin",
+              "/usr/local/teTeX/bin/i386-darwin/",
+              "/usr/local/teTeX/bin/i386-apple-darwin-current/",
               "/opt/local/bin/"]
       locs.each do |loc|
         return loc if File.exist?(loc+"kpsewhich")
