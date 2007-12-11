@@ -128,7 +128,7 @@ module LaTeX
         s.scan(/\s*,/)
         until s.eos? or s.scan(/\s*\,?\s*\}/) do
           s.scan(/\s+/)
-          key = s.scan(/[\w\-]+/)
+          key = s.scan(/[\w\-\.]+/)
           unless s.scan(/\s*=\s*/) then
             s.scan(/[^@]*/m)
             c=nil
