@@ -118,7 +118,7 @@ module LaTeX
         s = StringScanner.new(text)
         s.scan(/\s+@/)
         c["bibtype"] = s.scan(/[^\s\{]+/)
-        s.scan(/\s*\{/)
+        s.scan(/\s*\{\s*/)
         c["citekey"] = s.scan(/[^\s,]+(?=\s*,)/)
         if c["citekey"].nil?
           c = nil
