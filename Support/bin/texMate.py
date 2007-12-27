@@ -492,6 +492,7 @@ if __name__ == '__main__':
             stat = sync_viewer(viewer,fileName,filePath)
         else:
             print "<p class='error'>pdfsync.sty must be included to use this command</p>"
+            sys.exit(206)
             
     elif texCommand == 'chktex':
         texCommand += ' '

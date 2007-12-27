@@ -4,7 +4,7 @@ To use `Typeset & View` and other commands from the LaTeX bundle you will need t
 
 We recommend that you use [MacTeX][] to install the necessary parts as it comes with a standard “no questions asked” installer.
 
-As of this writing, the installer also takes care of updating your `PATH` variable (by modifying `/etc/profile`) so TextMate will be able to find the installed `pdflatex`. If you are using another distribution you may need to [setup the path manually](?search_path).
+As of this writing, the installer also takes care of updating your `PATH` variable (by modifying `/etc/profile`) so TextMate will be able to find the installed `pdflatex`. If you are using another distribution you may need to [setup the path manually](http://macromates.com/textmate/manual/shell_commands#search_path).
 
 [mactex]: http://www.tug.org/mactex/
 
