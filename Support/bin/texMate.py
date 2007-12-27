@@ -150,6 +150,7 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
         pdfFile = shell_quote(fileNoSuffix+'.pdf')
         cmdPath,syncPath = findViewerPath(viewer,pdfFile,fileName)
         if cmdPath:
+            viewer = viewer.encode('utf-8') # if this is not done, the next line will thrown an encoding exception when the pdfFile contains non-ASCII. Is this a Python bug?
             stat = os.system("check_open %s %s"%(viewer,pdfFile))
             if stat != 0:
                 viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfFile
