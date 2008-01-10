@@ -1,5 +1,5 @@
 /*
-*	check_open.c	version 2.1
+*	check_open.c	version 3.0
 *
 *   usage:   check_open [-s | -q] application [document]
 *
@@ -20,7 +20,7 @@
 *		gcc -arch ppc -arch i386 -isysroot /Developer/SDKs/MacOSX10.4u.sdk \
             -framework ApplicationServices check_open.c -o check_open
 *
-*	Robin Houston, April 2007
+*	Robin Houston, April 2007; updated January 2008
 */
 
 #include <stdio.h>
@@ -55,9 +55,11 @@ void print_detailed_usage()
 			"\tbecause supplied document name cannot be encoded in MacRoman,\n\tor is too long,\n"
 			"\tor because the application doesn't understand the relevant request.\n");
 	printf(" 255 - an unexpected error occurred. Explanation printed to stderr.\n\n");
-	printf("If no document name is given, just the application will be checked.\n");
-	printf("Note that the application name is not necessarily the same as the name that\n"
-			"appears in the dock, though it often will be.\n\n");
+	printf("If the supplied document name begins with a slash (/) it is treated as a\n"
+			"pathname, otherwise it is treated as a document name. If no document name\n"
+			"is given, just the application will be checked. Note that the application\n"
+			"name is not necessarily the same as the name that appears in the dock,\n"
+			"though it usually is.\n\n");
 	exit (255);
 }
 
@@ -125,17 +127,25 @@ bool document_is_open(CFStringRef docNameCF, ProcessSerialNumber *psn)
 	AppleEvent    ae, reply;
 	AEBuildError  buildError;
 	char          returnValue;
+	char          *eventDescriptor;
 	
 	/* Apple Events only support MacRoman, I think */
 	if (!CFStringGetCString(docNameCF, docName, 255, kCFStringEncodingMacRoman))
 		give_up("Document name could not be encoded as MacRoman, or too long");
 	
+	if (docName[0] == '/')
+		eventDescriptor =
+			"'----':obj{form:enum('test'),want:type('docu'),seld:cmpd{relo:=,"
+			"'obj1':obj{form:prop, want:type('prop'), seld:type('ppth'), from:exmn()},"
+			"'obj2':TEXT(@)},from:null()}";
+	else
+		eventDescriptor =
+			"'----':obj{form:enum('name'),want:type('docu'),seld:TEXT(@),from:null()}";
+
 	status = AEBuildAppleEvent(kAECoreSuite, kAEDoObjectsExist,
 		typeProcessSerialNumber, psn, sizeof(*psn),
 		kAutoGenerateReturnID, kAnyTransactionID, &ae,
-		&buildError, "'----':obj{form:enum('name'),want:type('docu'),seld:TEXT(@),from:null()}",
-		docName
-		);
+		&buildError, eventDescriptor, docName);
 	if (status != noErr) {
 		fprintf(stderr, "check_open: AEBuildAppleEvent failed: error %d at pos %lu\n",
 			buildError.fError, buildError.fErrorPos);
