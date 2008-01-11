@@ -119,15 +119,15 @@ def findViewerPath(viewer,pdfFile,fileName):
         syncPath = '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
     return vp, syncPath
 
-def refreshViewer(viewer,pdfFile):
+def refreshViewer(viewer,pdfPath):
     """Use Applescript to tell the viewer to reload"""
-    print '<p class="info">Telling %s to Refresh %s...</p>'%(viewer,pdfFile)
+    print '<p class="info">Telling %s to Refresh %s...</p>'%(viewer,pdfPath)
     if viewer == 'Skim':
-        os.system("/usr/bin/osascript -e " + """'tell application "Skim" to revert document %s' """%pdfFile)
+        os.system("/usr/bin/osascript -e " + """'tell application "Skim" to revert (documents whose path is %s)' """%pdfPath)
     elif viewer == 'TeXniscope':
-        os.system("/usr/bin/osascript -e " + """'tell document %s of application "TeXniscope" to refresh' """%pdfFile)
+        os.system("/usr/bin/osascript -e " + """'tell application "TeXniscope" to tell documents whose path is %s to refresh' """%pdfPath)
     elif viewer == 'TeXShop':
-        os.system("/usr/bin/osascript -e " + """'tell document %s of application "TeXShop" to refreshpdf' """%pdfFile)
+        os.system("/usr/bin/osascript -e " + """'tell application "TeXShop" to tell documents whose path is %s to refreshpdf' """%pdfPath)
 
 # TODO refactor run_viewer and sync_viewer to work together better
 def sync_viewer(viewer,fileName,filePath):
@@ -146,17 +146,19 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
        If the viewer is an external viewer then ensure that it is installed and display the pdf"""
     stat = 0
     fileNoSuffix = getFileNameWithoutExtension(fileName)
+    pathNoSuffix = filePath +'/'+ fileNoSuffix
     if viewer != 'TextMate':
         pdfFile = shell_quote(fileNoSuffix+'.pdf')
+        pdfPath = shell_quote(pathNoSuffix+'.pdf')
         cmdPath,syncPath = findViewerPath(viewer,pdfFile,fileName)
         if cmdPath:
             viewer = viewer.encode('utf-8') # if this is not done, the next line will thrown an encoding exception when the pdfFile contains non-ASCII. Is this a Python bug?
-            stat = os.system("check_open %s %s"%(viewer,pdfFile))
+            stat = os.system("check_open %s %s"%(viewer,pdfPath))
             if stat != 0:
-                viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfFile
+                viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfPath
                 stat = os.system(viewCmd)
             else:
-                refreshViewer(viewer,pdfFile)            
+                refreshViewer(viewer,pdfPath)            
         else:
             print '<strong class="error">', viewer, ' does not appear to be installed on your system.</strong>'
         if syncPath and usePdfSync:
