@@ -40,7 +40,7 @@ If you have created a project file, then you can set *project specific environme
 
 This allows, among other things, creating folder specific variables for scratch projects.
 
-When the `TM_LATEX_MASTER` variable is set, then all LaTeX commands use the master file pointed to by this variable as their basis. In particular, the `Typeset & View` command will typeset the master file, instead of whatever the currently active file is. So you can freely edit whatever chapter you are working on, and when you want to see the result you just press `⌘R` without having to worry about switching to the master file. The error window that may show up is arranged so that clicking any of the errors opens up the corresponding `\include`'d file where the error occurred, and places the caret at the appropriate location.
+When the `TM_LATEX_MASTER` variable is set, then all LaTeX commands use the master file pointed to by this variable as their basis. In particular, the `Typeset & View` and `Watch document` commands will typeset the master file, instead of whatever the currently active file is. So you can freely edit whatever chapter you are working on, and when you want to see the result you just press `⌘R` without having to worry about switching to the master file. The error window that may show up is arranged so that clicking any of the errors opens up the corresponding `\include`'d file where the error occurred, and places the caret at the appropriate location.
 
 There is a way to arrange it so that the individual chapters can be compiled by themselves, and still work fine when included via the `\include` command. If that is something that might interest you, then [this thread from the mailing list][included-chapters] might interest you. 
 
@@ -52,6 +52,23 @@ TODO: Mention that `TM_LATEX_MASTER` can be relative to the project directory (o
 ### Using the %!TEX root directive
 
 TextMate also supports embedded directives in your TeX file by placing a line at the beginning of your document that looks like the following `%!TEX root = my_root`  This allows you to specify a master file without using the `TM_LATEX_MASTER` environment variable.  The files you specify using the `root = ` directive can be either absolute or relative.
+
+## Watching a document
+
+### Introduction
+
+When you watch a LaTeX document, it is continually monitored for changes.
+When you save a change, the document will be typeset again, and the preview updated. The preamble (i.e. everything before the `\begin{document}` command) is recompiled only when you change it; the rest of the time, only the main body of the document is recompiled. So the update cycle is substantially faster than typesetting the whole document from scratch.
+
+### Usage
+
+Press ⌃⌘W to start watching a document. If the document is already being watched, you will instead be given the option to stop watching it. You can watch several documents simultaneously.
+
+When you close the previewer, the associated watcher will automatically quit.
+
+### Troubleshooting
+
+In case of trouble, you may find some useful information in the system console. If you set the shell variable `TM_LATEX_WATCH_DEBUG=1` then additional diagnostic information is printed to the console, which may be helpful.
 
 # Previewing a LaTeX File
 

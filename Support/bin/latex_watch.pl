@@ -1,8 +1,8 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-	our $VERSION = "2.7";
-#	- by Robin Houston, March-August 2007.
+	our $VERSION = "2.8";
+#	- by Robin Houston, March-August 2007, January 2008.
 
 # Usage: latex_watch.pl [ options ] file.tex
 #
@@ -299,7 +299,12 @@ sub foreach_modified_file {
 		if (!defined($current_mtime)	# Error: probably input file moved or deleted
 		  || $current_mtime < $mtime)
 		{
-			$hash->{$file} = $current_mtime;
+			if (defined $current_mtime) {
+				$hash->{$file} = $current_mtime;
+			}
+			else {
+				delete $hash->{$file};
+			}
 			$callback->($file);
 		}
 	}
@@ -310,8 +315,19 @@ sub reload {
 		or fail ("Failed to open file",
 			"I couldn't open the file '$filepath' for reading: $!");
 
-	local $/ = "\\begin{document}";
-	my $new_preamble = <$f>;
+	my ($new_preamble, $body);
+	while (<$f>) {
+		if (/(.*)(\\begin\s*\{(?:document)\}.*)/) {
+			$new_preamble .= $1;
+			$body = $2;
+		}
+		elsif (defined $body) {
+			$body .= $_
+		}
+		else {
+			$new_preamble .= $_
+		}
+	}
 	chomp ($new_preamble)
 		or fail ("No \\begin{document} found",
 			"I couldn't find the command \\begin{document} in your file");
@@ -321,8 +337,7 @@ sub reload {
 		regenerate_format($new_preamble);
 	}
 
-	undef $/;
-	save_body(<$f>);
+	save_body($body);
 
 	close $f
 		or fail ("Failed to close file",
@@ -421,7 +436,7 @@ sub save_body {
 		or fail("Failed to create file",
 			"I couldn't create the file '$wd/$dotname.tex': $!");
 
-	print $f ("\\begin{document}", $bogus_preamble, @_);
+	print $f ($bogus_preamble, @_);
 
 	close($f)
 		or fail("Failed to close file",
@@ -1010,3 +1025,8 @@ Changes
 	- Fix TeXniscope support.
 	- Deal more robustly with files that are written as well as read during processing
 	  (previously this could cause an infinite update loop)
+
+2.8:
+	- Locate '\begin{document}' in a more flexible way.
+	- If an input file disappears, remove it from the watch list (otherwise it will
+	  recompiling the document in an endless loop).
