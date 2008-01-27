@@ -141,7 +141,7 @@ class LaTexParser(TexParser):
             (re.compile('LaTeX Font Warning:.*') , self.warning),            
             (re.compile('Overfull.*wide') , self.warn2),
             (re.compile('Underfull.*badness') , self.warn2),                        
-            (re.compile('^([\.\/\w\x7f-\xff\- ]+(?:\.tex|\.'+self.suffix+')):(\d+):\s+(.*)') , self.handleError),
+            (re.compile('^([\.\/\w\x7f-\xff\- ]+(?:\.sty|\.tex|\.'+self.suffix+')):(\d+):\s+(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): LaTeX Error:(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): (Emergency stop)') , self.handleError),
             (re.compile('Transcript written on (.*)\.$') , self.finishRun),

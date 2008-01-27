@@ -18,6 +18,7 @@
 
 .ltxmk {
     color: green;
+    display: none;
 }
 .default div#commandOutput {
     background-color: rgb(240,240,240);

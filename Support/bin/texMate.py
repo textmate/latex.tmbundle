@@ -41,11 +41,16 @@ import tmprefs
 from urllib import quote
 from struct import *
 from texparser import *
+from subprocess import *
 
+texMateVersion = '2008.01.27'
+DEBUG = False
 # 
+
 def expandName(fn,program='pdflatex'):
     sys.stdout.flush()
-    return os.popen('kpsewhich -progname="%s" "%s"' % (program, fn)).read().strip()
+    runObj = Popen('kpsewhich -progname="%s" "%s"' % (program, fn),shell=True,stdout=PIPE)
+    return runObj.stdout.read().strip()
 
 def run_bibtex(bibfile=None,verbose=False,texfile=None):
     """Determine Targets and run bibtex"""
@@ -61,22 +66,24 @@ def run_bibtex(bibfile=None,verbose=False,texfile=None):
         auxfiles = [bibfile]
     for bib in auxfiles:
         print '<h4>Processing: %s </h4>' % bib
-        texin,tex = os.popen4('bibtex'+" "+shell_quote(bib))
-        bp = BibTexParser(tex,verbose)
+        runObj = Popen('bibtex'+" "+shell_quote(bib),shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
+        bp = BibTexParser(runObj.stdout,verbose)
         f,e,w = bp.parseStream()
         fatal|=f
         err+=e
         warn+=w
-        stat = tex.close()
+        stat = runObj.wait()
     return stat,fatal,err,warn
         
 def run_latex(ltxcmd,texfile,verbose=False):
     """Run the flavor of latex specified by ltxcmd on texfile"""
     global numRuns
-    texin,tex = os.popen4(ltxcmd+" "+shell_quote(texfile))    
-    lp = LaTexParser(tex,verbose,texfile)
+    if DEBUG:
+        print "<pre>in run_latex: ", ltxcmd+" "+shell_quote(texfile), "</pre>"
+    runObj = Popen(ltxcmd+" "+shell_quote(texfile),shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
+    lp = LaTexParser(runObj.stdout,verbose,texfile)
     f,e,w = lp.parseStream()
-    stat = tex.close()
+    stat = runObj.wait()
     numRuns += 1
     return stat,f,e,w
 
@@ -96,20 +103,21 @@ def run_makeindex(fileName,idxfile=None):
     myList.append(idxFile)
     fatal, error, warning = 0,0,0
     for idxFile in myList:
-        texin,tex = os.popen4('makeindex ' + idxFile)
-        ip = TexParser(tex,True)
+        runObj = Popen('makeindex '+idxFile,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)        
+        ip = TexParser(runObj.stdout,True)
         f,e,w = ip.parseStream()
         fatal |= f
         error += e
         warning += w
-        stat = tex.close()
+        stat = runObj.wait()
     return stat,fatal,error,warning
 
 def findViewerPath(viewer,pdfFile,fileName):
     """Use the find_app command to ensure that the viewer is installed in the system
        For apps that support pdfsync search in pdf set up the command to go to the part of
        the page in the document the user was writing."""
-    vp = os.popen('find_app ' + viewer + '.app').read()
+    runObj = Popen('find_app ' + viewer + '.app',stdout=PIPE,shell=True)
+    vp = runObj.stdout.read()
     syncPath = None
     if viewer == 'Skim' and vp:
         syncPath = vp + '/Contents/Resources/displayline ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile + ' ' + shell_quote(os.getenv('TM_FILEPATH'))
@@ -191,7 +199,8 @@ def determine_ts_directory(tsDirectives):
             masterPath = os.path.normpath(os.path.join(startDir,masterPath))
     else:
         masterPath = startDir
-
+    if DEBUG:
+        print '<pre>Typesetting Directory = ', masterPath, '</pre>'
     return masterPath
 
 def findTexPackages(fileName):
@@ -223,6 +232,8 @@ def findTexPackages(fileName):
                 newList.append(sp.strip())
         else:
             newList.append(pkg.strip())
+    if DEBUG:
+        print '<pre>TEX package list = ', newList, '</pre>'
     return newList
 
 def find_TEX_directives():
@@ -266,7 +277,8 @@ def find_TEX_directives():
         f.close()
         if foundNewRoot == False:
             done = True
-
+    if DEBUG:
+        print '<pre>%!TEX Directives: ', tsDirectives, '</pre>'
     return tsDirectives
 
 def findFileToTypeset(tsDirectives):
@@ -284,7 +296,8 @@ def findFileToTypeset(tsDirectives):
     else:
         f = os.getenv('TM_FILEPATH')
     master = os.path.basename(f)
-
+    if DEBUG:
+        print '<pre>master file = ', master, '</pre>'
     return master,determine_ts_directory(tsDirectives)
 
 def constructEngineOptions(tsDirectives,tmPrefs):
@@ -299,6 +312,8 @@ def constructEngineOptions(tsDirectives,tmPrefs):
         opts += " " + tsDirectives['TS-options']
     else:
         opts += " " + tmPrefs['latexEngineOptions']
+    if DEBUG:
+        print '<pre>Engine options = ', opts, '</pre>'
     return opts
 
 def usesOnePackage(testPack, allPackages):
@@ -387,6 +402,11 @@ if __name__ == '__main__':
 # Get preferences from TextMate or local directives
 #
     tmPrefs = tmprefs.Preferences()
+
+    if int(tmPrefs['latexDebug']) == 1:
+        DEBUG = True
+        print '<pre>turning on debug</pre>'
+
     tsDirs = find_TEX_directives()
     os.chdir(determine_ts_directory(tsDirs))
     
@@ -395,6 +415,7 @@ if __name__ == '__main__':
 #
     if tmPrefs['latexVerbose'] == 1:
         verbose = True
+
 
     useLatexMk = tmPrefs['latexUselatexmk']
     if texCommand == 'latex' and useLatexMk:
@@ -411,6 +432,7 @@ if __name__ == '__main__':
     viewer = tmPrefs['latexViewer']
     engine = constructEngineCommand(tsDirs,tmPrefs,ltxPackages)
 
+        
     # Make sure that the bundle_support/tex directory is added
     #pcmd = os.popen("kpsewhich -progname %s --expand-var '$TEXINPUTS':%s/tex//" % (engine,bundle_support))
     #texinputs = pcmd.read()
@@ -422,6 +444,17 @@ if __name__ == '__main__':
     texinputs += "%s/tex//" % os.getenv('TM_BUNDLE_SUPPORT')
     os.putenv('TEXINPUTS',texinputs)
 
+    if DEBUG:
+        print '<pre>'
+        print 'texMateVersion = ', texMateVersion
+        print 'engine = ', engine
+        print 'texCommand = ', texCommand
+        print 'viewer = ', viewer
+        print 'texinputs = ', texinputs
+        print 'fileName = ', fileName
+        print 'useLatexMk = ', useLatexMk
+        print '</pre>'
+
 #
 # print out header information to begin the run
 #
@@ -432,6 +465,7 @@ if __name__ == '__main__':
     
     if fileName == fileNoSuffix:
         print "<h2 class='warning'>Warning:  Latex file has no extension.  See log for errors/warnings</h2>"
+
 
 #
 # Run the command passed on the command line or modified by preferences
@@ -446,10 +480,12 @@ if __name__ == '__main__':
 #            texCommand += shell_quote(shell_quote(fileName))
 #        else:
         texCommand += shell_quote(fileName)
-        texin,tex = os.popen4(texCommand)
-        commandParser = ParseLatexMk(tex,verbose,fileName)
+        if DEBUG:
+            print 'latexmk command = ', texCommand
+        runObj = Popen(texCommand,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
+        commandParser = ParseLatexMk(runObj.stdout,verbose,fileName)
         isFatal,numErrs,numWarns = commandParser.parseStream()
-        texStatus = tex.close()
+        texStatus = runObj.wait()
         os.remove("/tmp/latexmkrc")
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
@@ -463,8 +499,8 @@ if __name__ == '__main__':
     
     elif texCommand == 'clean':
         texCommand = 'latexmk.pl -CA '
-        texin,tex = os.popen4(texCommand)
-        commandParser = ParseLatexMk(tex,True,fileName)
+        runObj = Popen(texCommand,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
+        commandParser = ParseLatexMk(runObj.stdout,True,fileName)
         
     elif texCommand == 'builtin':
         # the latex, bibtex, index, latex, latex sequence should cover 80% of the cases that latexmk does
@@ -499,10 +535,10 @@ if __name__ == '__main__':
     elif texCommand == 'chktex':
         texCommand += ' '
         texCommand += shell_quote(fileName)
-        texin,tex = os.popen4(texCommand)
-        commandParser = ChkTeXParser(tex,verbose,fileName)
+        runObj = Popen(texCommand,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
+        commandParser = ChkTeXParser(runObj.stdout,verbose,fileName)
         isFatal,numErrs,numWarns = commandParser.parseStream()
-        texStatus = tex.close()
+        texStatus = runObj.wait()
 #    
 # Check status of running the viewer
 #
@@ -513,15 +549,13 @@ if __name__ == '__main__':
 # Check the status of any runs...
 #
     eCode = 0
-    if texStatus != None or numWarns > 0 or numErrs > 0:
+    if texStatus != 0 or numWarns > 0 or numErrs > 0:
         print "<p class='info'>Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings in " + str(numRuns) + " runs</p>"
-        if texStatus != None:
-            signal = (texStatus & 255)
-            returnCode = texStatus >> 8
-            if signal != 0:
-                print "<p class='error'>TeX killed by signal %s</p>" % str(signal) 
+        if texStatus != 0:
+            if texStatus > 0:
+                print "<p class='info'>%s exited with status %d</p>" % (texCommand,texStatus )
             else:
-                print "<p class='error'>TeX exited with error code %s</p> " % str(returnCode)
+                print "<p class='error'>%s exited with error code %d</p> " % (texCommand,texStatus)
 #
 # Decide what to do with the Latex & View log window   
 #
@@ -559,7 +593,11 @@ if __name__ == '__main__':
         print '<input type="button" value="Preferences…" onclick="runConfig(); return false" />'
         print '<p>'
         print '<input type="checkbox" id="hv_warn" name="fmtWarnings" onclick="makeFmtWarnVisible(); return false" />'
-        print '<label for="hv_warn">Show hbox,vbox Warnings </label></p>'            
+        print '<label for="hv_warn">Show hbox,vbox Warnings </label>'     
+        if useLatexMk:
+            print '<input type="checkbox" id="ltxmk_warn" name="ltxmkWarnings" onclick="makeLatexmkVisible(); return false" />'
+            print '<label for="ltxmk_warn">Show Latexmk.pl Messages </label>'
+        print '</p>'
         print '</div>'
 
     sys.exit(eCode)

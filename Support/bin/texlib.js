@@ -18,6 +18,9 @@ function displayIncrementalOutput(id,className,mess) {
         var entry = document.createElement("div");
         entry.innerHTML += mess
         c.appendChild(entry);
+        //window.location.hash = "texActions";
+        //objDiv = document.getElementById("tm_webpreview_content");
+        //objDiv.scrollTop = objDiv.scrollHeight;
 	}
 }
 
@@ -80,6 +83,14 @@ function getElementsByClassName(strTagName, strClassName){
 
 function makeFmtWarnVisible() {
     var warnElements = getElementsByClassName("*","fmtWarning");
+    var oElement;
+    for(var i=0;i<warnElements.length;i++) {
+        warnElements[i].style.display = (warnElements[i].style.display == "none" || warnElements[i].style.display == "" ? "block" : "none");
+    }
+}
+
+function makeLatexmkVisible() {
+    var warnElements = getElementsByClassName("*","ltxmk");
     var oElement;
     for(var i=0;i<warnElements.length;i++) {
         warnElements[i].style.display = (warnElements[i].style.display == "none" || warnElements[i].style.display == "" ? "block" : "none");

@@ -17,7 +17,8 @@ class Preferences(object):
             'latexVerbose' : 0,
             'latexUselatexmk' : 0,
             'latexViewer' : "TextMate",
-            'latexKeepLogWin' : 1
+            'latexKeepLogWin' : 1,
+            'latexDebug' : 0
         }
         self.prefs = self.defaults.copy()
         self.prefs.update(self.readTMPrefs())
