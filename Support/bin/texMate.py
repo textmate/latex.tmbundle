@@ -551,7 +551,7 @@ if __name__ == '__main__':
     eCode = 0
     if texStatus != 0 or numWarns > 0 or numErrs > 0:
         print "<p class='info'>Found " + str(numErrs) + " errors, and " + str(numWarns) + " warnings in " + str(numRuns) + " runs</p>"
-        if texStatus != 0:
+        if texStatus:
             if texStatus > 0:
                 print "<p class='info'>%s exited with status %d</p>" % (texCommand,texStatus )
             else:
