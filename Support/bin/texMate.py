@@ -43,7 +43,7 @@ from struct import *
 from texparser import *
 from subprocess import *
 
-texMateVersion = '2008.01.27'
+texMateVersion = ' $Rev$ '
 DEBUG = False
 # 
 
