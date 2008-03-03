@@ -19,6 +19,9 @@
 #   corresponding method is called.  This method is also stored in the dictionary.  Pattern matching
 #   callback methods must each take the match object as well as the current line as a parameter.
 #
+#   To enable debug mode without modifiying this file:
+#                 defaults write com.macromates.textmate latexDebug 1
+#
 #   Progress:
 #       7/17/07  -- Brad Miller
 #       Implemented  TexParse, BibTexParser, and LaTexParser classes
@@ -41,16 +44,38 @@ import tmprefs
 from urllib import quote
 from struct import *
 from texparser import *
-from subprocess import *
+
+DEBUG = False
+
+try:
+    from subprocess import *
+except:
+    if DEBUG:
+        print "Using Tiger Compatibility version of Popen class"
+    PIPE = 1
+    STDOUT=1
+    class Popen(object):
+        """Popen:  This class provides backward compatibility for Tiger
+           Do not assume anything about this works other than access
+           to stdout and the wait method."""
+        def __init__(self, command, **kwargs):
+            super(Popen, self).__init__()
+            self.command = command
+            stdin, self.stdout = os.popen4(command)
+        
+        def wait(self):
+            stat = self.stdout.close()
+            return stat
 
 texMateVersion = ' $Rev$ '
-DEBUG = False
+
 # 
 
 def expandName(fn,program='pdflatex'):
     sys.stdout.flush()
     runObj = Popen('kpsewhich -progname="%s" "%s"' % (program, fn),shell=True,stdout=PIPE)
-    return runObj.stdout.read().strip()
+    res = runObj.stdout.read().strip()
+    return res
 
 def run_bibtex(bibfile=None,verbose=False,texfile=None):
     """Determine Targets and run bibtex"""
