@@ -1,5 +1,7 @@
 import os
 import newplistlib as plistlib
+import string
+
 try:
     from Foundation import *
     haspyobjc = True
@@ -46,15 +48,15 @@ class Preferences(object):
             plDict = NSDictionary.dictionaryWithContentsOfFile_(os.environ["HOME"]+"/Library/Preferences/com.macromates.textmate.plist")
         else:   # TODO remove all this once everyone is on leopard
             os.system("plutil -convert xml1 \"$HOME/Library/Preferences/com.macromates.textmate.plist\" -o /tmp/tmltxprefs1.plist")
-            os.system(" cat /tmp/tmltxprefs1.plist | tr -cd '[:print:]' > /tmp/tmltxprefs.plist" )
-            pl = open('/tmp/tmltxprefs.plist')
+            null_tt = "".join([chr(i) for i in range(256)])
+            non_printables = null_tt.translate(null_tt, string.printable)
+            plist_str = open('/tmp/tmltxprefs1.plist').read()
+            plist_str = plist_str.translate(null_tt,non_printables)
             try:
-                plDict = plistlib.readPlist(pl)
+                plDict = plistlib.readPlistFromString(plist_str)
             except:
                 print '<p class="error">There was a problem reading the preferences file, continuing with defaults</p>'
-            pl.close()
             try:
-                os.remove("/tmp/tmltxprefs.plist")
                 os.remove("/tmp/tmltxprefs1.plist")
             except:
                 print '<p class="error">Problem removing temporary prefs file</p>'
