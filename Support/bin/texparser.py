@@ -144,6 +144,7 @@ class LaTexParser(TexParser):
             (re.compile('^([\.\/\w\x7f-\xff\- ]+(?:\.sty|\.tex|\.'+self.suffix+')):(\d+):\s+(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): LaTeX Error:(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): (Emergency stop)') , self.handleError),
+            (re.compile('Runaway argument') , self.pdfLatexError),            
             (re.compile('Transcript written on (.*)\.$') , self.finishRun),
             (re.compile('^Error: pdflatex') , self.pdfLatexError),
             (re.compile('\!.*') , self.handleOldStyleErrors),
@@ -203,6 +204,8 @@ class LaTexParser(TexParser):
             print '</p>'
             self.isFatal = True
         else:
+            if line:
+                print '<pre>    '+ line.rstrip("\n") + '</pre>'
             print '</p>'
         sys.stdout.flush()
     
