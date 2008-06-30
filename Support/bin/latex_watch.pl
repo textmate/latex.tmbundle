@@ -1,8 +1,8 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-	our $VERSION = "2.8";
-#	- by Robin Houston, March-August 2007, January 2008.
+	our $VERSION = "2.9";
+#	- by Robin Houston, 2007, 2008.
 
 # Usage: latex_watch.pl [ options ] file.tex
 #
@@ -426,6 +426,7 @@ sub parse_file_list {
 	}
 	
 	while (my ($f, $mtime) = each %updated_files) {
+		$preamble_mtimes{$f} = $mtime if exists $preamble_mtimes{$f} and defined $mtime;
 		$hash->{$f} = $mtime if exists $hash->{$f} and defined $mtime;
 	}
 	debug_msg("Parsed file list: found ".keys(%$hash)." files");
@@ -1030,3 +1031,8 @@ Changes
 	- Locate '\begin{document}' in a more flexible way.
 	- If an input file disappears, remove it from the watch list (otherwise it will
 	  recompiling the document in an endless loop).
+
+2.9:
+	- The loop-prevention code added in 2.7 did not work correctly in the case where
+	  a file is read from the preamble and written from the document body. This arises
+	  when the svn-multi package is used, for example. It should now work correctly.
