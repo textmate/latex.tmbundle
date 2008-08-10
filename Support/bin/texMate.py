@@ -150,6 +150,9 @@ def findViewerPath(viewer,pdfFile,fileName):
         syncPath = vp + '/Contents/Resources/forward-search.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + shell_quote(os.getenv('TM_FILEPATH')) + ' ' + pdfFile
     elif viewer == 'PDFView' and vp:
         syncPath = '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
+    if DEBUG:
+        print "VP = ", vp
+        print "syncPath = ", syncPath
     return vp, syncPath
 
 def refreshViewer(viewer,pdfPath):
@@ -333,6 +336,8 @@ def constructEngineOptions(tsDirectives,tmPrefs):
     In any case nonstopmode is set as is file-line-error-style.
     """
     opts = "-interaction=nonstopmode -file-line-error-style"
+    if synctex:
+        opts += " -synctex=1 "
     if 'TS-options' in tsDirectives:
         opts += " " + tsDirectives['TS-options']
     else:
@@ -411,7 +416,8 @@ if __name__ == '__main__':
     numErrs = 0
     numWarns = 0
     firstRun = False
-
+    synctex = False
+    
 #
 # Parse command line parameters...
 #
@@ -457,7 +463,10 @@ if __name__ == '__main__':
     viewer = tmPrefs['latexViewer']
     engine = constructEngineCommand(tsDirs,tmPrefs,ltxPackages)
 
-        
+    syncTexCheck = os.system(engine + " --help |grep -q synctex")
+    if syncTexCheck == 0:
+        synctex = True
+    
     # Make sure that the bundle_support/tex directory is added
     #pcmd = os.popen("kpsewhich -progname %s --expand-var '$TEXINPUTS':%s/tex//" % (engine,bundle_support))
     #texinputs = pcmd.read()
@@ -478,6 +487,7 @@ if __name__ == '__main__':
         print 'texinputs = ', texinputs
         print 'fileName = ', fileName
         print 'useLatexMk = ', useLatexMk
+        print 'synctex = ', synctex
         print '</pre>'
 
 #
@@ -551,10 +561,11 @@ if __name__ == '__main__':
         stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages)
         
     elif texCommand == 'sync':
-        if 'pdfsync' in ltxPackages:
+        if 'pdfsync' in ltxPackages or synctex:
             stat = sync_viewer(viewer,fileName,filePath)
         else:
-            print "<p class='error'>pdfsync.sty must be included to use this command</p>"
+            print "pdfsync.sty must be included to use this command"
+            print "or use a typesetter that supports synctex (such as TexLive 2008)"
             sys.exit(206)
             
     elif texCommand == 'chktex':
