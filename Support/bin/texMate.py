@@ -500,6 +500,9 @@ if __name__ == '__main__':
     
     if fileName == fileNoSuffix:
         print "<h2 class='warning'>Warning:  Latex file has no extension.  See log for errors/warnings</h2>"
+        
+    if synctex and 'pdfsync' in ltxPackages:
+        print "<p class='warning'>Warning:  %s supports synctex but you have included pdfsync. You can safely remove \usepackage{pdfsync}</p>" % engine
 
 
 #
