@@ -238,19 +238,38 @@ def findTexPackages(fileName):
     """
     try:
         realfn = expandName(fileName)
-        texString = open(realfn).read()
+        texString = open(realfn)
     except:
         print '<p class="error">Error: Could not open %s to check for packages</p>' % realfn
         print '<p class="error">This is most likely a problem with TM_LATEX_MASTER</p>'
         sys.exit(1)
-    incFiles = [x[3] for x in re.findall(r'((^|\n)[^%]*?)(\\input|\\include)\{([\w /\.\-]+)\}',texString)]
-    myList = [x[3] for x in re.findall(r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}',texString)]
+
+        
+    inputre = re.compile(r'((^|\n)[^%]*?)(\\input|\\include)\{([\w /\.\-]+)\}')
+    usepkgre = re.compile(r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}')
+                         #r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}'
+    beginre = re.compile(r'((^|\n)[^%]*?)\\begin\{document\}')
+    incFiles = []
+    myList = []
+    for line in texString:
+        begin = re.search(beginre,line)
+        inc = re.search(inputre,line)
+        usepkg = re.search(usepkgre,line)
+        if re.search(beginre,line):
+            break
+        elif inc:
+            incFiles.append(inc.group(4))
+        elif usepkg:
+            myList.append(usepkg.group(4))
+    #incFiles = [x[3] for x in re.findall(inputre,texString)]
+    #myList = [x[3] for x in re.findall(usepkgre,texString)]
     for ifile in incFiles:
         if ifile.find('.tex') < 0:
             ifile += '.tex'
         try:
             realif = expandName(ifile)
-            myList += [x[3] for x in re.findall(r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}',open(realif).read()) ]
+            incmatches = [re.search(usepkgre,line) for line in file(realif)] 
+            myList += [x.group(4) for x in incmatches if x]
         except:
             print '<p class="warning">Warning: Could not open %s to check for packages</p>' % ifile
     newList = []
