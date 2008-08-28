@@ -255,7 +255,7 @@ def findTexPackages(fileName):
         begin = re.search(beginre,line)
         inc = re.search(inputre,line)
         usepkg = re.search(usepkgre,line)
-        if re.search(beginre,line):
+        if begin:
             break
         elif inc:
             incFiles.append(inc.group(4))
@@ -263,15 +263,23 @@ def findTexPackages(fileName):
             myList.append(usepkg.group(4))
     #incFiles = [x[3] for x in re.findall(inputre,texString)]
     #myList = [x[3] for x in re.findall(usepkgre,texString)]
+    beginFound = False
     for ifile in incFiles:
         if ifile.find('.tex') < 0:
             ifile += '.tex'
         try:
             realif = expandName(ifile)
-            incmatches = [re.search(usepkgre,line) for line in file(realif)] 
+            incmatches = []
+            for line in file(realif):
+                incmatches.append(re.search(usepkgre,line))
+                if re.search(beginre,line):
+                    beginFound = True
+#            incmatches = [re.search(usepkgre,line) for line in file(realif)] 
             myList += [x.group(4) for x in incmatches if x]
         except:
             print '<p class="warning">Warning: Could not open %s to check for packages</p>' % ifile
+        if beginFound:
+            break
     newList = []
     for pkg in myList:
         if pkg.find(',') >= 0:
@@ -474,7 +482,7 @@ if __name__ == '__main__':
     if texCommand == 'latex' and tmPrefs['latexEngine'] == 'builtin':
         texCommand = 'builtin'
 
-    fileName,filePath = findFileToTypeset(tsDirs);
+    fileName,filePath = findFileToTypeset(tsDirs)
     fileNoSuffix = getFileNameWithoutExtension(fileName)
     
     ltxPackages = findTexPackages(fileName)
