@@ -3,6 +3,9 @@
 import sys
 import os
 import re
+from texMate import expandName, findTexPackages, find_TEX_directives, findFileToTypeset
+import cPickle
+import time
 
 # PyTeXDoc
 # Author:  Brad Miller
@@ -77,118 +80,119 @@ def makeDocList():
         docDict[key] = doc[:-1]
     return docDict
 
-def openIncludedFile(fname):
-    fname = os.path.expanduser(fname) # Added
-    if os.path.exists(fname):
-        return open(fname,'r')
-    elif os.path.exists(fname+'.tex'):
-        return open(fname+'.tex','r')
-    else:
-        print "Error:  Cannot open included file " + fname
-        return None
-
 ## Part 1
 ## Find all the packages included in this file or its inputs
 ##
-if os.environ.get("TM_LATEX_MASTER",None):
-    myFile = openIncludedFile(os.environ["TM_LATEX_MASTER"])
-elif os.environ.get("TM_FILEPATH",None):
-    myFile = openIncludedFile(os.environ["TM_FILEPATH"])
+tsDirs = find_TEX_directives()
+fileName,filePath = findFileToTypeset(tsDirs)
+mList = findTexPackages(fileName)
+
+home = os.environ["HOME"]
+docdbpath = home + "/Library/Caches/TextMate"
+docdbfile = docdbpath + "/latexdocindex"
+ninty_days_ago = time.time() - (90 * 86400)
+cachedIndex = False
+
+if os.path.exists(docdbfile) and os.path.getmtime(docdbfile) > ninty_days_ago:
+    infile = open(docdbfile,'rb')
+    path_desc_list = cPickle.load(infile)
+    pathDict = path_desc_list[0]
+    descDict = path_desc_list[1]    
+    headings = path_desc_list[2] 
+    cachedIndex = True
 else:
-    myFile = []
-mList = []
-fList = []
-packMatch = re.compile(r"^\\usepackage(\[.*\])?\{(\w+)\}")
-inpMatch = re.compile(r"^\\(input|include)\{(.*)\}")
-# Search the main file for usepackage statements or includes
-for line in myFile:
-    g = packMatch.match(line)
-    h = inpMatch.match(line)
-    if g:
-        mList.append(g.group(2))
-    elif h:
-        fList.append(h.group(2))
-# check files one level deeper for usepackage statements
-for f in fList:
-    myFile = openIncludedFile(f)
-    if myFile:  # guard against a non existant included file
-        for line in myFile:
-            g = packMatch.match(line)
-            if g:
-                mList.append(g.group(2))
-        myFile.close()
+    ## Part 2
+    ## Parse the texdoctk database of packages
+    ##
+    texMFbase = os.environ["TM_LATEX_DOCBASE"]
+    docIndex = os.environ["TEXDOCTKDB"]
 
-## Part 2
-## Parse the texdoctk database of packages
-##
-texMFbase = os.environ["TM_LATEX_DOCBASE"]
-docIndex = os.environ["TEXDOCTKDB"]
+    docBase = texMFbase + "/" #+ "doc/"
+    if docBase[-5:].rfind('doc') < 0:
+        docBase = docBase + "doc/"
 
-docBase = texMFbase + "/" #+ "doc/"
-if docBase[-5:].rfind('doc') < 0:
-    docBase = docBase + "doc/"
+    catalogDir = os.environ["TM_LATEX_HELP_CATALOG"]
 
-catalogDir = os.environ["TM_LATEX_HELP_CATALOG"]
+    texdocs = os.environ["TMTEXDOCDIRS"].split(':')
+    myDict = {}
+    for p in texdocs:
+        key = p[p.rfind('/')+1:]
+        myDict[key] = p
 
-texdocs = os.environ["TMTEXDOCDIRS"].split(':')
-myDict = {}
-for p in texdocs:
-    key = p[p.rfind('/')+1:]
-    myDict[key] = p
+    docDict = makeDocList()
 
-docDict = makeDocList()
-
-try:
-    docIndexFile = open(docIndex,'r')
-except:
-    docIndexFile = []
-for line in docIndexFile:
-    if line[0] == "#":
-        continue
-    elif line[0] == "@":
-        currentHeading = line[1:].strip()
-        headings[currentHeading] = []
-    else:
-        try:
-            lineFields = line.split(';')
-            key = lineFields[0]
-            desc = lineFields[1]
-            path = lineFields[2]
-        except:
-            print "Error parsing line: ", line
-            
-        headings[currentHeading].append(key)
-        if path.rfind('.sty') >= 0:
-            path = docBase + "tex/" + path
+    try:
+        docIndexFile = open(docIndex,'r')
+    except:
+        docIndexFile = []
+    for line in docIndexFile:
+        if line[0] == "#":
+            continue
+        elif line[0] == "@":
+            currentHeading = line[1:].strip()
+            headings[currentHeading] = []
         else:
-            path = docBase + path
-            if not os.path.exists(path):  # sometimes texdoctk.dat is misleading...
-                altkey = path[path.rfind("/")+1:path.rfind(".")]
-                if key in docDict:
-                    path = docDict[key]
-                elif altkey in docDict:
-                    path = docDict[altkey]
-                else:
-                    if key in myDict:
-                        path = findBestDoc(myDict[key])
+            try:
+                lineFields = line.split(';')
+                key = lineFields[0]
+                desc = lineFields[1]
+                path = lineFields[2]
+            except:
+                print "Error parsing line: ", line
+            
+            headings[currentHeading].append(key)
+            if path.rfind('.sty') >= 0:
+                path = docBase + "tex/" + path
+            else:
+                path = docBase + path
+                if not os.path.exists(path):  # sometimes texdoctk.dat is misleading...
+                    altkey = path[path.rfind("/")+1:path.rfind(".")]
+                    if key in docDict:
+                        path = docDict[key]
+                    elif altkey in docDict:
+                        path = docDict[altkey]
+                    else:
+                        if key in myDict:
+                            path = findBestDoc(myDict[key])
                     
-        pathDict[key] = path.strip()
-        descDict[key] = desc.strip()
+            pathDict[key] = path.strip()
+            descDict[key] = desc.strip()
 
-## Part 3
-## supplement texdoctk index with the regular texdoc catalog
-##
-try:
-    catList = os.listdir(catalogDir)
-except:
-    catList = []
-for fname in catList:
-    key = fname[:fname.rfind('.html')]
-    if key not in pathDict:
-        pathDict[key] = catalogDir + '/' + fname
-        descDict[key] = key
-        if key in docDict:
-            pathDict[key] = docDict[key]
+    ## Part 3
+    ## supplement texdoctk index with the regular texdoc catalog
+    ##
+    try:
+        catList = os.listdir(catalogDir)
+    except:
+        catList = []
+    for fname in catList:
+        key = fname[:fname.rfind('.html')]
+        if key not in pathDict:
+            pathDict[key] = catalogDir + '/' + fname
+            descDict[key] = key
+            if key in docDict:
+                pathDict[key] = docDict[key]
+    ##
+    ## Continue to supplement with searched for files
+    ##
+    for p in docDict.keys()+myDict.keys():
+        if p not in pathDict:
+            if p in docDict:
+                pathDict[p] = docDict[p].strip()
+                descDict[p] = p
+            else:
+                if p in myDict:
+                    path = findBestDoc(myDict[p])
+                    pathDict[p] = path.strip()
+                    descDict[p] = p
+
+    try:
+        if not os.path.exists(docdbpath):
+            os.mkdir(docdbpath)
+        outfile = open(docdbfile, 'wb')                
+        cPickle.dump([pathDict,descDict,headings],outfile)
+    except:
+        print "<p>Error: Could not cache documentation index</p>"
 
 ## Part 4
 ## if a word was selected then view the documentation for that word
@@ -280,4 +284,5 @@ for h in headings:
     print "</ul>"
     print '</div>'
 print "</ul>"
-
+if cachedIndex:
+    print "<p>You are using a saved version of the LaTeX documentation index.  This index is automatically updated every 90 days.  If you want to force an update simply remove the file %s </p>" % docdbfile
