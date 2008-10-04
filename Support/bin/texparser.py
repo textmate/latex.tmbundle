@@ -129,7 +129,7 @@ class LaTexParser(TexParser):
         self.suffix = fileName[fileName.rfind('.')+1:]
         self.currentFile = fileName
         self.patterns += [
-            (re.compile('^This is') , self.info),
+            #(re.compile('^This is') , self.info),
             (re.compile('^Document Class') , self.info),
             (re.compile('.*?\((\.\/[^\)]*?\.(tex|'+self.suffix+')( |$))') , self.detectNewFile),
             (re.compile('.*\<use (.*?)\>') , self.detectInclude),

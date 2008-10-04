@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -u
 # encoding: utf-8
 
 # This is a rewrite of latexErrWarn.py
@@ -71,6 +71,9 @@ texMateVersion = ' $Rev$ '
 
 # 
 
+TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT").replace(" ", "\\ ")
+TM_SUPPORT_PATH = os.getenv("TM_SUPPORT_PATH").replace(" ", "\\ ")
+
 def expandName(fn,program='pdflatex'):
     sys.stdout.flush()
     runObj = Popen('kpsewhich -progname="%s" "%s"' % (program, fn),shell=True,stdout=PIPE)
@@ -141,7 +144,7 @@ def findViewerPath(viewer,pdfFile,fileName):
     """Use the find_app command to ensure that the viewer is installed in the system
        For apps that support pdfsync search in pdf set up the command to go to the part of
        the page in the document the user was writing."""
-    runObj = Popen('find_app ' + viewer + '.app',stdout=PIPE,shell=True)
+    runObj = Popen(TM_SUPPORT_PATH + '/bin/find_app ' + viewer + '.app',stdout=PIPE,shell=True)
     vp = runObj.stdout.read()
     syncPath = None
     if viewer == 'Skim' and vp:
@@ -189,7 +192,7 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
         cmdPath,syncPath = findViewerPath(viewer,pdfFile,fileName)
         if cmdPath:
             viewer = viewer.encode('utf-8') # if this is not done, the next line will thrown an encoding exception when the pdfFile contains non-ASCII. Is this a Python bug?
-            stat = os.system("check_open %s %s"%(viewer,pdfPath))
+            stat = os.system(TM_BUNDLE_SUPPORT+"/bin/check_open %s %s"%(viewer,pdfPath))
             if stat != 0:
                 viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfPath
                 stat = os.system(viewCmd)
@@ -517,12 +520,19 @@ if __name__ == '__main__':
         print 'synctex = ', synctex
         print '</pre>'
 
+
+    if texCommand == "version":
+      runObj = Popen(engine + " --version",stdout=PIPE,shell=True)
+      print runObj.stdout.read().split("\n")[0]
+      sys.exit(0)
+
+
 #
 # print out header information to begin the run
 #
     if not firstRun:
         print '<hr>'
-    print '<h2>Running %s on %s</h2>' % (texCommand,fileName)
+    #print '<h2>Running %s on %s</h2>' % (texCommand,fileName)
     print '<div id="commandOutput"><div id="preText">'
     
     if fileName == fileNoSuffix:
@@ -538,9 +548,9 @@ if __name__ == '__main__':
     if texCommand == 'latexmk':
         writeLatexmkRc(engine,constructEngineOptions(tsDirs,tmPrefs))
         if engine == 'latex':
-            texCommand = 'latexmk.pl -pdfps -f -r /tmp/latexmkrc ' 
+            texCommand = TM_BUNDLE_SUPPORT + '/bin/latexmk.pl -pdfps -f -r /tmp/latexmkrc ' 
         else:
-            texCommand = 'latexmk.pl -pdf -f -r /tmp/latexmkrc '
+            texCommand = TM_BUNDLE_SUPPORT + '/bin/latexmk.pl -pdf -f -r /tmp/latexmkrc '
 #        if ' ' in fileName:
 #            texCommand += shell_quote(shell_quote(fileName))
 #        else:
@@ -605,6 +615,7 @@ if __name__ == '__main__':
         commandParser = ChkTeXParser(runObj.stdout,verbose,fileName)
         isFatal,numErrs,numWarns = commandParser.parseStream()
         texStatus = runObj.wait()
+    
 #    
 # Check status of running the viewer
 #
