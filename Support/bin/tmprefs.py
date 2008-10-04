@@ -8,6 +8,25 @@ try:
 except:
     haspyobjc = False
 
+
+try:
+    from subprocess import *
+except:
+    PIPE = 1
+    STDOUT=1
+    class Popen(object):
+        """Popen:  This class provides backward compatibility for Tiger
+           Do not assume anything about this works other than access
+           to stdin, stdout and the wait method."""
+        def __init__(self, command, **kwargs):
+            super(Popen, self).__init__()
+            self.command = command
+            self.stdin, self.stdout = os.popen4(command)
+
+        def wait(self):
+            stat = self.stdout.close()
+            return stat
+
 class Preferences(object):
     """docstring for Preferences"""
     def __init__(self):
@@ -20,7 +39,7 @@ class Preferences(object):
             'latexUselatexmk' : 0,
             'latexViewer' : "TextMate",
             'latexKeepLogWin' : 1,
-            'latexDebug' : 0
+            'latexDebug' : 0,
         }
         self.prefs = self.defaults.copy()
         self.prefs.update(self.readTMPrefs())
@@ -65,10 +84,10 @@ class Preferences(object):
     def toDefString(self):
         """docstring for toDefString"""
         instr = plistlib.writePlistToString(self.defaults)
-        stdin,stdout = os.popen2('pl')
-        stdin.write(instr)
-        stdin.close()
-        defstr = stdout.read()
+        runObj = Popen('pl',shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
+        runObj.stdin.write(instr)
+        runObj.stdin.close()
+        defstr = runObj.stdout.read()
         return defstr.replace("\n","")
 
 if __name__ == '__main__':
