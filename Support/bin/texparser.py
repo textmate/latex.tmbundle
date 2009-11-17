@@ -223,7 +223,7 @@ class ParseLatexMk(TexParser):
         super(ParseLatexMk, self).__init__(input_stream,verbose)
         self.fileName = filename
         self.patterns += [
-            (re.compile('This is (pdfTeXk|latex2e|latex|XeTeXk)') , self.startLatex),
+            (re.compile('This is (pdfTeX|latex2e|latex|XeTeX)') , self.startLatex),
             (re.compile('This is BibTeX') , self.startBibtex),
             (re.compile('^Latexmk: All targets \(.*?\) are up-to-date') , self.finishRun),
             (re.compile('This is makeindex') , self.startBibtex),
