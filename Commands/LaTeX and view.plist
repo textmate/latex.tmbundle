@@ -28,7 +28,7 @@ TextMate.require_cmd("kpsewhich")
 texMate = ENV["TM_BUNDLE_SUPPORT"] + "/bin/texMate.py"
 engine_version = TextMate::Process.run(texMate, "version")
 TextMate::HTMLOutput.show(:title =&gt; "Typesetting “#{ENV["TM_DISPLAYNAME"] || File.basename(ENV["TM_FILEPATH"])}”…", :sub_title =&gt; engine_version) do |io|
-  TextMate::Process.run(texMate, 'latex', '1') do |line|
+  TextMate::Process.run(texMate, 'latex', '1', :interactive_input =&gt; false) do |line|
 	io &lt;&lt; line
   end
 end
