@@ -27,33 +27,55 @@ exit if m.nil?
 rows, columns = m[1].to_i, m[2].to_i
 # print "Rows: #{rows}"
 # print "Columns: #{columns}"
-print "\\begin{tabular}{"
-columns.times {print("c")}
-puts "}"
-puts "\\hline\n"
-n=0
+print "\\begin{table}[htb!]
+	\\caption{\\it \${1:caption}}
+	\\label{table:\${2:label}}
+	\\centering
+	\\begin{tabular}{"
+(columns-1).times {print("c ")}
+puts "c}
+		\\toprule\n"
+n=3
 rows.times do |r|
   (columns-1).times do |c|
     n+=1
-    print "${#{n}:r#{r+1}c#{c+1}} &amp; "
+	if r == 0
+		print "		\\textbf{${#{n}:Header #{c+1}}} &amp; "
+	else
+		print "		${#{n}:r#{r+1}c#{c+1}} &amp; "
+	end
   end
   n+=1
-  print "${#{n}:r#{r+1}c#{columns}}\\\\\\\\\n"
-  puts "\\hline\n"
-end
-puts "\\end{tabular}"
+	if r == 0
+		print "		\\textbf{${#{n}:Header #{columns}}}\\\\\\\\\n"
+	else
+		print "			${#{n}:r#{r+1}c#{columns}}\\\\\\\\\n"
+	end
+
+  end
+puts "		\\toprule
+	\\end{tabular}
+\\end{table}"
 </string>
 	<key>input</key>
 	<string>none</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string>^@T</string>
 	<key>name</key>
 	<string>Create Table</string>
-	<key>output</key>
-	<string>insertAsSnippet</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>snippet</string>
+	<key>outputLocation</key>
+	<string>replaceSelection</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>7190DABA-FE8B-4DC7-9D31-3A727A8647CD</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
