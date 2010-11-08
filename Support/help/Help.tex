@@ -424,13 +424,15 @@ In order for all this to work, make sure that the language for the document is s
 
 \subsubsection{Drag and Drop}
 
-There are two key drag and drop commands in LaTeX:
+There are three key drag and drop commands in LaTeX:
 
 \begin{itemize}
 
     \item You can drag an image file in to the document and have it surrounded by a complete figure environment. Using the modifier key \keys{\Alt} while dragging inserts the image surrounded by a \texttt{center} environment. If you use the modifier \keys{\shift}, then TextMate only inserts the \texttt{\textbackslash{}includegraphics} line.
 
     \item You can drag in another \texttt{.tex} file into your document. TextMate will then insert a \texttt{\textbackslash{}include} command that references the dropped file. To use a \texttt{\textbackslash{}input} command instead use the modifier key \keys{\Alt}.
+
+    \item If you drop a source code file into your document, then TextMate creates a new \texttt{lstinputlisting} command referencing the dropped file. \texttt{lstinputlisting} is part of the package \texttt{listings}, so make sure that you include said package via \verb|\usepackage{listings}|.
 
 \end{itemize}
 
