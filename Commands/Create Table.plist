@@ -7,41 +7,55 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
 
-require "#{ENV['TM_SUPPORT_PATH']}/lib/exit_codes.rb"
-require "#{ENV['TM_SUPPORT_PATH']}/lib/ui.rb"
+		require "#{ENV['TM_SUPPORT_PATH']}/lib/exit_codes.rb"
+		require "#{ENV['TM_SUPPORT_PATH']}/lib/ui.rb"
 
-if ENV.has_key?('TM_SELECTED_TEXT') then
-  result=ENV['TM_SELECTED_TEXT']
-else
-  result = TextMate::UI.request_string(
-    :title =&gt; 'LaTeX Array Creation', 
-    :prompt =&gt; 'Number of rows and columns:',
-    :default =&gt; '6 4',
-    :button1 =&gt; 'Create'
-  )
-  TextMate.exit_discard if result.nil?
-end
-# print "Result: #{result}"
-m = /(\d+)\D+(\d+)/.match(result.to_s)
-exit if m.nil?
-rows, columns = m[1].to_i, m[2].to_i
-# print "Rows: #{rows}"
-# print "Columns: #{columns}"
-print "\\begin{tabular}{"
-columns.times {print("c")}
-puts "}"
-puts "\\hline\n"
-n=0
-rows.times do |r|
-  (columns-1).times do |c|
-    n+=1
-    print "${#{n}:r#{r+1}c#{c+1}} &amp; "
-  end
-  n+=1
-  print "${#{n}:r#{r+1}c#{columns}}\\\\\\\\\n"
-  puts "\\hline\n"
-end
-puts "\\end{tabular}"
+		if ENV.has_key?('TM_SELECTED_TEXT') then
+		  result=ENV['TM_SELECTED_TEXT']
+		else
+		  result = TextMate::UI.request_string(
+		    :title =&gt; 'LaTeX Array Creation', 
+		    :prompt =&gt; 'Number of rows and columns:',
+		    :default =&gt; '6 4',
+		    :button1 =&gt; 'Create'
+		  )
+		  TextMate.exit_discard if result.nil?
+		end
+		# print "Result: #{result}"
+		m = /(\d+)\D+(\d+)/.match(result.to_s)
+		exit if m.nil?
+		rows, columns = m[1].to_i, m[2].to_i
+		# print "Rows: #{rows}"
+		# print "Columns: #{columns}"
+		print "\\begin{table}[htb!]
+			\\caption{\\it \${1:caption}}
+			\\label{table:\${2:label}}
+			\\centering
+			\\begin{tabular}{"
+		(columns-1).times {print("c ")}
+		puts "c}
+				\\toprule\n"
+		n=3
+		rows.times do |r|
+		  (columns-1).times do |c|
+		    n+=1
+			if r == 0
+				print "		\\textbf{${#{n}:Header #{c+1}}} &amp; "
+			else
+				print "		${#{n}:r#{r+1}c#{c+1}} &amp; "
+			end
+		  end
+		  n+=1
+			if r == 0
+				print "		\\textbf{${#{n}:Header #{columns}}}\\\\\\\\\n"
+			else
+				print "			${#{n}:r#{r+1}c#{columns}}\\\\\\\\\n"
+			end
+
+		  end
+		puts "		\\toprule
+			\\end{tabular}
+		\\end{table}"
 </string>
 	<key>input</key>
 	<string>none</string>
