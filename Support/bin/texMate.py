@@ -152,7 +152,7 @@ def findViewerPath(viewer,pdfFile,fileName):
     elif viewer == 'TeXniscope' and vp:
         syncPath = vp + '/Contents/Resources/forward-search.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + shell_quote(os.getenv('TM_FILEPATH')) + ' ' + pdfFile
     elif viewer == 'PDFView' and vp:
-        syncPath = '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
+        syncPath = vp + '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
     if DEBUG:
         print "VP = ", vp
         print "syncPath = ", syncPath
