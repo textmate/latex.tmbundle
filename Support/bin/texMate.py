@@ -145,7 +145,7 @@ def findViewerPath(viewer,pdfFile,fileName):
        For apps that support pdfsync search in pdf set up the command to go to the part of
        the page in the document the user was writing."""
     runObj = Popen(TM_SUPPORT_PATH + '/bin/find_app ' + viewer + '.app',stdout=PIPE,shell=True)
-    vp = runObj.stdout.read()
+    vp = shell_quote(runObj.stdout.read())
     syncPath = None
     if viewer == 'Skim' and vp:
         syncPath = vp + '/Contents/SharedSupport/displayline ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile + ' ' + shell_quote(os.getenv('TM_FILEPATH'))
