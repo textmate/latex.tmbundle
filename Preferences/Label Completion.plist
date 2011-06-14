@@ -9,7 +9,7 @@
 	<key>settings</key>
 	<dict>
 		<key>completionCommand</key>
-		<string>"$TM_SUPPORT_PATH/bin/LatexLabelCompletions.rb"</string>
+		<string>"$TM_BUNDLE_SUPPORT/bin/LatexLabelCompletions.rb"</string>
 		<key>disableDefaultCompletion</key>
 		<integer>1</integer>
 	</dict>

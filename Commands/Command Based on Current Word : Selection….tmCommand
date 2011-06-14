@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>beforeRunningCommand</key>
@@ -16,7 +16,7 @@ require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
 phrase = STDIN.read.chomp
 # include LaTeX
 begin
-  items = `"#{ENV['TM_SUPPORT_PATH']}"/bin/LaTeXCommandCompletions.rb`.split("\n")
+  items = `"#{ENV['TM_BUNDLE_SUPPORT']}"/bin/LatexCommandCompletions.rb`.split("\n")
   TextMate.exit_discard if items.empty?
   if items.length &gt; 1 then
     choice = TextMate::UI.menu(items)
