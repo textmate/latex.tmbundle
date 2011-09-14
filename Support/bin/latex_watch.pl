@@ -101,7 +101,7 @@ main_loop();
 		init_prefs() unless defined $prefs;
 		
         my $pref = $prefs->objectForKey_($prefName);
-        return ( ref($pref) eq 'NSCFString'
+        return ( ref($pref) eq '__NSCFString'
             ? $pref->UTF8String()
             : $default)
     }
