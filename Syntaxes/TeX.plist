@@ -292,7 +292,7 @@
 				</dict>
 				<dict>
 					<key>begin</key>
-					<string>((\\)Sexpr)(\{)</string>
+					<string>((\\)Sexpr(\{))</string>
 					<key>beginCaptures</key>
 					<dict>
 						<key>1</key>
@@ -312,24 +312,45 @@
 						</dict>
 					</dict>
 					<key>contentName</key>
-					<string>source.r.embedded.math.tex</string>
+					<string>support.function.sexpr.math.tex</string>
 					<key>end</key>
-					<string>(\})</string>
+					<string>(((\})))</string>
 					<key>endCaptures</key>
 					<dict>
 						<key>1</key>
 						<dict>
 							<key>name</key>
+							<string>support.function.sexpr.math.tex</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
 							<string>punctuation.section.embedded.end.math.tex</string>
+						</dict>
+						<key>3</key>
+						<dict>
+							<key>name</key>
+							<string>source.r</string>
 						</dict>
 					</dict>
 					<key>name</key>
-					<string>meta.function.sexpr.math.tex</string>
+					<string>meta.embedded.line.r</string>
 					<key>patterns</key>
 					<array>
 						<dict>
-							<key>include</key>
+							<key>begin</key>
+							<string>\G(?!\})</string>
+							<key>end</key>
+							<string>(?=\})</string>
+							<key>name</key>
 							<string>source.r</string>
+							<key>patterns</key>
+							<array>
+								<dict>
+									<key>include</key>
+									<string>source.r</string>
+								</dict>
+							</array>
 						</dict>
 					</array>
 				</dict>
