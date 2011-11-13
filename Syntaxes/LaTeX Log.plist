@@ -4,10 +4,6 @@
 <dict>
 	<key>firstLineMatch</key>
 	<string>This is (pdf|pdfe)?TeXk?, Version </string>
-	<key>foldingStartMarker</key>
-	<string>/\*\*|\(\s*$</string>
-	<key>foldingStopMarker</key>
-	<string>\*\*/|^\s*\)</string>
 	<key>name</key>
 	<string>LaTeX Log</string>
 	<key>patterns</key>
