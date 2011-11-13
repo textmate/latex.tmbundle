@@ -6,10 +6,6 @@
 	<array/>
 	<key>firstLineMatch</key>
 	<string>^\\documentclass(\[.*\])?\{beamer\}</string>
-	<key>foldingStartMarker</key>
-	<string>\\begin\{.*\}|%.*\(fold\)\s*$</string>
-	<key>foldingStopMarker</key>
-	<string>\\end\{.*\}|%.*\(end\)\s*$</string>
 	<key>keyEquivalent</key>
 	<string>^~B</string>
 	<key>name</key>

@@ -7,10 +7,6 @@
 		<string>sty</string>
 		<string>cls</string>
 	</array>
-	<key>foldingStartMarker</key>
-	<string>/\*\*|\{\s*$</string>
-	<key>foldingStopMarker</key>
-	<string>\*\*/|^\s*\}</string>
 	<key>name</key>
 	<string>TeX</string>
 	<key>patterns</key>
