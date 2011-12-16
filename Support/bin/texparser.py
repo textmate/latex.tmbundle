@@ -5,12 +5,14 @@ import os
 import tmprefs
 from struct import *
 
+import urllib
 
 def percent_escape(str):
 	return re.sub('[\x80-\xff /&]', lambda x: '%%%02X' % unpack('B', x.group(0))[0], str)
 
+# Swapped call to percent_escape with urllib.quote.  Was causing links to fail in TM2
 def make_link(file, line):
-	return 'txmt://open?url=file:%2F%2F' + percent_escape(file) + '&amp;line=' + line
+	return 'txmt://open/?url=file://' + urllib.quote(file) + '&amp;line=' + line
 
 def shell_quote(string):
 	return '"' + re.sub(r'([`$\\"])', r'\\\1', string) + '"'
