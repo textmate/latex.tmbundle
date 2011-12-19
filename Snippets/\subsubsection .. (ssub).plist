@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>content</key>
 	<string>\subsubsection{${1:subsubsection name}} % (fold)
-\label{ssub:${2:${1/\\\w+\{(.*?)\}|\\(.)|(\w+)|([^\w\\]+)/(?4:_:\L$1$2$3)/g}}}
+\label{ssub:${2:${1/\\\\\w+\{(.*?)\}|\\\\(.)|(\w+)|([^\w\\\\]+)/(?4:_:\L$1$2$3)/g}}}
 ${0:$TM_SELECTED_TEXT}
 % subsubsection $2 (end)</string>
 	<key>name</key>
