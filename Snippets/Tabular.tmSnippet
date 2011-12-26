@@ -4,7 +4,7 @@
 <dict>
 	<key>content</key>
 	<string>\\begin{${1:t}${1/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}{${2:c}}
-$0${2/((?&lt;=.)c|l|r)|./(?1: &amp; )/g}
+$0${2/((?&lt;=[clr])(\|*(c|l|r)))|./(?1: &amp; )/g}
 \\end{${1:t}${1/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}</string>
 	<key>name</key>
 	<string>Tabular</string>
