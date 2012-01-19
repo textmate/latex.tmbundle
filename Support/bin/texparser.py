@@ -124,6 +124,25 @@ class BibTexParser(TexParser):
         self.done = True
         print '</div>'
 
+class BiberParser(TexParser):
+    """Parse and format Error Messages from biber"""
+    def __init__(self, btex, verbose):
+        super(BiberParser, self).__init__(btex,verbose)
+        self.patterns += [ 
+            (re.compile('^.*WARN') , self.warning),
+            (re.compile('^.*ERROR') , self.error),
+            (re.compile('^.*FATAL'), self.fatal),
+            (re.compile('^.*Output to (.*)$') , self.finishRun),
+        ]
+
+    def finishRun(self,m,line):
+      logFile = m.group(1)[:-3] + 'blg'
+      print '<p>  Complete transcript is in '
+      print '<a href="' + make_link(os.path.join(os.getcwd(),logFile),'1') +  '">' + logFile + '</a>'
+      print '</p>'
+      self.done = True
+      print '</div>'
+
 class LaTexParser(TexParser):
     """Parse Output From Latex"""
     def __init__(self, input_stream, verbose, fileName):
@@ -227,6 +246,7 @@ class ParseLatexMk(TexParser):
         self.patterns += [
             (re.compile('This is (pdfTeX|latex2e|latex|XeTeX)') , self.startLatex),
             (re.compile('This is BibTeX') , self.startBibtex),
+            (re.compile('^.*This is biber') , self.startBiber),
             (re.compile('^Latexmk: All targets \(.*?\) are up-to-date') , self.finishRun),
             (re.compile('This is makeindex') , self.startBibtex),
             (re.compile('^Latexmk') , self.ltxmk),
@@ -238,6 +258,14 @@ class ParseLatexMk(TexParser):
         print '<div class="bibtex">'
         print '<h3>' + line[:-1] + '</h3>'
         bp = BibTexParser(self.input_stream,self.verbose)
+        f,e,w = bp.parseStream()
+        self.numErrs += e
+        self.numWarns += w
+
+    def startBiber(self,m,line):
+        print '<div class="bibtex">'
+        print '<h3>' + line + '</h3>'
+        bp = BiberParser(self.input_stream,self.verbose)
         f,e,w = bp.parseStream()
         self.numErrs += e
         self.numWarns += w
@@ -298,6 +326,7 @@ if __name__ == '__main__':
     # test
     stream = open('../tex/test.log')
     lp = LaTexParser(stream,False,"test.tex")
+    lp = BiberParser(stream, False)
     f,e,w = lp.parseStream()
     
 
