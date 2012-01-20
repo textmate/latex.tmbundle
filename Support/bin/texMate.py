@@ -147,12 +147,13 @@ def findViewerPath(viewer,pdfFile,fileName):
     runObj = Popen(TM_SUPPORT_PATH + '/bin/find_app ' + viewer + '.app',stdout=PIPE,shell=True)
     vp = shell_quote(runObj.stdout.read())
     syncPath = None
+    lineNumber = os.getenv('TM_SELECTION').split(':')[0]
     if viewer == 'Skim' and vp:
-        syncPath = vp + '/Contents/SharedSupport/displayline ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile + ' ' + shell_quote(os.getenv('TM_FILEPATH'))
+        syncPath = vp + '/Contents/SharedSupport/displayline ' + lineNumber + ' ' + pdfFile + ' ' + shell_quote(os.getenv('TM_FILEPATH'))
     elif viewer == 'TeXniscope' and vp:
-        syncPath = vp + '/Contents/Resources/forward-search.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + shell_quote(os.getenv('TM_FILEPATH')) + ' ' + pdfFile
+        syncPath = vp + '/Contents/Resources/forward-search.sh ' + lineNumber + ' ' + shell_quote(os.getenv('TM_FILEPATH')) + ' ' + pdfFile
     elif viewer == 'PDFView' and vp:
-        syncPath = vp + '/Contents/MacOS/gotoline.sh ' + os.getenv('TM_LINE_NUMBER') + ' ' + pdfFile
+        syncPath = vp + '/Contents/MacOS/gotoline.sh ' + lineNumber + ' ' + pdfFile
     if DEBUG:
         print "VP = ", vp
         print "syncPath = ", syncPath
