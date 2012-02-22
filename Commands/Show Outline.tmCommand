@@ -16,8 +16,15 @@ INCLUDE_REGEX = /\\(?:input|include)(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/
 NON_COMMENT_REGEX = /^([^%]+$|(?:[^%]|\\%)*)(?=%|$)/
 class String
   def adjust_end(new_piece)
-    new_form = self.sub(/[^\/]*$/,new_piece)
-    new_form += ".tex" unless new_form.match(/\.tex$/)
+    master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']) 
+    new_form = self
+    unless master == self
+      masterdir = File.dirname(master)
+      new_form = File.expand_path(new_piece, masterdir)
+    else 
+      new_form = self.sub(/[^\/]*$/,new_piece)
+    end
+    new_form += ".tex" unless new_form.match(/\.tex$/) or File.exists?(new_form)
     new_form
   end
 end
