@@ -134,6 +134,12 @@ class BiberParser(TexParser):
             (re.compile('^.*FATAL'), self.fatal),
             (re.compile('^.*Output to (.*)$') , self.finishRun),
         ]
+        
+    def warning(self,m,line):
+        """Using one print command works more reliably 
+           than using several lines"""
+        print '<p class="warning">' + line + '</p>'
+        self.numWarns += 1
 
     def finishRun(self,m,line):
       logFile = m.group(1)[:-3] + 'blg'
@@ -263,7 +269,7 @@ class ParseLatexMk(TexParser):
         self.numWarns += w
 
     def startBiber(self,m,line):
-        print '<div class="bibtex">'
+        print '<div class="biber">'
         print '<h3>' + line + '</h3>'
         bp = BiberParser(self.input_stream,self.verbose)
         f,e,w = bp.parseStream()
