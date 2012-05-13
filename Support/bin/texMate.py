@@ -102,6 +102,19 @@ def run_bibtex(bibfile=None,verbose=False,texfile=None):
         warn+=w
         stat = runObj.wait()
     return stat,fatal,err,warn
+
+def run_biber(bibfile=None,verbose=False,texfile=None):
+    """Determine Targets and run biber"""
+    # call biber without extension.
+    fatal,err,warn = 0,0,0
+    runObj = Popen('biber'+" "+fileNoSuffix,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
+    bp = BiberParser(runObj.stdout,verbose)
+    f,e,w = bp.parseStream()
+    fatal|=f
+    err+=e
+    warn+=w
+    stat = runObj.wait()
+    return stat,fatal,err,warn
         
 def run_latex(ltxcmd,texfile,verbose=False):
     """Run the flavor of latex specified by ltxcmd on texfile"""
@@ -568,7 +581,10 @@ if __name__ == '__main__':
         numRuns = commandParser.numRuns
         
     elif texCommand == 'bibtex':
-        texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
+        if os.path.exists(fileNoSuffix+'.bcf'):        
+            texStatus, isFatal, numErrs, numWarns = run_biber(texfile=fileName)
+        else:
+            texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
         
     elif texCommand == 'index':
         texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
@@ -582,7 +598,10 @@ if __name__ == '__main__':
         # the latex, bibtex, index, latex, latex sequence should cover 80% of the cases that latexmk does
         texCommand =  engine + " " + constructEngineOptions(tsDirs,tmPrefs)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
-        texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
+        if os.path.exists(fileNoSuffix+'.bcf'):        
+            texStatus, isFatal, numErrs, numWarns = run_biber(texfile=fileName)
+        else:
+            texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
         if os.path.exists(fileNoSuffix+'.idx'):
             texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
@@ -660,7 +679,7 @@ if __name__ == '__main__':
 
         print '<div id="texActions">'
         print '<input type="button" value="Re-Run %s" onclick="runLatex(); return false" />' % engine
-        print '<input type="button" value="Run BibTeX" onclick="runBibtex(); return false" />'
+        print '<input type="button" value="Run Bib" onclick="runBibtex(); return false" />'
         print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
         print '<input type="button" value="Clean up" onclick="runClean(); return false" />'        
         if viewer == 'TextMate':
