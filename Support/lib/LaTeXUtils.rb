@@ -241,10 +241,19 @@ module LaTeX
       scanner = FileScanner.new(root)
       bibitem_regexp = /^[^%]*\\bibitem(?:\[[^\]]*\])?\{([^\}]*)\}(.*)/
       biblio_regexp = /^[^%]*\\bibliography\s*\{([^\}]*)\}/
+      addbib_regexp = /^[^%]*\\addbibresource\s*\{([^\}]*)\}/
       scanner.extractors[bibitem_regexp] = Proc.new do |filename, line, groups, text|
       citationsList << Citation.new( "citekey" => groups[0], "cite_data" => groups[1])
       end
       scanner.extractors[biblio_regexp] = Proc.new do |filename, line, groups, text|
+        groups[0].split(",").each do |it|
+          file = LaTeX.find_file( it.strip, "bib", File.dirname(root) )
+          raise "Could not locate any file named '#{it}'" if file.nil?
+          citationsList += LaTeX.parse_bibfile(file)
+          citationsList += LaTeX.parse_bibfile(ENV["TM_LATEX_BIB"]) unless ENV["TM_LATEX_BIB"].nil?
+        end
+      end
+      scanner.extractors[addbib_regexp] = Proc.new do |filename, line, groups, text|
         groups[0].split(",").each do |it|
           file = LaTeX.find_file( it.strip, "bib", File.dirname(root) )
           raise "Could not locate any file named '#{it}'" if file.nil?
