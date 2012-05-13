@@ -581,7 +581,7 @@ if __name__ == '__main__':
         numRuns = commandParser.numRuns
         
     elif texCommand == 'bibtex':
-        if os.path.exists(fileNoSuffix+'.bcf'):        
+        if os.path.exists(fileNoSuffix+'.bcf'):
             texStatus, isFatal, numErrs, numWarns = run_biber(texfile=fileName)
         else:
             texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
@@ -598,7 +598,7 @@ if __name__ == '__main__':
         # the latex, bibtex, index, latex, latex sequence should cover 80% of the cases that latexmk does
         texCommand =  engine + " " + constructEngineOptions(tsDirs,tmPrefs)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
-        if os.path.exists(fileNoSuffix+'.bcf'):        
+        if os.path.exists(fileNoSuffix+'.bcf'):
             texStatus, isFatal, numErrs, numWarns = run_biber(texfile=fileName)
         else:
             texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
