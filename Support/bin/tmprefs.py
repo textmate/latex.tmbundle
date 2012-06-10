@@ -63,10 +63,17 @@ class Preferences(object):
         # to the output.
         #
         plDict = {}
+        
+        # Check for TM2 Preferences List
+        if os.path.exists(os.environ["HOME"]+"/Library/Preferences/com.macromates.TextMate.preview.plist"):
+            preferences_file = "com.macromates.TextMate.preview.plist"
+        else:
+            preferences_file = "com.macromates.textmate.plist"
+            
         if haspyobjc:
-            plDict = NSDictionary.dictionaryWithContentsOfFile_(os.environ["HOME"]+"/Library/Preferences/com.macromates.textmate.plist")
+            plDict = NSDictionary.dictionaryWithContentsOfFile_(os.environ["HOME"]+"/Library/Preferences/"+preferences_file)
         else:   # TODO remove all this once everyone is on leopard
-            os.system("plutil -convert xml1 \"$HOME/Library/Preferences/com.macromates.textmate.plist\" -o /tmp/tmltxprefs1.plist")
+            os.system("plutil -convert xml1 \"$HOME/Library/Preferences/"+preferences_file+"\" -o /tmp/tmltxprefs1.plist")
             null_tt = "".join([chr(i) for i in range(256)])
             non_printables = null_tt.translate(null_tt, string.printable)
             plist_str = open('/tmp/tmltxprefs1.plist').read()
