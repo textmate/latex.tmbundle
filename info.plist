@@ -354,13 +354,6 @@
 		<string>0E51AD42-17AD-4507-950B-AB114408B58D</string>
 		<string>BDA02D31-3097-4726-9A93-7AAA4576F676</string>
 	</array>
-	<key>source</key>
-	<dict>
-		<key>method</key>
-		<string>git</string>
-		<key>url</key>
-		<string>git://github.com/avian/latex.tmbundle</string>
-	</dict>
 	<key>uuid</key>
 	<string>46788DCE-6227-11D9-BFB1-000D93589AF6</string>
 </dict>
