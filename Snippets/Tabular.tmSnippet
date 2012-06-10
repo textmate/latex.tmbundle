@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>content</key>
 	<string>\\begin{${1:t}${1/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}{${2:c}}
-$0${2/((?&lt;=.)c|l|r)|./(?1: &amp; )/g}
+$0${2/((?&lt;=[clr])([ |]*(c|l|r)))|./(?1: &amp; )/g}
 \\end{${1:t}${1/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}</string>
 	<key>name</key>
 	<string>Tabular</string>
