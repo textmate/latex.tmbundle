@@ -11,10 +11,6 @@
 	<array>
 		<string>bib</string>
 	</array>
-	<key>foldingStartMarker</key>
-	<string>\@[a-zA-Z]+\s*[{(].+,</string>
-	<key>foldingStopMarker</key>
-	<string>^\s*[)}]\s*$</string>
 	<key>name</key>
 	<string>BibTeX</string>
 	<key>patterns</key>
