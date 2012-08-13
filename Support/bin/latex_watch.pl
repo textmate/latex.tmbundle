@@ -125,7 +125,7 @@ sub init_environment {
 
 	# If TM_SUPPORT_PATH is undefined, make a plausible guess.
 	# (Useful for running this script from outside TextMate.)
-	$ENV{TM_SUPPORT_PATH} = "/Applications/TextMate.app/Contents/SharedSupport/Support"
+	$ENV{TM_SUPPORT_PATH} = "$ENV{HOME}/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared"
 		if !defined $ENV{TM_SUPPORT_PATH};
 
 	# Add TextMate support paths
