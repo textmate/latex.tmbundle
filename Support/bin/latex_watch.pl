@@ -214,7 +214,6 @@ sub main_loop {
 			compile() and view();
 			if (defined ($progressbar_pid)) {
 				debug_msg("Closing progress bar window ($progressbar_pid)");
-				debug_msg("Progress bar process ID: $progressbar_pid");
 				kill(9, $progressbar_pid) or fail("Failed to close progress bar window: $!");
 				undef $progressbar_pid;
 			}
