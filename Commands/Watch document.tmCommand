@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>beforeRunningCommand</key>
@@ -7,7 +7,8 @@
 	<key>bundleUUID</key>
 	<string>46788DCE-6227-11D9-BFB1-000D93589AF6</string>
 	<key>command</key>
-	<string>#  See the end of $watch_script (defined below) for changelog and version information.
+	<string>#!/usr/bin/env bash
+[[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
 
 watch_script="$TM_BUNDLE_SUPPORT"/bin/latex_watch.pl
 
@@ -25,7 +26,7 @@ if [ -f "$pid_file" ]; then
 			--text "Stop watching?" \
 			--informative-text "The file '$file' is already being watched. Shall I stop watching it?")
 		if [ "$ok" -eq 1 ]; then
-			kill $(cat "$pid_file")
+			kill -KILL $(cat "$pid_file")
 		fi
 		exit
 	fi
@@ -73,11 +74,17 @@ jobs -p %% &gt; "$pid_file"
 </string>
 	<key>input</key>
 	<string>none</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string>^@w</string>
 	<key>name</key>
 	<string>Watch document</string>
-	<key>output</key>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
 	<string>discard</string>
 	<key>requiredCommands</key>
 	<array>
@@ -95,5 +102,7 @@ jobs -p %% &gt; "$pid_file"
 	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>4BB11B68-A0F5-4670-A0B9-B3982D10A54B</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
