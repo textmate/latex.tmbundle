@@ -116,6 +116,7 @@ class BibTexParser(TexParser):
             (re.compile(r"I couldn't open style file"), self.error),
             (re.compile(r"You're missing a field name---line (\d+)"), self.error),
             (re.compile(r'Too many commas in name \d+ of'), self.error),
+            (re.compile(r'I was expecting a'),self.error),
             (re.compile('This is BibTeX') , self.info),
             (re.compile('The style') , self.info),
             (re.compile('Database') , self.info),
