@@ -114,9 +114,12 @@ class BibTexParser(TexParser):
             (re.compile("Warning--I didn't find a database entry") , self.warning),
             (re.compile(r'I found no \\\w+ command') , self.error),
             (re.compile(r"I couldn't open style file"), self.error),
+            (re.compile(r"You're missing a field name---line (\d+)"), self.error),
+            (re.compile(r'Too many commas in name \d+ of'), self.error),
+            (re.compile(r'I was expecting a'),self.error),
             (re.compile('This is BibTeX') , self.info),
-            (re.compile('The style') , self.info),            
-            (re.compile('Database') , self.info),                        
+            (re.compile('The style') , self.info),
+            (re.compile('Database') , self.info),
             (re.compile('---') , self.finishRun)
         ]
     
