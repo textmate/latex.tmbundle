@@ -222,10 +222,10 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
 
     else:
         pdfFile = fileNoSuffix+'.pdf'
-        tmHref = '<p><a href="tm-file://'+quote(filePath+'/'+pdfFile)+'">Click Here to View</a></p>'
+        tmHref = '<p><a href="file://'+quote(filePath+'/'+pdfFile)+'">Click Here to View</a></p>'
         if (numErrs < 1 and numWarns < 1) or (numErrs < 1 and numWarns > 0 and not force):
             print '<script type="text/javascript">'
-            print 'window.location="tm-file://'+quote(filePath+'/'+pdfFile)+'"'
+            print 'window.location="file://'+quote(filePath+'/'+pdfFile)+'"'
             print '</script>'
     return stat
 
@@ -684,7 +684,7 @@ if __name__ == '__main__':
         print '<input type="button" value="Clean up" onclick="runClean(); return false" />'        
         if viewer == 'TextMate':
             pdfFile = fileNoSuffix+'.pdf'
-            print """<input type="button" value="view in TextMate" onclick="window.location='""" + 'tm-file://' + quote(filePath+'/'+pdfFile) +"""'"/>"""
+            print """<input type="button" value="view in TextMate" onclick="window.location='""" + 'file://' + quote(filePath+'/'+pdfFile) +"""'"/>"""
         else:
             print '<input type="button" value="View in %s" onclick="runView(); return false" />' % viewer
         print '<input type="button" value="Preferences…" onclick="runConfig(); return false" />'
