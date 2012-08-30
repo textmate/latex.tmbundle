@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/env bash
 [[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
-"$TM_BUNDLE_SUPPORT"/bin/texcount.pl "$TM_FILENAME"</string>
+"$TM_BUNDLE_SUPPORT"/bin/texcount.pl "$TM_FILEPATH"</string>
 	<key>input</key>
 	<string>none</string>
 	<key>inputFormat</key>
