@@ -28,7 +28,10 @@ except:
             return stat
 
 # The preference file for textmate to retrieve the prefs from
-TM_PREFERENCE_FILE = 'com.macromates.TextMate.preview.plist'
+if os.environ.has_key('TM_APP_IDENTIFIER'):
+    TM_PREFERENCE_FILE = os.environ['TM_APP_IDENTIFIER'] + '.plist'
+else:
+    TM_PREFERENCE_FILE = 'com.macromates.textmate.plist'
 
 class Preferences(object):
     """docstring for Preferences"""

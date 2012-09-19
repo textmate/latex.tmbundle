@@ -92,7 +92,12 @@ main_loop();
 				"The Perl module Foundation.pm could not be loaded. If you have been foolish enough to remove the default Perl interpreter (/usr/bin/perl), you must install PerlObjCBridge manually.\n\n$@\0");
 		}
 	
-	    $prefs_file = "$ENV{HOME}/Library/Preferences/com.macromates.textmate.preview.plist";
+		if($ENV{TM_APP_IDENTIFIER}) {
+			$prefs_file = "$ENV{HOME}/Library/Preferences/$ENV{TM_APP_IDENTIFIER}.plist";
+		} else {
+		    $prefs_file = "$ENV{HOME}/Library/Preferences/com.macromates.textmate.plist";
+		}
+	    
 	    $prefs = NSDictionary->dictionaryWithContentsOfFile_($prefs_file);
 	}
 
