@@ -22,6 +22,18 @@ html_footer
 	<string>^V</string>
 	<key>name</key>
 	<string>Check LaTeX (chktex)</string>
+	<key>requiredCommands</key>
+	<array>
+		<dict>
+			<key>command</key>
+			<string>kpsewhich</string>
+			<key>locations</key>
+			<array>
+				<string>/usr/texbin/kpsewhich</string>
+				<string>/opt/local/bin/kpsewhich</string>
+			</array>
+		</dict>
+	</array>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>

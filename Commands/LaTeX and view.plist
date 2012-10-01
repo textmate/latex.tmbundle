@@ -15,7 +15,6 @@
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/process"
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/htmloutput"
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/save_current_document"
-require ENV["TM_SUPPORT_PATH"] + "/lib/tm/require_cmd"
 
 # To enable the typesetting of unsaved documents, you must change the “Save” setting of
 # this command to “Current File” and add the variable TM_LATEX_AUTOSAVE to TextMate's
@@ -24,8 +23,6 @@ require ENV["TM_SUPPORT_PATH"] + "/lib/tm/require_cmd"
 # encoding you prefer.
 
 TextMate.save_current_document unless ENV["TM_LATEX_AUTOSAVE"].nil?
-
-TextMate.require_cmd("kpsewhich")
 
 texMate = ENV["TM_BUNDLE_SUPPORT"] + "/bin/texMate.py"
 engine_version = TextMate::Process.run(texMate, "version")
@@ -50,6 +47,18 @@ end
 	<string>html</string>
 	<key>outputLocation</key>
 	<string>newWindow</string>
+	<key>requiredCommands</key>
+	<array>
+		<dict>
+			<key>command</key>
+			<string>kpsewhich</string>
+			<key>locations</key>
+			<array>
+				<string>/usr/texbin/kpsewhich</string>
+				<string>/opt/local/bin/kpsewhich</string>
+			</array>
+		</dict>
+	</array>
 	<key>scope</key>
 	<string>text.tex</string>
 	<key>semanticClass</key>

@@ -47,6 +47,18 @@ PyTeXdoc.py</string>
 	<string>Documentation for Package</string>
 	<key>output</key>
 	<string>showAsHTML</string>
+	<key>requiredCommands</key>
+	<array>
+		<dict>
+			<key>command</key>
+			<string>kpsewhich</string>
+			<key>locations</key>
+			<array>
+				<string>/usr/texbin/kpsewhich</string>
+				<string>/opt/local/bin/kpsewhich</string>
+			</array>
+		</dict>
+	</array>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
