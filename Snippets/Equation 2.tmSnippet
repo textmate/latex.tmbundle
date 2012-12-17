@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>content</key>
-	<string>${1:Equation~\eqref{${2:eq:}}$0</string>
+	<string>${1:Equation}~\eqref{${2:eq:}}$0</string>
 	<key>name</key>
 	<string>Equation</string>
 	<key>scope</key>
