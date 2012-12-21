@@ -189,7 +189,7 @@ module LaTeX
     # Default values for the +includes+ hash.
     def set_defaults
       @includes = Hash.new
-      @includes[/^[^%]*(?:\\include|\\input)\s*\{([^\}]*)\}/] = Proc.new {|m|
+      @includes[/^[^%]*(?:\\include|\\input)\s*\{([^}\\]*)\}/] = Proc.new {|m|
         m[0].split(",").map do |it|
           LaTeX.find_file( it.strip, "tex", File.dirname(@root) ) || raise("Could not locate any file named '#{it}'")
         end
