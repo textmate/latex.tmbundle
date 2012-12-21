@@ -14,7 +14,7 @@
 	<key>inputFormat</key>
 	<string>text</string>
 	<key>keyEquivalent</key>
-	<string>^~N</string>
+	<string>^N</string>
 	<key>name</key>
 	<string>TeXcount</string>
 	<key>outputCaret</key>
