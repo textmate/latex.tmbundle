@@ -70,11 +70,6 @@ my ($mode, $viewer_option, $viewer, $base_format, @tex);
 		}
 	}
 
-
-# Remove the 'hide extension' attribute, or else ping_pdf_viewer_texshop will fail
-fail_unless_system("SetFile", "-a", "e", "$name.tex")
-    if $viewer eq "TeXShop";
-
 init_cleanup();
 main_loop();
 
@@ -708,20 +703,20 @@ sub start_pdf_viewer_texshop {
 	applescript (
 		qq(tell application "TeXShop" ).
 		qq(to open_for_externaleditor at ).
-		quote_applescript("$absolute_wd/$name.tex"));
+		quote_applescript("$absolute_wd/$name"));
 	$viewer_id = "TeXShop";
 }
 
 sub refresh_pdf_viewer_texshop {
 	debug_msg("Refreshing PDF viewer (TeXShop)");
 	applescript(
-		qq(tell document ).quote_applescript("$name.tex").
+		qq(tell document ).quote_applescript("$name").
 		qq( of application "TeXShop" to refreshpdf));
 }
 
 my $ping_failed;
 sub ping_pdf_viewer_texshop {
-	my $r = check_open($pdf_viewer_app, "$name.tex");
+    my $r = check_open($pdf_viewer_app, "$name");
 	$ping_failed = 1 if !$r;
 	return $r;
 }
@@ -731,7 +726,7 @@ sub cleanup_pdf_viewer_texshop {
 	debug_msg("Closing document in PDF viewer ($pdf_viewer_app)");
 	applescript_ignoring_errors(
 		qq(tell application ).quote_applescript($pdf_viewer_app).
-		qq( to close document ).quote_applescript("$name.tex"));
+		qq( to close document ).quote_applescript("$name"));
 }
 
 # TeXniscope
