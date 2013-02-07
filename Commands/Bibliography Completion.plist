@@ -13,7 +13,9 @@ phrase = STDIN.read.chomp
 include LaTeX
 begin
 	items = LaTeX.get_citations.map{|i| i.citekey + "   % "+i.description}
-  items = items.grep(/#{phrase}/) if phrase != ""
+  if ((phrase != "") && (phrase != "{}"))
+  	items = items.grep(/#{phrase}/) 
+  end
   TextMate.exit_discard if items.empty?
   if items.length &gt; 1
   	choice = TextMate::UI.menu(items)
