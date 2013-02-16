@@ -395,7 +395,7 @@
 		</dict>
 	</dict>
 	<key>scopeName</key>
-	<string>text.bibtex</string>
+	<string>text.tex.bibtex</string>
 	<key>uuid</key>
 	<string>47F30BA1-6B1D-11D9-9A60-000D93589AF6</string>
 </dict>
