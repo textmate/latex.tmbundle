@@ -18,6 +18,8 @@
 	<string>insertAsSnippet</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
+	<key>semanticClass</key>
+	<string>style.alternate.small_caps.latex</string>
 	<key>uuid</key>
 	<string>9B3C2535-5CB7-43B8-9A8E-BCAB1085A245</string>
 </dict>

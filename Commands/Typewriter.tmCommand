@@ -18,6 +18,8 @@
 	<string>insertAsSnippet</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
+	<key>semanticClass</key>
+	<string>style.alternate.typewriter.latex</string>
 	<key>uuid</key>
 	<string>17A74DB2-7B65-4083-A091-AD51023DA8D7</string>
 </dict>
