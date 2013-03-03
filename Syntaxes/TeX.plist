@@ -6,6 +6,8 @@
 	<array>
 		<string>sty</string>
 		<string>cls</string>
+		<string>bbx</string>
+		<string>cbx</string>
 	</array>
 	<key>name</key>
 	<string>TeX</string>
