@@ -19,7 +19,7 @@ module LaTeX
       File.open(filepath, "r") do |file|
         1.upto(20) do
           line = file.readline
-          if line =~ /^%!TEX (\S*) =\s*([^\r]*)\s*$/
+          if line =~ /^%!TEX (\S*) =\s*([^\s]*)\s*$/
             opts[$1] = $2
           end
         end
