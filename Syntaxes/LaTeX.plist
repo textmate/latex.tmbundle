@@ -930,7 +930,7 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>((\\)footnote)(\{)</string>
+			<string>((\\)footnote)((?:\[[^\[]*?\])*)(\{)</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -944,6 +944,34 @@
 					<string>punctuation.definition.function.latex</string>
 				</dict>
 				<key>3</key>
+				<dict>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>captures</key>
+							<dict>
+								<key>1</key>
+								<dict>
+									<key>name</key>
+									<string>punctuation.definition.arguments.begin.latex</string>
+								</dict>
+								<key>2</key>
+								<dict>
+									<key>name</key>
+									<string>variable.parameter.latex</string>
+								</dict>
+								<key>3</key>
+								<dict>
+									<key>name</key>
+									<string>punctuation.definition.arguments.end.latex</string>
+								</dict>
+							</dict>
+							<key>match</key>
+							<string>(\[)([^\[]*?)(\])</string>
+						</dict>
+					</array>
+				</dict>
+				<key>4</key>
 				<dict>
 					<key>name</key>
 					<string>punctuation.definition.footnote.begin.latex</string>
