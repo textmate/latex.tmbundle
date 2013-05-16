@@ -24,9 +24,9 @@ when /SHIFT/
 else
   puts ["\\\\begin{figure}[\${1:htbp}]",
 "	\\\\centering",
-"		\\\\includegraphics[width=\${1:.9\\textwidth}]{#{path}}",
-"	\\\\caption{\${4:caption}}",
-"	\\\\label{fig:\${5:#{path.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}}",
+"		\\\\includegraphics[width=\${2:.9\\textwidth}]{#{path}}",
+"	\\\\caption{\${3:caption}}",
+"	\\\\label{fig:\${4:#{path.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}}",
 "\\\\end{figure}"].join("\n")
 end</string>
 	<key>draggedFileExtensions</key>
