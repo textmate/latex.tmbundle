@@ -17,14 +17,14 @@ path = Pathname.new(filename).relative_path_from(master.dirname)
 case ENV['TM_MODIFIER_FLAGS']
 when /OPTION/
 	puts ["\\\\begin{center}",
-    " \\\\includegraphics[width=\${1:.9\textwidth}]{#{path}}",
+    " \\\\includegraphics[width=\${1:.9\\textwidth}]{#{path}}",
 "\\\\end{center}"].join("\n")
 when /SHIFT/
-  puts "\\\\includegraphics[width=\${1:.9\textwidth}]{#{path}}"
+  puts "\\\\includegraphics[width=\${1:.9\\textwidth}]{#{path}}"
 else
   puts ["\\\\begin{figure}[\${1:htbp}]",
 "	\\\\centering",
-"		\\\\includegraphics[width=\${1:.9\textwidth}]{#{path}}",
+"		\\\\includegraphics[width=\${1:.9\\textwidth}]{#{path}}",
 "	\\\\caption{\${4:caption}}",
 "	\\\\label{fig:\${5:#{path.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}}",
 "\\\\end{figure}"].join("\n")
