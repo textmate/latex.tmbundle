@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby
+	<string>#!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
 def escape(str)
   esc_str = str.gsub(/\t/," &amp; ") + "\\\\"
   esc_str.gsub(/(\d)E([+-]?)(\d{1,2})/) do |m|

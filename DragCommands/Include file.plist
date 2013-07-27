@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby
+	<string>#!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
 require 'pathname'
 require 'pp'
 require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/LaTeXUtils.rb"

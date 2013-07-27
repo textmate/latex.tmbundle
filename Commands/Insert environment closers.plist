@@ -8,7 +8,7 @@
 	<string># This command inserts any missing \end{environment} at the caret position
 # It is analogous with Insert Closing Tag for HTML.
 
-ruby -- "$TM_SUPPORT_PATH/bin/checknest.rb" '\\begin(?&gt;\{(.+?)\})' '\\end(?&gt;\{(.+?)\})' '\end{$1}' -n$TM_LINE_NUMBER</string>
+/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby -- "$TM_SUPPORT_PATH/bin/checknest.rb" '\\begin(?&gt;\{(.+?)\})' '\\end(?&gt;\{(.+?)\})' '\end{$1}' -n$TM_LINE_NUMBER</string>
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
