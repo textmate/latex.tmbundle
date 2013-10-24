@@ -29,7 +29,7 @@ TextMate::HTMLOutput.show(:title =&gt; "Typesetting “#{ENV["TM_DISPLAYNAME"] |
 	io &lt;&lt; line
   end
 end
-::Process.exit($?.exitstatus)
+::Process.exit($?.exitstatus || 0) # exitstatus is nil if our process is prematurely terminated (SIGINT)
 </string>
 	<key>dontFollowNewOutput</key>
 	<false/>
