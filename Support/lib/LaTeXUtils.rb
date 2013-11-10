@@ -200,7 +200,7 @@ module LaTeX
     def recursive_scan
        raise "No root specified!" if @root.nil?
        raise "Could not find file #{@root}" unless File.exist?(@root)
-       text = File.read(@root)
+       text = File.readlines(@root)
        text.each_with_index do |line, index|
          includes.each_pair do |regexp, block|
            line.scan(regexp).each do |m|
