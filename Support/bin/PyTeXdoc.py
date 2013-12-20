@@ -261,8 +261,8 @@ print "<ul>"
 for p in mList:
     print '<div id="mypkg">'
     if p in pathDict:
-        print """<li><a href="javascript:TextMate.system('viewDoc.sh %s', null);" >%s</a>
-             </li> """%(pathDict[p],descDict[p])
+        print """<li><a href="javascript:TextMate.system('\\'%s/bin/viewDoc.sh\\' %s', null);" >%s</a>
+             </li> """%(os.environ["TM_BUNDLE_SUPPORT"],pathDict[p],descDict[p])
     else:
         print """<li>%s</li>"""%(p)
     print '</div>'
@@ -277,8 +277,8 @@ for h in headings:
     print "<ul>"
     for p in headings[h]:
         if os.path.exists(pathDict[p]):
-            print """<li><a href="javascript:TextMate.system('viewDoc.sh %s', null);">%s</a>
-                </li> """%(pathDict[p],descDict[p])
+            print """<li><a href="javascript:TextMate.system('\\'%s/bin/viewDoc.sh\\' %s', null);">%s</a>
+                </li> """%(os.environ["TM_BUNDLE_SUPPORT"],pathDict[p],descDict[p])
         else:
             print """<li>%s</li>"""%(p)
     print "</ul>"
