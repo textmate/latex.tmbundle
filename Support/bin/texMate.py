@@ -153,7 +153,21 @@ def run_makeindex(fileName,idxfile=None):
         warning += w
         stat = runObj.wait()
     return stat,fatal,error,warning
-
+    
+    
+def run_makeglossaries():
+    """Run makeglossaries"""
+    # call biber without extension.
+    fatal,err,warn = 0,0,0
+    runObj = Popen('makeglossaries'+" "+fileNoSuffix,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
+    bp = MakeGlossariesParser(runObj.stdout,verbose)
+    f,e,w = bp.parseStream()
+    fatal|=f
+    err+=e
+    warn+=w
+    stat = runObj.wait()
+    return stat,fatal,err,warn
+    
 def findViewerPath(viewer,pdfFile,fileName):
     """Use the find_app command to ensure that the viewer is installed in the system
        For apps that support pdfsync search in pdf set up the command to go to the part of
@@ -591,7 +605,10 @@ if __name__ == '__main__':
             texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
         
     elif texCommand == 'index':
-        texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
+        if os.path.exists(fileNoSuffix+'.glsdefs'):
+            texStatus, isFatal, numErrs, numWarns = run_makeglossaries()
+        else:
+            texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
     
     elif texCommand == 'clean':
         texCommand = 'latexmk.pl -CA '
@@ -684,7 +701,10 @@ if __name__ == '__main__':
         print '<div id="texActions">'
         print '<input type="button" value="Re-Run %s" onclick="runLatex(); return false" />' % engine
         print '<input type="button" value="Run Bib" onclick="runBibtex(); return false" />'
-        print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
+        if os.path.exists(fileNoSuffix+'.glsdefs'):
+            print '<input type="button" value="Make Glossaries" onclick="runMakeIndex(); return false" />'
+        else:
+            print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
         print '<input type="button" value="Clean up" onclick="runClean(); return false" />'        
         if viewer == 'TextMate':
             pdfFile = fileNoSuffix+'.pdf'
