@@ -152,6 +152,61 @@ class BiberParser(TexParser):
       self.done = True
       print '</div>'
 
+class MakeGlossariesParser(TexParser):
+    """Parse and format Error Messages from makeglossaries"""
+    def __init__(self, btex, verbose):
+        super(MakeGlossariesParser, self).__init__(btex,verbose)
+        self.patterns += [
+            (re.compile('^.*makeglossaries version (.*)$') , self.beginRun),
+            (re.compile('^.*added glossary type \'(.*)\' \((.*)\).*$') , self.addType),
+            (re.compile('^.*Markup written into file "(.*)".$') , self.finishMarkup),
+            (re.compile('^.*xindy.*-L (.*) -I.*-t ".*\.(.*)" -o.*$'), self.runXindy),
+            (re.compile('Cannot locate xindy module') , self.warning),
+            (re.compile('ERROR'),self.error),
+            (re.compile('Warning'),self.warning),
+            (re.compile('^\*\*\*'),self.info),      
+        ]
+        self.types = dict()
+        
+    def beginRun(self,m,line):
+        version = m.group(1)
+        print "<h2>Make Glossaries</h2>"
+        print '<p class="info" >Version: <i>'+version+ "</i></p>" 
+    
+    def addType(self,m,line):
+        thisType = m.group(1)
+        files = m.group(2)
+        filesSet = files.split(',')
+        for file in filesSet:
+            self.types[file] = thisType
+        print '<p class="info"> Add Glossary Type <strong>' + thisType +'</strong> <i>(Files: ' + files + ')</i></p>'
+        
+    
+    def runXindy(self,m,line):
+        lang = m.group(1)
+        file = m.group(2)
+        thisType = self.types[file]
+        
+        print '<h3>Run xindy for glossary type '+ thisType +'</h3>'
+        print '<p class="info">Language: '+ lang +'</p>'
+
+    def finishMarkup(self,m,line):
+      mkFile = m.group(1)
+      thisType = self.types[mkFile[-3:]]
+      print '<p class="info">  Finished glossary for type <strong>'+ thisType+ '</strong>. Output is in <a href="' + make_link(os.path.join(os.getcwd(),mkFile),'1') +  '">' + mkFile + '</a></p>'
+        
+    def warning(self,m,line):
+        """Using one print command works more reliably 
+           than using several lines"""
+        print '<p class="warning">' + line + '</p>'
+        self.numWarns += 1
+    
+    def error(self,m,line):
+        """Using one print command works more reliably 
+           than using several lines"""
+        print '<p class="error">' + line + '</p>'
+        self.numWarns += 1
+
 class LaTexParser(TexParser):
     """Parse Output From Latex"""
     def __init__(self, input_stream, verbose, fileName):
