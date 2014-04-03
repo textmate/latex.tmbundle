@@ -46,6 +46,9 @@ from urllib import quote
 from struct import *
 from texparser import *
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 DEBUG = False
 
 try:
