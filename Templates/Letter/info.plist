@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>#!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby -wKU
+	<string>#!/usr/bin/env ruby18 -wKU
 
 abort if File.exists? ENV['TM_NEW_FILE']
 is_on_tiger = %x{ defaults read /System/Library/CoreServices/SystemVersion ProductVersion } =~ /\A10\.4/

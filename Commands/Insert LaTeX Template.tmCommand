@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
+	<string>#!/usr/bin/env ruby18
 # This command is meant to be used for quick insertion of your LaTeX template files. They should be placed
 # in the directory ~/Library/Application Support/LaTeX/Templates. A pop-up is provided, letting you pick
 # the template file you want inserted, and then it gets inserted as a snippet. See

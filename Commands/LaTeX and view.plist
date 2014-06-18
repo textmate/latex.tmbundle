@@ -7,7 +7,7 @@
 	<key>bundleUUID</key>
 	<string>46788DCE-6227-11D9-BFB1-000D93589AF6</string>
 	<key>command</key>
-	<string>#!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
+	<string>#!/usr/bin/env ruby18
 # coding: utf-8
 
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/process"
