@@ -13,10 +13,6 @@ our $VERSION = "2.9";
 #  --textmate-pid <pid>    Exit if the process <pid> disappears
 #  --progressbar-pid <pid> Kill <pid> after the document has been compiled for
 #                          the 1st time
-#  --ps                    Use PostScript mode
-#  --pdf                   Use PDF mode (default)
-#  --viewer                What previewer to use. Currently only used in PDF
-#                          mode.
 
 # Changelog now at end of file.
 
