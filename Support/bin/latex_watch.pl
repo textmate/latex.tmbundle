@@ -30,8 +30,7 @@ use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
 # Configure #
 #############
 
-print "Latex Watch $VERSION: ",
-  ( join $", map { /\s/ ? qq('$_') : $_ } @ARGV ), "\n";
+print "Latex Watch $VERSION: @ARGV\n";
 init_environment();
 
 my ( $DEBUG, $textmate_pid, $progressbar_pid ) = parse_command_line_options();
