@@ -42,7 +42,7 @@ my ( $mode, $viewer_option, $viewer, $base_format, @tex );
 if ( $prefs{engine} eq 'latex' ) {
     $mode = "PS";
 
-    # Set $DISPLAY to a sensible default, it it's unset
+    # Set $DISPLAY to a sensible default, if it's unset
     $ENV{DISPLAY} = ":0"
       if !defined $ENV{DISPLAY};
 
@@ -252,7 +252,7 @@ sub main_loop {
 
             process_is_running($textmate_pid)
               or do {
-                debug_msg("Textmate appears to have been closed. Exiting.");
+                debug_msg("TextMate appears to have been closed. Exiting.");
                 exit;
               };
         }
