@@ -39,6 +39,7 @@
 import sys
 import re
 from os.path import basename
+from os.path import isfile
 import os
 import tmprefs
 from urllib import quote
@@ -221,12 +222,15 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
 
 
     else:
-        pdfFile = fileNoSuffix+'.pdf'
-        tmHref = '<p><a href="file://'+quote(filePath+'/'+pdfFile)+'">Click Here to View</a></p>'
+        pdfPath = filePath+'/'+fileNoSuffix+'.pdf'
+        tmHref = '<p><a href="file://'+quote(pdfPath)+'">Click Here to View</a></p>'
         if (numErrs < 1 and numWarns < 1) or (numErrs < 1 and numWarns > 0 and not force):
-            print '<script type="text/javascript">'
-            print 'window.location="file://'+quote(filePath+'/'+pdfFile)+'"'
-            print '</script>'
+            if os.path.isfile(pdfPath):
+                print '<script type="text/javascript">'
+                print 'window.location="file://'+quote(pdfPath)+'"'
+                print '</script>'
+            else:
+                print 'File does not exist: '+pdfPath
     return stat
 
 def determine_ts_directory(tsDirectives):
