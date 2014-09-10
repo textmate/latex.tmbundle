@@ -41,7 +41,7 @@ if ( $prefs{engine} eq 'latex' ) {
     $ENV{DISPLAY} = ":0"
       if !defined $ENV{DISPLAY};
 
-    applescript('tell application "X11" to launch');
+    applescript('tell application "XQuartz" to launch');
 
     # Add Fink path
     $ENV{PATH} .= ":/sw/bin";
