@@ -18,7 +18,7 @@ Depending on the setting of the Keep log window open preference, this window may
 
 ## Typesetting Multiple Passes
 
-Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` in-between. You can re-run LaTeX on the same file by clicking on the Run LaTeX button at the bottom of the Typeset & View window.  You will also find buttons there to allow you to run BibTeX or MakeIndex on the current file.
+Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` and/or `makeglossaries` in-between. You can re-run LaTeX on the same file by clicking on the Run LaTeX button at the bottom of the Typeset & View window.  You will also find buttons there to allow you to run BibTeX or MakeIndex or MakeGlossaries on the current file.
 
 In addition, The `latexmk.pl` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk.pl` when compiling, you have to check the `Use Latexmk.pl`.
 

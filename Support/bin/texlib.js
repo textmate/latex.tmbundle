@@ -49,6 +49,10 @@ function runMakeIndex(){
     runCommand('index')
 };
 
+function runMakeGlossaries(){
+    runCommand('glossaries')
+};
+
 function runView(){
     runCommand('view')
 };

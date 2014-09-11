@@ -154,6 +154,26 @@ def run_makeindex(fileName,idxfile=None):
         stat = runObj.wait()
     return stat,fatal,error,warning
 
+def run_makeglossaries(fileName):
+    """Run the makeglossaries command"""
+    try:
+        texString = open(fileName).read()
+    except:
+        print '<p class="error">Error: Could not open %s to check for makeglossary</p>' % fileName
+        print '<p class="error">This is most likely a problem with TM_LATEX_MASTER</p>'
+        sys.exit(1)
+    myList = [x[2] for x in re.findall(r'([^%]|^)\\makeglossaries(\[([\w]+)\])?',texString) if x[2] ]
+    
+    fileNoSuffix = getFileNameWithoutExtension(fileName)
+    runObj = Popen('makeglossaries '+fileNoSuffix,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)        
+    ip = TexParser(runObj.stdout,True)
+    f,e,w = ip.parseStream()
+    fatal = f
+    error = e
+    warning = w
+    stat = runObj.wait()
+    return stat,fatal,error,warning
+
 def findViewerPath(viewer,pdfFile,fileName):
     """Use the find_app command to ensure that the viewer is installed in the system
        For apps that support pdfsync search in pdf set up the command to go to the part of
@@ -593,6 +613,9 @@ if __name__ == '__main__':
     elif texCommand == 'index':
         texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
     
+    elif texCommand == 'glossaries':
+        texStatus, isFatal, numErrs, numWarns = run_makeglossaries(fileName)
+    
     elif texCommand == 'clean':
         texCommand = 'latexmk.pl -CA '
         runObj = Popen(texCommand,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
@@ -685,6 +708,7 @@ if __name__ == '__main__':
         print '<input type="button" value="Re-Run %s" onclick="runLatex(); return false" />' % engine
         print '<input type="button" value="Run Bib" onclick="runBibtex(); return false" />'
         print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
+        print '<input type="button" value="Run Makeglossaries" onclick="runMakeGlossaries(); return false" />'
         print '<input type="button" value="Clean up" onclick="runClean(); return false" />'        
         if viewer == 'TextMate':
             pdfFile = fileNoSuffix+'.pdf'
