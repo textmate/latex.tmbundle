@@ -19,7 +19,9 @@ our $VERSION = "2.9";
 use strict;
 use warnings;
 use POSIX ();
+use File::Basename;
 use File::Copy 'copy';
+use File::Spec;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
 
 #############
@@ -30,10 +32,12 @@ print "Latex Watch $VERSION: @ARGV\n";
 init_environment();
 
 my ( $DEBUG, $textmate_pid, $progressbar_pid ) = parse_command_line_options();
-my ( $filepath, $wd, $name, $dotname, $absolute_wd ) = parse_file_path();
+my ( $filepath, $wd, $name, $absolute_wd ) = parse_file_path();
 
 my %prefs = get_prefs();
-my ( $mode, $viewer_option, $viewer, $base_format, @tex );
+my ( $mode, $viewer_option, $viewer, @tex );
+
+@tex = qw(latexmk -interaction=nonstopmode);
 if ( $prefs{engine} eq 'latex' ) {
     $mode = "PS";
 
@@ -46,16 +50,14 @@ if ( $prefs{engine} eq 'latex' ) {
     # Add Fink path
     $ENV{PATH} .= ":/sw/bin";
 
-    @tex         = qw(etex);
-    $base_format = "latex";
+    push( @tex, qw(-ps) );
 
     select_postscript_viewer();
 }
 elsif ( $prefs{engine} eq "pdflatex" ) {
     $mode = "PDF";
 
-    $base_format = "pdflatex";
-    @tex         = qw(pdfetex -output-format pdf);
+    push( @tex, qw(-pdf) );
 
     if ( $prefs{viewer} eq 'TextMate' ) {
         print "Latex Watch: Cannot use TextMate to preview.",
@@ -94,8 +96,12 @@ main_loop();
               "$ENV{HOME}/Library/Preferences/$ENV{TM_APP_IDENTIFIER}.plist";
         }
         else {
+            # Guess the location of the current preference file outside of
+            # TextMate. The following path is the usual location for the
+            # preview version of TextMate (2.0-alpha).
             $prefs_file =
-              "$ENV{HOME}/Library/Preferences/com.macromates.textmate.plist";
+                "$ENV{HOME}/Library/Preferences/"
+              . "com.macromates.textmate.preview.plist";
         }
 
         $prefs = NSDictionary->dictionaryWithContentsOfFile_($prefs_file);
@@ -126,21 +132,25 @@ sub init_environment {
 
     # Add MacTeX and teTeX paths (in that order)
     $ENV{PATH} .= ":/usr/texbin";
-    $ENV{PATH} .= ":/usr/local/teTeX/bin/"
-      . `/usr/local/teTeX/bin/highesttexbin.pl`
+    $ENV{PATH} .=
+      ":/usr/local/teTeX/bin/" . `/usr/local/teTeX/bin/highesttexbin.pl`
       if -x "/usr/local/teTeX/bin/highesttexbin.pl";
 
-    # If TM_SUPPORT_PATH is undefined, make a plausible guess.
-    # (Useful for running this script from outside TextMate.)
+    # If TM_SUPPORT_PATH or TM_BUNDLE_SUPPORT are undefined, make a plausible
+    # guess. (Useful for running this script from outside TextMate.)
     $ENV{TM_SUPPORT_PATH} =
         "$ENV{HOME}/Library/Application Support/"
       . "TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared"
       if !defined $ENV{TM_SUPPORT_PATH};
+    if ( !defined $ENV{TM_BUNDLE_SUPPORT} ) {
+        $ENV{TM_BUNDLE_SUPPORT} =
+          dirname( File::Spec->rel2abs(__FILE__) );
+        $ENV{TM_BUNDLE_SUPPORT} =~ s/\/bin$//;
+    }
 
     # Add TextMate support paths
     $ENV{PATH} .= ":$ENV{TM_SUPPORT_PATH}/bin";
-    $ENV{PATH} .= ":$ENV{TM_BUNDLE_SUPPORT}/bin"
-      if defined $ENV{TM_BUNDLE_SUPPORT};
+    $ENV{PATH} .= ":$ENV{TM_BUNDLE_SUPPORT}/bin";
 
     # Location of CocoaDialog binary
     init_CocoaDialog( "$ENV{TM_SUPPORT_PATH}/bin/CocoaDialog.app"
@@ -151,8 +161,7 @@ sub init_environment {
     $ENV{TEXINPUTS} = `kpsewhich -progname latex --expand-var '\$TEXINPUTS'`;
     chomp $ENV{TEXINPUTS};
 
-    $ENV{TEXINPUTS} .= ":$ENV{TM_BUNDLE_SUPPORT}/tex//"
-      if defined $ENV{TM_BUNDLE_SUPPORT};
+    $ENV{TEXINPUTS} .= ":$ENV{TM_BUNDLE_SUPPORT}/tex/";
 }
 
 sub parse_command_line_options {
@@ -178,15 +187,12 @@ sub parse_file_path {
       or $filepath eq "";
 
     # Parse and verify file path
-    my ( $wd, $name, $dotname, $absolute_wd );
+    my ( $wd, $name, $absolute_wd );
     if ( $filepath =~ m!(.*)/! ) {
         $wd = $1;
         my $fullname = $';
         if ( $fullname =~ /\.tex\z/ ) {
             $name    = $`;
-            $dotname = ".$name";
-            $dotname =~
-              y/\01-\040"\\$%&/_/;    # Any other chars that cause problems?
         }
         else {
             fail(
@@ -208,14 +214,11 @@ sub parse_file_path {
     chdir( $absolute_wd = $wd );
     $wd = ".";
 
-    return ( $filepath, $wd, $name, $dotname, $absolute_wd );
+    return ( $filepath, $wd, $name, $absolute_wd );
 }
 
 # Persistent state
-my (
-    $preamble,    $bogus_preamble, %preamble_mtimes,
-    %body_mtimes, $cleanup_viewer, $ping_viewer
-);
+my ( %files_mtimes, $cleanup_viewer, $ping_viewer );
 
 #############
 # Main loop #
@@ -226,7 +229,6 @@ sub main_loop {
     while (1) {
         if ( document_has_changed() ) {
             debug_msg("Reloading file");
-            reload();
             compile() and view();
             if ( defined($progressbar_pid) ) {
                 debug_msg("Closing progress bar window ($progressbar_pid)");
@@ -264,10 +266,11 @@ sub main_loop {
 sub clean_up {
     debug_msg("Cleaning up");
     unlink(
-        map( "$wd/$dotname.$_", qw(ini fmt fls tex dvi ps pdf pdfsync bbl log) )
-      )
-      if defined($wd)
-      and defined($dotname);
+        map( "$wd/$name.$_",
+            qw(aux bbl bcf blg fdb_latexmk dvi ps fls fmt ini latexmk.log log
+              out pdfsync run.xml toc) )
+    ) if defined($wd);
+
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
         debug_msg("Closing progress bar window as part of cleanup");
@@ -296,23 +299,12 @@ sub process_is_running {
 
 # Check whether the document, or any of its dependencies, has changed
 sub document_has_changed {
-    return 1 if keys(%preamble_mtimes) == 0;
+    return 1 if keys(%files_mtimes) == 0;
 
     my $change = 0;
-    foreach_modified_file(
-        \%preamble_mtimes,
-        sub {
-            my ($file) = @_;
-            debug_msg( "The preamble file '$file' has changed."
-                  . " Forcing format regeneration." );
-            undef $preamble;    # Force format regeneration
-            $change = 1;
-        }
-    );
-    return 1 if $change;
 
     foreach_modified_file(
-        \%body_mtimes,
+        \%files_mtimes,
         sub {
             my ($file) = @_;
             debug_msg("The file '$file' has changed.");
@@ -345,92 +337,12 @@ sub foreach_modified_file {
     }
 }
 
-sub reload {
-    open( my $f, "<", $filepath )
-      or fail( "Failed to open file",
-        "I couldn't open the file '$filepath' for reading: $!" );
-
-    my ( $new_preamble, $body );
-    while (<$f>) {
-        if (/(.*)(\\begin\s*\{(?:document)\}.*)/) {
-            $new_preamble .= $1;
-            $body = $2;
-        }
-        elsif ( defined $body ) {
-            $body .= $_;
-        }
-        else {
-            $new_preamble .= $_;
-        }
-    }
-    chomp($new_preamble)
-      or fail( "No \\begin{document} found",
-        "I couldn't find the command \\begin{document} in your file" );
-
-    if ( !defined($preamble) or $new_preamble ne $preamble ) {
-        debug_msg("Preamble has changed. Regenerating format.");
-        regenerate_format($new_preamble);
-    }
-
-    save_body($body);
-
-    close $f
-      or fail( "Failed to close file",
-        "I got an error closing the file '$filepath': $!" );
-}
-
-sub regenerate_format {
-    ($preamble) = @_;
-
-    # Create bogus preamble, so the line numbers match for PDFSync
-    $bogus_preamble = "%\n" x ( $preamble =~ y/\n// );
-
-    open( my $ini, ">", "$wd/$dotname.ini" )
-      or fail( "Failed to create file",
-        "The file '$wd/$dotname.ini' could not be opened for writing: $!" );
-    print $ini ( $preamble, "\n\\dump\n" );
-    close $ini
-      or fail( "Failed to close file",
-        "The file '$wd/$dotname.ini' gave an error on closing: $!" );
-
-    copy( "$wd/$name.bbl", "$wd/$dotname.bbl" );    # Ignore errors
-    unlink("$wd/$dotname.fmt");                     # Ignore errors
-
-    fail_unless_system(
-        @tex, "-ini",
-        -interaction => "batchmode",
-        "-recorder",
-        "&" . $base_format,
-        qq("$wd/$dotname.ini"),
-        sub {
-            my $button = cocoa_dialog(
-                "msgbox",
-                "--button3" => "Stop Watching",
-                "--button1" => "Show Log",
-                "--button2" => "Ignore Error",
-                "--title"   => "LaTeX Watch Error: Failed to process preamble",
-                "--informative-text" =>
-                  "Errors were encountered while processing the preamble "
-                  . "of your document. What would you like to do?"
-            );
-            debug_msg("Button $button pressed");
-            if ( $button == 1 ) {
-                show_log();
-            }
-            elsif ( $button == 3 ) {
-                exit;
-            }
-        }
-    );
-    parse_file_list( \%preamble_mtimes );
-}
-
 sub parse_file_list {
     my ($hash) = @_;
 
-    open( my $f, "<", "$wd/$dotname.fls" )
+    open( my $f, "<", "$wd/$name.fls" )
       or fail( "Failed to open file list",
-        "I couldn't open the file '$wd/$dotname.fls': $!" );
+        "I couldn't open the file '$wd/$name.fls': $!" );
     local $/ = "\n";
 
     my %updated_files;
@@ -441,7 +353,6 @@ sub parse_file_list {
             next
               if $f =~
               m!\.(?:fd|tfm|aux|ini)$!;   # Skip font files, .aux and .ini files
-            $f =~ s/(^|\Q$wd\E\/)\Q$dotname.\E(tex|bbl|aux)/$1$name.$2/;
             $f = "$wd/$f" if $f !~ m(/);
 
             my $mtime = -M ($f);
@@ -471,41 +382,21 @@ sub parse_file_list {
     }
 
     while ( my ( $f, $mtime ) = each %updated_files ) {
-        $preamble_mtimes{$f} = $mtime
-          if exists $preamble_mtimes{$f} and defined $mtime;
-        $hash->{$f} = $mtime if exists $hash->{$f} and defined $mtime;
+        $files_mtimes{$f} = $mtime
+          if exists $files_mtimes{$f} and defined $mtime;
     }
     debug_msg( "Parsed file list: found " . keys(%$hash) . " files" );
-}
-
-sub save_body {
-    open( my $f, ">", "$wd/$dotname.tex" )
-      or fail( "Failed to create file",
-        "I couldn't create the file '$wd/$dotname.tex': $!" );
-
-    print $f ( $bogus_preamble, @_ );
-
-    close($f)
-      or fail( "Failed to close file",
-        "I got an error on closing the file '$wd/$dotname.tex': $!" );
 }
 
 my ( $compiled_document, $compiled_document_name );
 
 sub compile {
-    copy( "$wd/$name.bbl", "$wd/$dotname.bbl" );    # Ignore errors
-    copy( "$wd/$name.aux", "$wd/$dotname.aux" );    # Ignore errors
-
-    unlink "$wd/$dotname.dvi";
     my $error = 0;
+
     fail_unless_system(
-        @tex,
-        -interaction => "batchmode",
-        "-recorder",
-        "&$dotname",
-        qq("$wd/$dotname.tex"),
+        "@tex '$wd/$name.tex' &> '$name.latexmk.log'",
         sub {
-            if ( $? == 1 || $? == 2 ) {
+            if ( $? == 1 || $? == 2 || $? == 12 ) {
                 # An error in the document
                 offer_to_show_log();
                 $error = 1;
@@ -517,18 +408,12 @@ sub compile {
         }
     );
 
-    parse_file_list( \%body_mtimes );
-
-    # Do this even in PDF mode, so that bibtex picks it up
-    rename( "$wd/$dotname.aux", "$wd/$name.aux" ) unless $error;
+    parse_file_list( \%files_mtimes );
 
     if ( $mode eq 'PS' ) {
-
-      # The DVI file might not have been generated, if there was a serious error
-        if ( -e "$wd/$dotname.dvi" ) {
-            fail_unless_system( "dvips", "$wd/$dotname.dvi", "-o" );
-            $compiled_document      = "$wd/$dotname.ps";
-            $compiled_document_name = "$dotname.ps";
+        if ( -e "$wd/$name.ps" ) {
+            $compiled_document      = "$wd/$name.ps";
+            $compiled_document_name = "$name.ps";
             return 1;    # Success!
         }
         else {
@@ -536,9 +421,7 @@ sub compile {
         }
     }
     else {               # PDF mode
-        if ( -e "$wd/$dotname.pdf" ) {
-            munge_pdfsync_file() if -e "$wd/$dotname.pdfsync";
-            rename( "$wd/$dotname.pdf", "$wd/$name.pdf" );
+        if ( -e "$wd/$name.pdf" ) {
             $compiled_document      = "$wd/$name.pdf";
             $compiled_document_name = "$name.pdf";
             return 1;    # Success!
@@ -547,23 +430,6 @@ sub compile {
             return;      # Failure
         }
     }
-}
-
-sub munge_pdfsync_file {
-    my $contents;
-    open( my $f, "<", "$wd/$dotname.pdfsync" )
-      or fail( "Failed to open pdfsync file",
-        "I failed to read the file $dotname.pdfsync: $!" );
-    for ( my $n = 0 ; my $c = read( $f, $contents, 4096, $n ) ; $n += $c ) { }
-    close $f;
-
-    $contents =~ s/^(\(?)\Q$dotname\E((\.tex)?)$/$1$name$2/mg;
-
-    open( $f, ">", "$wd/$name.pdfsync" )
-      or fail( "Failed to open pdfsync file",
-        "I failed to write to the file $name.pdfsync: $!" );
-    print $f $contents;
-    close $f;
 }
 
 sub offer_to_show_log {
@@ -581,7 +447,7 @@ sub offer_to_show_log {
 
 sub show_log {
     # OK button pressed
-    fail_unless_system( "mate", "$wd/$dotname.log" );
+    fail_unless_system( "mate", "$wd/$name.latexmk.log" );
 }
 
 #####################
@@ -613,7 +479,7 @@ my ( @ps_viewer, $hup_viewer );
 sub select_postscript_viewer {
 
     # PostScript viewer: try to discover the right options to use with
-    #   whichever version of gv we find.
+    # whichever version of gv we find.
     $hup_viewer = 1;
     {
         my $gv_version = `gv --version 2>/dev/null`;
@@ -690,9 +556,10 @@ sub start_postscript_viewer {
 sub refresh_postscript_viewer {
     if ($hup_viewer) {
         kill( 1, $viewer_id )
-          or fail( "Failed to signal viewer",
+          or fail(
+            "Failed to signal viewer",
             "I failed to signal the PostScript viewer (PID $viewer_id)"
-            . " to reload: $!"
+              . " to reload: $!"
           );
     }
 }
@@ -930,8 +797,8 @@ sub cocoa_dialog {
         close(STDOUT);
         open( STDOUT, ">&", $wh );    # Talk to the pipe!
 
-# Enclose the exec command in a block, to avoid the warning about code
-# following exec.
+        # Enclose the exec command in a block, to avoid the warning about code
+        # following exec.
         { exec( $CocoaDialog, @_ ) }
 
         # If there's an error, just exit with a non-zero code.
