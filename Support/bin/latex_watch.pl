@@ -54,10 +54,15 @@ if ( $prefs{engine} eq 'latex' ) {
 
     select_postscript_viewer();
 }
-elsif ( $prefs{engine} eq "pdflatex" ) {
+elsif ( $prefs{engine} eq "pdflatex" || $prefs{engine} eq "xelatex" ) {
     $mode = "PDF";
 
-    push( @tex, qw(-pdf) );
+    if ( $prefs{engine} eq "pdflatex" ) {
+        push( @tex, qw(-pdf) );
+    }
+    else {
+        push( @tex, qw(-xelatex) );
+    }
 
     if ( $prefs{viewer} eq 'TextMate' ) {
         print "Latex Watch: Cannot use TextMate to preview.",
