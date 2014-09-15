@@ -54,11 +54,17 @@ if ( $prefs{engine} eq 'latex' ) {
 
     select_postscript_viewer();
 }
-elsif ( $prefs{engine} eq "pdflatex" || $prefs{engine} eq "xelatex" ) {
+elsif ($prefs{engine} eq "lualatex"
+    || $prefs{engine} eq "pdflatex"
+    || $prefs{engine} eq "xelatex" )
+{
     $mode = "PDF";
 
     if ( $prefs{engine} eq "pdflatex" ) {
         push( @tex, qw(-pdf) );
+    }
+    elsif ( $prefs{engine} eq "lualatex" ) {
+        push( @tex, qw(-lualatex) );
     }
     else {
         push( @tex, qw(-xelatex) );
@@ -144,7 +150,7 @@ sub guess_tex_engine {
       or die "cannot open @_: $!";
 
     # TS-program is case insensitive e.g. `LaTeX` should be the same as `latex`
-    my $engines = "(?i)latex|pdflatex|xelatex(?-i)";
+    my $engines = "(?i)latex|lualatex|pdflatex|xelatex(?-i)";
     while ( my $line = <$fh> ) {
         if ( $line =~ /%!TEX(?:\s+)(?:TS-)program(?:\s*)=(?:\s*)($engines)/ ) {
             return lc("$1");
