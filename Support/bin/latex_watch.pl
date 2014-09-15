@@ -1,9 +1,10 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "2.9";
+our $VERSION = "3.0";
 
 #  - by Robin Houston, 2007, 2008.
+#  - modified by René Schwaiger, 2014
 
 # Usage: latex_watch.pl [ options ] file.tex
 #
@@ -13,6 +14,12 @@ our $VERSION = "2.9";
 #  --textmate-pid <pid>    Exit if the process <pid> disappears
 #  --progressbar-pid <pid> Kill <pid> after the document has been compiled for
 #                          the 1st time
+#
+# Example usage using `fish` (http://fishshell.com):
+#
+#   set tm_pid (pgrep TextMate); and LaTeX.tmbundle/Support/bin/latex_watch.pl \
+#       -d --textmate-pid=$tm_pid path/to/texfile.tex
+#
 
 # Changelog now at end of file.
 
@@ -893,23 +900,17 @@ BUGS?
    - Spews too much information to the console
 
 LIMITATIONS:
-   - Does not work if \begin{document} is in an included file
    - Cannot specify different modes per file.
-   - Only works with latex, not xelatex, ConTeXt, etc.
+   - Only works with latex, xelatex and lualatex not ConTeXt, etc.
 
 FUTURE:
-   - (2.x) Support DVI route without GV, warning where appropriate.
+   - Support DVI route without GV, warning where appropriate.
      [If GV not installed, fall back to something else.]
-   - (2.x) Parse %!TEX TS-program lines.
-   - (2.x) Support xetex (and xelatex).
-   - (2.x) If TM_LATEX_VIEWER unset, sniff available viewers and pick one.
-         (If it's set to "Preview", warn that Preview sucks and look for
-          another.)
-   - (3.0) Incorporate some latexmk-style logic,
-     so that if refs or cites are out-dated: the display is
-     updated after the first compile, but then subsequent
-     operations are automatically initiated, and the display
-     updated when they're finished.
+   - Support xetex.
+   - If TM_LATEX_VIEWER unset, sniff available viewers and pick one.
+     (If it's set to "Preview", warn that Preview sucks and look for another.)
+   - Nicer error output would be a really nice feature
+   - Remove support for outdated software (teTeX, TeXniscope)
 
 Changes
 1.1:
@@ -1032,3 +1033,12 @@ Changes
      where a file is read from the preamble and written from the document body.
      This arises when the svn-multi package is used, for example. It should now
      work correctly.
+
+3.0:
+   - Use `latexmk` to translate documents. This change allows us to directly
+   translate the whole document without the need to use any of the common
+   external TeX tools (`bibtex`, `makeindex`, …) directly.
+   - Add support for `%!TEX TS-program`. We now try to read the typesetting
+   program specified in the tex file. If the typesetting program is not
+   specified inside the file then we use the engine specified in the settings
+   dialog.
