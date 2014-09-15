@@ -58,7 +58,7 @@ TextMate also supports embedded directives in your TeX file by placing a line at
 ### Introduction
 
 When you watch a LaTeX document, it is continually monitored for changes.
-When you save a change, the document will be typeset again, and the preview updated. The preamble (i.e. everything before the `\begin{document}` command) is recompiled only when you change it; the rest of the time, only the main body of the document is recompiled. So the update cycle is substantially faster than typesetting the whole document from scratch.
+When you save a change, the document will be typeset again, and the preview updated.
 
 ### Usage
 
