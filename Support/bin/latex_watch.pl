@@ -121,9 +121,45 @@ main_loop();
     }
 }
 
+# Guess the TeX engine which should be used to translate a certain TeX-file.
+#
+# Arguments:
+#
+#      filepath - The file path to the TeX file either as absolute path or
+#                 relative to the location of this file
+#
+# Returns:
+#
+#      A string containing the TeX engine for the given file or an empty
+#      string if the engine could not be determined
+#
+# Example:
+#
+#   We assume `test.tex` contains the line `%!TEX TS-program = pdflatex`
+#   $ guess_tex_engine(test.tex)
+#   "latex"
+#
+sub guess_tex_engine {
+    open( my $fh, "<", @_ )
+      or die "cannot open @_: $!";
+
+    # TS-program is case insensitive e.g. `LaTeX` should be the same as `latex`
+    my $engines = "(?i)latex|pdflatex|xelatex(?-i)";
+    while ( my $line = <$fh> ) {
+        if ( $line =~ /%!TEX(?:\s+)(?:TS-)program(?:\s*)=(?:\s*)($engines)/ ) {
+            return lc("$1");
+            close($fh);
+        }
+    }
+    return "";
+}
+
 sub get_prefs {
+    my $engine = guess_tex_engine("$absolute_wd/$name.tex");
+    debug_msg("Found type setting program: $engine");
+    $engine = getPreference( latexEngine => "pdflatex" ) if $engine eq "";
     return (
-        engine  => getPreference( latexEngine        => "pdflatex" ),
+        engine  => $engine,
         options => getPreference( latexEngineOptions => "" ),
         viewer  => getPreference( latexViewer        => "TextMate" ),
     );
