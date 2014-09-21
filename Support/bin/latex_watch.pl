@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.0";
+our $VERSION = "3.1";
 
 #  - by Robin Houston, 2007, 2008.
 #  - modified by René Schwaiger, 2014
@@ -692,21 +692,21 @@ sub start_pdf_viewer_texshop {
     );
     applescript( qq(tell application "TeXShop" )
           . qq(to open_for_externaleditor at )
-          . quote_applescript("$absolute_wd/$name") );
+          . quote_applescript("$absolute_wd/$compiled_document_name") );
     $viewer_id = "TeXShop";
 }
 
 sub refresh_pdf_viewer_texshop {
     debug_msg("Refreshing PDF viewer (TeXShop)");
     applescript( qq(tell document )
-          . quote_applescript("$name")
+          . quote_applescript("$compiled_document_name")
           . qq( of application "TeXShop" to refreshpdf) );
 }
 
 my $ping_failed;
 
 sub ping_pdf_viewer_texshop {
-    my $r = check_open( $pdf_viewer_app, "$name" );
+    my $r = check_open( $pdf_viewer_app, "$compiled_document_name" );
     $ping_failed = 1 if !$r;
     return $r;
 }
@@ -717,7 +717,7 @@ sub cleanup_pdf_viewer_texshop {
     applescript_ignoring_errors( qq(tell application )
           . quote_applescript($pdf_viewer_app)
           . qq( to close document )
-          . quote_applescript("$name") );
+          . quote_applescript("$compiled_document_name") );
 }
 
 # TeXniscope
@@ -1042,3 +1042,6 @@ Changes
    program specified in the tex file. If the typesetting program is not
    specified inside the file then we use the engine specified in the settings
    dialog.
+
+3.1:
+    - Fix support for “TeXShop” PDF viewer.
