@@ -20,13 +20,13 @@ Depending on the setting of the Keep log window open preference, this window may
 
 Because LaTeX processes files in a single pass, it is often required to compile more than once to resolve all references, or possibly even run `bibtex` and/or `makeindex` in-between. You can re-run LaTeX on the same file by clicking on the Run LaTeX button at the bottom of the Typeset & View window.  You will also find buttons there to allow you to run BibTeX or MakeIndex on the current file.
 
-In addition, The `latexmk.pl` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk.pl` when compiling, you have to check the `Use Latexmk.pl`.
+In addition, The `latexmk` script does all the compiling necessary for things to be right. In order to tell TextMate to use `latexmk` when compiling, you have to check the `Use Latexmk`.
 
 <!-- NOT NECESSARY ANY MORE: See [9.2 Static Variables](?static_variables) in the TextMate manual for how to setup environment variables. -->
 
-<!-- Note further, that if you have some other complicated compiling system, using a makefile for example, you can use that instead of `latexmk.pl`. You can use the variable `TM_LATEX_OPTIONS` to set command line options for your script. -->
+<!-- Note further, that if you have some other complicated compiling system, using a makefile for example, you can use that instead of `latexmk`. You can use the variable `TM_LATEX_OPTIONS` to set command line options for your script. -->
 
-<!-- Probably not relevant any more: TODO: Update this section if a new command is created for `latexmk.pl` -->
+<!-- Probably not relevant any more: TODO: Update this section if a new command is created for `latexmk` -->
 
 ## Using a Master File
 
@@ -277,9 +277,9 @@ You can bring up the Preferences panel for LaTeX by running the Preferences comm
   
 * *Options:*  If you have specific options that you will usually want to pass to the engine you have selected you can set them here.  Note:  If you have options that are specific to a single file you are better off to use the `%!TEX TS-options = ` directive at the top of your source file.
 
-* *Use Latexmk.pl:*   TextMate includes the popular latexmmk.pl script which automatically runs latex, bibtex, and makeindex as many times as needed to resolve all cross references and citations in your file.  To use latexmk.pl just check this box.
+* *Use Latexmk:*   TextMate supports the popular latexmk script which automatically runs latex, bibtex, and makeindex as many times as needed to resolve all cross references and citations in your file.  To use latexmk just check this box.
 
-Latexmk.pl will use the engine and any options you specify in the preferences window, or any `%!TEX` directives in an individual file.
+Latexmk will use the engine and any options you specify in the preferences window, or any `%!TEX` directives in an individual file.
 
 * *Verbose TeX output:*  If you want to see the raw LaTeX log file in real time, check this box.
 
