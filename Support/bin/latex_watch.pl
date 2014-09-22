@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.1";
+our $VERSION = "3.2";
 
 #  - by Robin Houston, 2007, 2008.
 #  - modified by René Schwaiger, 2014
@@ -321,8 +321,8 @@ sub clean_up {
     debug_msg("Cleaning up");
     unlink(
         map( "$wd/$name.$_",
-            qw(aux bbl bcf blg fdb_latexmk dvi ps fls fmt ini latexmk.log log
-              out pdfsync run.xml toc) )
+            qw(aux bbl bcf blg fdb_latexmk fls fmt ini latexmk.log log maf mtc
+              mtc1 out pdfsync run.xml synctex.gz toc) )
     ) if defined($wd);
 
     $cleanup_viewer->() if defined $cleanup_viewer;
@@ -1045,3 +1045,6 @@ Changes
 
 3.1:
     - Fix support for “TeXShop” PDF viewer.
+
+3.2:
+    - Update the list of auxiliary files removed on cleanup.
