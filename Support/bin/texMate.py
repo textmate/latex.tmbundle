@@ -6,7 +6,7 @@
 #   1.  Modularize the processing of a latex run to better capture and parse errors
 #   2.  replace latexmk
 #   3.  provide a nice pushbutton interface for manually running latex,bibtex,mkindex, and viewing
-#   
+#
 # Overview:
 #    Each tex command has its own class that parses the output from that program.  Each of these classes
 #    extends the TexParser class which provides default methods:
@@ -15,7 +15,7 @@
 #       warning
 #       info
 #   The parseStream method reads each line from the input stream matches against a set of regular
-#   expressions defined in the patterns dictionary.  If one of these patterns matches then the 
+#   expressions defined in the patterns dictionary.  If one of these patterns matches then the
 #   corresponding method is called.  This method is also stored in the dictionary.  Pattern matching
 #   callback methods must each take the match object as well as the current line as a parameter.
 #
@@ -32,8 +32,8 @@
 #       the confusing mass of code that was Typeset & View has been replaced by this one
 #
 #   Future:
-# 
-#       think about replacing latexmk.pl with a simpler python version.  If only rubber worked reliably..
+#
+#       think about replacing latexmk with a simpler python version.  If only rubber worked reliably..
 #
 
 import sys
@@ -66,14 +66,14 @@ except:
             super(Popen, self).__init__()
             self.command = command
             stdin, self.stdout = os.popen4(command)
-        
+
         def wait(self):
             stat = self.stdout.close()
             return stat
 
 texMateVersion = ' $Rev$ '
 
-# 
+#
 
 TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT").replace(" ", "\\ ")
 TM_SUPPORT_PATH = os.getenv("TM_SUPPORT_PATH").replace(" ", "\\ ")
@@ -119,7 +119,7 @@ def run_biber(bibfile=None,verbose=False,texfile=None):
     warn+=w
     stat = runObj.wait()
     return stat,fatal,err,warn
-        
+
 def run_latex(ltxcmd,texfile,verbose=False):
     """Run the flavor of latex specified by ltxcmd on texfile"""
     global numRuns
@@ -142,13 +142,13 @@ def run_makeindex(fileName,idxfile=None):
         print '<p class="error">This is most likely a problem with TM_LATEX_MASTER</p>'
         sys.exit(1)
     myList = [x[2] for x in re.findall(r'([^%]|^)\\makeindex(\[([\w]+)\])?',texString) if x[2] ]
-    
+
     fileNoSuffix = getFileNameWithoutExtension(fileName)
     idxFile = fileNoSuffix+'.idx'
     myList.append(idxFile)
     fatal, error, warning = 0,0,0
     for idxFile in myList:
-        runObj = Popen('makeindex '+idxFile,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)        
+        runObj = Popen('makeindex '+idxFile,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
         ip = TexParser(runObj.stdout,True)
         f,e,w = ip.parseStream()
         fatal |= f
@@ -156,8 +156,8 @@ def run_makeindex(fileName,idxfile=None):
         warning += w
         stat = runObj.wait()
     return stat,fatal,error,warning
-    
-    
+
+
 def run_makeglossaries():
     """Run makeglossaries"""
     # call biber without extension.
@@ -170,7 +170,7 @@ def run_makeglossaries():
     warn+=w
     stat = runObj.wait()
     return stat,fatal,err,warn
-    
+
 def findViewerPath(viewer,pdfFile,fileName):
     """Use the find_app command to ensure that the viewer is installed in the system
        For apps that support pdfsync search in pdf set up the command to go to the part of
@@ -210,7 +210,7 @@ def sync_viewer(viewer,fileName,filePath):
     else:
         print 'pdfsync is not supported for this viewer'
     return stat
-    
+
 def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
     """If the viewer is textmate, then setup the proper urls and/or redirects to show the
        pdf file in the html output window.
@@ -229,7 +229,7 @@ def run_viewer(viewer,fileName,filePath,force,usePdfSync=True):
                 viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfPath
                 stat = os.system(viewCmd)
             else:
-                refreshViewer(viewer,pdfPath)            
+                refreshViewer(viewer,pdfPath)
         else:
             print '<strong class="error">', viewer, ' does not appear to be installed on your system.</strong>'
         if syncPath and usePdfSync:
@@ -282,7 +282,7 @@ def findTexPackages(fileName):
         print '<p class="error">This is most likely a problem with TM_LATEX_MASTER</p>'
         sys.exit(1)
 
-        
+
     inputre = re.compile(r'((^|\n)[^%]*?)(\\input|\\include)\{([\w /\.\-]+)\}')
     usepkgre = re.compile(r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}')
                          #r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}'
@@ -312,7 +312,7 @@ def findTexPackages(fileName):
                 incmatches.append(re.search(usepkgre,line))
                 if re.search(beginre,line):
                     beginFound = True
-#            incmatches = [re.search(usepkgre,line) for line in file(realif)] 
+#            incmatches = [re.search(usepkgre,line) for line in file(realif)]
             myList += [x.group(4) for x in incmatches if x]
         except:
             print '<p class="warning">Warning: Could not open %s to check for packages</p>' % ifile
@@ -339,7 +339,7 @@ def find_TEX_directives():
        """
     texfile = os.getenv('TM_FILEPATH')
     startDir = os.path.dirname(texfile)
-    done = False    
+    done = False
     tsDirectives = {}
     rootChain = [texfile]
     while not done:
@@ -358,7 +358,7 @@ def find_TEX_directives():
                     if newtf in rootChain:
                         print "<p class='error'> There is a loop in your '%!TEX root =' directives.</p>"
                         print "<p class='error'> chain = ",rootChain, "</p>"
-                        print "<p class='error'> exiting.</p>"                        
+                        print "<p class='error'> exiting.</p>"
                         sys.exit(-1)
                     else:
                         texfile = newtf
@@ -418,7 +418,7 @@ def usesOnePackage(testPack, allPackages):
     return False
 
 def constructEngineCommand(tsDirectives,tmPrefs,packages):
-    """This function decides which engine to run using 
+    """This function decides which engine to run using
        + %!TEX directives from the tex file
        + Preferences
        + or by detecting certain packages
@@ -455,7 +455,7 @@ def getFileNameWithoutExtension(fileName):
     else:
         fileNoSuffix = fileName
     return fileNoSuffix
-    
+
 def writeLatexmkRc(engine,eOpts):
     """Create a latexmkrc file that uses the proper engine and arguments"""
     rcFile = open("/tmp/latexmkrc",'w')
@@ -466,7 +466,7 @@ def writeLatexmkRc(engine,eOpts):
 #    rcFile.write("""$dvipdf = 'dvipdf %O "%S" "%D"';\n""")
 #    rcFile.write("""$clean_full_ext = "maf mtc mtc1 mtc2 mtc3";\n""")
     rcFile.close()
-    
+
 ###############################################################
 #                                                             #
 #                 Start of main program...                    #
@@ -482,7 +482,7 @@ if __name__ == '__main__':
     numWarns = 0
     firstRun = False
     synctex = False
-    
+
 #
 # Parse command line parameters...
 #
@@ -505,7 +505,7 @@ if __name__ == '__main__':
 
     tsDirs = find_TEX_directives()
     os.chdir(determine_ts_directory(tsDirs))
-    
+
 #
 # Set up some configuration variables
 #
@@ -516,22 +516,22 @@ if __name__ == '__main__':
     useLatexMk = tmPrefs['latexUselatexmk']
     if texCommand == 'latex' and useLatexMk:
         texCommand = 'latexmk'
-    
+
     if texCommand == 'latex' and tmPrefs['latexEngine'] == 'builtin':
         texCommand = 'builtin'
 
     fileName,filePath = findFileToTypeset(tsDirs)
     fileNoSuffix = getFileNameWithoutExtension(fileName)
-    
+
     ltxPackages = findTexPackages(fileName)
-        
+
     viewer = tmPrefs['latexViewer']
     engine = constructEngineCommand(tsDirs,tmPrefs,ltxPackages)
 
     syncTexCheck = os.system(engine + " --help |grep -q synctex")
     if syncTexCheck == 0:
         synctex = True
-    
+
     # Make sure that the bundle_support/tex directory is added
     #pcmd = os.popen("kpsewhich -progname %s --expand-var '$TEXINPUTS':%s/tex//" % (engine,bundle_support))
     #texinputs = pcmd.read()
@@ -569,10 +569,10 @@ if __name__ == '__main__':
         print '<hr>'
     #print '<h2>Running %s on %s</h2>' % (texCommand,fileName)
     print '<div id="commandOutput"><div id="preText">'
-    
+
     if fileName == fileNoSuffix:
         print "<h2 class='warning'>Warning:  Latex file has no extension.  See log for errors/warnings</h2>"
-        
+
     if synctex and 'pdfsync' in ltxPackages:
         print "<p class='warning'>Warning:  %s supports synctex but you have included pdfsync. You can safely remove \usepackage{pdfsync}</p>" % engine
 
@@ -583,9 +583,9 @@ if __name__ == '__main__':
     if texCommand == 'latexmk':
         writeLatexmkRc(engine,constructEngineOptions(tsDirs,tmPrefs))
         if engine == 'latex':
-            texCommand = TM_BUNDLE_SUPPORT + '/bin/latexmk.pl -pdfps -f -r /tmp/latexmkrc ' 
+            texCommand = 'latexmk -pdfps -f -r /tmp/latexmkrc '
         else:
-            texCommand = TM_BUNDLE_SUPPORT + '/bin/latexmk.pl -pdf -f -r /tmp/latexmkrc '
+            texCommand = 'latexmk -pdf -f -r /tmp/latexmkrc '
 #        if ' ' in fileName:
 #            texCommand += shell_quote(shell_quote(fileName))
 #        else:
@@ -600,24 +600,24 @@ if __name__ == '__main__':
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages or synctex)
         numRuns = commandParser.numRuns
-        
+
     elif texCommand == 'bibtex':
         if os.path.exists(fileNoSuffix+'.bcf'):
             texStatus, isFatal, numErrs, numWarns = run_biber(texfile=fileName)
         else:
             texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
-        
+
     elif texCommand == 'index':
         if os.path.exists(fileNoSuffix+'.glsdefs'):
             texStatus, isFatal, numErrs, numWarns = run_makeglossaries()
         else:
             texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
-    
+
     elif texCommand == 'clean':
-        texCommand = 'latexmk.pl -CA '
+        texCommand = 'latexmk -CA '
         runObj = Popen(texCommand,shell=True,stdout=PIPE,stdin=PIPE,stderr=STDOUT,close_fds=True)
         commandParser = ParseLatexMk(runObj.stdout,True,fileName)
-        
+
     elif texCommand == 'builtin':
         # the latex, bibtex, index, latex, latex sequence should cover 80% of the cases that latexmk does
         texCommand =  engine + " " + constructEngineOptions(tsDirs,tmPrefs)
@@ -630,7 +630,7 @@ if __name__ == '__main__':
             texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
-        
+
     elif texCommand =='latex':
         texCommand = engine + " " + constructEngineOptions(tsDirs,tmPrefs)
         texStatus,isFatal,numErrs,numWarns = run_latex(texCommand,fileName,verbose)
@@ -640,10 +640,10 @@ if __name__ == '__main__':
             os.system('ps2pdf ' + psFile)
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages or synctex)
-        
+
     elif texCommand == 'view':
         stat = run_viewer(viewer,fileName,filePath,tmPrefs['latexKeepLogWin'],'pdfsync' in ltxPackages or synctex)
-        
+
     elif texCommand == 'sync':
         if 'pdfsync' in ltxPackages or synctex:
             stat = sync_viewer(viewer,fileName,filePath)
@@ -651,7 +651,7 @@ if __name__ == '__main__':
             print "pdfsync.sty must be included to use this command"
             print "or use a typesetter that supports synctex (such as TexLive 2008)"
             sys.exit(206)
-            
+
     elif texCommand == 'chktex':
         texCommand += ' '
         texCommand += shell_quote(fileName)
@@ -659,8 +659,8 @@ if __name__ == '__main__':
         commandParser = ChkTeXParser(runObj.stdout,verbose,fileName)
         isFatal,numErrs,numWarns = commandParser.parseStream()
         texStatus = runObj.wait()
-    
-#    
+
+#
 # Check status of running the viewer
 #
     if stat != 0:
@@ -678,7 +678,7 @@ if __name__ == '__main__':
             else:
                 print "<p class='error'>%s exited with error code %d</p> " % (texCommand,texStatus)
 #
-# Decide what to do with the Latex & View log window   
+# Decide what to do with the Latex & View log window
 #
     if not tmPrefs['latexKeepLogWin']:
         if numErrs == 0 and viewer != 'TextMate':
@@ -688,7 +688,7 @@ if __name__ == '__main__':
     else:
         eCode = 0
 
-    print '</div></div>'  # closes <pre> and <div id="commandOutput"> 
+    print '</div></div>'  # closes <pre> and <div id="commandOutput">
 
 #
 # Output buttons at the bottom of the window
@@ -708,7 +708,7 @@ if __name__ == '__main__':
             print '<input type="button" value="Make Glossaries" onclick="runMakeIndex(); return false" />'
         else:
             print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
-        print '<input type="button" value="Clean up" onclick="runClean(); return false" />'        
+        print '<input type="button" value="Clean up" onclick="runClean(); return false" />'
         if viewer == 'TextMate':
             pdfFile = fileNoSuffix+'.pdf'
             print """<input type="button" value="view in TextMate" onclick="window.location='""" + 'file://' + quote(filePath+'/'+pdfFile) +"""'"/>"""
@@ -717,10 +717,10 @@ if __name__ == '__main__':
         print '<input type="button" value="Preferences…" onclick="runConfig(); return false" />'
         print '<p>'
         print '<input type="checkbox" id="hv_warn" name="fmtWarnings" onclick="makeFmtWarnVisible(); return false" />'
-        print '<label for="hv_warn">Show hbox,vbox Warnings </label>'     
+        print '<label for="hv_warn">Show hbox,vbox Warnings </label>'
         if useLatexMk:
             print '<input type="checkbox" id="ltxmk_warn" name="ltxmkWarnings" onclick="makeLatexmkVisible(); return false" />'
-            print '<label for="ltxmk_warn">Show Latexmk.pl Messages </label>'
+            print '<label for="ltxmk_warn">Show Latexmk Messages </label>'
         print '</p>'
         print '</div>'
 

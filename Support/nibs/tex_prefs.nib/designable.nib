@@ -360,7 +360,7 @@
 							<object class="NSButtonCell" key="NSCell" id="800711848">
 								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Use Latexmk.pl</string>
+								<string key="NSContents">Use Latexmk</string>
 								<reference key="NSSupport" ref="785281613"/>
 								<reference key="NSControlView" ref="650807153"/>
 								<int key="NSButtonFlags">1211912448</int>
@@ -1155,7 +1155,7 @@
 					<object class="IBToolTipAttribute" key="NS.object.0">
 						<string key="name">ToolTip</string>
 						<reference key="object" ref="650807153"/>
-						<string key="toolTip">Latexmk.pl automatically runs LaTeX BibTeX and Makeindex as needed</string>
+						<string key="toolTip">Latexmk automatically runs LaTeX BibTeX and Makeindex as needed</string>
 					</object>
 				</object>
 				<string key="156.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
