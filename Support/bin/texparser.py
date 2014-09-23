@@ -33,13 +33,13 @@ class TexParser(object):
 
     def getRewrappedLine(self):
         """Sometimes TeX breaks up lines with hard linebreaks.  This is annoying.
-           Even more annoying is that it sometime does not break line, for two distinct 
+           Even more annoying is that it sometime does not break line, for two distinct
            warnings. This function attempts to return a single statement."""
         statement = ""
         while True:
             line = self.input_stream.readline()
             if not line:
-                if statement: 
+                if statement:
                     return statement
                 else:
                     return ""
@@ -47,7 +47,7 @@ class TexParser(object):
             if len(line) != 80: # including line break
                 break
         return statement+"\n"
-    
+
     def parseStream(self):
         """Process the input_stream one line at a time, matching against
            each pattern in the patterns dictionary.  If a pattern matches
@@ -68,7 +68,7 @@ class TexParser(object):
                     break
             if self.verbose and not foundMatch:
                 print line
-            
+
             line = self.getRewrappedLine()
         if self.done == False:
             self.badRun()
@@ -84,7 +84,7 @@ class TexParser(object):
         print line
         print '</p>'
         self.numErrs += 1
-        
+
     def warning(self,m,line):
         print '<p class="warning">'
         print line
@@ -95,7 +95,7 @@ class TexParser(object):
         print '<p class="fmtWarning">'
         print line
         print '</p>'
-        
+
     def fatal(self,m,line):
         print '<p class="error">'
         print line
@@ -105,12 +105,12 @@ class TexParser(object):
     def badRun(self):
         """docstring for finishRun"""
         pass
-        
+
 class BibTexParser(TexParser):
     """Parse and format Error Messages from bibtex"""
     def __init__(self, btex, verbose):
         super(BibTexParser, self).__init__(btex,verbose)
-        self.patterns += [ 
+        self.patterns += [
             (re.compile("Warning--I didn't find a database entry") , self.warning),
             (re.compile(r'I found no \\\w+ command') , self.error),
             (re.compile(r"I couldn't open style file"), self.error),
@@ -122,7 +122,7 @@ class BibTexParser(TexParser):
             (re.compile('Database') , self.info),
             (re.compile('---') , self.finishRun)
         ]
-    
+
     def finishRun(self,m,line):
         self.done = True
         print '</div>'
@@ -131,15 +131,15 @@ class BiberParser(TexParser):
     """Parse and format Error Messages from biber"""
     def __init__(self, btex, verbose):
         super(BiberParser, self).__init__(btex,verbose)
-        self.patterns += [ 
+        self.patterns += [
             (re.compile('^.*WARN') , self.warning),
             (re.compile('^.*ERROR') , self.error),
             (re.compile('^.*FATAL'), self.fatal),
             (re.compile('^.*Output to (.*)$') , self.finishRun),
         ]
-        
+
     def warning(self,m,line):
-        """Using one print command works more reliably 
+        """Using one print command works more reliably
            than using several lines"""
         print '<p class="warning">' + line + '</p>'
         self.numWarns += 1
@@ -164,15 +164,15 @@ class MakeGlossariesParser(TexParser):
             (re.compile('Cannot locate xindy module') , self.warning),
             (re.compile('ERROR'),self.error),
             (re.compile('Warning'),self.warning),
-            (re.compile('^\*\*\*'),self.info),      
+            (re.compile('^\*\*\*'),self.info),
         ]
         self.types = dict()
-        
+
     def beginRun(self,m,line):
         version = m.group(1)
         print "<h2>Make Glossaries</h2>"
-        print '<p class="info" >Version: <i>'+version+ "</i></p>" 
-    
+        print '<p class="info" >Version: <i>'+version+ "</i></p>"
+
     def addType(self,m,line):
         thisType = m.group(1)
         files = m.group(2)
@@ -180,13 +180,13 @@ class MakeGlossariesParser(TexParser):
         for file in filesSet:
             self.types[file] = thisType
         print '<p class="info"> Add Glossary Type <strong>' + thisType +'</strong> <i>(Files: ' + files + ')</i></p>'
-        
-    
+
+
     def runXindy(self,m,line):
         lang = m.group(1)
         file = m.group(2)
         thisType = self.types[file]
-        
+
         print '<h3>Run xindy for glossary type '+ thisType +'</h3>'
         print '<p class="info">Language: '+ lang +'</p>'
 
@@ -194,15 +194,15 @@ class MakeGlossariesParser(TexParser):
       mkFile = m.group(1)
       thisType = self.types[mkFile[-3:]]
       print '<p class="info">  Finished glossary for type <strong>'+ thisType+ '</strong>. Output is in <a href="' + make_link(os.path.join(os.getcwd(),mkFile),'1') +  '">' + mkFile + '</a></p>'
-        
+
     def warning(self,m,line):
-        """Using one print command works more reliably 
+        """Using one print command works more reliably
            than using several lines"""
         print '<p class="warning">' + line + '</p>'
         self.numWarns += 1
-    
+
     def error(self,m,line):
-        """Using one print command works more reliably 
+        """Using one print command works more reliably
            than using several lines"""
         print '<p class="error">' + line + '</p>'
         self.numWarns += 1
@@ -221,21 +221,21 @@ class LaTexParser(TexParser):
             (re.compile('^Output written') , self.info),
             (re.compile('LaTeX Warning:.*?input line (\d+)(\.|$)') , self.handleWarning),
             (re.compile('LaTeX Warning:.*') , self.warning),
-            (re.compile('^([^:]*):(\d+):\s+(pdfTeX warning.*)') , self.handleFileLineWarning),            
-            (re.compile('.*pdfTeX warning.*') , self.warning),            
-            (re.compile('LaTeX Font Warning:.*') , self.warning),            
+            (re.compile('^([^:]*):(\d+):\s+(pdfTeX warning.*)') , self.handleFileLineWarning),
+            (re.compile('.*pdfTeX warning.*') , self.warning),
+            (re.compile('LaTeX Font Warning:.*') , self.warning),
             (re.compile('Overfull.*wide') , self.warn2),
-            (re.compile('Underfull.*badness') , self.warn2),                        
+            (re.compile('Underfull.*badness') , self.warn2),
             (re.compile('^([\.\/\w\x7f-\xff\- ]+(?:\.sty|\.tex|\.'+self.suffix+')):(\d+):\s+(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): LaTeX Error:(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): (Emergency stop)') , self.handleError),
-            (re.compile('Runaway argument') , self.pdfLatexError),            
+            (re.compile('Runaway argument') , self.pdfLatexError),
             (re.compile('Transcript written on (.*)\.$') , self.finishRun),
             (re.compile('^Error: pdflatex') , self.pdfLatexError),
             (re.compile('\!.*') , self.handleOldStyleErrors),
             (re.compile('^\s+==>') , self.fatal)
         ]
-        self.blankLine = re.compile(r'^\s*$')        
+        self.blankLine = re.compile(r'^\s*$')
 
     def detectNewFile(self,m,line):
         self.currentFile = m.group(1).rstrip()
@@ -248,24 +248,24 @@ class LaTexParser(TexParser):
     def handleWarning(self,m,line):
         print '<p class="warning"><a href="' + make_link(os.path.join(os.getcwd(),self.currentFile), m.group(1)) + '">'+line+"</a></p>"
         self.numWarns += 1
-    
+
     def handleFileLineWarning(self,m,line):
         """Display warning. match m should contain file, line, warning message"""
         print '<p class="warning"><a href="' + make_link(os.path.join(os.getcwd(), m.group(1)),m.group(2)) + '">' + m.group(3) + "</a></p>"
         self.numWarns += 1
-    
+
     def handleError(self,m,line):
         print '<p class="error">'
         print 'Latex Error: <a  href="' + make_link(os.path.join(os.getcwd(),m.group(1)),m.group(2)) +  '">' + m.group(1)+":"+m.group(2) + '</a> '+m.group(3)+'</p>'
         self.numErrs += 1
-        
+
     def finishRun(self,m,line):
         logFile = m.group(1).strip('"')
         print '<p>  Complete transcript is in '
         print '<a href="' + make_link(os.path.join(os.getcwd(),logFile),'1') +  '">' + logFile + '</a>'
         print '</p>'
         self.done = True
-        
+
     def handleOldStyleErrors(self,m,line):
         if re.search('[Ee]rror', line):
             print '<p class="error">'
@@ -277,14 +277,14 @@ class LaTexParser(TexParser):
             print line
             print '</p>'
             self.numWarns += 1
-        
+
     def pdfLatexError(self,m,line):
         """docstring for pdfLatexError"""
         self.numErrs += 1
         print '<p class="error">'
         print line
         line = self.input_stream.readline()
-        if line and re.match('^ ==> Fatal error occurred', line):  
+        if line and re.match('^ ==> Fatal error occurred', line):
             print line.rstrip("\n")
             print '</p>'
             self.isFatal = True
@@ -293,13 +293,13 @@ class LaTexParser(TexParser):
                 print '<pre>    '+ line.rstrip("\n") + '</pre>'
             print '</p>'
         sys.stdout.flush()
-    
+
     def badRun(self):
         """docstring for finishRun"""
         print '<p class="error">A fatal error occured, log file is in '
         logFile = os.path.basename(os.getenv('TM_FILEPATH'))
         logFile = logFile.replace(self.suffix,'log')
-        print '<a href="' + make_link(os.path.join(os.getcwd(),logFile),'1') +  '">' + logFile + '</a>'        
+        print '<a href="' + make_link(os.path.join(os.getcwd(),logFile),'1') +  '">' + logFile + '</a>'
         print '</p>'
 
 class ParseLatexMk(TexParser):
@@ -317,7 +317,7 @@ class ParseLatexMk(TexParser):
             (re.compile('Run number') , self.newRun)
         ]
         self.numRuns = 0
-    
+
     def startBibtex(self,m,line):
         print '<div class="bibtex">'
         print '<h3>' + line[:-1] + '</h3>'
@@ -392,5 +392,3 @@ if __name__ == '__main__':
     lp = LaTexParser(stream,False,"test.tex")
     lp = BiberParser(stream, False)
     f,e,w = lp.parseStream()
-    
-
