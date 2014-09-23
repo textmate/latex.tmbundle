@@ -230,7 +230,10 @@ class LaTexParser(TexParser):
             (re.compile('([^:]*):(\d+): LaTeX Error:(.*)') , self.handleError),
             (re.compile('([^:]*):(\d+): (Emergency stop)') , self.handleError),
             (re.compile('Runaway argument') , self.pdfLatexError),
-            (re.compile('Transcript written on (.*)\.$') , self.finishRun),
+            # We need the (.*) at the beginning of the regular expression
+            # since in some edge cases cases the output about the transcript
+            # might actually not start at the beginning of the line.
+            (re.compile('(.*)Transcript written on (.*)\.$') , self.finishRun),
             (re.compile('^Error: pdflatex') , self.pdfLatexError),
             (re.compile('\!.*') , self.handleOldStyleErrors),
             (re.compile('^\s+==>') , self.fatal)
