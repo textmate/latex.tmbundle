@@ -29,7 +29,7 @@ module LaTeX
     end
     opts
   end
-  
+
   # Returns the root file for the given filepath
   # If no master exists, return the given filepath
   # Stop searching after 10 iterations, in case of loop
@@ -47,16 +47,16 @@ module LaTeX
     end
     master.to_s
   end
-  # Implements general methods that give information about the LaTeX document. 
+  # Implements general methods that give information about the LaTeX document.
   # Most of these commands recurse into \included files.
   class <<self
-    # Returns an array of the label names. If you want actual Label objects, 
+    # Returns an array of the label names. If you want actual Label objects,
     # then use FileScanner.label_scan
     def get_labels
       mFile = LaTeX.master(ENV["TM_LATEX_MASTER"] || ENV["TM_FILEPATH"])
       return FileScanner.label_scan(mFile).map{|i| i.label}.sort
     end
-    # Returns an array of the citation objects. If you only want the citekeys, 
+    # Returns an array of the citation objects. If you only want the citekeys,
     # use LaTeX.get_citekeys
     def get_citations
       mFile = LaTeX.master(ENV["TM_LATEX_MASTER"] || ENV["TM_FILEPATH"])
@@ -88,7 +88,7 @@ module LaTeX
     # +relative+ determines an explicit path that should be included in the
     # paths to look at when searching for the file. This will typically be the
     # path to the root document.
-    
+
     # TODO: The following method should probably be simplified dramatically
     def find_file(filename, extension, relative)
       filename.gsub!(/"/,"")
@@ -211,7 +211,7 @@ module LaTeX
                scanner.recursive_scan
              end
            end
-           extractors.each_pair { |regexp,block| 
+           extractors.each_pair { |regexp,block|
              line.scan(regexp).each do |m|
                block.call(root,index,m,text)
              end
@@ -225,10 +225,10 @@ module LaTeX
       # LaTeX.set_paths
       labelsList = Array.new
       scanner = FileScanner.new(root)
-      scanner.extractors[/.*?\[.*label=(.*?)\,.*\]/] = Proc.new do |filename, line, groups, text| 
+      scanner.extractors[/.*?\[.*label=(.*?)\,.*\]/] = Proc.new do |filename, line, groups, text|
         labelsList << Label.new(:file => filename, :line => line, :label => groups[0], :contents => text)
       end
-      scanner.extractors[/^[^%]*\\label\{([^\}]*)\}/] = Proc.new do |filename, line, groups, text| 
+      scanner.extractors[/^[^%]*\\label\{([^\}]*)\}/] = Proc.new do |filename, line, groups, text|
         labelsList << Label.new(:file => filename, :line => line, :label => groups[0], :contents => text)
       end
       scanner.recursive_scan
