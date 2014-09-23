@@ -1,10 +1,10 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.2";
+our $VERSION = "3.3";
 
 #  - by Robin Houston, 2007, 2008.
-#  - modified by René Schwaiger, 2014
+#  - by René Schwaiger, 2014
 
 # Usage: latex_watch.pl [ options ] file.tex
 #
@@ -66,15 +66,16 @@ elsif ($prefs{engine} eq "lualatex"
     || $prefs{engine} eq "xelatex" )
 {
     $mode = "PDF";
+    push( @tex, qw(-pdf) );
 
     if ( $prefs{engine} eq "pdflatex" ) {
-        push( @tex, qw(-pdf) );
+        push( @tex, qw(-pdflatex='pdflatex -synctex=1') );
     }
     elsif ( $prefs{engine} eq "lualatex" ) {
-        push( @tex, qw(-lualatex) );
+        push( @tex, qw(-pdflatex='lualatex -synctex=1') );
     }
     else {
-        push( @tex, qw(-xelatex) );
+        push( @tex, qw(-pdflatex='xelatex -synctex=1') );
     }
 
     if ( $prefs{viewer} eq 'TextMate' ) {
@@ -1048,3 +1049,6 @@ Changes
 
 3.2:
     - Update the list of auxiliary files removed on cleanup.
+
+3.3:
+    - (Re)add support for SyncTeX.
