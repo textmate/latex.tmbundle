@@ -240,8 +240,10 @@ module LaTeX
       citationsList = Array.new
       scanner = FileScanner.new(root)
       bibitem_regexp = /^[^%]*\\bibitem(?:\[[^\]]*\])?\{([^\}]*)\}(.*)/
-      biblio_regexp = /^[^%]*\\bibliography\s*\{([^\}]*)\}/
-      addbib_regexp = /^[^%]*\\addbibresource\s*\{([^\}]*)\}/
+      # We ignore bibliography files located on Windows drives by not matching
+      # any path which starts with a single letter followed by a “:” e.g.: “c:”
+      biblio_regexp = /^[^%]*\\bibliography\s*\{(?![a-zA-Z]:)([^\}]*)\}/
+      addbib_regexp = /^[^%]*\\addbibresource\s*\{(?![a-zA-Z]:)([^\}]*)\}/
       scanner.extractors[bibitem_regexp] = Proc.new do |filename, line, groups, text|
       citationsList << Citation.new( "citekey" => groups[0], "cite_data" => groups[1])
       end
