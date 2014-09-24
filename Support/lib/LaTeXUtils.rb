@@ -101,9 +101,9 @@ module LaTeX
       @@paths[extension] ||= ([`#{texpath}kpsewhich -show-path=#{extension}`.chomp.split(/:!!|:/)].flatten.map{|i| i.sub(/\/*$/,'/')}).unshift(relative).unshift("")
       @@paths[extension].each do |path|
         testpath = File.expand_path(File.join(path,filename + "." + extension))
-        return testpath if File.exist?(testpath)
+        return testpath if File.exist?(testpath) && !File.directory?(testpath)
         testpath = File.expand_path(File.join(path,filename))
-        return testpath if File.exist?(testpath)
+        return testpath if File.exist?(testpath) && !File.directory?(testpath)
       end
       return nil
     end
