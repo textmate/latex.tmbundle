@@ -21,8 +21,6 @@ TMTEXMAIN=`kpsewhich --expand-path '$TEXMFMAIN'`
 export TMTEXMAIN
 
 # May need to add more lines to accomodate different tex distros.
-[ -z $TM_LATEX_DOCBASE ] &amp;&amp; TM_LATEX_DOCBASE=`kpsewhich --expand-path '$TEXMFTE'`   # teTeX
-[ -z $TM_LATEX_DOCBASE ] &amp;&amp; TM_LATEX_DOCBASE=`kpsewhich --expand-path '$TEXMFTL'`   # gwTeX 
 [ -z $TM_LATEX_DOCBASE ] &amp;&amp; TM_LATEX_DOCBASE=`kpsewhich --expand-path '$TEXMFDOCDIR'`  # TeXLive
 export TM_LATEX_DOCBASE
 

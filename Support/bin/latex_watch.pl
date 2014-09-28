@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.3";
+our $VERSION = "3.4";
 
 #  - by Robin Houston, 2007, 2008.
 #  - by René Schwaiger, 2014
@@ -185,11 +185,8 @@ sub get_prefs {
 
 sub init_environment {
 
-    # Add MacTeX and teTeX paths (in that order)
+    # Add MacTeX
     $ENV{PATH} .= ":/usr/texbin";
-    $ENV{PATH} .=
-      ":/usr/local/teTeX/bin/" . `/usr/local/teTeX/bin/highesttexbin.pl`
-      if -x "/usr/local/teTeX/bin/highesttexbin.pl";
 
     # If TM_SUPPORT_PATH or TM_BUNDLE_SUPPORT are undefined, make a plausible
     # guess. (Useful for running this script from outside TextMate.)
@@ -911,7 +908,7 @@ FUTURE:
    - If TM_LATEX_VIEWER unset, sniff available viewers and pick one.
      (If it's set to "Preview", warn that Preview sucks and look for another.)
    - Nicer error output would be a really nice feature
-   - Remove support for outdated software (teTeX, TeXniscope)
+   - Remove support for outdated software (TeXniscope)
 
 Changes
 1.1:
@@ -1052,3 +1049,6 @@ Changes
 
 3.3:
     - (Re)add support for SyncTeX.
+
+3.4:
+    - Remove support for teTeX
