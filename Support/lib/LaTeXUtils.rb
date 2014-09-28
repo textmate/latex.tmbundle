@@ -3,8 +3,8 @@ require 'pathname'
 # The LaTeX module contains a lot of methods useful when dealing with LaTeX
 # files.
 #
-# Author:: Charilaos Skiadas
-# Date:: 12/21/2006
+# Authors:: Charilaos Skiadas, René Schwaiger
+# Date::    2014-09-28
 module LaTeX
   # Simple conversion of bib field names to a simpler form
   def e_var(name)
@@ -71,11 +71,7 @@ module LaTeX
       # First try directly
       return "" if ENV['PATH'].split(':').find { |dir| File.exists? File.join(dir, 'kpsewhich') }
       # Then try some specific paths
-      locs = ["/usr/texbin/",
-              "/usr/local/teTeX/bin/powerpc-apple-darwin-current/",
-              "/usr/local/teTeX/bin/i386-darwin/",
-              "/usr/local/teTeX/bin/i386-apple-darwin-current/",
-              "/opt/local/bin/"]
+      locs = ["/usr/texbin/", "/opt/local/bin/"]
       locs.each do |loc|
         return loc if File.exist?(loc+"kpsewhich")
       end
