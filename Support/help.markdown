@@ -42,7 +42,7 @@ This allows, among other things, creating folder specific variables for scratch 
 
 When the `TM_LATEX_MASTER` variable is set, then all LaTeX commands use the master file pointed to by this variable as their basis. In particular, the `Typeset & View` and `Watch document` commands will typeset the master file, instead of whatever the currently active file is. So you can freely edit whatever chapter you are working on, and when you want to see the result you just press `⌘R` without having to worry about switching to the master file. The error window that may show up is arranged so that clicking any of the errors opens up the corresponding `\include`'d file where the error occurred, and places the caret at the appropriate location.
 
-There is a way to arrange it so that the individual chapters can be compiled by themselves, and still work fine when included via the `\include` command. If that is something that might interest you, then [this thread from the mailing list][included-chapters] might interest you. 
+There is a way to arrange it so that the individual chapters can be compiled by themselves, and still work fine when included via the `\include` command. If that is something that might interest you, then [this thread from the mailing list][included-chapters] might interest you.
 
 TODO: Mention that `TM_LATEX_MASTER` can be relative to the project directory (or directory of current file) -- this way one can set it in the global preferences if one always use the same name of the master file.
 
@@ -246,7 +246,7 @@ In order for all this to work, make sure that the language for the document is s
 
 ### Drag and Drop
 
-There are two key drag and drop commands in LaTeX: 
+There are two key drag and drop commands in LaTeX:
 
 * You can drag an image file in to the document and have it surrounded by a complete figure environment. Using the modifier key `⌥` while dragging inserts the image inside a `center` environment. Using `⇧` instead inserts only the `\includegraphics` line.
 * You can drag in another .tex file to have that file added to your document with an `\include` command.
@@ -274,7 +274,7 @@ You can bring up the Preferences panel for LaTeX by running the Preferences comm
 * *Default Engine:*  You can choose a typesetting engine from the dropdown list.  Note:  This engine is the fallback engine.  The LaTeX `Typeset & View` command can override the default in two ways:
   + If you use a `%!TEX TS-program = ` directive in your source file. (See below)
   + If you include packages that indicate you should use plain LaTeX, or xeLaTeX
-  
+
 * *Options:*  If you have specific options that you will usually want to pass to the engine you have selected you can set them here.  Note:  If you have options that are specific to a single file you are better off to use the `%!TEX TS-options = ` directive at the top of your source file.
 
 * *Use Latexmk:*   TextMate supports the popular latexmk script which automatically runs latex, bibtex, and makeindex as many times as needed to resolve all cross references and citations in your file.  To use latexmk just check this box.
@@ -304,6 +304,6 @@ The best way to set local options is to use the `%!TEX` directives.  They are as
 
 # Credits
 
-There were at least two or possibly three versions of a LaTeX bundle floating around in the early days of TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and Andrew Ellis At some point, January 2005, Eric Hsu pulled together the threads into one package. From then on there have been contributions by Sune Foldager, Brad Miller, Allan Odgaard, Jeroen van der Ham, Robin Houston and Haris Skiadas. 
+There were at least two or possibly three versions of a LaTeX bundle floating around in the early days of TextMate by (I think): Normand Mousseau, Gaetan Le Guelvouit and Andrew Ellis At some point, January 2005, Eric Hsu pulled together the threads into one package. From then on there have been contributions by Sune Foldager, Brad Miller, Allan Odgaard, Jeroen van der Ham, Robin Houston and Haris Skiadas.
 
 Happy LaTeXing!
