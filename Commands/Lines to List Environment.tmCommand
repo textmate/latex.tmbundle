@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python
+# coding=utf-8
+
+# -- Imports ------------------------------------------------------------------
+
+from os import environ
+from subprocess import call
+from sys import path, stdin, stdout
+
+path.append(environ['TM_BUNDLE_SUPPORT'] + '/bin')
+from itemize import *
+
+# -- Main ---------------------------------------------------------------------
+
+stdout.write(itemize(text=stdin.read(), 
+                     use_spaces_to_indent=environ['TM_SOFT_TABS'] == 'YES',
+                     number_of_spaces_for_indent=int(environ['TM_TAB_SIZE'])))</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>^L</string>
+	<key>name</key>
+	<string>Itemize Lines in Selection</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
+	<key>scope</key>
+	<string>text.tex.latex</string>
+	<key>uuid</key>
+	<string>1108B460-CCDD-4D4A-BFAC-D91B2E1BC2FC</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>

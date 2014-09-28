@@ -14,6 +14,7 @@
 		<string>52EFF5E0-892D-4E86-88EF-BBB0F984C3BB</string>
 		<string>B585D867-EF22-4396-AD50-8742B9B8FC84</string>
 		<string>C99FA1E9-E535-4CB2-BC31-7157318B67B5</string>
+		<string>A7B97D14-AE83-11D9-8B45-000D93B6E43C</string>
 	</array>
 	<key>description</key>
 	<string>Support for the &lt;a href="http://www.latex-project.org/"&gt;LaTeX&lt;/a&gt; typesetting system, the de facto standard for scientific papers.</string>
@@ -64,7 +65,7 @@
 			<dict>
 				<key>items</key>
 				<array>
-					<string>A7B97D14-AE83-11D9-8B45-000D93B6E43C</string>
+					<string>1108B460-CCDD-4D4A-BFAC-D91B2E1BC2FC</string>
 					<string>948DDCF2-0EB5-46A3-B970-09597D268BAF</string>
 					<string>------------------------------------</string>
 					<string>BC8B98E2-5F16-11D9-B9C3-000D93589AF6</string>
@@ -100,7 +101,7 @@
 			<dict>
 				<key>items</key>
 				<array>
-                                   <string>2E6F374A-C713-42BF-A7E9-C8728201A15A</string>
+					<string>2E6F374A-C713-42BF-A7E9-C8728201A15A</string>
 					<string>C4288DF5-A4DA-4F35-9AB9-4062EE5B7E61</string>
 					<string>0F8A8F61-0AE1-44F8-B4FA-01D4F877E9EE</string>
 					<string>FD59489B-7437-48DD-A4EC-9AF3AB2FCF19</string>
@@ -316,7 +317,6 @@
 		<string>76987ABA-D716-4F75-ADC1-5FB767FC460E</string>
 		<string>1475649F-2577-4BF0-A392-DD8D4B64DA91</string>
 		<string>BC8B98E2-5F16-11D9-B9C3-000D93589AF6</string>
-		<string>A7B97D14-AE83-11D9-8B45-000D93B6E43C</string>
 		<string>7D3548FA-AE80-11D9-8B45-000D93B6E43C</string>
 		<string>C4288DF5-A4DA-4F35-9AB9-4062EE5B7E61</string>
 		<string>84216BD6-F6EB-4325-9485-1665E7364102</string>
