@@ -181,10 +181,6 @@ def findViewerPath(viewer,pdfFile,fileName):
     lineNumber = os.getenv('TM_SELECTION').split(':')[0]
     if viewer == 'Skim' and vp:
         syncPath = vp + '/Contents/SharedSupport/displayline ' + lineNumber + ' ' + pdfFile + ' ' + shell_quote(os.getenv('TM_FILEPATH'))
-    elif viewer == 'TeXniscope' and vp:
-        syncPath = vp + '/Contents/Resources/forward-search.sh ' + lineNumber + ' ' + shell_quote(os.getenv('TM_FILEPATH')) + ' ' + pdfFile
-    elif viewer == 'PDFView' and vp:
-        syncPath = vp + '/Contents/MacOS/gotoline.sh ' + lineNumber + ' ' + pdfFile
     if DEBUG:
         print "VP = ", vp
         print "syncPath = ", syncPath
@@ -195,8 +191,6 @@ def refreshViewer(viewer,pdfPath):
     print '<p class="info">Telling %s to Refresh %s...</p>'%(viewer,pdfPath)
     if viewer == 'Skim':
         os.system("/usr/bin/osascript -e " + """'tell application "Skim" to revert (documents whose path is %s)' """%pdfPath)
-    elif viewer == 'TeXniscope':
-        os.system("/usr/bin/osascript -e " + """'tell application "TeXniscope" to tell documents whose path is %s to refresh' """%pdfPath)
     elif viewer == 'TeXShop':
         os.system("/usr/bin/osascript -e " + """'tell application "TeXShop" to tell documents whose path is %s to refreshpdf' """%pdfPath)
 

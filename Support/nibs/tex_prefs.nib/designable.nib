@@ -519,17 +519,6 @@
 											<string key="NSAction">_popUpItemAction:</string>
 											<reference key="NSTarget" ref="1005174923"/>
 										</object>
-										<object class="NSMenuItem" id="801509244">
-											<reference key="NSMenu" ref="160069704"/>
-											<string key="NSTitle">TeXniscope</string>
-											<string key="NSKeyEquiv"/>
-											<int key="NSKeyEquivModMask">1048576</int>
-											<int key="NSMnemonicLoc">2147483647</int>
-											<reference key="NSOnImage" ref="835911140"/>
-											<reference key="NSMixedImage" ref="697471517"/>
-											<string key="NSAction">_popUpItemAction:</string>
-											<reference key="NSTarget" ref="1005174923"/>
-										</object>
 										<object class="NSMenuItem" id="982720857">
 											<reference key="NSMenu" ref="160069704"/>
 											<string key="NSTitle">Preview</string>
@@ -544,17 +533,6 @@
 										<object class="NSMenuItem" id="637926891">
 											<reference key="NSMenu" ref="160069704"/>
 											<string key="NSTitle">TeXShop</string>
-											<string key="NSKeyEquiv"/>
-											<int key="NSKeyEquivModMask">1048576</int>
-											<int key="NSMnemonicLoc">2147483647</int>
-											<reference key="NSOnImage" ref="835911140"/>
-											<reference key="NSMixedImage" ref="697471517"/>
-											<string key="NSAction">_popUpItemAction:</string>
-											<reference key="NSTarget" ref="1005174923"/>
-										</object>
-										<object class="NSMenuItem" id="104040725">
-											<reference key="NSMenu" ref="160069704"/>
-											<string key="NSTitle">PDFView</string>
 											<string key="NSKeyEquiv"/>
 											<int key="NSKeyEquivModMask">1048576</int>
 											<int key="NSMnemonicLoc">2147483647</int>
@@ -1027,22 +1005,15 @@
 						<reference key="object" ref="160069704"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="637926891"/>
-							<reference ref="104040725"/>
 							<reference ref="982720857"/>
 							<reference ref="415619848"/>
 							<reference ref="400094208"/>
-							<reference ref="801509244"/>
 						</array>
 						<reference key="parent" ref="1005174923"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">211</int>
 						<reference key="object" ref="637926891"/>
-						<reference key="parent" ref="160069704"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">188</int>
-						<reference key="object" ref="104040725"/>
 						<reference key="parent" ref="160069704"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -1058,11 +1029,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">108</int>
 						<reference key="object" ref="400094208"/>
-						<reference key="parent" ref="160069704"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">107</int>
-						<reference key="object" ref="801509244"/>
 						<reference key="parent" ref="160069704"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -1138,7 +1104,6 @@
 				<string key="100.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="105.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="106.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="107.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="108.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="109.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="110.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1170,7 +1135,6 @@
 					</object>
 				</object>
 				<string key="185.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="188.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="193.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="195.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="197.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
