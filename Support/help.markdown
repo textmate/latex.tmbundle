@@ -90,14 +90,13 @@ To avoid this open the preferences for Adobe Reader and go to the Internet categ
 
 ## External Previewers
 
-You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are three standard options, Apple's own Preview,  [TeXniscope][], or [Skim][].  Skim is a very nice viewer that is under active development.
+You can also setup an external previewer for showing the PDF output. Focus will then switch to that previewer. Any program that opens PDF files will do, but there are two standard options, Apple's own Preview, and [Skim][].  Skim is a very nice viewer that is under active development.
 
-We recommend you use either Skim, if you are only going to be dealing with pdf files, or TeXniscope if you will also be dealing with dvi files. They both support pdfsync, though TeXniscope is not a universal binary as of this writing.
+We recommend you use Skim, which supports pdfsync.
 
 To use one of these previewers, you must set the Viewer preference in the Preferences panel.
 
 [texshop]: http://www.uoregon.edu/~koch/texshop/
-[texniscope]: http://www.ing.unipi.it/~d9615/homepage/texniscope.html
 [skim]: http://skim-app.sourceforge.net/
 
 ## Preview Options
@@ -110,11 +109,11 @@ Preview options are somewhat complicated depending on the viewer you choose.  Th
 2. If you use an external viewer then the `Typeset & View` window will automatically close if there are no errors or warnings, unless the “keep log window open” preference is checked.
 
 ## Refreshing the Viewer
-The `Typeset & View (PDF)` command uses a short Applescript to tell Skim, TeXniscope, or the TeXShop viewers to reload the pdf file once ALL the typesetting is complete.  This is more efficient than enabling the auto-refresh feature in the viewers because it often takes more than one run of LaTeX before the document is really ready to view.  In that case most viewers would try to reload the pdf multiple times.
+The `Typeset & View (PDF)` command uses a short Applescript to tell Skim, or the TeXShop viewer to reload the pdf file once ALL the typesetting is complete.  This is more efficient than enabling the auto-refresh feature in the viewers because it often takes more than one run of LaTeX before the document is really ready to view.  In that case most viewers would try to reload the pdf multiple times.
 
 # PDFSync
 
-The [pdfsync][] package allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of TeXniscope or Skim.
+The [pdfsync][] package allows you to easily hop back and forth between the document and generated PDF version, granted you use an external previewer which supports pdfsync. In the following we will assume the use of Skim.
 
 [pdfsync]: http://itexmac.sourceforge.net/pdfsync.html
 
@@ -128,21 +127,11 @@ You need to perform the following steps to enable synchronization:
 
  2. Set your viewer to `Skim`. This enables you to use the `Show in PDFViewer (pdfsync)` command bound to `⌃⌥⌘O` by default.
 
- 3. In TeXniscope go to the preferences. There, set the following two options:
+ 3. In `Skim` go to the preferences. There, choose the Preset `TextMate` under the option `Sync`.
 
-        Editor: mate
-        Editor options: -l %line "%file"
-In Skim these are already set by default.
+    This assumes that you have installed `mate` (see Help → mate and rmate… in TextMate). After this is done, shift-command-clicking (⇧⌘) at a location in the PDF file (as shown in Skim) should take you to the corresponding location in TextMate.
 
-    This assumes that you have installed `mate` (see Help → Terminal Usage… in TextMate). You may want to provide a full path to `mate` if it is not found by TeXniscope. After this is done, command-clicking (⌘) at a location in the PDF file (as shown in TeXniscope/Skim) should take you to the corresponding location in TextMate.
-
-**Note 1:** PDFSync does not work when your filename contains a space.
-
-**Note 2:** The granularity of the synchronization data is generally “per paragraph”, so going from TextMate to TeXniscope or back will generally locate just the paragraph nearest your desired position.
-
-**Note 3:** Problems have been reported with the universal build of TeXniscope. So Intel users may want to run TeXniscope under Rosetta, or use Skim instead.
-
-**Note 4:** In Skim, you need to shift-command-click, instead of command-clicking, to be taken back to TextMate.
+**Note:** The granularity of the synchronization data is generally “per paragraph”, so going from TextMate to Skim or back will generally locate just the paragraph nearest your desired position.
 
 # Working With LaTeX
 

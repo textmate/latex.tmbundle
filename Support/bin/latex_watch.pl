@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.4";
+our $VERSION = "3.5";
 
 #  - by Robin Houston, 2007, 2008.
 #  - by René Schwaiger, 2014
@@ -662,10 +662,6 @@ sub select_pdf_viewer {
         $ping_viewer    = \&ping_pdf_viewer_texshop;
         $cleanup_viewer = \&cleanup_pdf_viewer_texshop;
     }
-    elsif ( $viewer eq "TeXniscope" ) {
-        $start_viewer   = \&start_pdf_viewer_texniscope;
-        $refresh_viewer = \&refresh_pdf_viewer_texniscope;
-    }
     elsif ( $viewer eq "Skim" ) {
         $refresh_viewer = \&refresh_pdf_viewer_skim;
     }
@@ -716,26 +712,6 @@ sub cleanup_pdf_viewer_texshop {
           . quote_applescript($pdf_viewer_app)
           . qq( to close document )
           . quote_applescript("$compiled_document_name") );
-}
-
-# TeXniscope
-
-sub start_pdf_viewer_texniscope {
-    my $doc = $compiled_document;
-    $doc =~ s!^\./!POSIX::getcwd() . "/"!e;
-    debug_msg( "Starting PDF viewer (TeXniscope)", "Opening file: $doc" );
-    applescript( qq(tell application "TeXniscope")
-          . qq{ to open file ((POSIX file }
-          . quote_applescript($doc)
-          . qq{) as string)} );
-    $viewer_id = "TeXniscope";
-}
-
-sub refresh_pdf_viewer_texniscope {
-    debug_msg("Refreshing PDF viewer (TeXniscope)");
-    applescript( qq(tell document )
-          . quote_applescript("$name.pdf")
-          . qq( of application "TeXniscope" to refresh) );
 }
 
 # Skim
@@ -908,7 +884,6 @@ FUTURE:
    - If TM_LATEX_VIEWER unset, sniff available viewers and pick one.
      (If it's set to "Preview", warn that Preview sucks and look for another.)
    - Nicer error output would be a really nice feature
-   - Remove support for outdated software (TeXniscope)
 
 Changes
 1.1:
@@ -1052,3 +1027,6 @@ Changes
 
 3.4:
     - Remove support for teTeX
+
+3.5:
+    - Remove support for TeXniscope
