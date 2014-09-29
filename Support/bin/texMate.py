@@ -57,6 +57,7 @@ import os
 import tmprefs
 
 from urllib import quote
+from subprocess import Popen, PIPE, STDOUT
 from texparser import (shell_quote, BibTexParser, BiberParser, ChkTeXParser,
                        LaTexParser, MakeGlossariesParser, ParseLatexMk,
                        TexParser)
@@ -65,28 +66,6 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 DEBUG = False
-
-try:
-    from subprocess import Popen, PIPE, STDOUT
-except:
-    if DEBUG:
-        print "Using Tiger Compatibility version of Popen class"
-    PIPE = 1
-    STDOUT = 1
-
-    class Popen(object):
-        """Popen: This class provides backward compatibility for Tiger Do not
-        assume anything about this works other than access to stdout and the
-        wait method."""
-        def __init__(self, command, **kwargs):
-            super(Popen, self).__init__()
-            self.command = command
-            stdin, self.stdout = os.popen4(command)
-
-        def wait(self):
-            stat = self.stdout.close()
-            return stat
-
 texMateVersion = ' $Rev$ '
 
 TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT").replace(" ", "\\ ")
