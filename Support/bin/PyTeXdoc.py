@@ -13,7 +13,7 @@ import time
 #              3/4/2007		-- removed colours from stylesheet (and added underlines) to
 #								avoid problems with dark themes
 # This script is a hacked together set of heuristics to try and bring some
-# order out of the various bits and pieces of documentation that are strewn 
+# order out of the various bits and pieces of documentation that are strewn
 # around any given LaTeX distro.
 # texdoctk provides a nice list of packages, along with paths to the documents
 # that are relative to one or more roots.  The root for these documents varies.
@@ -29,7 +29,7 @@ import time
 # attempt to find the best match for that word as a package and open the documentaiton for that
 # package immediately.
 #
-# because good dvi viewers are quite rare on OS X, I also provide a simple viewDoc.sh script. 
+# because good dvi viewers are quite rare on OS X, I also provide a simple viewDoc.sh script.
 # viewDoc.sh converts a dvi file (using dvipdfm) and opens it in Previewer.
 
 #TODO make the viewing command configurable
@@ -97,8 +97,8 @@ if os.path.exists(docdbfile) and os.path.getmtime(docdbfile) > ninty_days_ago:
     infile = open(docdbfile,'rb')
     path_desc_list = cPickle.load(infile)
     pathDict = path_desc_list[0]
-    descDict = path_desc_list[1]    
-    headings = path_desc_list[2] 
+    descDict = path_desc_list[1]
+    headings = path_desc_list[2]
     cachedIndex = True
 else:
     ## Part 2
@@ -139,7 +139,7 @@ else:
                 path = lineFields[2]
             except:
                 print "Error parsing line: ", line
-            
+
             headings[currentHeading].append(key)
             if path.rfind('.sty') >= 0:
                 path = docBase + "tex/" + path
@@ -154,7 +154,7 @@ else:
                     else:
                         if key in myDict:
                             path = findBestDoc(myDict[key])
-                    
+
             pathDict[key] = path.strip()
             descDict[key] = desc.strip()
 
@@ -189,7 +189,7 @@ else:
     try:
         if not os.path.exists(docdbpath):
             os.mkdir(docdbpath)
-        outfile = open(docdbfile, 'wb')                
+        outfile = open(docdbfile, 'wb')
         cPickle.dump([pathDict,descDict,headings],outfile)
     except:
         print "<p>Error: Could not cache documentation index</p>"
@@ -223,10 +223,10 @@ a.dsphead:hover{
    display:none;
    text-decoration:none;
    font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
-   margin: 0px 20px 0px 20px;} 
+   margin: 0px 20px 0px 20px;}
 .dspcont a{
     text-decoration: none;
-} 
+}
 .dspcont a:hover{
     text-decoration:underline;
 }
@@ -251,11 +251,11 @@ function dsp(loc){
       foc=loc.parentNode.nextSibling.style?
          loc.parentNode.nextSibling:
          loc.parentNode.nextSibling.nextSibling;
-      foc.style.display=foc.style.display=='block'?'none':'block';}}  
+      foc.style.display=foc.style.display=='block'?'none':'block';}}
 
 //-->
 </script>
-"""    
+"""
 print "<h1>Your Packages</h1>"
 print "<ul>"
 for p in mList:
