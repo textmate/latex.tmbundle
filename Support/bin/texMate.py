@@ -87,7 +87,7 @@ def run_bibtex(bibfile=None, verbose=False, texfile=None):
     auxfiles = []
     if texfile:
         basename = texfile[:texfile.rfind('.')]
-    if bibfile == None:
+    if not bibfile:
         auxfiles = [f for f in os.listdir('.') if re.search('.aux$', f) > 0]
         auxfiles = [f for f in auxfiles
                     if re.match(r'(' + basename + r'\.aux|bu\d+\.aux)', f)]
@@ -393,7 +393,7 @@ def find_TEX_directives():
                 else:
                     tsDirectives[m.group(1)] = m.group(2).rstrip()
         f.close()
-        if foundNewRoot == False:
+        if not foundNewRoot:
             done = True
     if DEBUG:
         print '<pre>%!TEX Directives: ', tsDirectives, '</pre>'
