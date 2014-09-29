@@ -53,13 +53,13 @@
 
 import sys
 import re
-from os.path import basename
-from os.path import isfile
 import os
 import tmprefs
+
 from urllib import quote
-from struct import *
-from texparser import *
+from texparser import (shell_quote, BibTexParser, BiberParser, ChkTeXParser,
+                       LaTexParser, MakeGlossariesParser, ParseLatexMk,
+                       TexParser)
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -67,7 +67,7 @@ sys.setdefaultencoding("utf-8")
 DEBUG = False
 
 try:
-    from subprocess import *
+    from subprocess import Popen, PIPE, STDOUT
 except:
     if DEBUG:
         print "Using Tiger Compatibility version of Popen class"
