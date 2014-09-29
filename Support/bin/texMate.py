@@ -256,8 +256,6 @@ def run_viewer(viewer, fileName, filePath, force, usePdfSync=True):
             print 'pdfsync is not supported for this viewer'
     else:
         pdfPath = filePath+'/'+fileNoSuffix+'.pdf'
-        tmHref = ('<p><a href="file://' + quote(pdfPath) +
-                  '">Click Here to View</a></p>')
         if(numErrs < 1 and numWarns < 1 or
            numErrs < 1 and numWarns > 0 and not force):
             if os.path.isfile(pdfPath):
