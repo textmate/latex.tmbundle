@@ -321,7 +321,7 @@ def findTexPackages(fileName):
         texString = open(realfn)
     except:
         print('<p class="error">Error: Could not open ' +
-              '%s to check for packages</p>' % realfn)
+              '%s to check for packages</p>' % fileName)
         print('<p class="error">This is most likely a problem with ' +
               'TM_LATEX_MASTER</p>')
         sys.exit(1)
