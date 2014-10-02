@@ -4,12 +4,6 @@ import os.path
 import os
 
 from urllib import quote
-from struct import unpack
-
-
-def percent_escape(str):
-    return re.sub('[\x80-\xff /&]',
-                  lambda x: '%%%02X' % unpack('B', x.group(0))[0], str)
 
 
 def make_link(file, line):
