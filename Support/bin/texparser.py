@@ -2,10 +2,9 @@ import sys
 import re
 import os.path
 import os
-import tmprefs
-from struct import *
-
 import urllib
+
+from struct import unpack
 
 
 def percent_escape(str):
