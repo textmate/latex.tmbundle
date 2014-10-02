@@ -58,6 +58,7 @@ import tmprefs
 
 from urllib import quote
 from subprocess import Popen, PIPE, STDOUT
+from sys import stdout
 from texparser import (shell_quote, BibTexParser, BiberParser, ChkTeXParser,
                        LaTexParser, MakeGlossariesParser, ParseLatexMk,
                        TexParser)
@@ -72,12 +73,34 @@ TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT").replace(" ", "\\ ")
 TM_SUPPORT_PATH = os.getenv("TM_SUPPORT_PATH").replace(" ", "\\ ")
 
 
-def expandName(fn, program='pdflatex'):
-    sys.stdout.flush()
-    runObj = Popen('kpsewhich -progname="%s" "%s"' % (program, fn),
-                   shell=True, stdout=PIPE)
-    res = runObj.stdout.read().strip()
-    return res
+def expand_name(filename, program='pdflatex'):
+    """Get the expanded file name for a certain tex file.
+
+    Arguments:
+
+        filename
+
+                The name of the file we want to expand.
+
+        program
+
+                The name of the tex program for which we want to expand the
+                name of the file.
+
+    Returns: ``str``
+
+    Examples:
+
+        >>> expand_name('Tests/text.tex')
+        './Tests/text.tex'
+        >>> expand_name('non_existent_file.tex')
+        ''
+
+    """
+    stdout.flush()
+    run_object = Popen("kpsewhich -progname='{}' '{}'".format(
+        program, filename), shell=True, stdout=PIPE)
+    return run_object.stdout.read().strip()
 
 
 def run_bibtex(bibfile=None, verbose=False, texfile=None):
@@ -294,7 +317,7 @@ def findTexPackages(fileName):
        more than one level deep for preamble stuff.
     """
     try:
-        realfn = expandName(fileName)
+        realfn = expand_name(fileName)
         texString = open(realfn)
     except:
         print('<p class="error">Error: Could not open ' +
@@ -323,7 +346,7 @@ def findTexPackages(fileName):
         if ifile.find('.tex') < 0:
             ifile += '.tex'
         try:
-            realif = expandName(ifile)
+            realif = expand_name(ifile)
             incmatches = []
             for line in file(realif):
                 incmatches.append(re.search(usepkgre, line))

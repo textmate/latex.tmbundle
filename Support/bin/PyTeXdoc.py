@@ -3,7 +3,7 @@
 import sys
 import os
 import re
-from texMate import expandName, findTexPackages, find_TEX_directives, findFileToTypeset
+from texMate import findTexPackages, find_TEX_directives, findFileToTypeset
 import cPickle
 import time
 
