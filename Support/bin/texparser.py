@@ -79,7 +79,7 @@ class TexParser(object):
                 print line
 
             line = self.getRewrappedLine()
-        if self.done == False:
+        if not self.done:
             self.badRun()
         return self.isFatal, self.numErrs, self.numWarns
 
