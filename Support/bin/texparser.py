@@ -2,8 +2,8 @@ import sys
 import re
 import os.path
 import os
-import urllib
 
+from urllib import quote
 from struct import unpack
 
 
@@ -12,11 +12,8 @@ def percent_escape(str):
                   lambda x: '%%%02X' % unpack('B', x.group(0))[0], str)
 
 
-# Swapped call to percent_escape with urllib.quote.  Was causing links to fail
-# in TM2
 def make_link(file, line):
-    return('txmt://open/?url=file://' + urllib.quote(file) + '&amp;line=' +
-           line)
+    return "txmt://open/?url=file://{}&line={}".format(quote(file), line)
 
 
 def shell_quote(string):
@@ -299,7 +296,7 @@ class LaTexParser(TexParser):
         self.numErrs += 1
 
     def finishRun(self, m, line):
-        logFile = m.group(1).strip('"')
+        logFile = m.group(2).strip('"')
         print '<p>  Complete transcript is in '
         print('<a href="' +
               make_link(os.path.join(os.getcwd(), logFile), '1') + '">' +
