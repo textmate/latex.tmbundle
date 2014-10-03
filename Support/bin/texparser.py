@@ -18,7 +18,6 @@ class TexParser(object):
     """Master Class for Parsing Tex Typesetting Streams"""
 
     def __init__(self, input_stream, verbose):
-        super(TexParser, self).__init__()
         self.input_stream = input_stream
         self.patterns = []
         self.done = False
