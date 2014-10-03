@@ -15,7 +15,7 @@ def shell_quote(string):
 
 
 class TexParser(object):
-    """Master Class for Parsing Tex Typsetting Streams"""
+    """Master Class for Parsing Tex Typesetting Streams"""
 
     def __init__(self, input_stream, verbose):
         super(TexParser, self).__init__()
@@ -31,7 +31,7 @@ class TexParser(object):
         self.fileStack = []
 
     def getRewrappedLine(self):
-        """Sometimes TeX breaks up lines with hard linebreaks. This is
+        """Sometimes TeX breaks up lines with hard line breaks. This is
         annoying. Even more annoying is that it sometime does not break line,
         for two distinct warnings. This function attempts to return a single
         statement."""
@@ -328,7 +328,7 @@ class LaTexParser(TexParser):
 
     def badRun(self):
         """docstring for finishRun"""
-        print '<p class="error">A fatal error occured, log file is in '
+        print '<p class="error">A fatal error occurred, log file is in '
         logFile = os.path.basename(os.getenv('TM_FILEPATH'))
         logFile = logFile.replace(self.suffix, 'log')
         print('<a href="' +
