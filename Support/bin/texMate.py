@@ -59,9 +59,8 @@ import tmprefs
 from urllib import quote
 from subprocess import Popen, PIPE, STDOUT
 from sys import stdout
-from texparser import (shell_quote, BibTexParser, BiberParser, ChkTeXParser,
-                       LaTexParser, MakeGlossariesParser, ParseLatexMk,
-                       TexParser)
+from texparser import (BibTexParser, BiberParser, ChkTeXParser, LaTexParser,
+                       MakeGlossariesParser, ParseLatexMk, TexParser)
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -69,8 +68,8 @@ sys.setdefaultencoding("utf-8")
 DEBUG = False
 texMateVersion = ' $Rev$ '
 
-TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT").replace(" ", "\\ ")
-TM_SUPPORT_PATH = os.getenv("TM_SUPPORT_PATH").replace(" ", "\\ ")
+TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT")
+TM_SUPPORT_PATH = os.getenv("TM_SUPPORT_PATH")
 
 
 def expand_name(filename, program='pdflatex'):
@@ -118,7 +117,7 @@ def run_bibtex(bibfile=None, verbose=False, texfile=None):
         auxfiles = [bibfile]
     for bib in auxfiles:
         print '<h4>Processing: %s </h4>' % bib
-        runObj = Popen('bibtex ' + " " + shell_quote(bib), shell=True,
+        runObj = Popen("bibtex '{}'".format(bib), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
         bp = BibTexParser(runObj.stdout, verbose)
         f, e, w = bp.parseStream()
@@ -133,7 +132,7 @@ def run_biber(bibfile=None, verbose=False, texfile=None):
     """Determine Targets and run biber"""
     # call biber without extension.
     fatal, err, warn = 0, 0, 0
-    runObj = Popen('biber' + " " + fileNoSuffix, shell=True, stdout=PIPE,
+    runObj = Popen("biber '{}'".format(fileNoSuffix), shell=True, stdout=PIPE,
                    stdin=PIPE, stderr=STDOUT, close_fds=True)
     bp = BiberParser(runObj.stdout, verbose)
     f, e, w = bp.parseStream()
@@ -148,9 +147,8 @@ def run_latex(ltxcmd, texfile, verbose=False):
     """Run the flavor of latex specified by ltxcmd on texfile"""
     global numRuns
     if DEBUG:
-        print("<pre>in run_latex: ", ltxcmd + " " + shell_quote(texfile),
-              "</pre>")
-    runObj = Popen(ltxcmd + " " + shell_quote(texfile), shell=True,
+        print("<pre>in run_latex: {} '{}'</pre>".format(ltxcmd, texfile))
+    runObj = Popen("{} '{}'".format(ltxcmd, texfile), shell=True,
                    stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     lp = LaTexParser(runObj.stdout, verbose, texfile)
     f, e, w = lp.parseStream()
@@ -178,8 +176,8 @@ def run_makeindex(fileName, idxfile=None):
     myList.append(idxFile)
     fatal, error, warning = 0, 0, 0
     for idxFile in myList:
-        runObj = Popen('makeindex ' + idxFile, shell=True, stdout=PIPE,
-                       stdin=PIPE, stderr=STDOUT, close_fds=True)
+        runObj = Popen("makeindex '{}'".format(idxFile), shell=True,
+                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
         ip = TexParser(runObj.stdout, True)
         f, e, w = ip.parseStream()
         fatal |= f
@@ -193,7 +191,7 @@ def run_makeglossaries():
     """Run makeglossaries"""
     # Call biber without extension.
     fatal, err, warn = 0, 0, 0
-    runObj = Popen('makeglossaries' + " " + fileNoSuffix, shell=True,
+    runObj = Popen("makeglossaries '{}'".format(fileNoSuffix), shell=True,
                    stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     bp = MakeGlossariesParser(runObj.stdout, verbose)
     f, e, w = bp.parseStream()
@@ -208,15 +206,15 @@ def findViewerPath(viewer, pdfFile, fileName):
     """Use the find_app command to ensure that the viewer is installed in the
     system For apps that support pdfsync search in pdf set up the command to
     go to the part of the page in the document the user was writing."""
-    runObj = Popen(TM_SUPPORT_PATH + '/bin/find_app ' + viewer + '.app',
-                   stdout=PIPE, shell=True)
-    vp = shell_quote(runObj.stdout.read())
+    runObj = Popen("'{}/bin/find_app' '{}.app'".format(TM_SUPPORT_PATH,
+                   viewer), stdout=PIPE, shell=True)
+    vp = runObj.stdout.read()
     syncPath = None
     lineNumber = os.getenv('TM_SELECTION').split(':')[0]
     if viewer == 'Skim' and vp:
-        syncPath = (vp + '/Contents/SharedSupport/displayline ' + lineNumber +
-                    ' ' + pdfFile + ' ' +
-                    shell_quote(os.getenv('TM_FILEPATH')))
+        syncPath = ("'{}/Contents/SharedSupport/displayline' ".format(vp) +
+                    "{} '{}' '{}'".format(lineNumber, pdfFile,
+                                          os.getenv('TM_FILEPATH')))
     if DEBUG:
         print "VP = ", vp
         print "syncPath = ", syncPath
@@ -227,18 +225,18 @@ def refreshViewer(viewer, pdfPath):
     """Use Applescript to tell the viewer to reload"""
     print '<p class="info">Telling %s to Refresh %s...</p>' % (viewer, pdfPath)
     if viewer == 'Skim':
-        os.system("/usr/bin/osascript -e " + "'tell application \"Skim\" " +
-                  "to revert (documents whose path is %s)' " % pdfPath)
+        os.system("/usr/bin/osascript -e 'tell application \"Skim\" to " +
+                  "revert (documents whose path is \"{}\")'".format(pdfPath))
     elif viewer == 'TeXShop':
-        os.system("/usr/bin/osascript -e " + "'tell application \"TeXShop\" " +
-                  "to tell documents whose path is %s to refreshpdf' " %
-                  pdfPath)
+        os.system("/usr/bin/osascript -e 'tell application \"TeXShop\" to " +
+                  "tell documents whose path is \"{}\" ".format(pdfPath) +
+                  "to refreshpdf'")
 
 
 # TODO refactor run_viewer and sync_viewer to work together better
 def sync_viewer(viewer, fileName, filePath):
     fileNoSuffix = getFileNameWithoutExtension(fileName)
-    pdfFile = shell_quote(fileNoSuffix+'.pdf')
+    pdfFile = '{}.pdf'.format(fileNoSuffix)
     cmdPath, syncPath = findViewerPath(viewer, pdfFile, fileName)
     if syncPath:
         stat = os.system(syncPath)
@@ -255,18 +253,19 @@ def run_viewer(viewer, fileName, filePath, force, usePdfSync=True):
     fileNoSuffix = getFileNameWithoutExtension(fileName)
     pathNoSuffix = filePath + '/' + fileNoSuffix
     if viewer != 'TextMate':
-        pdfFile = shell_quote(fileNoSuffix + '.pdf')
-        pdfPath = shell_quote(pathNoSuffix + '.pdf')
+        pdfFile = '{}.pdf'.format(fileNoSuffix)
+        pdfPath = '{}.pdf'.format(pathNoSuffix)
         cmdPath, syncPath = findViewerPath(viewer, pdfFile, fileName)
         if cmdPath:
             # if this is not done, the next line will thrown an encoding
             # exception when the pdfFile contains non-ASCII. Is this a Python
             # bug?
             viewer = viewer.encode('utf-8')
-            stat = os.system(TM_BUNDLE_SUPPORT +
-                             "/bin/check_open %s %s" % (viewer, pdfPath))
+            stat = os.system("'{}/bin/check_open' '{}' '{}'".format(
+                             TM_BUNDLE_SUPPORT, viewer, pdfPath))
             if stat != 0:
-                viewCmd = '/usr/bin/open -a ' + viewer + '.app ' + pdfPath
+                viewCmd = "/usr/bin/open -a '{}.app' '{}'".format(viewer,
+                                                                  pdfPath)
                 stat = os.system(viewCmd)
             else:
                 refreshViewer(viewer, pdfPath)
@@ -502,7 +501,7 @@ def constructEngineCommand(tsDirectives, tmPrefs, packages):
         engine = 'xelatex'
     else:
         engine = tmPrefs['latexEngine']
-    stat = os.system('type '+engine+' > /dev/null')
+    stat = os.system("type {} > /dev/null".format(engine))
     if stat != 0:
         print('<p class="error">Error: %s is not found, ' % engine +
               'you need to install LaTeX or be sure that your PATH is ' +
@@ -590,7 +589,7 @@ if __name__ == '__main__':
     viewer = tmPrefs['latexViewer']
     engine = constructEngineCommand(tsDirs, tmPrefs, ltxPackages)
 
-    syncTexCheck = os.system(engine + " --help |grep -q synctex")
+    syncTexCheck = os.system("{} --help |grep -q synctex".format(engine))
     if syncTexCheck == 0:
         synctex = True
 
@@ -614,7 +613,7 @@ if __name__ == '__main__':
         print '</pre>'
 
     if texCommand == "version":
-        runObj = Popen(engine + " --version", stdout=PIPE, shell=True)
+        runObj = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
         print runObj.stdout.read().split("\n")[0]
         sys.exit(0)
 
@@ -644,9 +643,9 @@ if __name__ == '__main__':
             texCommand = 'latexmk -pdfps -f -r /tmp/latexmkrc '
         else:
             texCommand = 'latexmk -pdf -f -r /tmp/latexmkrc '
-        texCommand += shell_quote(fileName)
+        texCommand = "{} '{}'".format(texCommand, fileName)
         if DEBUG:
-            print 'latexmk command = ', texCommand
+            print("latexmk command = {}".format(texCommand))
         runObj = Popen(texCommand, shell=True, stdout=PIPE, stdin=PIPE,
                        stderr=STDOUT, close_fds=True)
         commandParser = ParseLatexMk(runObj.stdout, verbose, fileName)
@@ -707,8 +706,8 @@ if __name__ == '__main__':
             texCommand, fileName, verbose)
         if engine == 'latex':
             psFile = fileNoSuffix+'.ps'
-            os.system('dvips ' + fileNoSuffix+'.dvi' + ' -o ' + psFile)
-            os.system('ps2pdf ' + psFile)
+            os.system("dvips {}.dvi -o '{}'".format(fileNoSuffix, psFile))
+            os.system("ps2pdf {}".format(psFile))
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer, fileName, filePath,
                               tmPrefs['latexKeepLogWin'],
@@ -728,8 +727,7 @@ if __name__ == '__main__':
             sys.exit(206)
 
     elif texCommand == 'chktex':
-        texCommand += ' '
-        texCommand += shell_quote(fileName)
+        texCommand = "{} '{}'".format(texCommand, fileName)
         runObj = Popen(texCommand, shell=True, stdout=PIPE, stdin=PIPE,
                        stderr=STDOUT, close_fds=True)
         commandParser = ChkTeXParser(runObj.stdout, verbose, fileName)

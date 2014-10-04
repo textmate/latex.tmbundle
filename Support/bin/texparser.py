@@ -10,10 +10,6 @@ def make_link(file, line):
     return "txmt://open/?url=file://{}&line={}".format(quote(file), line)
 
 
-def shell_quote(string):
-    return '"' + re.sub(r'([`$\\"])', r'\\\1', string) + '"'
-
-
 class TexParser(object):
     """Master Class for Parsing Tex Typesetting Streams"""
 
