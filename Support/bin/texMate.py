@@ -255,18 +255,44 @@ def run_latex(ltxcmd, texfile, verbose=False):
 
 
 def run_makeindex(filename):
-    """Run the makeindex command"""
-    index_file = '{}.idx'.format(getFileNameWithoutExtension(filename))
-    fatal, error, warning = 0, 0, 0
-    runObj = Popen("makeindex '{}'".format(index_file), shell=True,
-                   stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
-    ip = TexParser(runObj.stdout, True)
-    f, e, w = ip.parseStream()
-    fatal |= f
-    error += e
-    warning += w
-    stat = runObj.wait()
-    return stat, fatal, error, warning
+    """Run the makeindex command.
+
+    Generate the index for the given file returning
+
+        - the return value of ``makeindex``,
+
+        - a value specifying if there were any fatal flaws (``True``) or not
+          (``False``), and
+
+        - the number of errors and
+
+        - the number of warnings encountered while processing ``filename``.
+
+    Arguments:
+
+        filename
+
+            The name of the tex file for which we want to generate an index.
+
+    Returns: ``(int, bool, int, int)``
+
+    Examples:
+
+        >>> chdir('Tests')
+        >>> run_makeindex('makeindex.tex') # doctest:+ELLIPSIS
+        This is makeindex...
+        ...
+        (0, False, 0, 0)
+        >>> chdir('..')
+
+    """
+    run_object = Popen("makeindex '{}.idx'".format(
+                       getFileNameWithoutExtension(filename)), shell=True,
+                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+    ip = TexParser(run_object.stdout, True)
+    fatal, errors, warnings = ip.parseStream()
+    stat = run_object.wait()
+    return stat, fatal, errors, warnings
 
 
 def run_makeglossaries():
