@@ -51,6 +51,8 @@
 #       Think about replacing latexmk with a simpler python version.  If only
 #       rubber worked reliably..
 
+# -- Imports ------------------------------------------------------------------
+
 import sys
 import re
 import os
@@ -67,15 +69,24 @@ from urllib import quote
 from texparser import (BibTexParser, BiberParser, ChkTeXParser, LaTexParser,
                        MakeGlossariesParser, ParseLatexMk, TexParser)
 
+
+# -- Module Import ------------------------------------------------------------
+
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-DEBUG = False
-texMateVersion = ' $Rev$ '
 
+# -- Global Variables ---------------------------------------------------------
+
+DEBUG = False
 TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT")
 TM_SUPPORT_PATH = os.getenv("TM_SUPPORT_PATH")
 
+texMateVersion = ' $Rev$ '
+numRuns = 0
+
+
+# -- Functions ----------------------------------------------------------------
 
 def expand_name(filename, program='pdflatex'):
     """Get the expanded file name for a certain tex file.
