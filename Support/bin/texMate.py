@@ -206,17 +206,52 @@ def run_biber(texfile, verbose=False):
 
 
 def run_latex(ltxcmd, texfile, verbose=False):
-    """Run the flavor of latex specified by ltxcmd on texfile"""
+    """Run the flavor of latex specified by ltxcmd on texfile.
+
+    This function returns:
+
+        - the return value of ``ltxcmd``,
+
+        - a value specifying if there were any fatal flaws (``True``) or not
+          (``False``), and
+
+        - the number of errors and
+
+        - the number of warnings encountered while processing ``texfile``.
+
+    Arguments:
+
+        ltxcmd
+
+            The latex command which should be used translate ``texfile``.
+
+        texfile
+
+            The path of the tex file which should be translated by ``ltxcmd``.
+
+    Returns: ``(int, bool, int, int)``
+
+    Examples:
+
+        >>> chdir('Tests')
+        >>> run_latex(ltxcmd='pdflatex',
+        ...           texfile='external_bibliography.tex') # doctest:+ELLIPSIS
+        <h4>...
+        ...
+        (0, False, 0, 0)
+        >>> chdir('..')
+
+    """
     global numRuns
     if DEBUG:
-        print("<pre>in run_latex: {} '{}'</pre>".format(ltxcmd, texfile))
-    runObj = Popen("{} '{}'".format(ltxcmd, texfile), shell=True,
-                   stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
-    lp = LaTexParser(runObj.stdout, verbose, texfile)
-    f, e, w = lp.parseStream()
-    stat = runObj.wait()
+        print("<pre>run_latex: {} '{}'</pre>".format(ltxcmd, texfile))
+    run_object = Popen("{} '{}'".format(ltxcmd, texfile), shell=True,
+                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+    lp = LaTexParser(run_object.stdout, verbose, texfile)
+    fatal, errors, warnings = lp.parseStream()
+    stat = run_object.wait()
     numRuns += 1
-    return stat, f, e, w
+    return stat, fatal, errors, warnings
 
 
 def run_makeindex(fileName, idxfile=None):
