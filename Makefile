@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
-# Date:    2014-10-02
+# Date:    2014-10-05
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 1
+# Version: 2
 #
 # Run tests for this bundle. To execute the tests:
 #
@@ -12,7 +12,7 @@
 #
 # -----------------------------------------------------------------------------
 
-.PHONY: run test
+.PHONY: run test test_texmate
 
 # -- Rules --------------------------------------------------------------------
 
@@ -20,3 +20,6 @@ run: test
 
 test:
 	nosetests --with-doctest Support/bin/texMate.py
+
+test_texmate:
+	Tests/test_texmate.sh
