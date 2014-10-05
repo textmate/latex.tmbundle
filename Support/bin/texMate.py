@@ -254,33 +254,18 @@ def run_latex(ltxcmd, texfile, verbose=False):
     return stat, fatal, errors, warnings
 
 
-def run_makeindex(fileName, idxfile=None):
-    ## TODO foreach \makeindex[(.*)] run makeindex on $1, plus the master file.
+def run_makeindex(filename):
     """Run the makeindex command"""
-    try:
-        texString = open(fileName).read()
-    except:
-        print('<p class="error">Error: Could not open ' +
-              '%s to check for makeindex</p>' % fileName)
-        print('<p class="error">This is most likely a problem with ' +
-              'TM_LATEX_MASTER</p>')
-        sys.exit(1)
-    myList = [x[2] for x in re.findall(r'([^%]|^)\\makeindex(\[([\w]+)\])?',
-              texString) if x[2]]
-
-    fileNoSuffix = getFileNameWithoutExtension(fileName)
-    idxFile = fileNoSuffix+'.idx'
-    myList.append(idxFile)
+    index_file = '{}.idx'.format(getFileNameWithoutExtension(filename))
     fatal, error, warning = 0, 0, 0
-    for idxFile in myList:
-        runObj = Popen("makeindex '{}'".format(idxFile), shell=True,
-                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
-        ip = TexParser(runObj.stdout, True)
-        f, e, w = ip.parseStream()
-        fatal |= f
-        error += e
-        warning += w
-        stat = runObj.wait()
+    runObj = Popen("makeindex '{}'".format(index_file), shell=True,
+                   stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+    ip = TexParser(runObj.stdout, True)
+    f, e, w = ip.parseStream()
+    fatal |= f
+    error += e
+    warning += w
+    stat = runObj.wait()
     return stat, fatal, error, warning
 
 
