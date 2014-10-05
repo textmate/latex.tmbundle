@@ -56,9 +56,14 @@ import re
 import os
 import tmprefs
 
-from urllib import quote
+from glob import glob
+from os import chdir  # NOQA
+from os.path import dirname
+from re import match
 from subprocess import Popen, PIPE, STDOUT
 from sys import stdout
+from urllib import quote
+
 from texparser import (BibTexParser, BiberParser, ChkTeXParser, LaTexParser,
                        MakeGlossariesParser, ParseLatexMk, TexParser)
 
@@ -102,30 +107,65 @@ def expand_name(filename, program='pdflatex'):
     return run_object.stdout.read().strip()
 
 
-def run_bibtex(bibfile=None, verbose=False, texfile=None):
-    """Determine targets and run bibtex"""
-    # Find all the aux files.
-    fatal, err, warn = 0, 0, 0
-    auxfiles = []
-    if texfile:
-        basename = texfile[:texfile.rfind('.')]
-    if not bibfile:
-        auxfiles = [f for f in os.listdir('.') if re.search('.aux$', f) > 0]
-        auxfiles = [f for f in auxfiles
-                    if re.match(r'(' + basename + r'\.aux|bu\d+\.aux)', f)]
-    else:
-        auxfiles = [bibfile]
+def run_bibtex(texfile, verbose=False):
+    """Run bibtex for a certain tex file.
+
+    Run bibtex for ``texfile`` and return the following values:
+
+    - The return value of the bibtex runs done by this function: This value
+      will be ``0`` after a successful run. Any other value indicates that
+      there were some kind of problems.
+
+    - Fatal error: Specifies if there was a fatal error while processing the
+      bibliography.
+
+    - Errors: The number of non-fatal errors encountered while processing the
+      bibliography
+
+    - Warnings: The number of warnings found while running this function
+
+    Arguments:
+
+        texfile
+
+            Specifies the name of the tex file. This information will be used
+            to find the bibliography.
+
+        verbose
+
+            Specifies if the output by this function should be verbose.
+
+
+    Returns: ``(int, bool, int, int)``
+
+    Examples:
+
+        >>> chdir('Tests')
+        >>> run_bibtex('external_bibliography.tex') # doctest:+ELLIPSIS
+        <h4>Processing: ...
+        ...
+        (0, False, 0, 0)
+        >>> chdir('..')
+
+    """
+    basename = texfile[:texfile.rfind('.')]
+    directory = dirname(texfile) if dirname(texfile) else '.'
+    regex_auxfiles = (r'.*/({}|bu\d+)\.aux$'.format(basename))
+    auxfiles = [f for f in glob("{}/*.aux".format(directory))
+                if match(regex_auxfiles, f)]
+
+    stat, fatal, errors, warnings = 0, False, 0, 0
     for bib in auxfiles:
-        print '<h4>Processing: %s </h4>' % bib
-        runObj = Popen("bibtex '{}'".format(bib), shell=True,
-                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
-        bp = BibTexParser(runObj.stdout, verbose)
+        print('<h4>Processing: {} </h4>'.format(bib))
+        run_object = Popen("bibtex '{}'".format(bib), shell=True, stdout=PIPE,
+                           stdin=PIPE, stderr=STDOUT, close_fds=True)
+        bp = BibTexParser(run_object.stdout, verbose)
         f, e, w = bp.parseStream()
         fatal |= f
-        err += e
-        warn += w
-        stat = runObj.wait()
-    return stat, fatal, err, warn
+        errors += e
+        warnings += w
+        stat |= run_object.wait()
+    return stat, fatal, errors, warnings
 
 
 def run_biber(bibfile=None, verbose=False, texfile=None):
