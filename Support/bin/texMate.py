@@ -168,19 +168,30 @@ def run_bibtex(texfile, verbose=False):
     return stat, fatal, errors, warnings
 
 
-def run_biber(bibfile=None, verbose=False, texfile=None):
-    """Determine Targets and run biber"""
-    # call biber without extension.
-    fatal, err, warn = 0, 0, 0
-    runObj = Popen("biber '{}'".format(fileNoSuffix), shell=True, stdout=PIPE,
-                   stdin=PIPE, stderr=STDOUT, close_fds=True)
-    bp = BiberParser(runObj.stdout, verbose)
-    f, e, w = bp.parseStream()
-    fatal |= f
-    err += e
-    warn += w
-    stat = runObj.wait()
-    return stat, fatal, err, warn
+def run_biber(texfile, verbose=False):
+    """Run biber for a certain tex file.
+
+    The interface for this function is exactly the same as the one for
+    ``run_bibtex``. For the list of arguments and return values please take a
+    look at the doc-string of ``run_bibtex``.
+
+    Examples:
+
+        >>> chdir('Tests')
+        >>> run_biber('external_bibliography_biber.tex') # doctest:+ELLIPSIS
+        <...
+        ...
+        (0, False, 0, 0)
+        >>> chdir('..')
+
+    """
+    file_no_suffix = getFileNameWithoutExtension(texfile)
+    run_object = Popen("biber '{}'".format(file_no_suffix), shell=True,
+                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+    bp = BiberParser(run_object.stdout, verbose)
+    fatal, errors, warnings = bp.parseStream()
+    stat = run_object.wait()
+    return stat, fatal, errors, warnings
 
 
 def run_latex(ltxcmd, texfile, verbose=False):
