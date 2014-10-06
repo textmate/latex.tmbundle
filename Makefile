@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
-# Date:    2014-10-05
+# Date:    2014-10-06
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 3
+# Version: 4
 #
 # Run tests for this bundle. To execute the tests:
 #
@@ -19,7 +19,8 @@
 run: test clean
 
 clean:
-	cd Tests && rm -vf *.bbl *.blg *.ilg *.ind *.log *.pdf
+	cd Tests && rm -vf *.acr *.alg *.bbl *.blg *.glg *.gls *.ilg *.ind *.log \
+		*.pdf
 
 test:
 	nosetests --with-doctest Support/bin/texMate.py
