@@ -295,19 +295,30 @@ def run_makeindex(filename):
     return stat, fatal, errors, warnings
 
 
-def run_makeglossaries():
-    """Run makeglossaries"""
-    # Call biber without extension.
-    fatal, err, warn = 0, 0, 0
-    runObj = Popen("makeglossaries '{}'".format(fileNoSuffix), shell=True,
-                   stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
-    bp = MakeGlossariesParser(runObj.stdout, verbose)
-    f, e, w = bp.parseStream()
-    fatal |= f
-    err += e
-    warn += w
-    stat = runObj.wait()
-    return stat, fatal, err, warn
+def run_makeglossaries(filename):
+    """Run makeglossaries for the given file.
+
+    The interface of this function is exactly the same as the one for
+    ``run_makeindex``. For the list of arguments and return values, please
+    take a look at ``run_makeindex``.
+
+    Examples:
+
+        >>> chdir('Tests')
+        >>> run_makeglossaries('makeglossaries.tex') # doctest:+ELLIPSIS
+        <h2>Make Glossaries...
+        ...
+        (0, False, 0, 0)
+        >>> chdir('..')
+
+    """
+    run_object = Popen("makeglossaries '{}'".format(
+                       getFileNameWithoutExtension(filename)), shell=True,
+                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+    bp = MakeGlossariesParser(run_object.stdout, True)
+    fatal, errors, warnings = bp.parseStream()
+    stat = run_object.wait()
+    return stat, fatal, errors, warnings
 
 
 def findViewerPath(viewer, pdfFile, fileName):
@@ -775,7 +786,8 @@ if __name__ == '__main__':
 
     elif texCommand == 'index':
         if os.path.exists(fileNoSuffix+'.glsdefs'):
-            texStatus, isFatal, numErrs, numWarns = run_makeglossaries()
+            texStatus, isFatal, numErrs, numWarns = (
+                run_makeglossaries(fileName))
         else:
             texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
 
