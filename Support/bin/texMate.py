@@ -83,7 +83,6 @@ TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT")
 TM_SUPPORT_PATH = os.getenv("TM_SUPPORT_PATH")
 
 texMateVersion = ' $Rev$ '
-numRuns = 0
 
 
 # -- Functions ----------------------------------------------------------------
@@ -242,7 +241,6 @@ def run_latex(ltxcmd, texfile, verbose=False):
         >>> chdir('..')
 
     """
-    global numRuns
     if DEBUG:
         print("<pre>run_latex: {} '{}'</pre>".format(ltxcmd, texfile))
     run_object = Popen("{} '{}'".format(ltxcmd, texfile), shell=True,
@@ -250,7 +248,6 @@ def run_latex(ltxcmd, texfile, verbose=False):
     lp = LaTexParser(run_object.stdout, verbose, texfile)
     fatal, errors, warnings = lp.parseStream()
     stat = run_object.wait()
-    numRuns += 1
     return stat, fatal, errors, warnings
 
 
@@ -945,6 +942,7 @@ if __name__ == '__main__':
         texCommand = engine + " " + constructEngineOptions(tsDirs, tmPrefs)
         texStatus, isFatal, numErrs, numWarns = run_latex(
             texCommand, fileName, verbose)
+        numRuns += 1
         if os.path.exists(fileNoSuffix + '.bcf'):
             texStatus, isFatal, numErrs, numWarns = run_biber(texfile=fileName)
         else:
@@ -954,13 +952,16 @@ if __name__ == '__main__':
             texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
         texStatus, isFatal, numErrs, numWarns = run_latex(texCommand,
                                                           fileName, verbose)
+        numRuns += 1
         texStatus, isFatal, numErrs, numWarns = run_latex(texCommand,
                                                           fileName, verbose)
+        numRuns += 1
 
     elif texCommand == 'latex':
         texCommand = engine + " " + constructEngineOptions(tsDirs, tmPrefs)
         texStatus, isFatal, numErrs, numWarns = run_latex(
             texCommand, fileName, verbose)
+        numRuns += 1
         if engine == 'latex':
             psFile = fileNoSuffix+'.ps'
             os.system("dvips {}.dvi -o '{}'".format(fileNoSuffix, psFile))
