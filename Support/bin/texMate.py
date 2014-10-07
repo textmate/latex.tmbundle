@@ -454,19 +454,6 @@ def refresh_viewer(viewer, pdf_path):
     return 1
 
 
-# TODO refactor run_viewer and sync_viewer to work together better
-def sync_viewer(viewer, fileName, filePath, line_number):
-    fileNoSuffix = getFileNameWithoutExtension(fileName)
-    pdfFile = '{}.pdf'.format(fileNoSuffix)
-    cmdPath, syncPath = get_app_path_and_sync_command(viewer, pdfFile,
-                                                      fileName, line_number)
-    if syncPath:
-        stat = os.system(syncPath)
-    else:
-        print 'pdfsync is not supported for this viewer'
-    return stat
-
-
 def run_viewer(viewer, fileName, filePath, force, usePdfSync, line_number):
     """If the viewer is TextMate,  then setup the proper urls and/or redirects
     to show the pdf file in the html output window. If the viewer is an
@@ -949,7 +936,14 @@ if __name__ == '__main__':
 
     elif texCommand == 'sync':
         if 'pdfsync' in ltxPackages or synctex:
-            stat = sync_viewer(viewer, fileName, filePath)
+            _, sync_command = get_app_path_and_sync_command(
+                viewer, '{}.pdf'.format(fileNoSuffix), fileName, line_number)
+            if sync_command:
+                stat = call(sync_command, shell=True)
+            else:
+                print("{} does not supported for pdfsync".format(viewer))
+                stat = 1
+
         else:
             print "pdfsync.sty must be included to use this command"
             print "or use a typesetter that supports synctex (such as TexLive)"
