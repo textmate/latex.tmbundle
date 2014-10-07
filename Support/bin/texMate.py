@@ -62,7 +62,7 @@ from glob import glob
 from os import chdir, getenv  # NOQA
 from os.path import dirname
 from re import match
-from subprocess import check_output, Popen, PIPE, STDOUT
+from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import stdout
 from urllib import quote
 
@@ -413,16 +413,45 @@ def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
     return path_to_viewer, sync_command
 
 
-def refreshViewer(viewer, pdfPath):
-    """Use Applescript to tell the viewer to reload"""
-    print '<p class="info">Telling %s to Refresh %s...</p>' % (viewer, pdfPath)
+def refresh_viewer(viewer, pdf_path):
+    """Tell the specified PDF viewer to refresh the PDF output.
+
+    If the viewer does not support refreshing PDFs (e.g. “Preview”) then this
+    command will do nothing. This command will return a non-zero value if the
+    the viewer could not be found or the PDF viewer does not support a “manual”
+    refresh.
+
+    Arguments:
+
+        viewer
+
+            The viewer for which we want to refresh the output of the PDF file
+            specified in ``pdf_path``.
+
+        pdf_path
+
+            The path to the PDF file for which we want to refresh the output.
+
+    Returns: ``int``
+
+    Examples:
+
+        >>> refresh_viewer('Skim', 'test.pdf')
+        <p class="info">Tell Skim to refresh 'test.pdf'</p>
+        0
+
+    """
+    print('<p class="info">Tell {} to refresh \'{}\'</p>').format(viewer,
+                                                                  pdf_path)
     if viewer == 'Skim':
-        os.system("/usr/bin/osascript -e 'tell application \"Skim\" to " +
-                  "revert (documents whose path is \"{}\")'".format(pdfPath))
+        return call("osascript -e 'tell application \"{}\" ".format(viewer) +
+                    "to revert (documents whose path is " +
+                    "\"{}\")'".format(pdf_path), shell=True)
     elif viewer == 'TeXShop':
-        os.system("/usr/bin/osascript -e 'tell application \"TeXShop\" to " +
-                  "tell documents whose path is \"{}\" ".format(pdfPath) +
-                  "to refreshpdf'")
+        return call("osascript -e 'tell application \"{}\" ".format(viewer) +
+                    "to tell documents whose path is " +
+                    "\"{}\" to refreshpdf'".format(pdf_path), shell=True)
+    return 1
 
 
 # TODO refactor run_viewer and sync_viewer to work together better
@@ -463,7 +492,7 @@ def run_viewer(viewer, fileName, filePath, force, usePdfSync, line_number):
                                                                   pdfPath)
                 stat = os.system(viewCmd)
             else:
-                refreshViewer(viewer, pdfPath)
+                refresh_viewer(viewer, pdfPath)
         else:
             print('<strong class="error">', viewer, ' does not appear to be ' +
                   'installed on your system.</strong>')
@@ -909,7 +938,7 @@ if __name__ == '__main__':
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer, fileName, filePath,
                               tmPrefs['latexKeepLogWin'],
-                              'pdfsync' in ltxPackages or synctex.
+                              'pdfsync' in ltxPackages or synctex,
                               line_number)
 
     elif texCommand == 'view':
