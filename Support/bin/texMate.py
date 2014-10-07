@@ -79,7 +79,6 @@ sys.setdefaultencoding("utf-8")
 # -- Global Variables ---------------------------------------------------------
 
 DEBUG = False
-texMateVersion = ' $Rev$ '
 
 
 # -- Functions ----------------------------------------------------------------
@@ -851,7 +850,6 @@ if __name__ == '__main__':
 
     if DEBUG:
         print '<pre>'
-        print 'texMateVersion = ', texMateVersion
         print 'engine = ', engine
         print 'texCommand = ', texCommand
         print 'viewer = ', viewer
