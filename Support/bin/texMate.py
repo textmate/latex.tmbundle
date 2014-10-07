@@ -59,10 +59,10 @@ import os
 import tmprefs
 
 from glob import glob
-from os import chdir  # NOQA
+from os import chdir, getenv  # NOQA
 from os.path import dirname
 from re import match
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import check_output, Popen, PIPE, STDOUT
 from sys import stdout
 from urllib import quote
 
@@ -321,23 +321,96 @@ def run_makeglossaries(filename):
     return stat, fatal, errors, warnings
 
 
-def findViewerPath(viewer, pdfFile, fileName):
-    """Use the find_app command to ensure that the viewer is installed in the
-    system For apps that support pdfsync search in pdf set up the command to
-    go to the part of the page in the document the user was writing."""
-    runObj = Popen("'{}/bin/find_app' '{}.app'".format(TM_SUPPORT_PATH,
-                   viewer), stdout=PIPE, shell=True)
-    vp = runObj.stdout.read()
-    syncPath = None
-    lineNumber = os.getenv('TM_SELECTION').split(':')[0]
-    if viewer == 'Skim' and vp:
-        syncPath = ("'{}/Contents/SharedSupport/displayline' ".format(vp) +
-                    "{} '{}' '{}'".format(lineNumber, pdfFile,
-                                          os.getenv('TM_FILEPATH')))
+def get_app_path(application, tm_support_path=getenv("TM_SUPPORT_PATH")):
+    """Get the absolute path of the specified application.
+
+    This function returns either the path to ``application`` or ``None`` if
+    the specified application was not found.
+
+    Arguments:
+
+        application
+
+            The application for which this function should return the path
+
+        tm_support_path
+
+            The path to the “Bundle Support” bundle
+
+    Returns: ``str``
+
+        # We assume that Skim is installed in the ``/Applications`` folder
+        >>> get_app_path('Skim')
+        '/Applications/Skim.app'
+        >>> get_app_path('NonExistentApp') # Returns ``None``
+
+    """
+    try:
+        return check_output("'{}/bin/find_app' '{}.app'".format(
+                            tm_support_path, application),
+                            shell=True, universal_newlines=True).strip()
+    except:
+        return None
+
+
+def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
+                                  line_number):
+    """Get the path and pdfsync command for the specified viewer.
+
+    This function returns a tuple containing
+
+        - the full path to the application, and
+
+        - a command which can be used to show the PDF output corresponding to
+          ``line_number`` inside tex file.
+
+    If one of these two variables could not be determined, then the
+    corresponding value will be set to ``None``.
+
+    Arguments:
+
+        viewer:
+
+            The name of the PDF viewer application.
+
+        path_pdf:
+
+            The path to the PDF file generated from the tex file located at
+            ``path_tex_file``.
+
+        path_tex_file
+
+            The path to the tex file for which we want to generate the pdfsync
+            command.
+
+        line_number
+
+            The line in the tex file for which we want to get the
+            synchronization command.
+
+    Examples:
+
+        # We assume that Skim is installed
+        >>> get_app_path_and_sync_command('Skim', 'test.pdf', 'test.tex', 1)
+        ...     # doctest:+ELLIPSIS +NORMALIZE_WHITESPACE
+        ('.../Skim.app',
+         "'.../Skim.app/.../displayline' 1 'test.pdf' 'test.tex'")
+
+        # Preview has no pdfsync support
+        >>> get_app_path_and_sync_command('Preview', 'test.pdf', 'test.tex', 1)
+        ('/Applications/Preview.app', None)
+
+    """
+    sync_command = None
+    path_to_viewer = get_app_path(viewer)
+    if path_to_viewer and viewer == 'Skim':
+        sync_command = ("'{}/Contents/SharedSupport/displayline' ".format(
+                        path_to_viewer) + "{} '{}' '{}'".format(line_number,
+                        path_pdf, path_tex_file))
     if DEBUG:
-        print "VP = ", vp
-        print "syncPath = ", syncPath
-    return vp, syncPath
+        print("Path to PDF viewer:      {}".format(path_to_viewer))
+        print("Synchronization command: {}".format(sync_command))
+    return path_to_viewer, sync_command
 
 
 def refreshViewer(viewer, pdfPath):
@@ -353,10 +426,11 @@ def refreshViewer(viewer, pdfPath):
 
 
 # TODO refactor run_viewer and sync_viewer to work together better
-def sync_viewer(viewer, fileName, filePath):
+def sync_viewer(viewer, fileName, filePath, line_number):
     fileNoSuffix = getFileNameWithoutExtension(fileName)
     pdfFile = '{}.pdf'.format(fileNoSuffix)
-    cmdPath, syncPath = findViewerPath(viewer, pdfFile, fileName)
+    cmdPath, syncPath = get_app_path_and_sync_command(viewer, pdfFile,
+                                                      fileName, line_number)
     if syncPath:
         stat = os.system(syncPath)
     else:
@@ -364,7 +438,7 @@ def sync_viewer(viewer, fileName, filePath):
     return stat
 
 
-def run_viewer(viewer, fileName, filePath, force, usePdfSync=True):
+def run_viewer(viewer, fileName, filePath, force, usePdfSync, line_number):
     """If the viewer is TextMate,  then setup the proper urls and/or redirects
     to show the pdf file in the html output window. If the viewer is an
     external viewer then ensure that it is installed and display the pdf"""
@@ -374,7 +448,9 @@ def run_viewer(viewer, fileName, filePath, force, usePdfSync=True):
     if viewer != 'TextMate':
         pdfFile = '{}.pdf'.format(fileNoSuffix)
         pdfPath = '{}.pdf'.format(pathNoSuffix)
-        cmdPath, syncPath = findViewerPath(viewer, pdfFile, fileName)
+        cmdPath, syncPath = get_app_path_and_sync_command(viewer, pdfFile,
+                                                          fileName,
+                                                          line_number)
         if cmdPath:
             # if this is not done, the next line will thrown an encoding
             # exception when the pdfFile contains non-ASCII. Is this a Python
@@ -663,6 +739,7 @@ if __name__ == '__main__':
     numWarns = 0
     firstRun = False
     synctex = False
+    line_number = os.getenv('TM_SELECTION').split(':')[0]
 
 #
 # Parse command line parameters...
@@ -774,7 +851,8 @@ if __name__ == '__main__':
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer, fileName, filePath,
                               tmPrefs['latexKeepLogWin'],
-                              'pdfsync' in ltxPackages or synctex)
+                              'pdfsync' in ltxPackages or synctex,
+                              line_number)
         numRuns = commandParser.numRuns
 
     elif texCommand == 'bibtex':
@@ -831,12 +909,14 @@ if __name__ == '__main__':
         if tmPrefs['latexAutoView'] and numErrs < 1:
             stat = run_viewer(viewer, fileName, filePath,
                               tmPrefs['latexKeepLogWin'],
-                              'pdfsync' in ltxPackages or synctex)
+                              'pdfsync' in ltxPackages or synctex.
+                              line_number)
 
     elif texCommand == 'view':
         stat = run_viewer(viewer, fileName, filePath,
                           tmPrefs['latexKeepLogWin'],
-                          'pdfsync' in ltxPackages or synctex)
+                          'pdfsync' in ltxPackages or synctex,
+                          line_number)
 
     elif texCommand == 'sync':
         if 'pdfsync' in ltxPackages or synctex:
