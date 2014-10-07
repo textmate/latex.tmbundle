@@ -79,9 +79,6 @@ sys.setdefaultencoding("utf-8")
 # -- Global Variables ---------------------------------------------------------
 
 DEBUG = False
-TM_BUNDLE_SUPPORT = os.getenv("TM_BUNDLE_SUPPORT")
-TM_SUPPORT_PATH = os.getenv("TM_SUPPORT_PATH")
-
 texMateVersion = ' $Rev$ '
 
 
