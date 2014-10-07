@@ -60,7 +60,7 @@ import tmprefs
 
 from glob import glob
 from os import chdir, getenv  # NOQA
-from os.path import dirname
+from os.path import abspath, dirname, isfile, normpath  # NOQA
 from re import match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import stdout
@@ -454,50 +454,93 @@ def refresh_viewer(viewer, pdf_path):
     return 1
 
 
-def run_viewer(viewer, fileName, filePath, force, usePdfSync, line_number):
-    """If the viewer is TextMate,  then setup the proper urls and/or redirects
-    to show the pdf file in the html output window. If the viewer is an
-    external viewer then ensure that it is installed and display the pdf"""
-    stat = 0
-    fileNoSuffix = getFileNameWithoutExtension(fileName)
-    pathNoSuffix = filePath + '/' + fileNoSuffix
-    if viewer != 'TextMate':
-        pdfFile = '{}.pdf'.format(fileNoSuffix)
-        pdfPath = '{}.pdf'.format(pathNoSuffix)
-        cmdPath, syncPath = get_app_path_and_sync_command(viewer, pdfFile,
-                                                          fileName,
-                                                          line_number)
-        if cmdPath:
-            # if this is not done, the next line will thrown an encoding
-            # exception when the pdfFile contains non-ASCII. Is this a Python
-            # bug?
-            viewer = viewer.encode('utf-8')
-            stat = os.system("'{}/bin/check_open' '{}' '{}'".format(
-                             TM_BUNDLE_SUPPORT, viewer, pdfPath))
-            if stat != 0:
-                viewCmd = "/usr/bin/open -a '{}.app' '{}'".format(viewer,
-                                                                  pdfPath)
-                stat = os.system(viewCmd)
+def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
+               use_pdfsync, line_number,
+               tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
+    """Open the PDF viewer containing the PDF generated from ``file_name``.
+
+    If ``use_pdfsync`` is set to ``True`` and the ``viewer`` supports pdfsnyc
+    then the part of the PDF corresponding to ``line_number`` will be opened.
+    The function returns the exit value of the shell command used to display
+    the PDF file.
+
+    Arguments:
+
+        viewer
+
+            Specifies which PDF viewer should be used to display the PDF
+
+        file_name
+
+            The file name of the tex file
+
+        file_path
+
+            The path to the folder which contains the tex file
+
+        suppress_pdf_output_textmate
+
+            This variable is only used when ``viewer`` is set to ``TextMate``.
+            If it is set to ``True`` then TextMate will not try to display the
+            generated PDF.
+
+        tm_bundle_support
+
+            The location of the “LaTeX Bundle” support folder
+
+    Returns: ``int``
+
+    Examples:
+
+        >>> chdir('Tests')
+        >>> call("pdflatex makeindex.tex > /dev/null", shell=True)
+        0
+        >>> run_viewer('Skim', 'makeindex.tex', '.',
+        ...            suppress_pdf_output_textmate=None, use_pdfsync=True,
+        ...            line_number=10, tm_bundle_support=abspath('..'))
+        0
+        >>> chdir('..')
+
+    """
+    status = 0
+    path_file = "{}/{}".format(file_path, file_name)
+    path_pdf = "{}/{}.pdf".format(file_path,
+                                  getFileNameWithoutExtension(file_name))
+
+    if viewer == 'TextMate':
+        if not suppress_pdf_output_textmate:
+            if isfile(path_pdf):
+                print('''<script type="text/javascript">
+                         window.location="file://{}"
+                         </script>'''.format(quote(path_pdf)))
             else:
-                refresh_viewer(viewer, pdfPath)
-        else:
-            print('<strong class="error">', viewer, ' does not appear to be ' +
-                  'installed on your system.</strong>')
-        if syncPath and usePdfSync:
-            os.system(syncPath)
-        elif not syncPath and usePdfSync:
-            print 'pdfsync is not supported for this viewer'
+                print("File does not exist: '{}'".format(path_pdf))
     else:
-        pdfPath = filePath+'/'+fileNoSuffix+'.pdf'
-        if(numErrs < 1 and numWarns < 1 or
-           numErrs < 1 and numWarns > 0 and not force):
-            if os.path.isfile(pdfPath):
-                print '<script type="text/javascript">'
-                print 'window.location="file://'+quote(pdfPath)+'"'
-                print '</script>'
+        path_to_viewer, sync_command = get_app_path_and_sync_command(
+            viewer, path_pdf, path_file, line_number)
+        # PDF viewer is installed and it supports pdfsync
+        if sync_command and use_pdfsync:
+            call(sync_command, shell=True)
+        # PDF viewer is installed
+        elif path_to_viewer:
+            if use_pdfsync:
+                print("{} does not supported pdfsync".format(viewer))
+            # If this is not done, the next line will thrown an encoding
+            # exception when the PDF file contains non-ASCII characters.
+            viewer = viewer.encode('utf-8')
+            pdf_already_open = not(bool(
+                call("'{}/bin/check_open' '{}' '{}'".format(tm_bundle_support,
+                     viewer, path_pdf), shell=True)))
+            if pdf_already_open:
+                refresh_viewer(viewer, path_pdf)
             else:
-                print 'File does not exist: '+pdfPath
-    return stat
+                status = call("open -a '{}.app' '{}'".format(viewer, path_pdf),
+                              shell=True)
+        # PDF viewer could not be found
+        else:
+            print('<strong class="error"> {} does not appear '.format(viewer) +
+                  'to be installed on your system.</strong>')
+    return status
 
 
 def determine_ts_directory(tsDirectives):
@@ -865,10 +908,10 @@ if __name__ == '__main__':
         texStatus = runObj.wait()
         os.remove("/tmp/latexmkrc")
         if tmPrefs['latexAutoView'] and numErrs < 1:
-            stat = run_viewer(viewer, fileName, filePath,
-                              tmPrefs['latexKeepLogWin'],
-                              'pdfsync' in ltxPackages or synctex,
-                              line_number)
+            stat = run_viewer(
+                viewer, fileName, filePath,
+                numErrs > 1 or numWarns > 0 and tmPrefs['latexKeepLogWin'],
+                'pdfsync' in ltxPackages or synctex, line_number)
         numRuns = commandParser.numRuns
 
     elif texCommand == 'bibtex':
@@ -923,16 +966,16 @@ if __name__ == '__main__':
             os.system("dvips {}.dvi -o '{}'".format(fileNoSuffix, psFile))
             os.system("ps2pdf {}".format(psFile))
         if tmPrefs['latexAutoView'] and numErrs < 1:
-            stat = run_viewer(viewer, fileName, filePath,
-                              tmPrefs['latexKeepLogWin'],
-                              'pdfsync' in ltxPackages or synctex,
-                              line_number)
+            stat = run_viewer(
+                viewer, fileName, filePath,
+                numErrs > 1 or numWarns > 0 and tmPrefs['latexKeepLogWin'],
+                'pdfsync' in ltxPackages or synctex, line_number)
 
     elif texCommand == 'view':
-        stat = run_viewer(viewer, fileName, filePath,
-                          tmPrefs['latexKeepLogWin'],
-                          'pdfsync' in ltxPackages or synctex,
-                          line_number)
+        stat = run_viewer(
+            viewer, fileName, filePath,
+            numErrs > 1 or numWarns > 0 and tmPrefs['latexKeepLogWin'],
+            'pdfsync' in ltxPackages or synctex, line_number)
 
     elif texCommand == 'sync':
         if 'pdfsync' in ltxPackages or synctex:
