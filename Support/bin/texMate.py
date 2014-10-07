@@ -608,7 +608,7 @@ if __name__ == '__main__':
             texStatus, isFatal, numErrs, numWarns = run_bibtex(texfile=fileName)
 
     elif texCommand == 'index':
-        if os.path.exists(fileNoSuffix+'.glsdefs'):
+        if os.path.exists(fileNoSuffix+'.xdy'):
             texStatus, isFatal, numErrs, numWarns = run_makeglossaries()
         else:
             texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
@@ -709,7 +709,7 @@ if __name__ == '__main__':
         print '<div id="texActions">'
         print '<input type="button" value="Re-Run %s" onclick="runLatex(); return false" />' % engine
         print '<input type="button" value="Run Bib" onclick="runBibtex(); return false" />'
-        if os.path.exists(fileNoSuffix+'.glsdefs'):
+        if os.path.exists(fileNoSuffix+'.xdy'):
             print '<input type="button" value="Make Glossaries" onclick="runMakeIndex(); return false" />'
         else:
             print '<input type="button" value="Run Makeindex" onclick="runMakeIndex(); return false" />'
