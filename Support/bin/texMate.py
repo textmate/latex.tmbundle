@@ -59,11 +59,11 @@ import os
 import tmprefs
 
 from glob import glob
-from os import chdir, getenv  # NOQA
+from os import chdir, getenv
 from os.path import abspath, dirname, isfile, join, normpath  # NOQA
-from re import match
+from re import compile, match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
-from sys import stdout
+from sys import exit, stdout
 from urllib import quote
 
 from texparser import (BibTexParser, BiberParser, ChkTeXParser, LaTexParser,
@@ -599,63 +599,91 @@ def determine_typesetting_directory(ts_directives,
     return master_path
 
 
-def findTexPackages(fileName):
-    """Find all packages included by the master file.
-       or any file included from the master.  We should not have to go
-       more than one level deep for preamble stuff.
+def find_tex_packages(file_name):
+    """Find packages included by the given file.
+
+    This function searches for packages in:
+
+        1. The preamble of ``file_name``, and
+        2. files included in the preamble of ``file_name``.
+
+    Arguments:
+
+        file_name
+
+            The path of the file which should be searched for packages.
+
+    Returns: ``[str]``
+
+    Examples:
+
+        >>> chdir('Tests')
+        >>> sorted(find_tex_packages('packages.tex'))
+        ...     # doctest:+NORMALIZE_WHITESPACE
+        ['csquotes', 'framed', 'mathtools', 'polyglossia', 'unicode-math',
+         'xcolor']
+        >>> chdir('..')
+
     """
     try:
-        realfn = expand_name(fileName)
-        texString = open(realfn)
+        file = open(expand_name(file_name))
     except:
         print('<p class="error">Error: Could not open ' +
-              '%s to check for packages</p>' % fileName)
+              '{} to check for packages</p>'.format(file_name))
         print('<p class="error">This is most likely a problem with ' +
               'TM_LATEX_MASTER</p>')
-        sys.exit(1)
-    inputre = re.compile(r'((^|\n)[^%]*?)(\\input|\\include)\{([\w /\.\-]+)\}')
-    usepkgre = re.compile(
-        r'((^|\n)[^%]*?)\\usepackage(\[[\w, \-]+\])?\{([\w,\-]+)\}')
-    beginre = re.compile(r'((^|\n)[^%]*?)\\begin\{document\}')
-    incFiles = []
-    myList = []
-    for line in texString:
-        begin = re.search(beginre, line)
-        inc = re.search(inputre, line)
-        usepkg = re.search(usepkgre, line)
-        if begin:
+        exit(1)
+    option_regex = r'\[[^\{]+\]'
+    argument_regex = r'\{([^\}]+)\}'
+    input_regex = compile(r'[^%]*?\\input{}'.format(argument_regex))
+    package_regex = compile(r'[^%]*?\\usepackage(?:{})?{}'.format(
+                            option_regex, argument_regex))
+    begin_regex = compile(r'[^%]*?\\begin\{document\}')
+
+    # Search for packages and included files in the tex document
+    included_files = []
+    packages = []
+    for line in file:
+        match_input = match(input_regex, line)
+        match_package = match(package_regex, line)
+        if match_input:
+            included_files.append(match_input.group(1))
+        if match_package:
+            packages.append(match_package.group(1))
+        if match(begin_regex, line):
             break
-        elif inc:
-            incFiles.append(inc.group(4))
-        elif usepkg:
-            myList.append(usepkg.group(4))
-    beginFound = False
-    for ifile in incFiles:
-        if ifile.find('.tex') < 0:
-            ifile += '.tex'
+
+    # Search for packages in all files till we find the beginning of the
+    # document and therefore the end of the preamble
+    included_files = [included_file if included_file.endswith('.tex')
+                      else '{}.tex'.format(included_file)
+                      for included_file in included_files]
+    match_begin = False
+    while included_files and not match_begin:
         try:
-            realif = expand_name(ifile)
-            incmatches = []
-            for line in file(realif):
-                incmatches.append(re.search(usepkgre, line))
-                if re.search(beginre, line):
-                    beginFound = True
-            myList += [x.group(4) for x in incmatches if x]
+            file = open(expand_name(included_files.pop()))
         except:
             print('<p class="warning">Warning: Could not open ' +
-                  '%s to check for packages</p>' % ifile)
-        if beginFound:
-            break
-    newList = []
-    for pkg in myList:
-        if pkg.find(',') >= 0:
-            for sp in pkg.split(','):
-                newList.append(sp.strip())
-        else:
-            newList.append(pkg.strip())
+                  '{} to check for packages</p>'.format(included_file))
+
+        for line in file:
+            match_package = match(package_regex, line)
+            match_begin = match(begin_regex, line)
+            if match_package:
+                packages.append(match_package.group(1))
+            if match_begin:
+                break
+
+    # Split package definitions of the form 'package1, package2' into
+    # 'package1', 'package2'
+    package_list = []
+    for package in packages:
+        package_list.extend([package.strip()
+                             for package in package.split(',')])
+
     if DEBUG:
-        print '<pre>TEX package list = ', newList, '</pre>'
-    return newList
+        print('<pre>TEX package list = {}</pre>'.format(package_list))
+    return package_list
 
 
 def find_TEX_directives():
@@ -874,7 +902,7 @@ if __name__ == '__main__':
     fileName, filePath = findFileToTypeset(tsDirs)
     fileNoSuffix = getFileNameWithoutExtension(fileName)
 
-    ltxPackages = findTexPackages(fileName)
+    ltxPackages = find_tex_packages(fileName)
 
     viewer = tmPrefs['latexViewer']
     engine = constructEngineCommand(tsDirs, tmPrefs, ltxPackages)
