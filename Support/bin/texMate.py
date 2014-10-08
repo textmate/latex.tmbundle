@@ -60,7 +60,7 @@ import tmprefs
 
 from glob import glob
 from os import chdir, getenv  # NOQA
-from os.path import abspath, dirname, isfile, normpath  # NOQA
+from os.path import abspath, dirname, isfile, join, normpath  # NOQA
 from re import match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import stdout
@@ -536,25 +536,67 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
     return status
 
 
-def determine_ts_directory(tsDirectives):
-    """Determine the proper directory to use for typesetting the current
-    document"""
-    master = os.getenv('TM_LATEX_MASTER')
-    texfile = os.getenv('TM_FILEPATH')
-    startDir = os.path.dirname(texfile)
+def determine_typesetting_directory(ts_directives,
+                                    master_document=getenv('TM_LATEX_MASTER'),
+                                    tex_file=getenv('TM_FILEPATH')):
+    """Determine the proper directory for typesetting the current document.
 
-    if 'root' in tsDirectives:
-        masterPath = os.path.dirname(os.path.normpath(tsDirectives['root']))
-        return masterPath
-    if master:
-        masterPath = os.path.dirname(master)
-        if masterPath == '' or masterPath[0] != '/':
-            masterPath = os.path.normpath(os.path.join(startDir, masterPath))
+    The typesetting directory is set according to the first applicable setting
+    in the following list:
+
+        1. The typesetting directive specified via the line
+
+                ``%!TEX root = path_to_tex_file``
+
+            somewhere in your tex file
+
+        2. the value of ``TM_LATEX_MASTER``, or
+        3. the location of the current tex file.
+
+    Arguments:
+
+        ts_directives
+
+            A dictionary containing typesetting directives. If it contains the
+            key ``root`` then the path in the value of ``root`` will be used
+            as typesetting directory.
+
+        master_document
+
+            Specifies the location of the master document
+            (``TM_LATEX_MASTER``).
+
+        tex_file
+
+            The location of the current tex file
+
+    Returns: ``str``
+
+    Examples:
+
+        >>> ts_directives = {'root' : 'Tests/makeindex.tex'}
+        >>> determine_typesetting_directory(ts_directives)
+        'Tests'
+        >>> determine_typesetting_directory( # doctest:+ELLIPSIS
+        ...     {}, master_document='Tests/external_bibliography')
+        '.../Tests'
+
+    """
+    start_dir = dirname(tex_file)
+
+    if 'root' in ts_directives:
+        master_path = dirname(normpath(ts_directives['root']))
+    elif master_document:
+        master_path = dirname(master_document)
+        if master_path == '' or not master_path.startswith('/'):
+            master_path = normpath(join(start_dir, master_path))
     else:
-        masterPath = startDir
+        master_path = start_dir
+
     if DEBUG:
-        print '<pre>Typesetting Directory = ', masterPath, '</pre>'
-    return masterPath
+        print("<pre>Typesetting Directory = {}</pre>".format(master_path))
+
+    return master_path
 
 
 def findTexPackages(fileName):
@@ -687,7 +729,7 @@ def findFileToTypeset(tsDirectives):
     master = os.path.basename(f)
     if DEBUG:
         print '<pre>master file = ', master, '</pre>'
-    return master, determine_ts_directory(tsDirectives)
+    return master, determine_typesetting_directory(tsDirectives)
 
 
 def constructEngineOptions(tsDirectives, tmPrefs):
@@ -814,7 +856,7 @@ if __name__ == '__main__':
         print '<pre>turning on debug</pre>'
 
     tsDirs = find_TEX_directives()
-    os.chdir(determine_ts_directory(tsDirs))
+    chdir(determine_typesetting_directory(tsDirs))
 
 #
 # Set up some configuration variables
