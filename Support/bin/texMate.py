@@ -59,7 +59,8 @@ import tmprefs
 
 from glob import glob
 from os import chdir, getenv
-from os.path import abspath, dirname, isfile, join, normpath, realpath  # NOQA
+from os.path import (abspath, basename, dirname, isfile, join,  # NOQA
+                     normpath, realpath)
 from re import compile, match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import exit, stdout
@@ -153,9 +154,9 @@ def run_bibtex(texfile, verbose=False):
         >>> chdir('..')
 
     """
-    basename = texfile[:texfile.rfind('.')]
+    name_without_suffix = texfile[:texfile.rfind('.')]
     directory = dirname(texfile) if dirname(texfile) else '.'
-    regex_auxfiles = (r'.*/({}|bu\d+)\.aux$'.format(basename))
+    regex_auxfiles = (r'.*/({}|bu\d+)\.aux$'.format(name_without_suffix))
     auxfiles = [f for f in glob("{}/*.aux".format(directory))
                 if match(regex_auxfiles, f)]
 
@@ -574,28 +575,93 @@ def determine_typesetting_directory(ts_directives,
     Examples:
 
         >>> ts_directives = {'root' : 'Tests/makeindex.tex'}
-        >>> determine_typesetting_directory(ts_directives)
-        'Tests'
+        >>> determine_typesetting_directory(ts_directives) # doctest:+ELLIPSIS
+        '.../Tests'
         >>> determine_typesetting_directory( # doctest:+ELLIPSIS
         ...     {}, master_document='Tests/external_bibliography')
         '.../Tests'
 
     """
-    start_dir = dirname(tex_file)
+    tex_file_dir = dirname(tex_file)
 
     if 'root' in ts_directives:
-        master_path = dirname(normpath(ts_directives['root']))
+        master_path = dirname(ts_directives['root'])
     elif master_document:
         master_path = dirname(master_document)
-        if master_path == '' or not master_path.startswith('/'):
-            master_path = normpath(join(start_dir, master_path))
     else:
-        master_path = start_dir
+        master_path = tex_file_dir
+
+    if master_path == '' or not master_path.startswith('/'):
+        master_path = normpath(realpath(join(tex_file_dir, master_path)))
 
     if DEBUG:
         print("<pre>Typesetting Directory = {}</pre>".format(master_path))
 
     return master_path
+
+
+def find_file_to_typeset(tyesetting_directives,
+                         master_document=getenv('TM_LATEX_MASTER'),
+                         tex_file=getenv('TM_FILEPATH')):
+    """Determine which tex file to typeset.
+
+    This is determined according to the following options:
+
+       - %!TEX root directive
+       - The ``TM_LATEX_MASTER`` environment variable
+       - The environment variable ``TM_FILEPATH``
+
+       This function returns a tuple containing the name and the path to the
+       file which should be typeset.
+
+    Arguments:
+
+        ts_directives
+
+            A dictionary containing typesetting directives. If it contains the
+            key ``root`` then the value of ``root`` will be used for
+            determining the file which should be typeset.
+
+        master_document
+
+            Specifies the location of the master document
+            (``TM_LATEX_MASTER``).
+
+        tex_file
+
+            The location of the current tex file
+
+    Returns: (``str``, ``str``)
+
+    Examples:
+
+        >>> find_file_to_typeset({'root': 'Tests/makeindex.tex'})
+        ...     # doctest:+ELLIPSIS
+        ('makeindex.tex', '.../Tests')
+        >>> find_file_to_typeset({},
+        ...     master_document='../packages.tex',
+        ...     tex_file='Tests/input/packages_input1.tex') # doctest:+ELLIPSIS
+        ('packages.tex', '.../Tests')
+        >>> find_file_to_typeset({'root': '../packages.tex'}, None,
+        ...     tex_file='Tests/input/packages_input1.tex') # doctest:+ELLIPSIS
+        ('packages.tex', '.../Tests')
+        >>> find_file_to_typeset({}, None, 'Tests/packages.tex')
+        ...     # doctest:+ELLIPSIS
+        ('packages.tex', '.../Tests')
+
+    """
+    if 'root' in tyesetting_directives:
+        master = tyesetting_directives['root']
+    elif master_document:
+        master = master_document
+    else:
+        master = tex_file
+
+    if DEBUG:
+        print('<pre>Master File = {}</pre>'.format(master))
+    return (basename(master),
+            determine_typesetting_directory(tyesetting_directives,
+                                            master_document, tex_file))
 
 
 def find_tex_packages(file_name):
@@ -762,29 +828,6 @@ def find_tex_directives(texfile=getenv('TM_FILEPATH')):
     return directives
 
 
-def findFileToTypeset(tsDirectives):
-    """Determine which file to typeset. Using the following rules:
-
-       + %!TEX root directive
-       + using the TM_LATEX_MASTER environment variable
-       + Using TM_FILEPATH
-
-       Once the file is decided return the name of the file and the normalized
-       absolute path to the file as a tuple.
-
-    """
-    if 'root' in tsDirectives:
-        f = tsDirectives['root']
-    elif os.getenv('TM_LATEX_MASTER'):
-        f = os.getenv('TM_LATEX_MASTER')
-    else:
-        f = os.getenv('TM_FILEPATH')
-    master = os.path.basename(f)
-    if DEBUG:
-        print '<pre>master file = ', master, '</pre>'
-    return master, determine_typesetting_directory(tsDirectives)
-
-
 def constructEngineOptions(tsDirectives, tmPrefs):
     """Construct a string of command line options to pass to the typesetting
     engine
@@ -924,7 +967,7 @@ if __name__ == '__main__':
     if texCommand == 'latex' and tmPrefs['latexEngine'] == 'builtin':
         texCommand = 'builtin'
 
-    fileName, filePath = findFileToTypeset(tsDirs)
+    fileName, filePath = find_file_to_typeset(tsDirs)
     fileNoSuffix = getFileNameWithoutExtension(fileName)
 
     ltxPackages = find_tex_packages(fileName)
