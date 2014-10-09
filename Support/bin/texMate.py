@@ -54,13 +54,12 @@
 # -- Imports ------------------------------------------------------------------
 
 import sys
-import re
 import os
 import tmprefs
 
 from glob import glob
 from os import chdir, getenv
-from os.path import abspath, dirname, isfile, join, normpath  # NOQA
+from os.path import abspath, dirname, isfile, join, normpath, realpath  # NOQA
 from re import compile, match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import exit, stdout
@@ -686,55 +685,81 @@ def find_tex_packages(file_name):
     return package_list
 
 
-def find_TEX_directives():
-    """Build a dictionary of %!TEX directives
+def find_tex_directives(texfile=getenv('TM_FILEPATH')):
+    """Build a dictionary of %!TEX directives.
 
-    The main ones we are concerned with are
+    The main ones we are concerned with are:
 
-       root : which specifies a root file to run tex on for this subsidiary
-       TS-program : which tells us which latex program to run
-       TS-options : options to pass to TS-program
-       encoding  :  file encoding
+       root
+
+           Specifies a root file to run tex on for this subsidiary
+
+       TS-program
+
+            Tells us which latex program to run
+
+       TS-options
+
+           Options to pass to TS-program
+
+       encoding
+
+            The text encoding of the tex file
+
+    Arguments:
+
+        texfile
+
+            The initial tex file which should be searched for tex directives.
+            If this file contains a “root” directive, then the file specified
+            in this directive will be searched next.
+
+    Returns: ``{str: str}``
+
+    Examples:
+
+        >>> chdir('Tests')
+        >>> find_tex_directives('input/packages_input1.tex')
+        ...     # doctest:+ELLIPSIS
+        {'root': .../Tests/packages.tex', 'TS-program': 'xelatex'}
+        >>> find_tex_directives('makeindex.tex')
+        {}
+        >>> chdir('..')
 
     """
-    texfile = os.getenv('TM_FILEPATH')
-    startDir = os.path.dirname(texfile)
-    done = False
-    tsDirectives = {}
-    rootChain = [texfile]
-    while not done:
-        f = open(texfile)
-        foundNewRoot = False
-        for i in range(20):
-            line = f.readline()
-            m = re.match(r'^%!TEX\s+([\w-]+)\s?=\s?(.*)', line)
-            if m:
-                if m.group(1) == 'root':
-                    foundNewRoot = True
-                    if m.group(2)[0] == '/':
-                        newtf = m.group(2).rstrip()
-                    else:  # new root is relative or in same directory
-                        newtf = os.path.realpath(
-                            os.path.join(startDir, m.group(2).rstrip()))
-                    if newtf in rootChain:
-                        print("<p class='error'> There is a loop in your " +
-                              "'%!TEX root =' directives.</p>")
-                        print "<p class='error'> chain = ", rootChain, "</p>"
-                        print "<p class='error'> exiting.</p>"
-                        sys.exit(-1)
-                    else:
-                        texfile = newtf
-                        rootChain.append(newtf)
-                    startDir = os.path.dirname(texfile)
-                    tsDirectives['root'] = texfile
-                else:
-                    tsDirectives[m.group(1)] = m.group(2).rstrip()
-        f.close()
-        if not foundNewRoot:
-            done = True
+    root_chain = [texfile]
+    directive_regex = compile(r'%!TEX\s+([\w-]+)\s?=\s?(.*)')
+    directives = {}
+    while True:
+        lines = [line for (line_number, line) in enumerate(open(texfile))
+                 if line_number < 20]
+        new_directives = {directive.group(1): directive.group(2).rstrip()
+                          for directive
+                          in [directive_regex.match(line) for line in lines]
+                          if directive}
+        directives.update(new_directives)
+        if 'root' in new_directives:
+            root = directives['root']
+            new_tex_file = (root if root.startswith('/') else
+                            realpath(join(dirname(texfile), root)))
+            directives['root'] = new_tex_file
+        else:
+            break
+
+        if new_tex_file in root_chain:
+            print('''<p class="error"> There is a loop in your "%!TEX root ="
+                                       directives.</p>
+                     <p class="error"> Chain: {}</p>
+                     <p class="error"> Exiting.</p>'''.format(root_chain))
+            exit(-1)
+        else:
+            texfile = new_tex_file
+            root_chain.append(texfile)
+
     if DEBUG:
-        print '<pre>%!TEX Directives: ', tsDirectives, '</pre>'
-    return tsDirectives
+        print('<pre>%!TEX Directives: {}</pre>'.format(directives))
+
+    return directives
 
 
 def findFileToTypeset(tsDirectives):
@@ -883,7 +908,7 @@ if __name__ == '__main__':
         DEBUG = True
         print '<pre>turning on debug</pre>'
 
-    tsDirs = find_TEX_directives()
+    tsDirs = find_tex_directives()
     chdir(determine_typesetting_directory(tsDirs))
 
 #
