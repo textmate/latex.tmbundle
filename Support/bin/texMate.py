@@ -828,28 +828,69 @@ def find_tex_directives(texfile=getenv('TM_FILEPATH')):
     return directives
 
 
-def constructEngineOptions(tsDirectives, tmPrefs):
-    """Construct a string of command line options to pass to the typesetting
-    engine
+def construct_engine_options(ts_directives, tm_preferences, synctex=True):
+    """Construct a string of command line options.
 
-    Options can come from:
+    The options come from two different sources:
 
-        +  %!TEX TS-options directive in the file
-        + Preferences
+        - %!TEX TS-options directive in the file
+        - Options specified in the preferences of the LaTeX bundle
 
-    In any case nonstopmode is set as is file-line-error-style.
+    In any case ``nonstopmode`` is set as is ``file-line-error-style``.
+
+    Arguments:
+
+        ts_directives
+
+            A dictionary containing typesetting directives. If it contains the
+            key ``TS-options`` then this value will be used to construct the
+            options.
+
+        tm_preferences
+
+            A ``Preferences`` object containing preference items from
+            TextMate. The settings specified in the key ``latexEngineOptions``
+            will be used to extend the options only if ts_directives does not
+            contain typesetting options. Otherwise the settings specified in
+            this item will be ignored.
+
+        synctex
+
+            Specifies if synctex should be used for typesetting or not.
+
+
+    Returns: ``str``
+
+    Examples:
+
+        # We “simulate” the ``Preference`` object in the following examples by
+        # using a dictionary
+        >>> tm_preferences = {'latexEngineOptions': ''}
+        >>> construct_engine_options({}, tm_preferences, True)
+        ...     # doctest:+ELLIPSIS
+        '-interaction=nonstopmode -file-line-error-style -synctex=1'
+        >>> construct_engine_options({'TS-options': '-draftmode'},
+        ...                          tm_preferences, False)
+        '-interaction=nonstopmode -file-line-error-style -draftmode'
+        >>> construct_engine_options({'TS-options': '-draftmode'},
+        ...                          {'latexEngineOptions': '-8bit'}, False)
+        '-interaction=nonstopmode -file-line-error-style -draftmode'
+        >>> construct_engine_options({}, {'latexEngineOptions': '-8bit'})
+        '-interaction=nonstopmode -file-line-error-style -synctex=1 -8bit'
 
     """
-    opts = "-interaction=nonstopmode -file-line-error-style"
-    if synctex:
-        opts += " -synctex=1 "
-    if 'TS-options' in tsDirectives:
-        opts += " " + tsDirectives['TS-options']
+    options = "-interaction=nonstopmode -file-line-error-style{}".format(
+        ' -synctex=1' if synctex else '')
+
+    if 'TS-options' in ts_directives:
+        options += ' {}'.format(ts_directives['TS-options'])
     else:
-        opts += " " + tmPrefs['latexEngineOptions']
+        latex_options = tm_preferences['latexEngineOptions'].strip()
+        options += ' {}'.format(latex_options) if latex_options else ''
+
     if DEBUG:
-        print '<pre>Engine options = ', opts, '</pre>'
-    return opts
+        print('<pre>Engine options = {}</pre>'.format(options))
+    return options
 
 
 def usesOnePackage(testPack, allPackages):
@@ -1023,7 +1064,8 @@ if __name__ == '__main__':
 # Run the command passed on the command line or modified by preferences
 #
     if texCommand == 'latexmk':
-        writeLatexmkRc(engine, constructEngineOptions(tsDirs, tmPrefs))
+        writeLatexmkRc(engine,
+                       construct_engine_options(tsDirs, tmPrefs, synctex))
         if engine == 'latex':
             texCommand = 'latexmk -pdfps -f -r /tmp/latexmkrc '
         else:
@@ -1072,7 +1114,8 @@ if __name__ == '__main__':
     elif texCommand == 'builtin':
         # the latex, bibtex, index, latex, latex sequence should cover 80% of
         # the cases that latexmk does
-        texCommand = engine + " " + constructEngineOptions(tsDirs, tmPrefs)
+        texCommand = engine + " " + construct_engine_options(tsDirs, tmPrefs,
+                                                             synctex)
         texStatus, isFatal, numErrs, numWarns = run_latex(
             texCommand, fileName, verbose)
         numRuns += 1
@@ -1091,7 +1134,8 @@ if __name__ == '__main__':
         numRuns += 1
 
     elif texCommand == 'latex':
-        texCommand = engine + " " + constructEngineOptions(tsDirs, tmPrefs)
+        texCommand = engine + " " + construct_engine_options(tsDirs, tmPrefs,
+                                                             synctex)
         texStatus, isFatal, numErrs, numWarns = run_latex(
             texCommand, fileName, verbose)
         numRuns += 1
