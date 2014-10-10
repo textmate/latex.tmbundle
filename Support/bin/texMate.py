@@ -895,39 +895,73 @@ def construct_engine_options(ts_directives, tm_preferences, synctex=True):
     return options
 
 
-def constructEngineCommand(tsDirectives, tmPrefs, packages):
-    """This function decides which engine to run using
+def construct_engine_command(ts_directives, tm_preferences, packages):
+    """Decide which tex engine to use according to the given arguments.
 
-       + %!TEX directives from the tex file
-       + Preferences
-       + or by detecting certain packages
+    The value of the engine is calculated according to the first applicable
+    setting in the following list:
 
-    The default is pdflatex.  But it may be modified to be one of
+       1. The value of ``TS-program`` specified inside the tex file.
 
-          latex
-          xelatex
-          texexec  -- although I'm not sure how compatible context is with any
-                      of this
+       2. The list of included packages. If one of the used packages only works
+          with a special typesetting engine, then this engine will be returned.
+
+       3. The value of the latex engine specified inside the preferences of
+          the LaTeX bundle.
+
+    Arguments:
+
+        ts_directives
+
+            A dictionary containing typesetting directives. If it contains the
+            key ``TS-program`` then this value will be used as the typesetting
+            engine.
+
+        tm_preferences
+
+            A ``Preferences`` object containing preference items from
+            TextMate. The settings specified in the key ``latexEngine`` will
+            be used as typesetting engine if ``TS-program`` is not set and non
+            of the packages contain engine-specific code.
+
+        packages
+
+            The packages included in the tex file, which should be typeset.
+
+    Returns: ``str``
+
+    Examples:
+
+        # We “simulate” the ``Preference`` object in the following examples by
+        # using a dictionary
+        >>> tm_preferences = {'latexEngine': 'latex'}
+        >>> construct_engine_command({'TS-program': 'pdflatex'},
+        ...                          tm_preferences, set())
+        'pdflatex'
+        >>> construct_engine_command({}, tm_preferences, {'fontspec'})
+        'xelatex'
+        >>> construct_engine_command({}, tm_preferences, set())
+        'latex'
 
     """
-    engine = "pdflatex"
     latexIndicators = {'pstricks', 'xyling', 'pst-asr', 'OTtablx', 'epsfig'}
     xelatexIndicators = {'xunicode', 'fontspec'}
 
-    if 'TS-program' in tsDirectives:
-        engine = tsDirectives['TS-program']
+    if 'TS-program' in ts_directives:
+        engine = ts_directives['TS-program']
     elif packages.intersection(latexIndicators):
         engine = 'latex'
     elif packages.intersection(xelatexIndicators):
         engine = 'xelatex'
     else:
-        engine = tmPrefs['latexEngine']
-    stat = os.system("type {} > /dev/null".format(engine))
-    if stat != 0:
-        print('<p class="error">Error: %s is not found, ' % engine +
-              'you need to install LaTeX or be sure that your PATH is ' +
-              'setup properly.</p>')
-        sys.exit(1)
+        engine = tm_preferences['latexEngine']
+
+    if call("type {} > /dev/null".format(engine), shell=True) != 0:
+        print('''<p class="error">Error: {} was not found,
+                 Please make sure that LaTeX is installed and your PATH is
+                 setup properly.</p>'''.format(engine))
+        exit(1)
+
     return engine
 
 
@@ -1009,7 +1043,7 @@ if __name__ == '__main__':
     ltxPackages = find_tex_packages(fileName)
 
     viewer = tmPrefs['latexViewer']
-    engine = constructEngineCommand(tsDirs, tmPrefs, ltxPackages)
+    engine = construct_engine_command(tsDirs, tmPrefs, ltxPackages)
 
     syncTexCheck = os.system("{} --help |grep -q synctex".format(engine))
     if syncTexCheck == 0:
