@@ -678,13 +678,15 @@ def find_tex_packages(file_name):
 
             The path of the file which should be searched for packages.
 
-    Returns: ``[str]``
+    Returns: ``{str}``
 
     Examples:
 
         >>> chdir('Tests')
-        >>> sorted(find_tex_packages('packages.tex'))
-        ...     # doctest:+NORMALIZE_WHITESPACE
+        >>> packages = find_tex_packages('packages.tex')
+        >>> isinstance(packages, set)
+        True
+        >>> sorted(packages) # doctest:+NORMALIZE_WHITESPACE
         ['csquotes', 'framed', 'mathtools', 'polyglossia', 'unicode-math',
          'xcolor']
         >>> chdir('..')
@@ -748,7 +750,7 @@ def find_tex_packages(file_name):
 
     if DEBUG:
         print('<pre>TEX package list = {}</pre>'.format(package_list))
-    return package_list
+    return set(package_list)
 
 
 def find_tex_directives(texfile=getenv('TM_FILEPATH')):
@@ -893,13 +895,6 @@ def construct_engine_options(ts_directives, tm_preferences, synctex=True):
     return options
 
 
-def usesOnePackage(testPack, allPackages):
-    for p in testPack:
-        if p in allPackages:
-            return True
-    return False
-
-
 def constructEngineCommand(tsDirectives, tmPrefs, packages):
     """This function decides which engine to run using
 
@@ -916,14 +911,14 @@ def constructEngineCommand(tsDirectives, tmPrefs, packages):
 
     """
     engine = "pdflatex"
-    latexIndicators = ['pstricks', 'xyling', 'pst-asr', 'OTtablx', 'epsfig']
-    xelatexIndicators = ['xunicode', 'fontspec']
+    latexIndicators = {'pstricks', 'xyling', 'pst-asr', 'OTtablx', 'epsfig'}
+    xelatexIndicators = {'xunicode', 'fontspec'}
 
     if 'TS-program' in tsDirectives:
         engine = tsDirectives['TS-program']
-    elif usesOnePackage(latexIndicators, packages):
+    elif packages.intersection(latexIndicators):
         engine = 'latex'
-    elif usesOnePackage(xelatexIndicators, packages):
+    elif packages.intersection(xelatexIndicators):
         engine = 'xelatex'
     else:
         engine = tmPrefs['latexEngine']
