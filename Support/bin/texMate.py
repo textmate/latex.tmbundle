@@ -191,7 +191,7 @@ def run_biber(texfile, verbose=False):
         >>> chdir('..')
 
     """
-    file_no_suffix = getFileNameWithoutExtension(texfile)
+    file_no_suffix = get_filename_without_extension(texfile)
     run_object = Popen("biber '{}'".format(file_no_suffix), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     bp = BiberParser(run_object.stdout, verbose)
@@ -280,7 +280,7 @@ def run_makeindex(filename):
 
     """
     run_object = Popen("makeindex '{}.idx'".format(
-                       getFileNameWithoutExtension(filename)), shell=True,
+                       get_filename_without_extension(filename)), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     ip = TexParser(run_object.stdout, True)
     fatal, errors, warnings = ip.parseStream()
@@ -306,7 +306,7 @@ def run_makeglossaries(filename):
 
     """
     run_object = Popen("makeglossaries '{}'".format(
-                       getFileNameWithoutExtension(filename)), shell=True,
+                       get_filename_without_extension(filename)), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     bp = MakeGlossariesParser(run_object.stdout, True)
     fatal, errors, warnings = bp.parseStream()
@@ -498,7 +498,7 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
     status = 0
     path_file = "{}/{}".format(file_path, file_name)
     path_pdf = "{}/{}.pdf".format(file_path,
-                                  getFileNameWithoutExtension(file_name))
+                                  get_filename_without_extension(file_name))
 
     if viewer == 'TextMate':
         if not suppress_pdf_output_textmate:
@@ -965,14 +965,31 @@ def construct_engine_command(ts_directives, tm_preferences, packages):
     return engine
 
 
-def getFileNameWithoutExtension(fileName):
-    """Return filename upto the . or full filename if no ."""
-    suffStart = fileName.rfind(".")
-    if suffStart > 0:
-        fileNoSuffix = fileName[:suffStart]
-    else:
-        fileNoSuffix = fileName
-    return fileNoSuffix
+def get_filename_without_extension(filename):
+    """Get the given file name without its extension.
+
+    If ``filename`` has no extensions then the unchanged file name will be
+    returned.
+
+    Arguments:
+
+        file_name
+
+            The path of some file, either with or without extension.
+
+    Returns: ``str``
+
+
+    Examples:
+
+        >>> get_filename_without_extension('../hello_world.tex')
+        '../hello_world'
+        >>> get_filename_without_extension('Makefile')
+        'Makefile'
+
+    """
+    suffix_index = filename.rfind(".")
+    return filename[:suffix_index] if suffix_index > 0 else filename
 
 
 def writeLatexmkRc(engine, eOpts):
@@ -1038,7 +1055,7 @@ if __name__ == '__main__':
         texCommand = 'builtin'
 
     fileName, filePath = find_file_to_typeset(tsDirs)
-    fileNoSuffix = getFileNameWithoutExtension(fileName)
+    fileNoSuffix = get_filename_without_extension(fileName)
 
     ltxPackages = find_tex_packages(fileName)
 
