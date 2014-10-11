@@ -452,7 +452,7 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
                tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
     """Open the PDF viewer containing the PDF generated from ``file_name``.
 
-    If ``use_pdfsync`` is set to ``True`` and the ``viewer`` supports pdfsnyc
+    If ``use_pdfsync`` is set to ``True`` and the ``viewer`` supports pdfsync
     then the part of the PDF corresponding to ``line_number`` will be opened.
     The function returns the exit value of the shell command used to display
     the PDF file.
