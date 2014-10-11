@@ -992,14 +992,41 @@ def get_filename_without_extension(filename):
     return filename[:suffix_index] if suffix_index > 0 else filename
 
 
-def writeLatexmkRc(engine, eOpts):
-    """Create a latexmkrc file that uses the proper engine and arguments"""
-    rcFile = open("/tmp/latexmkrc", 'w')
-    rcFile.write("$latex = 'latex -interaction=nonstopmode " +
-                 "-file-line-error-style %s  ';\n" % eOpts)
-    rcFile.write("$pdflatex = '%s -interaction=nonstopmode " % engine +
-                 "-file-line-error-style %s ';\n""" % eOpts)
-    rcFile.close()
+def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
+    """Create a “latexmkrc” file that uses the proper engine and arguments.
+
+    Arguments:
+
+        engine
+
+            A string specifying the engine which should be used by ``latexmk``.
+
+        options
+
+            A string specifying the arguments which should be used by
+            ``engine``.
+
+        location
+
+            The path to the location where the ``latexmkrc`` file should be
+            saved.
+
+    Examples:
+
+        >>> write_latexmkrc(engine='latex', options='8bit')
+        >>> with open('/tmp/latexmkrc') as latexmkrc_file:
+        ...     print(latexmkrc_file.read())  # doctest:+ELLIPSIS
+        $latex = '...8bit...';
+        ...
+
+    """
+    with open("/tmp/latexmkrc", 'w') as latexmkrc:
+        latexmkrc.write("$latex = 'latex -interaction=nonstopmode " +
+                        "-file-line-error-style {}';\n".format(options) +
+                        "$pdflatex = '{} ".format(engine) +
+                        "-interaction=nonstopmode " +
+                        "-file-line-error-style {}';".format(options))
+
 
 ###############################################################
 #                                                             #
@@ -1110,8 +1137,8 @@ if __name__ == '__main__':
 # Run the command passed on the command line or modified by preferences
 #
     if texCommand == 'latexmk':
-        writeLatexmkRc(engine,
-                       construct_engine_options(tsDirs, tmPrefs, synctex))
+        write_latexmkrc(engine,
+                        construct_engine_options(tsDirs, tmPrefs, synctex))
         if engine == 'latex':
             texCommand = 'latexmk -pdfps -f -r /tmp/latexmkrc '
         else:
