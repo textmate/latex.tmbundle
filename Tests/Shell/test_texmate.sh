@@ -2,8 +2,8 @@
 
 # -----------------------------------------------------------------------------
 # Author:    René Schwaiger (sanssecours@f-m.fm)
-# Date:      2014-10-05
-# Version:   1
+# Date:      2014-10-11
+# Version:   2
 #
 # This script can be used to test the functionality of `texMate`.
 # -----------------------------------------------------------------------------
@@ -15,7 +15,7 @@ TM_BUNDLE_DIR="$HOME/Library/Application Support/TextMate/Managed/Bundles"
 
 export TM_SUPPORT_PATH="$TM_BUNDLE_DIR/Bundle Support.tmbundle/Support/shared"
 export TM_BUNDLE_SUPPORT="$BUNDLE_DIR/Support"
-export TM_FILEPATH="$BUNDLE_DIR/Tests/external_bibliography.tex"
+export TM_FILEPATH="$BUNDLE_DIR/Tests/TeX/external_bibliography.tex"
 export PATH="$BUNDLE_DIR/Support/bin":$PATH
 export TM_SELECTION='1:1'
 

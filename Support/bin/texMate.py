@@ -101,8 +101,8 @@ def expand_name(filename, program='pdflatex'):
 
     Examples:
 
-        >>> expand_name('Tests/text.tex')
-        './Tests/text.tex'
+        >>> expand_name('Tests/TeX/text.tex')
+        './Tests/TeX/text.tex'
         >>> expand_name('non_existent_file.tex')
         ''
 
@@ -146,12 +146,12 @@ def run_bibtex(texfile, verbose=False):
 
     Examples:
 
-        >>> chdir('Tests')
+        >>> chdir('Tests/TeX')
         >>> run_bibtex('external_bibliography.tex') # doctest:+ELLIPSIS
         <h4>Processing: ...
         ...
         (0, False, 0, 0)
-        >>> chdir('..')
+        >>> chdir('../..')
 
     """
     name_without_suffix = texfile[:texfile.rfind('.')]
@@ -183,12 +183,12 @@ def run_biber(texfile, verbose=False):
 
     Examples:
 
-        >>> chdir('Tests')
+        >>> chdir('Tests/TeX')
         >>> run_biber('external_bibliography_biber.tex') # doctest:+ELLIPSIS
         <...
         ...
         (0, False, 0, 0)
-        >>> chdir('..')
+        >>> chdir('../..')
 
     """
     file_no_suffix = get_filename_without_extension(texfile)
@@ -228,13 +228,13 @@ def run_latex(ltxcmd, texfile, verbose=False):
 
     Examples:
 
-        >>> chdir('Tests')
+        >>> chdir('Tests/TeX')
         >>> run_latex(ltxcmd='pdflatex',
         ...           texfile='external_bibliography.tex') # doctest:+ELLIPSIS
         <h4>...
         ...
         (0, False, 0, 0)
-        >>> chdir('..')
+        >>> chdir('../..')
 
     """
     if DEBUG:
@@ -271,12 +271,12 @@ def run_makeindex(filename):
 
     Examples:
 
-        >>> chdir('Tests')
+        >>> chdir('Tests/TeX')
         >>> run_makeindex('makeindex.tex') # doctest:+ELLIPSIS
         This is makeindex...
         ...
         (0, False, 0, 0)
-        >>> chdir('..')
+        >>> chdir('../..')
 
     """
     run_object = Popen("makeindex '{}.idx'".format(
@@ -297,12 +297,12 @@ def run_makeglossaries(filename):
 
     Examples:
 
-        >>> chdir('Tests')
+        >>> chdir('Tests/TeX')
         >>> run_makeglossaries('makeglossaries.tex') # doctest:+ELLIPSIS
         <h2>Make Glossaries...
         ...
         (0, False, 0, 0)
-        >>> chdir('..')
+        >>> chdir('../..')
 
     """
     run_object = Popen("makeglossaries '{}'".format(
@@ -485,14 +485,14 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
 
     Examples:
 
-        >>> chdir('Tests')
+        >>> chdir('Tests/TeX')
         >>> call("pdflatex makeindex.tex > /dev/null", shell=True)
         0
         >>> run_viewer('Skim', 'makeindex.tex', '.',
         ...            suppress_pdf_output_textmate=None, use_pdfsync=True,
         ...            line_number=10, tm_bundle_support=abspath('..'))
         0
-        >>> chdir('..')
+        >>> chdir('../..')
 
     """
     status = 0
@@ -682,14 +682,14 @@ def find_tex_packages(file_name):
 
     Examples:
 
-        >>> chdir('Tests')
+        >>> chdir('Tests/TeX')
         >>> packages = find_tex_packages('packages.tex')
         >>> isinstance(packages, set)
         True
         >>> sorted(packages) # doctest:+NORMALIZE_WHITESPACE
         ['csquotes', 'framed', 'mathtools', 'polyglossia', 'unicode-math',
          'xcolor']
-        >>> chdir('..')
+        >>> chdir('../..')
 
     """
     try:
@@ -786,13 +786,13 @@ def find_tex_directives(texfile=getenv('TM_FILEPATH')):
 
     Examples:
 
-        >>> chdir('Tests')
+        >>> chdir('Tests/TeX')
         >>> find_tex_directives('input/packages_input1.tex')
         ...     # doctest:+ELLIPSIS
-        {'root': .../Tests/packages.tex', 'TS-program': 'xelatex'}
+        {'root': .../Tests/TeX/packages.tex', 'TS-program': 'xelatex'}
         >>> find_tex_directives('makeindex.tex')
         {}
-        >>> chdir('..')
+        >>> chdir('../..')
 
     """
     root_chain = [texfile]
