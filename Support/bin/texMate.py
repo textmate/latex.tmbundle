@@ -1167,7 +1167,7 @@ if __name__ == '__main__':
                 texfile=fileName)
 
     elif texCommand == 'index':
-        if os.path.exists(fileNoSuffix+'.glsdefs'):
+        if os.path.exists(fileNoSuffix+'.glo'):
             texStatus, isFatal, numErrs, numWarns = (
                 run_makeglossaries(fileName))
         else:
@@ -1299,7 +1299,7 @@ if __name__ == '__main__':
               'onclick="runLatex(); return false" />')
         print('<input type="button" value="Run Bib" onclick="runBibtex(); ' +
               'return false" />')
-        if os.path.exists(fileNoSuffix+'.glsdefs'):
+        if os.path.exists(fileNoSuffix+'.glo'):
             print('<input type="button" value="Make Glossaries" ' +
                   'onclick="runMakeIndex(); return false" />')
         else:
