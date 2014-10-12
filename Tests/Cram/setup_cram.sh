@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 # Author:    René Schwaiger (sanssecours@f-m.fm)
 # Date:      2014-10-12
-# Version:   1
+# Version:   2
 #
 # This script setups common variables and aliases for the cram tests inside
 # this directory
@@ -19,9 +19,10 @@ export TM_BUNDLE_SUPPORT="$BUNDLE_DIR/Support"
 export PATH="$BUNDLE_DIR/Support/bin":$PATH
 export TM_SELECTION='1:1'
 
-auxiliary_files_regex='(.aux)|(.bbl)|(.bcf)|(.blg)|(.fdb_latexmk)|(.fls)'
-auxiliary_files_regex+='|(.fmt)|(.ini)|(.log)|(.out)|(.maf)|(.mtc)|(.mtc1)'
-auxiliary_files_regex+='|(.pdfsync)|(.run.xml)|(.synctex.gz)|(.toc)'
+auxiliary_files_regex='(.aux)|(.acr)|(.alg)|(.bbl)|(.bcf)|(.blg)|'
+auxiliary_files_regex+='(.fdb_latexmk)|(.fls)|(.fmt)|(.glg)|(.gls)|(.ini)|'
+auxiliary_files_regex+='(.log)|(.out)|(.maf)|(.mtc)|(.mtc1)|(.pdfsync)|'
+auxiliary_files_regex+='(.run.xml)|(.synctex.gz)|(.toc)'
 
 # -- Aliases ------------------------------------------------------------------
 

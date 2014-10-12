@@ -1174,10 +1174,10 @@ if __name__ == '__main__':
             texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
 
     elif texCommand == 'clean':
-        auxiliary_file_extension = ['aux', 'bbl', 'bcf', 'blg', 'fdb_latexmk',
-                                    'fls', 'fmt', 'ini', 'log', 'out', 'maf',
-                                    'mtc', 'mtc1', 'pdfsync', 'run.xml',
-                                    'synctex.gz', 'toc']
+        auxiliary_file_extension = [
+            'acr', 'alg', 'aux', 'bbl', 'bcf', 'blg', 'fdb_latexmk', 'fls',
+            'fmt', 'glg', 'gls', 'ini', 'log', 'out', 'maf', 'mtc', 'mtc1',
+            'pdfsync', 'run.xml', 'synctex.gz', 'toc']
         texCommand = 'rm ' + ' '.join(
             ['*.' + extension for extension in auxiliary_file_extension])
         runObj = Popen(texCommand, shell=True, stdout=PIPE, stdin=PIPE,
