@@ -24,12 +24,6 @@ We try to process the files using `latexmk`.
   $ texMate.py latexmk | grep -e 'All .* up-to-date' | countlines
   1
 
-If we check the tex file with `chktex` we should not get any warning at all.
-This means grep will fail and therefore return the status value 1.
-
-  $ texMate.py 'chktex' | grep 'Warning'
-  [1]
-
 Check if clean removes all auxiliary files.
 
   $ texMate.py clean > /dev/null
