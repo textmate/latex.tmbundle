@@ -59,8 +59,7 @@ import tmprefs
 
 from glob import glob
 from os import chdir, getenv
-from os.path import (abspath, basename, dirname, isfile, join,  # NOQA
-                     normpath, realpath)
+from os.path import basename, dirname, isfile, join, normpath, realpath
 from re import compile, match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import exit, stdout
@@ -490,7 +489,7 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
         0
         >>> run_viewer('Skim', 'makeindex.tex', '.',
         ...            suppress_pdf_output_textmate=None, use_pdfsync=True,
-        ...            line_number=10, tm_bundle_support=abspath('..'))
+        ...            line_number=10, tm_bundle_support=realpath('..'))
         0
         >>> chdir('../..')
 
