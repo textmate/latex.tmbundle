@@ -464,7 +464,7 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
 
         file_name
 
-            The file name of the tex file
+            The file name of the tex or pdf file.
 
         file_path
 
