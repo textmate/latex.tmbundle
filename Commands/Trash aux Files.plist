@@ -11,7 +11,7 @@
 # Prepare output window.
 html_header 'Clean Auxiliary files'
 
-texMate.py clean 1</string>
+texmate.py clean 1</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>

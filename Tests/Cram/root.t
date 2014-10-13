@@ -15,13 +15,13 @@ call typesetting on a certain file, we translate the file specified as
 Just try to translate the program using `latex`. The root file is
 `packages.tex`
 
-  $ output=`texMate.py latex | grep 'packages.tex' | countlines`
+  $ output=`texmate.py latex | grep 'packages.tex' | countlines`
   $ if [ $output -ge 1 ]; then echo 'OK'; fi
   OK
 
 Check if clean removes all auxiliary files.
 
-  $ texMate.py clean > /dev/null
+  $ texmate.py clean > /dev/null
   $ ls | grep $auxiliary_files_regex
   [1]
 

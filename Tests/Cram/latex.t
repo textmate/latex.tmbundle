@@ -10,18 +10,18 @@
 
 Just try to translate the program using `latex`
 
-  $ output=`texMate.py latex | grep 'Output written' | countlines`
+  $ output=`texmate.py latex | grep 'Output written' | countlines`
   $ if [ $output -ge 1 ]; then echo 'OK'; fi
   OK
 
 We use 3 runs to process a file.
 
-  $ texMate.py builtin | grep 'Output written' | countlines
+  $ texmate.py builtin | grep 'Output written' | countlines
   3
 
 Check if clean removes all auxiliary files.
 
-  $ texMate.py clean > /dev/null
+  $ texmate.py clean > /dev/null
   $ ls | grep $auxiliary_files_regex
   [1]
 

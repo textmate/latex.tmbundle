@@ -22,10 +22,10 @@ require ENV["TM_SUPPORT_PATH"] + "/lib/tm/save_current_document"
 
 TextMate.save_current_document unless ENV["TM_LATEX_AUTOSAVE"].nil?
 
-texMate = ENV["TM_BUNDLE_SUPPORT"] + "/bin/texMate.py"
-engine_version = TextMate::Process.run(texMate, "version")
+texmate = ENV["TM_BUNDLE_SUPPORT"] + "/bin/texmate.py"
+engine_version = TextMate::Process.run(texmate, "version")
 TextMate::HTMLOutput.show(:title =&gt; "Typesetting “#{ENV["TM_DISPLAYNAME"] || File.basename(ENV["TM_FILEPATH"])}”…", :sub_title =&gt; engine_version) do |io|
-  TextMate::Process.run(texMate, 'latex', '1', :interactive_input =&gt; false) do |line|
+  TextMate::Process.run(texmate, 'latex', '1', :interactive_input =&gt; false) do |line|
 	io &lt;&lt; line
   end
 end

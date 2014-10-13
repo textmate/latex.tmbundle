@@ -10,12 +10,12 @@
 
 We try to process the files using `latexmk`.
 
-  $ texMate.py latexmk | grep -e 'All .* up-to-date' | countlines
+  $ texmate.py latexmk | grep -e 'All .* up-to-date' | countlines
   1
 
 Check if clean removes all auxiliary files.
 
-  $ texMate.py clean > /dev/null
+  $ texmate.py clean > /dev/null
   $ ls | grep $auxiliary_files_regex
   [1]
 

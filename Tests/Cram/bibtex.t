@@ -10,4 +10,4 @@
 
 Check if building the bibliography works without procducing any error
 
-  $ texMate.py bibtex > /dev/null
+  $ texmate.py bibtex > /dev/null

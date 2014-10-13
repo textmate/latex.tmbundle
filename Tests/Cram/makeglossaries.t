@@ -10,18 +10,18 @@
 
 Translate the file to create the files needed by `makeglossaries`
 
-  $ output=`texMate.py latex | grep "Output written" | countlines`
+  $ output=`texmate.py latex | grep "Output written" | countlines`
   $ if [ $output -ge 1 ]; then echo 'OK'; fi
   OK
 
 Generate the index for the file
 
-  $ texMate.py index | grep "Output written in .*.gls" | countlines
+  $ texmate.py index | grep "Output written in .*.gls" | countlines
   1
 
 Check if clean removes all auxiliary files.
 
-  $ texMate.py clean > /dev/null
+  $ texmate.py clean > /dev/null
   $ ls | grep $auxiliary_files_regex
   [1]
 

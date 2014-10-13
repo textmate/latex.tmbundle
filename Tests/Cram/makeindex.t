@@ -10,12 +10,12 @@
 
 Generate the index for the file
 
-  $ texMate.py index | grep 'Output written' | countlines
+  $ texmate.py index | grep 'Output written' | countlines
   1
 
 Translate the LaTeX file
 
-  $ output=`texMate.py latex | grep 'Output written' | countlines`
+  $ output=`texmate.py latex | grep 'Output written' | countlines`
   $ if [ $output -ge 1 ]; then echo 'OK'; fi
   OK
 

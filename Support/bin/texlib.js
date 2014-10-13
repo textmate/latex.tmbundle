@@ -1,7 +1,7 @@
-/* Javascript functions to support texMate.py  */
+/* Javascript functions to support texmate.py  */
 
 /*
-Use Textmate.system to run the texMate script
+Use Textmate.system to run the texmate script
 The environment variables available to the script are the same as those available to the
 original scrip that created the output window.
 We can set up a function to capture the output of the script
@@ -26,7 +26,7 @@ function displayIncrementalOutput(id,className,mess) {
 
 function runCommand(theCmd){
 	cmd  = 'cd "${TM_PROJECT_DIRECTORY:-$TM_DIRECTORY}"; '
-	cmd += '"$TM_BUNDLE_SUPPORT"/bin/texMate.py ' + theCmd;
+	cmd += '"$TM_BUNDLE_SUPPORT"/bin/texmate.py ' + theCmd;
 	TextMate.isBusy = true;
 	myCommand = TextMate.system(cmd, function(task) { TextMate.isBusy = false; } );
 	myCommand.onreadoutput = latexReadOutput;
@@ -56,7 +56,7 @@ function runView(){
 function runConfig(){
     cmd = '"$TM_BUNDLE_SUPPORT"/bin/configure.py'
     myCommand = TextMate.system(cmd, function(task) { TextMate.isBusy = false; } );
-	
+
 }
 function latexReadOutput(str){
 	displayIncrementalOutput('info', 'info', str);

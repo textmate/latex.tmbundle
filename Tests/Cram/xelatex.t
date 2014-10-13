@@ -10,12 +10,12 @@
 
 Just try to translate the program using `latex`
 
-  $ texMate.py latex | grep 'Output written' | countlines
+  $ texmate.py latex | grep 'Output written' | countlines
   1
 
 Check if clean removes all auxiliary files.
 
-  $ texMate.py clean > /dev/null
+  $ texmate.py clean > /dev/null
   $ ls | grep $auxiliary_files_regex
   [1]
 

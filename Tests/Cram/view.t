@@ -15,11 +15,11 @@ Generate the PDF
 
 Check if opening the PDF works with the current viewer
 
-  $ texMate.py view > /dev/null
+  $ texmate.py view > /dev/null
 
 Check if clean removes all auxiliary files.
 
-  $ texMate.py clean > /dev/null
+  $ texmate.py clean > /dev/null
   $ ls | grep $auxiliary_files_regex
   [1]
 

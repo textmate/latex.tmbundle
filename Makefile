@@ -25,7 +25,7 @@ clean:
 		*.gls *.ilg *.ind *.log *.pdf
 
 nosetests:
-	nosetests --with-doctest Support/bin/texMate.py
+	nosetests --with-doctest Support/bin/texmate.py
 
 cramtests: clean
 	cd Tests/Cram && cram *.t
