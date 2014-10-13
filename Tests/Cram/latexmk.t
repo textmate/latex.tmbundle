@@ -8,16 +8,10 @@
 
   $ TM_FILEPATH="external_bibliography.tex"
 
-Just try to translate the program using `latex`
+We try to process the files using `latexmk`.
 
-  $ output=`texMate.py latex | grep 'Output written' | countlines`
-  $ if [ $output -ge 1 ]; then echo 'OK'; fi
-  OK
-
-We use 3 runs to process a file.
-
-  $ texMate.py builtin | grep 'Output written' | countlines
-  3
+  $ texMate.py latexmk | grep -e 'All .* up-to-date' | countlines
+  1
 
 Check if clean removes all auxiliary files.
 
