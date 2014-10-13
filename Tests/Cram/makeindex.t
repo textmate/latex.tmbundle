@@ -15,7 +15,7 @@ Generate the index for the file
 
 Translate the LaTeX file
 
-  $ output=`texmate.py latex | grep 'Output written' | countlines`
+  $ output=`texmate.py latex 2>&- | grep 'Output written' | countlines`
   $ if [ $output -ge 1 ]; then echo 'OK'; fi
   OK
 

@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Date:    2014-10-11
+# Date:    2014-10-13
 # Author:  René Schwaiger (sanssecours@f-m.fm)
 # Version: 6
 #
@@ -21,8 +21,8 @@ run: cramtests
 all: nosetests cramtests
 
 clean:
-	cd Tests/TeX && rm -vf *.acr *.alg *.bbl *.blg *.fdb_latexmk *.fls *.glg \
-		*.gls *.ilg *.ind *.log *.pdf
+	cd Tests/TeX && rm -vf *.acr *.alg *.bbl *.blg *.dvi *.fdb_latexmk *.fls \
+		*.glg *.gls *.ilg *.ind *.log *.ps *.pdf
 
 nosetests:
 	nosetests --with-doctest Support/bin/texmate.py

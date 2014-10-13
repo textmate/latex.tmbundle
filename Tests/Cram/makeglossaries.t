@@ -10,7 +10,7 @@
 
 Translate the file to create the files needed by `makeglossaries`
 
-  $ output=`texmate.py latex | grep "Output written" | countlines`
+  $ output=`texmate.py latex 2>&- | grep "Output written" | countlines`
   $ if [ $output -ge 1 ]; then echo 'OK'; fi
   OK
 

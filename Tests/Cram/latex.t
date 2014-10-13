@@ -10,7 +10,7 @@
 
 Just try to translate the program using `latex`
 
-  $ output=`texmate.py latex | grep 'Output written' | countlines`
+  $ output=`texmate.py latex 2>&- | grep 'Output written' | countlines`
   $ if [ $output -ge 1 ]; then echo 'OK'; fi
   OK
 
