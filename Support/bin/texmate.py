@@ -54,20 +54,18 @@
 # -- Imports ------------------------------------------------------------------
 
 import sys
-import os
-import tmprefs
 
 from glob import glob
-from os import chdir, getenv
-from os.path import basename, dirname, isfile, join, normpath, realpath
+from os import chdir, getenv, putenv, remove
+from os.path import basename, dirname, exists, isfile, join, normpath, realpath
 from re import compile, match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
-from sys import exit, stdout
+from sys import argv, exit, stderr, stdout
 from urllib import quote
 
 from texparser import (BibTexParser, BiberParser, ChkTeXParser, LaTexParser,
                        MakeGlossariesParser, ParseLatexMk, TexParser)
-
+from tmprefs import Preferences
 
 # -- Module Import ------------------------------------------------------------
 
@@ -1027,305 +1025,281 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
                         "-file-line-error-style {}';".format(options))
 
 
-###############################################################
-#                                                             #
-#                 Start of main program...                    #
-#                                                             #
-###############################################################
+# -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
-    verbose = False
-    numRuns = 0
-    stat = 0
-    texStatus = None
-    numErrs = 0
-    numWarns = 0
-    firstRun = False
+
+    def bibtex():
+        """Generate the bibliography for the tex file."""
+        use_biber = exists('{}.bcf'.format(file_without_suffix))
+        return (run_biber(texfile=filename) if use_biber else
+                run_bibtex(texfile=filename))
+
+    def index():
+        """Generate the index for the tex file"""
+        use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
+        return (run_makeglossaries(filename) if use_makeglossaries else
+                run_makeindex(filename))
+
+    def latex():
+        """Run latex for the tex file."""
+        engine_options = construct_engine_options(typesetting_directives,
+                                                  tm_preferences, synctex)
+        command = "{} {}".format(engine, engine_options)
+        return run_latex(command, filename, verbose), command
+
+    # Get preferences from TextMate
+    tm_preferences = Preferences()
+    number_runs = 0
+    viewer_status = 0
+    first_run = False
+    line_number = getenv('TM_SELECTION').split(':')[0]
+    number_errors = 0
+    number_warnings = 0
     synctex = False
-    line_number = os.getenv('TM_SELECTION').split(':')[0]
+    tex_status = None
+    tm_bundle_support = getenv('TM_BUNDLE_SUPPORT')
+    use_latexmk = tm_preferences['latexUselatexmk']
+    verbose = True if tm_preferences['latexVerbose'] == 1 else False
+    viewer = tm_preferences['latexViewer']
 
-#
-# Parse command line parameters...
-#
-    if len(sys.argv) > 2:
-        firstRun = True         # A little hack to make the buttons work nicer.
-    if len(sys.argv) > 1:
-        texCommand = sys.argv[1]
+    # Parse command line parameters...
+    if len(argv) > 2:
+        first_run = True  # A little hack to make the buttons work nicer.
+    if len(argv) > 1:
+        command = argv[1]
     else:
-        sys.stderr.write("Usage: "+sys.argv[0]+" tex-command firstRun\n")
-        sys.exit(255)
+        stderr.write("Usage: {} tex-command first_run\n".format(argv[0]))
+        exit(255)
 
-#
-# Get preferences from TextMate or local directives
-#
-    tmPrefs = tmprefs.Preferences()
-
-    if int(tmPrefs['latexDebug']) == 1:
+    if int(tm_preferences['latexDebug']) == 1:
         DEBUG = True
-        print '<pre>turning on debug</pre>'
+        print('<pre>Turning on Debug</pre>')
 
-    tsDirs = find_tex_directives()
-    chdir(determine_typesetting_directory(tsDirs))
+    typesetting_directives = find_tex_directives()
+    chdir(determine_typesetting_directory(typesetting_directives))
 
-#
-# Set up some configuration variables
-#
-    if tmPrefs['latexVerbose'] == 1:
-        verbose = True
+    if command == 'latex' and use_latexmk:
+        command = 'latexmk'
 
-    useLatexMk = tmPrefs['latexUselatexmk']
-    if texCommand == 'latex' and useLatexMk:
-        texCommand = 'latexmk'
+    filename, file_path = find_file_to_typeset(typesetting_directives)
+    file_without_suffix = get_filename_without_extension(filename)
 
-    if texCommand == 'latex' and tmPrefs['latexEngine'] == 'builtin':
-        texCommand = 'builtin'
+    packages = find_tex_packages(filename)
+    engine = construct_engine_command(typesetting_directives, tm_preferences,
+                                      packages)
 
-    fileName, filePath = find_file_to_typeset(tsDirs)
-    fileNoSuffix = get_filename_without_extension(fileName)
+    synctex = not(bool(call("{} --help | grep -q synctex".format(engine),
+                       shell=True)))
 
-    ltxPackages = find_tex_packages(fileName)
-
-    viewer = tmPrefs['latexViewer']
-    engine = construct_engine_command(tsDirs, tmPrefs, ltxPackages)
-
-    syncTexCheck = os.system("{} --help |grep -q synctex".format(engine))
-    if syncTexCheck == 0:
-        synctex = True
-
-    if os.getenv('TEXINPUTS'):
-        texinputs = os.getenv('TEXINPUTS') + ':'
-    else:
-        texinputs = ".::"
-    texinputs += "%s/tex//" % os.getenv('TM_BUNDLE_SUPPORT')
-    os.putenv('TEXINPUTS', texinputs)
+    texinputs = ('{}:'.format(getenv('TEXINPUTS')) if getenv('TEXINPUTS') else
+                 '.::')
+    texinputs += "{}/tex//".format(tm_bundle_support)
+    putenv('TEXINPUTS', texinputs)
 
     if DEBUG:
-        print '<pre>'
-        print 'engine = ', engine
-        print 'texCommand = ', texCommand
-        print 'viewer = ', viewer
-        print 'texinputs = ', texinputs
-        print 'fileName = ', fileName
-        print 'useLatexMk = ', useLatexMk
-        print 'synctex = ', synctex
-        print '</pre>'
+        print('<pre>')
+        print('Engine: {}'.format(engine))
+        print('Command: {}'.format(command))
+        print('Viewer: {}'.format(viewer))
+        print('TeX Inputs: {}'.format(texinputs))
+        print('Filename: {}'.format(filename))
+        print('Use Latexmk: {}'.format(use_latexmk))
+        print('Synctex: {}'.format(synctex))
+        print('</pre>')
 
-    if texCommand == "version":
-        runObj = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
-        print runObj.stdout.read().split("\n")[0]
-        sys.exit(0)
+    if command == "version":
+        process = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
+        print process.stdout.read().split('\n')[0]
+        exit(0)
 
-#
-# print out header information to begin the run
-#
-    if not firstRun:
-        print '<hr>'
-    #print '<h2>Running %s on %s</h2>' % (texCommand,fileName)
+    # Print out header information to begin the run
+    if not first_run:
+        print('<hr>')
     print '<div id="commandOutput"><div id="preText">'
 
-    if fileName == fileNoSuffix:
-        print("<h2 class='warning'>Warning:  Latex file has no extension. " +
+    if filename == file_without_suffix:
+        print("<h2 class='warning'>Warning: LaTeX file has no extension. " +
               "See log for errors/warnings</h2>")
 
-    if synctex and 'pdfsync' in ltxPackages:
-        print("<p class='warning'>Warning:  %s supports synctex " % engine +
-              "but you have included pdfsync. You can safely remove " +
+    if synctex and 'pdfsync' in packages:
+        print("<p class='warning'>Warning: {} supports ".fomat(engine) +
+              "synctex but you have included pdfsync. You can safely remove " +
               "\usepackage{pdfsync}</p>")
 
-#
-# Run the command passed on the command line or modified by preferences
-#
-    if texCommand == 'latexmk':
-        write_latexmkrc(engine,
-                        construct_engine_options(tsDirs, tmPrefs, synctex))
-        if engine == 'latex':
-            texCommand = 'latexmk -pdfps -f -r /tmp/latexmkrc '
-        else:
-            texCommand = 'latexmk -pdf -f -r /tmp/latexmkrc '
-        texCommand = "{} '{}'".format(texCommand, fileName)
+    # Run the command passed on the command line or modified by preferences
+    if command == 'latexmk':
+        engine_options = construct_engine_options(typesetting_directives,
+                                                  tm_preferences, synctex)
+        write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')
+        command = "latexmk -pdf{} -f -r /tmp/latexmkrc '{}'".format(
+            'ps' if engine == 'latex' else '', filename)
         if DEBUG:
-            print("latexmk command = {}".format(texCommand))
-        runObj = Popen(texCommand, shell=True, stdout=PIPE, stdin=PIPE,
-                       stderr=STDOUT, close_fds=True)
-        commandParser = ParseLatexMk(runObj.stdout, verbose, fileName)
-        isFatal, numErrs, numWarns = commandParser.parseStream()
-        texStatus = runObj.wait()
-        os.remove("/tmp/latexmkrc")
-        if tmPrefs['latexAutoView'] and numErrs < 1:
-            stat = run_viewer(
-                viewer, fileName, filePath,
-                numErrs > 1 or numWarns > 0 and tmPrefs['latexKeepLogWin'],
-                'pdfsync' in ltxPackages or synctex, line_number)
-        numRuns = commandParser.numRuns
+            print("Latexmk command: {}".format(command))
+        process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
+                        stderr=STDOUT, close_fds=True)
+        command_parser = ParseLatexMk(process.stdout, verbose, filename)
+        status = command_parser.parseStream()
+        fatal_error, number_errors, number_warnings = status
+        tex_status = process.wait()
+        remove("/tmp/latexmkrc")
+        if tm_preferences['latexAutoView'] and number_errors < 1:
+            viewer_status = run_viewer(
+                viewer, filename, file_path,
+                number_errors > 1 or number_warnings > 0
+                and tm_preferences['latexKeepLogWin'],
+                'pdfsync' in packages or synctex, line_number)
+        number_runs = command_parser.numRuns
 
-    elif texCommand == 'bibtex':
-        if os.path.exists(fileNoSuffix+'.bcf'):
-            texStatus, isFatal, numErrs, numWarns = run_biber(texfile=fileName)
-        else:
-            texStatus, isFatal, numErrs, numWarns = run_bibtex(
-                texfile=fileName)
+    elif command == 'bibtex':
+        tex_status, fatal_error, number_errors, number_warnings = bibtex()
 
-    elif texCommand == 'index':
-        if os.path.exists(fileNoSuffix+'.glo'):
-            texStatus, isFatal, numErrs, numWarns = (
-                run_makeglossaries(fileName))
-        else:
-            texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
+    elif command == 'index':
+        tex_status, fatal_error, number_errors, number_warnings = index()
 
-    elif texCommand == 'clean':
+    elif command == 'clean':
         auxiliary_file_extension = [
             'acr', 'alg', 'aux', 'bbl', 'bcf', 'blg', 'fdb_latexmk', 'fls',
             'fmt', 'glg', 'gls', 'ini', 'log', 'out', 'maf', 'mtc', 'mtc1',
             'pdfsync', 'run.xml', 'synctex.gz', 'toc']
-        texCommand = 'rm ' + ' '.join(
-            ['*.' + extension for extension in auxiliary_file_extension])
-        runObj = Popen(texCommand, shell=True, stdout=PIPE, stdin=PIPE,
-                       stderr=STDOUT, close_fds=True)
-        commandParser = ParseLatexMk(runObj.stdout, True, fileName)
+        command = 'rm -vf {}'.format(' '.join(
+            ['*.' + extension for extension in auxiliary_file_extension]))
+        removed_files = check_output(command, shell=True)
+        print("<p>Removed: {}</p>".format(removed_files))
 
-    elif texCommand == 'builtin':
-        # the latex, bibtex, index, latex, latex sequence should cover 80% of
+    elif command == 'builtin':
+        # The latex, bibtex, index, latex, latex sequence should cover 80% of
         # the cases that latexmk does
-        texCommand = engine + " " + construct_engine_options(tsDirs, tmPrefs,
-                                                             synctex)
-        texStatus, isFatal, numErrs, numWarns = run_latex(
-            texCommand, fileName, verbose)
-        numRuns += 1
-        if os.path.exists(fileNoSuffix + '.bcf'):
-            texStatus, isFatal, numErrs, numWarns = run_biber(texfile=fileName)
-        else:
-            texStatus, isFatal, numErrs, numWarns = run_bibtex(
-                texfile=fileName)
-        if os.path.exists(fileNoSuffix + '.idx'):
-            texStatus, isFatal, numErrs, numWarns = run_makeindex(fileName)
-        texStatus, isFatal, numErrs, numWarns = run_latex(texCommand,
-                                                          fileName, verbose)
-        numRuns += 1
-        texStatus, isFatal, numErrs, numWarns = run_latex(texCommand,
-                                                          fileName, verbose)
-        numRuns += 1
+        _, command = latex()
+        number_runs += 1
+        bibtex()
+        index()
+        for runs in range(2):
+            status = run_latex(command, filename, verbose)
+            number_runs += 1
 
-    elif texCommand == 'latex':
-        texCommand = engine + " " + construct_engine_options(tsDirs, tmPrefs,
-                                                             synctex)
-        texStatus, isFatal, numErrs, numWarns = run_latex(
-            texCommand, fileName, verbose)
-        numRuns += 1
+        tex_status, fatal_error, number_errors, number_warnings = status
+
+    elif command == 'latex':
+        status, _ = latex()
+        tex_status, fatal_error, number_errors, number_warnings = status
+        number_runs += 1
+
         if engine == 'latex':
-            psFile = fileNoSuffix+'.ps'
-            os.system("dvips {}.dvi -o '{}'".format(fileNoSuffix, psFile))
-            os.system("ps2pdf {}".format(psFile))
-        if tmPrefs['latexAutoView'] and numErrs < 1:
-            stat = run_viewer(
-                viewer, fileName, filePath,
-                numErrs > 1 or numWarns > 0 and tmPrefs['latexKeepLogWin'],
-                'pdfsync' in ltxPackages or synctex, line_number)
+            call("dvips {0}.dvi -o '{0}.ps'".format(file_without_suffix),
+                 shell=True)
+            call("ps2pdf '{}.ps'".format(file_without_suffix), shell=True)
+        if tm_preferences['latexAutoView'] and number_errors < 1:
+            viewer_status = run_viewer(
+                viewer, filename, file_path,
+                number_errors > 1 or number_warnings > 0 and
+                tm_preferences['latexKeepLogWin'],
+                'pdfsync' in packages or synctex, line_number)
 
-    elif texCommand == 'view':
-        stat = run_viewer(
-            viewer, fileName, filePath,
-            numErrs > 1 or numWarns > 0 and tmPrefs['latexKeepLogWin'],
-            'pdfsync' in ltxPackages or synctex, line_number)
+    elif command == 'view':
+        viewer_status = run_viewer(
+            viewer, filename, file_path,
+            number_errors > 1 or number_warnings > 0 and
+            tm_preferences['latexKeepLogWin'],
+            'pdfsync' in packages or synctex, line_number)
 
-    elif texCommand == 'sync':
-        if 'pdfsync' in ltxPackages or synctex:
+    elif command == 'sync':
+        if 'pdfsync' in packages or synctex:
             _, sync_command = get_app_path_and_sync_command(
-                viewer, '{}.pdf'.format(fileNoSuffix), fileName, line_number)
+                viewer, '{}.pdf'.format(file_without_suffix), filename,
+                line_number)
             if sync_command:
-                stat = call(sync_command, shell=True)
+                viewer_status = call(sync_command, shell=True)
             else:
-                print("{} does not supported for pdfsync".format(viewer))
-                stat = 1
+                print("{} does not support pdfsync".format(viewer))
+                viewer_status = 1
 
         else:
-            print "pdfsync.sty must be included to use this command"
-            print "or use a typesetter that supports synctex (such as TexLive)"
-            sys.exit(206)
+            print("Either you need to include `pdfsync.sty` in your document" +
+                  "or you need to use an engine that supports pdfsync.")
+            exit(206)
 
-    elif texCommand == 'chktex':
-        texCommand = "{} '{}'".format(texCommand, fileName)
-        runObj = Popen(texCommand, shell=True, stdout=PIPE, stdin=PIPE,
-                       stderr=STDOUT, close_fds=True)
-        commandParser = ChkTeXParser(runObj.stdout, verbose, fileName)
-        isFatal, numErrs, numWarns = commandParser.parseStream()
-        texStatus = runObj.wait()
+    elif command == 'chktex':
+        command = "{} '{}'".format(command, filename)
+        process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
+                        stderr=STDOUT, close_fds=True)
+        parser = ChkTeXParser(process.stdout, verbose, filename)
+        fatal_error, number_errors, number_warnings = parser.parseStream()
+        tex_status = process.wait()
 
-#
-# Check status of running the viewer
-#
-    if stat != 0:
-        print('<p class="error"><strong>error number %d ' % stat +
-              ' opening viewer</strong></p>')
+    # Check status of running the viewer
+    if viewer_status != 0:
+        print('<p class="error"><strong>Error {} '.format(viewer_status) +
+              'opening viewer</strong></p>')
 
-#
-# Check the status of any runs...
-#
-    eCode = 0
-    if texStatus != 0 or numWarns > 0 or numErrs > 0:
-        print("<p class='info'>Found " + str(numErrs) + " errors, and " +
-              str(numWarns) + " warnings in " + str(numRuns) + " runs</p>")
-        if texStatus:
-            if texStatus > 0:
-                print("<p class='info'>%s exited with status " % texCommand +
-                      "%d</p>" % texStatus)
+    # Check the status of any runs...
+    exit_code = 0
+    if tex_status != 0 or number_warnings > 0 or number_errors > 0:
+        print('<p class="info">Found {} errors, and '.format(number_errors) +
+              '{} warnings in {} run{}</p>'.format(number_warnings,
+              number_runs, '' if number_runs == 1 else 's'))
+        if tex_status:
+            if tex_status > 0:
+                print('<p class="info"> Command {} exited '.format(command) +
+                      'with status {}'.format(tex_status))
             else:
-                print("<p class='error'>%s exited with error " % texCommand +
-                      "code %d</p> " % texStatus)
-#
-# Decide what to do with the Latex & View log window
-#
-    if not tmPrefs['latexKeepLogWin']:
-        if numErrs == 0 and viewer != 'TextMate':
-            eCode = 200
+                print('<p class="error"> Command {} exited '.format(command) +
+                      'with error code {}</p>'.format(tex_status))
+
+    # Decide what to do with the Latex & View log window
+    if not tm_preferences['latexKeepLogWin']:
+        if number_errors == 0 and viewer != 'TextMate':
+            exit_code = 200
         else:
-            eCode = 0
+            exit_code = 0
     else:
-        eCode = 0
+        exit_code = 0
 
-    print '</div></div>'  # closes <pre> and <div id="commandOutput">
+    print '</div></div>'  # Close divs `preText` and `commandOutput`
 
-#
-# Output buttons at the bottom of the window
-#
-    if firstRun:
+    # Output buttons at the bottom of the window
+    if first_run:
+        pdf_file = '{}.pdf'.format(file_without_suffix)
+        use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
         # only need to include the javascript library once
-        js = os.getenv('TM_BUNDLE_SUPPORT') + '/bin/texlib.js'
-        js = quote(js)
-        print('\n<script src="file://%s" type="text/javascript"' % js +
-              'charset="utf-8"></script>')
-        print('<div id="texActions">')
-        print('<input type="button" value="Re-Run %s" ' % engine +
-              'onclick="runLatex(); return false" />')
-        print('<input type="button" value="Run Bib" onclick="runBibtex(); ' +
-              'return false" />')
-        if os.path.exists(fileNoSuffix+'.glo'):
-            print('<input type="button" value="Make Glossaries" ' +
-                  'onclick="runMakeIndex(); return false" />')
-        else:
-            print('<input type="button" value="Run Makeindex" ' +
-                  'onclick="runMakeIndex(); return false" />')
-        print('<input type="button" value="Clean up" onclick="runClean(); ' +
-              'return false" />')
-        if viewer == 'TextMate':
-            pdfFile = fileNoSuffix+'.pdf'
-            print('<input type="button" value="view in TextMate" ' +
-                  'onclick="window.location=\'file://' +
-                  quote(filePath + '/' + pdfFile) + '\'"/>')
-        else:
-            print('<input type="button" value="View in %s" ' % viewer +
-                  'onclick="runView(); return false" />')
-        print('<input type="button" value="Preferences…" ' +
-              'onclick="runConfig(); return false" />')
-        print('<p>')
-        print('<input type="checkbox" id="hv_warn" name="fmtWarnings" ' +
-              'onclick="makeFmtWarnVisible(); return false" />')
-        print('<label for="hv_warn">Show hbox,vbox Warnings </label>')
-        if useLatexMk:
-            print('<input type="checkbox" id="ltxmk_warn" ' +
-                  'name="ltxmkWarnings" onclick="makeLatexmkVisible(); ' +
-                  'return false" />')
-            print('<label for="ltxmk_warn">Show Latexmk Messages </label>')
-        print('</p>')
-        print('</div>')
+        texlib_location = quote('{}/bin/texlib.js'.format(tm_bundle_support))
 
-    sys.exit(eCode)
+        print('''<script src="file://{}" type="text/javascript"
+                  charset="utf-8"></script>
+                 <div id="texActions">
+                 <input type="button" value="Re-Run {}"
+                  onclick="runLatex(); return false"/>
+                 <input type="button" value="Run Bib" onclick="runBibtex();
+                  return false"/>'''.format(texlib_location, engine))
+
+        print('''<input type="button" value="{}"
+                  onclick="runMakeIndex(); return false"/>'''.format(
+              'Make Glossaries' if use_makeglossaries else 'Run Makeindex'))
+        print('''<input type="button" value="Clean up" onclick="runClean();
+                  return false"/>''')
+
+        if viewer == 'TextMate':
+            print('''<input type="button" value="view in TextMate"
+                      onclick="window.location='file://{}'"/>'''.format(
+                  quote('{}/{}'.format(file_path, pdf_file))))
+        else:
+            print('''<input type="button" value="View in {}"
+                     onclick="runView(); return false"/>'''.format(viewer))
+
+        print('''<input type="button" value="Preferences"
+                  onclick="runConfig(); return false"/>
+                 <p>
+                 <input type="checkbox" id="hv_warn" name="fmtWarnings"
+                 onclick="makeFmtWarnVisible(); return false"/>
+                 <label for="hv_warn">Show hbox, vbox Warnings </label>
+                 ''')
+
+        if use_latexmk:
+            print('''<input type="checkbox" id="ltxmk_warn"
+                      name="ltxmkWarnings" onclick="makeLatexmkVisible();
+                      return false"/>
+                     <label for="ltxmk_warn">Show Latexmk Messages </label>''')
+
+        print('</p></div>')
+
+    exit(exit_code)
