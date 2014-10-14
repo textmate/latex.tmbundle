@@ -1268,15 +1268,15 @@ if __name__ == '__main__':
                   charset="utf-8"></script>
                  <div id="texActions">
                  <input type="button" value="Re-Run {}"
-                  onclick="runLatex(); return false"/>
+                  onclick="runLatex(); return false">
                  <input type="button" value="Run Bib" onclick="runBibtex();
-                  return false"/>'''.format(texlib_location, engine))
+                  return false">'''.format(texlib_location, engine))
 
         print('''<input type="button" value="{}"
-                  onclick="runMakeIndex(); return false"/>'''.format(
+                  onclick="runMakeIndex(); return false">'''.format(
               'Make Glossaries' if use_makeglossaries else 'Run Makeindex'))
         print('''<input type="button" value="Clean up" onclick="runClean();
-                  return false"/>''')
+                  return false">''')
 
         if viewer == 'TextMate':
             print('''<input type="button" value="view in TextMate"
@@ -1284,20 +1284,20 @@ if __name__ == '__main__':
                   quote('{}/{}'.format(file_path, pdf_file))))
         else:
             print('''<input type="button" value="View in {}"
-                     onclick="runView(); return false"/>'''.format(viewer))
+                     onclick="runView(); return false">'''.format(viewer))
 
         print('''<input type="button" value="Preferences"
-                  onclick="runConfig(); return false"/>
+                  onclick="runConfig(); return false">
                  <p>
                  <input type="checkbox" id="hv_warn" name="fmtWarnings"
-                 onclick="makeFmtWarnVisible(); return false"/>
+                 onclick="makeFmtWarnVisible(); return false">
                  <label for="hv_warn">Show hbox, vbox Warnings </label>
                  ''')
 
         if use_latexmk:
             print('''<input type="checkbox" id="ltxmk_warn"
                       name="ltxmkWarnings" onclick="makeLatexmkVisible();
-                      return false"/>
+                      return false">
                      <label for="ltxmk_warn">Show Latexmk Messages </label>''')
 
         print('</p></div>')
