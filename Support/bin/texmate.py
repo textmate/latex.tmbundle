@@ -1114,9 +1114,10 @@ if __name__ == '__main__':
         exit(0)
 
     # Print out header information to begin the run
-    if not first_run:
+    if first_run:
+        print('<div id="commandOutput"><div id="preText">')
+    else:
         print('<hr>')
-    print '<div id="commandOutput"><div id="preText">'
 
     if filename == file_without_suffix:
         print("<h2 class='warning'>Warning: LaTeX file has no extension. " +
@@ -1255,10 +1256,9 @@ if __name__ == '__main__':
     else:
         exit_code = 0
 
-    print '</div></div>'  # Close divs `preText` and `commandOutput`
-
     # Output buttons at the bottom of the window
     if first_run:
+        print('</div></div>')  # Close divs `preText` and `commandOutput`
         pdf_file = '{}.pdf'.format(file_without_suffix)
         use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
         # only need to include the javascript library once
