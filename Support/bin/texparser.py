@@ -146,13 +146,10 @@ class BiberParser(TexParser):
 
     def finishRun(self, m, line):
         logFile = m.group(1)[:-3] + 'blg'
-        print '<p>  Complete transcript is in '
-        print('<a href="' +
-              make_link(os.path.join(os.getcwd(), logFile), '1') +
-              '">' + logFile + '</a>')
-        print '</p>'
+        print('''<p>Complete transcript is in <a href="{}">{}</a></p></div>
+              '''.format(make_link(os.path.join(os.getcwd(), logFile), 1),
+                         logFile))
         self.done = True
-        print '</div>'
 
 
 class MakeGlossariesParser(TexParser):
