@@ -14,13 +14,12 @@ Then we just need to redisplay the captured html...
 // a fully featured logging script.
 function displayIncrementalOutput(id,className,mess) {
 	if(mess != null && mess != '')	{
-		c = document.getElementById('preText');
-        var entry = document.createElement("div");
-        entry.innerHTML += mess
-        c.appendChild(entry);
-        //window.location.hash = "texActions";
-        //objDiv = document.getElementById("tm_webpreview_content");
-        //objDiv.scrollTop = objDiv.scrollHeight;
+        content = document.getElementById('preText');
+        if (typeof this.entry === 'undefined') {
+            this.entry = document.createElement("div");
+        }
+        this.entry.innerHTML += mess
+        content.appendChild(this.entry);
 	}
 }
 
