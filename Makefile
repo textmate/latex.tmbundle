@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
-# Date:    2014-10-13
+# Date:    2014-10-15
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 6
+# Version: 7
 #
 # Run tests for this bundle. To execute the tests:
 #
@@ -9,7 +9,8 @@
 #   2. Run the command “Build” (⌘B) located inside the Make bundle
 #
 # The tests require the nose test framework (http://nose.readthedocs.org) and
-# cram (https://bitheap.org/cram/).
+# cram (https://bitheap.org/cram/). For all tests to work correctly you also
+# need to install “Skim” inside `/Applications`
 # -----------------------------------------------------------------------------
 
 .PHONY: run all clean cramtests nosetests
@@ -25,7 +26,7 @@ clean:
 		*.glg *.gls *.ilg *.ind *.log *.ps *.pdf
 
 nosetests:
-	nosetests --with-doctest Support/bin/texmate.py
+	nosetests --with-doctest Support/bin/texmate.py Support/bin/texparser.py
 
 cramtests: clean
 	cd Tests/Cram && cram *.t
