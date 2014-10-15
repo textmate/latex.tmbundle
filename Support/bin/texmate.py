@@ -1267,7 +1267,7 @@ if __name__ == '__main__':
         print('''<script src="file://{}" type="text/javascript"
                   charset="utf-8"></script>
                  <div id="texActions">
-                 <input type="button" value="Re-Run {}"
+                 <input type="button" value="Run {}"
                   onclick="runLatex(); return false">
                  <input type="button" value="Run Bib" onclick="runBibtex();
                   return false">'''.format(texlib_location, engine))
