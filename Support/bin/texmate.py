@@ -1057,7 +1057,7 @@ if __name__ == '__main__':
     number_errors = 0
     number_warnings = 0
     synctex = False
-    tex_status = None
+    tex_status = 0
     tm_bundle_support = getenv('TM_BUNDLE_SUPPORT')
     use_latexmk = tm_preferences['latexUselatexmk']
     verbose = True if tm_preferences['latexVerbose'] == 1 else False
@@ -1235,17 +1235,18 @@ if __name__ == '__main__':
 
     # Check the status of any runs...
     exit_code = 0
-    if tex_status != 0 or number_warnings > 0 or number_errors > 0:
+
+            if tex_status > 0:
+        print('<p class="warning"> Command {} '.format(command) +
+              'exited with status {}'.format(tex_status))
+    elif tex_status < 0:
+                print('<p class="error"> Command {} exited '.format(command) +
+                      'with error code {}</p>'.format(tex_status))
+
+    if number_warnings > 0 or number_errors > 0:
         print('<p class="info">Found {} errors, and '.format(number_errors) +
               '{} warnings in {} run{}</p>'.format(number_warnings,
               number_runs, '' if number_runs == 1 else 's'))
-        if tex_status:
-            if tex_status > 0:
-                print('<p class="info"> Command {} exited '.format(command) +
-                      'with status {}'.format(tex_status))
-            else:
-                print('<p class="error"> Command {} exited '.format(command) +
-                      'with error code {}</p>'.format(tex_status))
 
     # Decide what to do with the Latex & View log window
     if not tm_preferences['latexKeepLogWin']:
