@@ -1159,14 +1159,19 @@ if __name__ == '__main__':
         tex_status, fatal_error, number_errors, number_warnings = index()
 
     elif command == 'clean':
-        auxiliary_file_extension = [
-            'acr', 'alg', 'aux', 'bbl', 'bcf', 'blg', 'fdb_latexmk', 'fls',
-            'fmt', 'glg', 'gls', 'ini', 'log', 'out', 'maf', 'mtc', 'mtc1',
-            'pdfsync', 'run.xml', 'synctex.gz', 'toc']
-        command = 'rm -vf {}'.format(' '.join(
-            ['*.' + extension for extension in auxiliary_file_extension]))
-        removed_files = check_output(command, shell=True)
-        print("<p>Removed: {}</p>".format(removed_files))
+        auxiliary_file_regex = ('.*\.(acr|alg|aux|bbl|bcf|blg|fdb_latexmk|' +
+                                'fls|fmt|glg|gls|ini|log|out|maf|mtc|mtc1|' +
+                                'pdfsync|run.xml|synctex.gz|toc)$')
+        command = ("find -E . -maxdepth 1 -type f -regex " +
+                   "'{}' -delete -print".format(auxiliary_file_regex))
+        removed_files = check_output(command, shell=True).strip()
+        # Remove leading './' to get nicer looking output
+        removed_files = removed_files.replace('./', '')
+        if removed_files:
+            for removed_file in removed_files.split('\n'):
+                print('<p class"info">Removed {}</p>'.format(removed_file))
+        else:
+            print('<p class"info">Clean: No Auxiliary files found'.format())
 
     elif command == 'builtin':
         # The latex, bibtex, index, latex, latex sequence should cover 80% of
@@ -1236,12 +1241,12 @@ if __name__ == '__main__':
     # Check the status of any runs...
     exit_code = 0
 
-            if tex_status > 0:
+    if tex_status > 0:
         print('<p class="warning"> Command {} '.format(command) +
               'exited with status {}'.format(tex_status))
     elif tex_status < 0:
-                print('<p class="error"> Command {} exited '.format(command) +
-                      'with error code {}</p>'.format(tex_status))
+        print('<p class="error"> Command {} exited '.format(command) +
+              'with error code {}</p>'.format(tex_status))
 
     if number_warnings > 0 or number_errors > 0:
         print('<p class="info">Found {} errors, and '.format(number_errors) +
