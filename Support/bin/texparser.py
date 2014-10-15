@@ -3,6 +3,7 @@ import re
 import os.path
 import os
 
+from sys import stdout
 from urllib import quote
 
 
@@ -34,94 +35,170 @@ def make_link(file, line):
 
 
 class TexParser(object):
-    """Master Class for Parsing Tex Typesetting Streams"""
+    """Parse TeX typesetting streams.
+
+    This class reads output from a tex program and tries to convert this
+    information into HTML.
+
+    """
 
     def __init__(self, input_stream, verbose):
+        """Initialize a new TexParser.
+
+        Arguments:
+
+            input_stream
+
+                A stream like object containing data produced by a tex program.
+
+            verbose
+
+                Specifies if the output produced by this class should cover
+                all messages provided by input stream (verbose=True) or if
+                only messages about important events should produce output by
+                this class.
+
+        Examples:
+
+            >>> with open('Tests/Log/external_bibliography.log') as log:
+            ...     parser = TexParser(log, True)
+
+        """
         self.input_stream = input_stream
         self.patterns = []
         self.done = False
         self.verbose = verbose
-        self.numErrs = 0
-        self.numWarns = 0
-        self.isFatal = False
-        # TODO: long term - can improve currentFile handling by keeping track
-        # of (xxx and )
-        self.fileStack = []
+        self.number_errors = 0
+        self.number_warnings = 0
+        self.fatal_error = False
 
-    def getRewrappedLine(self):
-        """Sometimes TeX breaks up lines with hard line breaks. This is
+    def get_rewrapped_line(self):
+        """Try to get exactly one line of coherent tex output.
+
+        Sometimes TeX breaks up lines with hard line breaks. This is
         annoying. Even more annoying is that it sometime does not break line,
         for two distinct warnings. This function attempts to return a single
-        statement."""
+        statement.
+
+        Returns: ``str``
+
+        Examples:
+
+            >>> with open('Tests/Log/latexmk.log') as log: # doctest:+ELLIPSIS
+            ...     parser = TexParser(log, True)
+            ...     line = parser.get_rewrapped_line()
+            ...     while line:
+            ...         print(line)
+            ...         line = parser.get_rewrapped_line()
+            Latexmk: ...
+            ...
+            \EU1/AvenirNext(0)/m/n/... on all fair paths ...
+            ...
+
+        """
         statement = ""
         while True:
             line = self.input_stream.readline()
             if not line:
-                if statement:
-                    return statement
-                else:
-                    return ""
-            statement += line.rstrip("\n")
-            if len(line) != 80:  # including line break
+                return statement
+            statement += line.rstrip('\n')
+            if len(line) != 80:  # Including line break
                 break
-        return statement+"\n"
+        return statement + '\n'
 
-    def parseStream(self):
-        """Process the input_stream one line at a time, matching against
-           each pattern in the patterns dictionary.  If a pattern matches
-           call the corresponding method in the dictionary.  The dictionary
-           is organized with patterns as the keys and methods as the values."""
-        line = self.getRewrappedLine()
+    def parse_stream(self):
+        """Process the input stream one line at a time.
+
+        We match against each pattern in the patterns dictionary. If a pattern
+        matches we call the corresponding method in the dictionary. The
+        dictionary is organized with patterns as the keys and methods as the
+        values.
+
+        This method returns a tuple containing the following values:
+
+            - A boolean value specifying if there was a fatal error
+              encountered by the tex program.
+
+            - The number of errors found in the stream
+
+            - The number of warnings found in the stream
+
+        Returns: ``(bool, int, int)``
+
+        Examples:
+
+            >>> status = None
+            >>> # Since the pattern dictionary of ``TexParser`` is empty the
+            >>> # following will print nothing
+            >>> with open('Tests/Log/external_bibliography.log') as log:
+            ...     parser = TexParser(log, False)
+            ...     status = parser.parse_stream()
+            >>> status
+            (False, 0, 0)
+
+        """
+        line = self.get_rewrapped_line()
         while line and not self.done:
             line = line.rstrip("\n")
-            foundMatch = False
+            found_match = False
 
-            # process matching patterns until we find one
-            for pat, fun in self.patterns:
-                myMatch = pat.match(line)
-                if myMatch:
-                    fun(myMatch, line)
-                    sys.stdout.flush()
-                    foundMatch = True
+            # Process matching patterns until we find one
+            for patttern, function in self.patterns:
+                match = patttern.match(line)
+                if match:
+                    function(match, line)
+                    stdout.flush()
+                    found_match = True
                     break
-            if self.verbose and not foundMatch:
-                print line
+            if self.verbose and not found_match:
+                print(line)
 
-            line = self.getRewrappedLine()
+            line = self.get_rewrapped_line()
         if not self.done:
-            self.badRun()
-        return self.isFatal, self.numErrs, self.numWarns
+            self.bad_run()
+        return self.fatal_error, self.number_errors, self.number_warnings
 
-    def info(self, m, line):
-        print '<p class="info">'
-        print line
-        print '</p>'
+    def info(self, match, line):
+        """Print a message containing ``line``.
 
-    def error(self, m, line):
-        print '<p class="error">'
-        print line
-        print '</p>'
-        self.numErrs += 1
+        The functions of the form ``function(self, match, line)`` in this
+        class and all subclasses use the same interface. We will therefore
+        describe their behaviour only here once.
 
-    def warning(self, m, line):
-        print '<p class="warning">'
-        print line
-        print '</p>'
-        self.numWarns += 1
+        Arguments:
 
-    def warn2(self, m, line):
-        print '<p class="fmtWarning">'
-        print line
-        print '</p>'
+            match
 
-    def fatal(self, m, line):
-        print '<p class="error">'
-        print line
-        print '</p>'
-        self.isFatal = True
+                A regex match containing the match for the given line. What the
+                match contains is dependent on the regex, which lead to the
+                call of this function.
 
-    def badRun(self):
-        """docstring for finishRun"""
+            line
+
+                A string containing the regex pattern which lead to the call
+                of this function
+
+        Returns: ``str``
+
+        """
+        print('<p class="info">{}</p>'.format(line))
+
+    def error(self, match, line):
+        print('<p class="error">{}</p>'.format(line))
+        self.number_errors += 1
+
+    def warning(self, match, line):
+        print('<p class="warning">{}</p>'.format(line))
+        self.number_warnings += 1
+
+    def warning_format(self, match, line):
+        print('<p class="fmtWarning">{}</p>'.format(line))
+
+    def fatal(self, match, line):
+        print('<p class="error">{}</p>'.format(line))
+        self.fatal_error = True
+
+    def bad_run(self):
         pass
 
 
@@ -165,7 +242,7 @@ class BiberParser(TexParser):
         """Using one print command works more reliably
            than using several lines"""
         print '<p class="warning">' + line + '</p>'
-        self.numWarns += 1
+        self.number_warnings += 1
 
     def finishRun(self, m, line):
         logFile = m.group(1)[:-3] + 'blg'
@@ -227,13 +304,13 @@ class MakeGlossariesParser(TexParser):
         """Using one print command works more reliably
            than using several lines"""
         print '<p class="warning">' + line + '</p>'
-        self.numWarns += 1
+        self.number_warnings += 1
 
     def error(self, m, line):
         """Using one print command works more reliably
            than using several lines"""
         print '<p class="error">' + line + '</p>'
-        self.numWarns += 1
+        self.number_warnings += 1
 
 
 class LaTexParser(TexParser):
@@ -257,8 +334,8 @@ class LaTexParser(TexParser):
              self.handleFileLineWarning),
             (re.compile('.*pdfTeX warning.*'), self.warning),
             (re.compile('LaTeX Font Warning:.*'), self.warning),
-            (re.compile('Overfull.*wide'), self.warn2),
-            (re.compile('Underfull.*badness'), self.warn2),
+            (re.compile('Overfull.*wide'), self.warning_format),
+            (re.compile('Underfull.*badness'), self.warning_format),
             (re.compile('^([\.\/\w\x7f-\xff\- ]+(?:\.sty|\.tex|\.' +
                         self.suffix+')):(\d+):\s+(.*)'),
              self.handleError),
@@ -287,7 +364,7 @@ class LaTexParser(TexParser):
         print('<p class="warning"><a href="' +
               make_link(os.path.join(os.getcwd(), self.currentFile),
                         m.group(1)) + '">' + line + "</a></p>")
-        self.numWarns += 1
+        self.number_warnings += 1
 
     def handleFileLineWarning(self, m, line):
         """Display warning. match m should contain file, line, warning
@@ -295,14 +372,14 @@ class LaTexParser(TexParser):
         print('<p class="warning"><a href="' +
               make_link(os.path.join(os.getcwd(), m.group(1)), m.group(2)) +
               '">' + m.group(3) + "</a></p>")
-        self.numWarns += 1
+        self.number_warnings += 1
 
     def handleError(self, m, line):
         print '<p class="error">'
         print('Latex Error: <a  href="' +
               make_link(os.path.join(os.getcwd(), m.group(1)), m.group(2)) +
               '">' + m.group(1) + ":" + m.group(2) + '</a> '+m.group(3)+'</p>')
-        self.numErrs += 1
+        self.number_errors += 1
 
     def finishRun(self, m, line):
         logFile = m.group(2).strip('"')
@@ -318,30 +395,30 @@ class LaTexParser(TexParser):
             print '<p class="error">'
             print line
             print '</p>'
-            self.numErrs += 1
+            self.number_errors += 1
         else:
             print '<p class="warning">'
             print line
             print '</p>'
-            self.numWarns += 1
+            self.number_warnings += 1
 
     def pdfLatexError(self, m, line):
         """docstring for pdfLatexError"""
-        self.numErrs += 1
+        self.number_errors += 1
         print '<p class="error">'
         print line
         line = self.input_stream.readline()
         if line and re.match('^ ==> Fatal error occurred', line):
             print line.rstrip("\n")
             print '</p>'
-            self.isFatal = True
+            self.fatal_error = True
         else:
             if line:
                 print '<pre>    ' + line.rstrip("\n") + '</pre>'
             print '</p>'
         sys.stdout.flush()
 
-    def badRun(self):
+    def bad_run(self):
         """docstring for finishRun"""
         print '<p class="error">A fatal error occurred, log file is in '
         logFile = os.path.basename(os.getenv('TM_FILEPATH'))
@@ -375,34 +452,34 @@ class ParseLatexMk(TexParser):
         print '<div class="bibtex">'
         print '<h3>' + line[:-1] + '</h3>'
         bp = BibTexParser(self.input_stream, self.verbose)
-        f, e, w = bp.parseStream()
-        self.numErrs += e
-        self.numWarns += w
+        f, e, w = bp.parse_stream()
+        self.number_errors += e
+        self.number_warnings += w
 
     def startBiber(self, m, line):
         print '<div class="biber">'
         print '<h3>' + line + '</h3>'
         bp = BiberParser(self.input_stream, self.verbose)
-        f, e, w = bp.parseStream()
-        self.numErrs += e
-        self.numWarns += w
+        f, e, w = bp.parse_stream()
+        self.number_errors += e
+        self.number_warnings += w
 
     def startLatex(self, m, line):
         print '<div class="latex">'
         print '<hr>'
         print '<h3>' + line[:-1] + '</h3>'
         bp = LaTexParser(self.input_stream, self.verbose, self.fileName)
-        f, e, w = bp.parseStream()
-        self.numErrs += e
-        self.numWarns += w
+        f, e, w = bp.parse_stream()
+        self.number_errors += e
+        self.number_warnings += w
 
     def newRun(self, m, line):
         if self.numRuns > 0:
             print '<hr />'
             print("<p> {} Errors {} Warnings in this run.</p>".format(
-                  self.numErrs, self.numWarns))
-        self.numWarns = 0
-        self.numErrs = 0
+                  self.number_errors, self.number_warnings))
+        self.number_warnings = 0
+        self.number_errors = 0
         self.numRuns += 1
 
     def finishRun(self, m, line):
@@ -438,7 +515,7 @@ class ChkTeXParser(TexParser):
         if len(warnDetail) > 2:
             print '<pre>', warnDetail[:-1]
             print self.input_stream.readline()[:-1], '</pre>'
-        self.numWarns += 1
+        self.number_warnings += 1
 
     def handleError(self, m, line):
         print '<p class="error">'
@@ -448,7 +525,7 @@ class ChkTeXParser(TexParser):
               '</p>')
         print '<pre>', self.input_stream.readline()[:-1]
         print self.input_stream.readline()[:-1], '</pre>'
-        self.numErrs += 1
+        self.number_errors += 1
 
 if __name__ == '__main__':
     # test

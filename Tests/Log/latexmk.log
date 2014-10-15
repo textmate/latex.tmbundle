@@ -1,0 +1,494 @@
+Latexmk: This is Latexmk, John Collins, 10 Nov 2013, version: 4.39.
+**** Report bugs etc to John Collins <collins at phys.psu.edu>. ****
+Latexmk: Log file says output to 'Computer Aided Verification [Exercises 2014].pdf'
+Latexmk: ===For rule 'latex', actual output 'Computer Aided Verification [Exercises 2014].pdf'
+       ======appears not to match expected output 'Computer Aided Verification [Exercises 2014].dvi'
+Latexmk: Log file says output to 'Computer Aided Verification [Exercises 2014].pdf'
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex': Rules & subrules not known to be previously run:
+   pdflatex
+Rule 'pdflatex': The following rules & subrules became out-of-date:
+      'pdflatex'
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'xelatex  -recorder  "Computer Aided Verification [Exercises 2014].tex"'
+------------
+This is XeTeX, Version 3.14159265-2.6-0.99991 (TeX Live 2014) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Computer Aided Verification [Exercises 2014].tex
+LaTeX2e <2014/05/01>
+Babel <3.9k> and hyphenation patterns for 78 languages loaded.
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/size12.clo))
+(./TeX/packages.tex
+(/usr/local/texlive/2014/texmf-dist/tex/latex/polyglossia/polyglossia.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/etex-pkg/etex.sty))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/makecmds/makecmds.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/local/texlive/2014/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/local/texlive/2014/texmf-dist/tex/generic/xkeyval/keyval.tex)))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/fontspec/fontspec.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/ifpdf.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/l3kernel/expl3-code.tex))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/fontspec/fontspec-patches.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/fixltx2e.sty)
+*************************************************
+* LaTeX warning: "xparse/redefine-command"
+*
+* Redefining document command \oldstylenums with arg. spec. 'm' on line 128.
+*************************************************
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/euenc/eu1enc.def)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/euenc/eu1lmr.fd))
+(/usr/local/texlive/2014/texmf-dist/tex/xelatex/xunicode/xunicode.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/tipa/t3enc.def
+(/usr/local/texlive/2014/texmf-dist/tex/latex/euenc/eu1lmss.fd))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/latexconfig/graphics.cfg)
+(/usr/local/texlive/2014/texmf-dist/tex/xelatex/xetex-def/xetex.def))))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/ifluatex.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/ifxetex/ifxetex.sty))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/polyglossia/gloss-english.ldf)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/polyglossia/gloss-german.ldf
+(/usr/local/texlive/2014/texmf-dist/tex/latex/polyglossia/babelsh.def))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/csquotes/csquotes.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/csquotes/csquotes.def)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/csquotes/csquotes.cfg))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/biblatex.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/biblatex2.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/ltxcmds.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/infwarerr.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/etexcmds.sty)))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/logreq/logreq.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/logreq/logreq.def))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/blx-dm.def)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/blx-compat.def)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/biblatex.def)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/bbx/alphabetic.bbx
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/bbx/standard.bbx))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/cbx/alphabetic.cbx)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/biblatex.cfg)))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/framed/framed.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/mh/mathtools.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/tools/calc.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/mh/mhsetup.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2014/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/amsmath/amsopn.sty)))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/unicode-math/unicode-math.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty)
+ (/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/catchfile.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/fix-cm.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/filehook/filehook.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/unicode-math/unicode-math-xetex.s
+ty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/unicode-math/unicode-math-table.t
+ex)
+*************************************************
+* unicode-math warning: "mathtools-colon"
+*
+* I'm going to overwrite the following commands from the `mathtools' package:
+*
+*     \dblcolon, \coloneqq, \Coloneqq, \eqqcolon.
+*
+* Note that since I won't overwrite the other colon-like commands, using them
+* will lead to inconsistencies.
+*************************************************
+))) (/usr/local/texlive/2014/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/latexconfig/color.cfg)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/xcolor/x11nam.def))
+(./TeX/document_packages.tex
+(/usr/local/texlive/2014/texmf-dist/tex/latex/enumitem/enumitem.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/float/float.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/oberdiek/grffile.sty
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/koma-script/scrpage2.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/soul/soul.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/titlesec/titlesec.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/xltxtra/xltxtra.sty
+(/usr/local/texlive/2014/texmf-dist/tex/latex/realscripts/realscripts.sty
+*************************************************
+* LaTeX warning: "xparse/redefine-command"
+*
+* Redefining document command \textsubscript with arg. spec. 's' on line 25.
+*************************************************
+*************************************************
+* LaTeX warning: "xparse/redefine-command"
+*
+* Redefining document command \textsuperscript with arg. spec. 's' on line 28.
+*************************************************
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/metalogo/metalogo.sty)))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/usr/local/texlive/2014/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+
+Package hyperref Message: Driver (autodetected): hxetex.
+
+(/usr/local/texlive/2014/texmf-dist/tex/latex/hyperref/hxetex.def
+(/usr/local/texlive/2014/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/stringenc.sty)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+(./TeX/document_properties.tex (./TeX/attributes.tex) (./TeX/colors.tex)
+(./TeX/fonts.tex
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next/B' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next/B' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next/I' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next/I' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next/BI' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Avenir
+* Next/BI' with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Ubuntu'
+* with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Ubuntu'
+* with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Ubuntu/B'
+* with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Ubuntu/I'
+* with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Ubuntu/BI'
+* with script 'Latin' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "aat-feature-not-exist-in-font"
+*
+* AAT feature 'Numbers=Lining' (21,1) not available in font 'Menlo'.
+*************************************************
+*************************************************
+* fontspec warning: "aat-feature-not-exist-in-font"
+*
+* AAT feature 'Numbers=Lining' (21,1) not available in font 'Menlo'.
+*************************************************
+*************************************************
+* fontspec warning: "aat-feature-not-exist-in-font"
+*
+* AAT feature 'Numbers=Lining' (21,1) not available in font 'Menlo/B'.
+*************************************************
+*************************************************
+* fontspec warning: "aat-feature-not-exist-in-font"
+*
+* AAT feature 'Numbers=Lining' (21,1) not available in font 'Menlo/I'.
+*************************************************
+*************************************************
+* fontspec warning: "aat-feature-not-exist-in-font"
+*
+* AAT feature 'Numbers=Lining' (21,1) not available in font 'Menlo/BI'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font
+* 'Asana-Math.otf' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "script-not-exist"
+*
+* Font 'Menlo' does not contain script 'Math'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Menlo'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Menlo'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Menlo'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Style=MathScript' (+ssty) not available for font 'Menlo'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Menlo'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Style=MathScriptScript' (+ssty) not available for font
+* 'Menlo' with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Menlo/B'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Menlo/B'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Style=MathScript' (+ssty) not available for font 'Menlo/B'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Numbers=Lining' (+lnum) not available for font 'Menlo/B'
+* with script 'Math' and language 'Default'.
+*************************************************
+*************************************************
+* fontspec warning: "icu-feature-not-exist-in-font"
+*
+* OpenType feature 'Style=MathScriptScript' (+ssty) not available for font
+* 'Menlo/B' with script 'Math' and language 'Default'.
+*************************************************
+) (./TeX/document_headers_footers.tex)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/se-ascii-print.def))
+(./TeX/macros.tex)
+
+Package csquotes Warning: Using preliminary 'polyglossia' interface.
+(csquotes)                Some of the multilingual features may not
+(csquotes)                work as expected.
+
+(/usr/local/texlive/2014/texmf-dist/tex/latex/biblatex/lbx/english.lbx)
+(./Computer Aided Verification [Exercises 2014].aux)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/tipa/t3cmr.fd)
+(./Computer Aided Verification [Exercises 2014].bbl)
+*************************************************
+* unicode-math warning: "mathtools-overbracket"
+*
+* Using \overbracket and \underbracke from `mathtools' package.
+*
+* Use \Uoverbracket and \Uunderbracke for original `unicode-math' definition.
+*************************************************
+(/usr/local/texlive/2014/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(./Computer Aided Verification [Exercises 2014].out)
+(./Computer Aided Verification [Exercises 2014].out) (./TeX/document_start.tex
+[1] (./Computer Aided Verification [Exercises 2014].toc) [2])
+Underfull \hbox (badness 10000) in paragraph at lines 77--79
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 80--81
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 82--83
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 93--95
+
+
+Overfull \hbox (12.28407pt too wide) in paragraph at lines 100--101
+[] []$[]$ \EU1/Ubuntu(0)/bx/n/12 is both $[]$-continuous and $[]$-continuous[]
+\EU1/AvenirNext(0)/m/n/12 We show that $[]$ is $[]$-continuous.
+
+Underfull \hbox (badness 10000) in paragraph at lines 100--101
+
+
+Overfull \hbox (11.85999pt too wide) in paragraph at lines 102--104
+[]\EU1/AvenirNext(0)/m/n/12 If we apply $[]$ on each set and take the union we
+have $[][][][][]  []  [][][][][]  []  [] []  [][][][][]$.
+
+Overfull \hbox (9.86778pt too wide) in paragraph at lines 102--104
+[][][][][] [] [] [] [][][][][]$\EU1/AvenirNext(0)/m/n/12 . From this we get tha
+t the union of $[][][][][]  []  [][][][][]  []  []  []  [][][][][]$
+[4] <use  "Figures/State Diagram AGEFp.pdf" >
+(./TeX/equivalence_AU_solution.tex [5]) [6]
+Overfull \hbox (2.00584pt too wide) in paragraph at lines 151--152
+\EU1/AvenirNext(0)/m/n/12 holds. The converse, $[][][][][][][][] [] [][][][]$,
+is of course
+
+Overfull \hbox (6.08058pt too wide) in paragraph at lines 153--154
+   [] \EU1/AvenirNext(0)/m/n/12 We assume that there are only fair paths where
+$[]$ holds
+
+Underfull \hbox (badness 10000) in paragraph at lines 153--154
+
+
+Overfull \hbox (0.89256pt too wide) in paragraph at lines 157--158
+\EU1/AvenirNext(0)/m/n/12 where $[][]$ holds all the time then on all fair path
+s there
+(./TeX/document_bibliography.tex)
+Overfull \hbox (3.446pt too wide) in paragraph at lines 165--165
+[][][][] [] [][][][][][][][][][][][][] [] [][][] [] [][][][][][][][][] [] [][][
+][][][] [] [][] [][] [] [][] [][][][][][][][] [][]
+
+Overfull \hbox (12.15178pt too wide) in paragraph at lines 165--165
+[][][][][][][] [][] [][][][][] [][] [][][][][][][][] [][] [][][][][][][][] [][]
+ [][][] [][] [] [][] [][][][][][][][] [][] [][][][][][][] [][]
+
+Overfull \hbox (1.84883pt too wide) in paragraph at lines 165--165
+[]\EU1/AvenirNext(0)/m/n/12 Michael Huth and Mark Ryan. \EU1/AvenirNext(0)/m/it
+/12 Logic in Computer Science: Mod-
+
+Overfull \hbox (10.63586pt too wide) in paragraph at lines 165--165
+\EU1/AvenirNext(0)/m/it/12 elling and reasoning about systems\EU1/AvenirNext(0)
+/m/n/12 . Cambridge University Press,
+[7] [8] (./Computer Aided Verification [Exercises 2014].aux) )
+(see the transcript file for additional information)
+Output written on Computer Aided Verification [Exercises 2014].pdf (8 pages).
+Transcript written on Computer Aided Verification [Exercises 2014].log.
+Latexmk: Log file says output to 'Computer Aided Verification [Exercises 2014].pdf'
+Latexmk: All targets (Computer Aided Verification [Exercises 2014].pdf) are up-to-date

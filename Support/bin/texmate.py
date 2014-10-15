@@ -17,12 +17,12 @@
 #    program.  Each of these classes extends the TexParser class which provides
 #    default methods:
 #
-#       parseStream
+#       parse_stream
 #       error
 #       warning
 #       info
 #
-#   The parseStream method reads each line from the input stream matches
+#   The parse_stream method reads each line from the input stream matches
 #   against a set of regular expressions defined in the patterns dictionary. If
 #   one of these patterns matches then the corresponding method is called. This
 #   method is also stored in the dictionary. Pattern matching callback methods
@@ -163,7 +163,7 @@ def run_bibtex(texfile, verbose=False):
         run_object = Popen("bibtex '{}'".format(bib), shell=True, stdout=PIPE,
                            stdin=PIPE, stderr=STDOUT, close_fds=True)
         bp = BibTexParser(run_object.stdout, verbose)
-        f, e, w = bp.parseStream()
+        f, e, w = bp.parse_stream()
         fatal |= f
         errors += e
         warnings += w
@@ -192,7 +192,7 @@ def run_biber(texfile, verbose=False):
     run_object = Popen("biber '{}'".format(file_no_suffix), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     bp = BiberParser(run_object.stdout, verbose)
-    fatal, errors, warnings = bp.parseStream()
+    fatal, errors, warnings = bp.parse_stream()
     stat = run_object.wait()
     return stat, fatal, errors, warnings
 
@@ -239,7 +239,7 @@ def run_latex(ltxcmd, texfile, verbose=False):
     run_object = Popen("{} '{}'".format(ltxcmd, texfile), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     lp = LaTexParser(run_object.stdout, verbose, texfile)
-    fatal, errors, warnings = lp.parseStream()
+    fatal, errors, warnings = lp.parse_stream()
     stat = run_object.wait()
     return stat, fatal, errors, warnings
 
@@ -280,7 +280,7 @@ def run_makeindex(filename):
                        get_filename_without_extension(filename)), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     ip = TexParser(run_object.stdout, True)
-    fatal, errors, warnings = ip.parseStream()
+    fatal, errors, warnings = ip.parse_stream()
     stat = run_object.wait()
     return stat, fatal, errors, warnings
 
@@ -306,7 +306,7 @@ def run_makeglossaries(filename):
                        get_filename_without_extension(filename)), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     bp = MakeGlossariesParser(run_object.stdout, True)
-    fatal, errors, warnings = bp.parseStream()
+    fatal, errors, warnings = bp.parse_stream()
     stat = run_object.wait()
     return stat, fatal, errors, warnings
 
@@ -1080,7 +1080,7 @@ if __name__ == '__main__':
     chdir(determine_typesetting_directory(typesetting_directives))
 
     if command == 'latex' and use_latexmk:
-        command = 'latexmk'
+            command = 'latexmk'
 
     filename, file_path = find_file_to_typeset(typesetting_directives)
     file_without_suffix = get_filename_without_extension(filename)
@@ -1140,7 +1140,7 @@ if __name__ == '__main__':
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
         command_parser = ParseLatexMk(process.stdout, verbose, filename)
-        status = command_parser.parseStream()
+        status = command_parser.parse_stream()
         fatal_error, number_errors, number_warnings = status
         tex_status = process.wait()
         remove("/tmp/latexmkrc")
@@ -1230,7 +1230,7 @@ if __name__ == '__main__':
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
         parser = ChkTeXParser(process.stdout, verbose, filename)
-        fatal_error, number_errors, number_warnings = parser.parseStream()
+        fatal_error, number_errors, number_warnings = parser.parse_stream()
         tex_status = process.wait()
 
     # Check status of running the viewer
