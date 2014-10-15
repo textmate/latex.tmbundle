@@ -1275,11 +1275,11 @@ if __name__ == '__main__':
         print('''<input type="button" value="{}"
                   onclick="runMakeIndex(); return false">'''.format(
               'Make Glossaries' if use_makeglossaries else 'Run Makeindex'))
-        print('''<input type="button" value="Clean up" onclick="runClean();
+        print('''<input type="button" value="Clean" onclick="runClean();
                   return false">''')
 
         if viewer == 'TextMate':
-            print('''<input type="button" value="view in TextMate"
+            print('''<input type="button" value="View in TextMate"
                       onclick="window.location='file://{}'"/>'''.format(
                   quote('{}/{}'.format(file_path, pdf_file))))
         else:
