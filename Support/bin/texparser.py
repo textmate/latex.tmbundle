@@ -3,6 +3,7 @@ import re
 import os.path
 import os
 
+from re import compile
 from sys import stdout
 from urllib import quote
 
@@ -203,28 +204,56 @@ class TexParser(object):
 
 
 class BibTexParser(TexParser):
-    """Parse and format Error Messages from bibtex"""
+    """Parse and format messages from bibtex"""
 
-    def __init__(self, btex, verbose):
-        super(BibTexParser, self).__init__(btex, verbose)
-        self.patterns += [
-            (re.compile("Warning--I didn't find a database entry"),
-             self.warning),
-            (re.compile(r'I found no \\\w+ command'), self.error),
-            (re.compile(r"I couldn't open style file"), self.error),
-            (re.compile(r"You're missing a field name---line (\d+)"),
-             self.error),
-            (re.compile(r'Too many commas in name \d+ of'), self.error),
-            (re.compile(r'I was expecting a'), self.error),
-            (re.compile('This is BibTeX'), self.info),
-            (re.compile('The style'), self.info),
-            (re.compile('Database'), self.info),
-            (re.compile('---'), self.finishRun)
-        ]
+    def __init__(self, input_stream, verbose):
+        """Initialize the regex patterns for the BibTexParser"""
+        super(BibTexParser, self).__init__(input_stream, verbose)
+        self.patterns.extend([
+            (compile("Warning--"), self.warning),
+            (compile(r'I found no \\\w+ command'), self.error),
+            (compile("I couldn't open style file"), self.error),
+            (compile(r"You're missing a field name---line (\d+)"), self.error),
+            (compile(r'Too many commas in name \d+ of'), self.error),
+            (compile('I was expecting a'), self.error),
+            (compile('This is BibTeX'), self.info),
+            (compile('The style'), self.info),
+            (compile('Database'), self.info),
+            (compile(r'(---)|(\(There were .*\))'), self.finish_run)
+        ])
 
-    def finishRun(self, m, line):
+    def parse_stream(self):
+        r"""Parse log messages from bibtex.
+
+        Examples:
+
+            >>> status = None
+            >>> with open('Tests/Log/bibtex.log') as log:  # doctest:+ELLIPSIS
+            ...     parser = BibTexParser(log, False)
+            ...     status = parser.parse_stream()
+            <p class="info">This is BibTeX...</p>
+            <p class="info">The style file: alpha.bst</p>
+            <p class="info">Database file #1: References.bib</p>
+            <p class="warning">Warning--entry...isn't style-file defined</p>
+            <p class="warning">Warning--empty journal in Rea...</p>
+            <p class="warning">Warning--I didn't find ... "Haggarty:01"</p>
+            <p class="warning">Warning--to sort,... in IEEE_1003_26</p>
+            <p class="warning">... "Realtime_Linux_Academic_Vs_Reality"...</p>
+            <p class="error">I was expecting ... biblio.bib</p>
+            <p class="error">Too many commas...for entry Arridge89</p>
+            <p class="error">You're missing...---line 5 of file biblio.bib</p>
+            <p class="error">I found no \bibdata command---while ...2a.aux</p>
+            <p class="error">I couldn't open style file natbib.bst</p>
+            >>> status
+            (False, 5, 5)
+            >>> parser.done
+            True
+
+        """
+        return super(BibTexParser, self).parse_stream()
+
+    def finish_run(self, match, line):
         self.done = True
-        print '</div>'
 
 
 class BiberParser(TexParser):
