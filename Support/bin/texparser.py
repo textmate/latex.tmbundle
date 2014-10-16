@@ -4,11 +4,13 @@ import os.path
 import os
 
 from re import compile
+from os import getcwd
+from os.path import join
 from sys import stdout
 from urllib import quote
 
 
-def make_link(file, line):
+def make_link(file, line=1):
     """Create a TextMate link for ``file`` pointing to ``line``.
 
     Arguments:
@@ -257,27 +259,45 @@ class BibTexParser(TexParser):
 
 
 class BiberParser(TexParser):
-    """Parse and format Error Messages from biber"""
-    def __init__(self, btex, verbose):
-        super(BiberParser, self).__init__(btex, verbose)
-        self.patterns += [
-            (re.compile('^.*WARN'), self.warning),
-            (re.compile('^.*ERROR'), self.error),
-            (re.compile('^.*FATAL'), self.fatal),
-            (re.compile('^.*Output to (.*)$'), self.finishRun),
-        ]
+    """Parse and format messages from biber"""
 
-    def warning(self, m, line):
-        """Using one print command works more reliably
-           than using several lines"""
-        print '<p class="warning">' + line + '</p>'
-        self.number_warnings += 1
+    def __init__(self, input_stream, verbose):
+        """Initialize the regex patterns for the BiberParser"""
+        super(BiberParser, self).__init__(input_stream, verbose)
+        self.patterns.extend([
+            (compile('INFO - This is Biber'), self.info),
+            (compile('WARN'), self.warning),
+            (compile('ERROR'), self.error),
+            (compile('FATAL'), self.fatal),
+            (compile('^.*Output to (.*)$'), self.finish_run),
+        ])
 
-    def finishRun(self, m, line):
-        logFile = m.group(1)[:-3] + 'blg'
-        print('''<p>Complete transcript is in <a href="{}">{}</a></p></div>
-              '''.format(make_link(os.path.join(os.getcwd(), logFile), 1),
-                         logFile))
+    def parse_stream(self):
+        """Parse log messages from biber.
+
+        Examples:
+
+            >>> status = None
+            >>> with open('Tests/Log/biber.log') as log:  # doctest:+ELLIPSIS
+            ...     parser = BiberParser(log, False)
+            ...     status = parser.parse_stream()
+            <p class="info">INFO - This is Biber...</p>
+            <p class="warning">WARN - Warning: Found ... expected... 2.5</p>
+            <p class="error">FATAL - Cannot find ... to BibLaTeX?</p>
+            <p class="error">ERROR - Cannot find file '.../References1'!</p>
+            <p>Complete transcript is in ...</a></p>
+            >>> status
+            (True, 1, 1)
+            >>> parser.done
+            True
+
+        """
+        return super(BiberParser, self).parse_stream()
+
+    def finish_run(self, match, line):
+        log = match.group(1)
+        print('<p>Complete transcript is in <a href="{}">{}</a></p>'.format(
+              make_link(join(getcwd(), log)), log))
         self.done = True
 
 
