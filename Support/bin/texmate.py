@@ -285,12 +285,24 @@ def run_makeindex(filename):
     return stat, fatal, errors, warnings
 
 
-def run_makeglossaries(filename):
+def run_makeglossaries(filename, verbose=False):
     """Run makeglossaries for the given file.
 
     The interface of this function is exactly the same as the one for
     ``run_makeindex``. For the list of arguments and return values, please
     take a look at ``run_makeindex``.
+
+    Arguments:
+
+        filename
+
+            The name of the tex file for which we want to generate an index.
+
+        verbose
+
+            This value specifies if all output should be printed
+            (``verbose=True``) or if only significant messages should be
+            printed.
 
     Examples:
 
@@ -305,7 +317,7 @@ def run_makeglossaries(filename):
     run_object = Popen("makeglossaries '{}'".format(
                        get_filename_without_extension(filename)), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
-    bp = MakeGlossariesParser(run_object.stdout, True)
+    bp = MakeGlossariesParser(run_object.stdout, verbose)
     fatal, errors, warnings = bp.parse_stream()
     stat = run_object.wait()
     return stat, fatal, errors, warnings
@@ -1038,8 +1050,8 @@ if __name__ == '__main__':
     def index():
         """Generate the index for the tex file"""
         use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
-        return (run_makeglossaries(filename) if use_makeglossaries else
-                run_makeindex(filename))
+        return (run_makeglossaries(filename, verbose) if use_makeglossaries
+                else run_makeindex(filename))
 
     def latex():
         """Run latex for the tex file."""
