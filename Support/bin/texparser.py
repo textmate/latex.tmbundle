@@ -302,64 +302,112 @@ class BiberParser(TexParser):
 
 
 class MakeGlossariesParser(TexParser):
-    """Parse and format Error Messages from makeglossaries"""
-    def __init__(self, btex, verbose):
-        super(MakeGlossariesParser, self).__init__(btex, verbose)
-        self.patterns += [
-            (re.compile('^.*makeglossaries version (.*)$'), self.beginRun),
-            (re.compile('^.*added glossary type \'(.*)\' \((.*)\).*$'),
-             self.addType),
-            (re.compile('^.*Markup written into file "(.*)".$'),
-             self.finishMarkup),
-            (re.compile('^.*xindy.*-L (.*) -I.*-t ".*\.(.*)" -o.*$'),
-             self.runXindy),
-            (re.compile('Cannot locate xindy module'), self.warning),
-            (re.compile('ERROR'), self.error),
-            (re.compile('Warning'), self.warning),
-            (re.compile('^\*\*\*'), self.info),
-        ]
-        self.types = dict()
+    """Parse and format messages from makeglossaries."""
 
-    def beginRun(self, m, line):
-        version = m.group(1)
-        print "<h2>Make Glossaries</h2>"
-        print '<p class="info" >Version: <i>' + version + "</i></p>"
+    def __init__(self, input_stream, verbose):
+        """Initialize the regex patterns for the MakeGlossariesParser"""
+        super(MakeGlossariesParser, self).__init__(input_stream, verbose)
+        self.patterns.extend([
+            (compile('^.*makeglossaries version (.*)$'), self.begin_run),
+            (compile('^.*added glossary type \'(.*)\' \((.*)\).*$'),
+             self.add_type),
+            (compile(r'This is makeindex, version (\d+\.\d+)'),
+             self.run_makeindex),
+            (compile(r'(\w+ \w+ file) (?:\./)?' +
+                     r'(.*\.(?:(?:acr)|(?:ist)|(?:glo)|(?:gls))).*\((.*)\)'),
+             self.work_with_file),
+            (compile(r'(\w+ written in) (.*)\.$'), self.written),
+            (compile(r'Sorting entries.*\((.*)\)'), self.sorting),
+            (compile('^.*Markup written into file "(.*)".$'),
+             self.finish_markup),
+            (compile('^.*xindy.*-L (.*) -I.*-t ".*\.(.*)" -o.*$'),
+             self.run_xindy),
+            (compile('Cannot locate xindy module'), self.warning),
+            (compile('ERROR'), self.error),
+            (compile('Warning'), self.warning),
+            (compile('^\*\*\*'), self.info),
+        ])
+        self.types = {}
 
-    def addType(self, m, line):
-        thisType = m.group(1)
-        files = m.group(2)
-        filesSet = files.split(',')
-        for file in filesSet:
-            self.types[file] = thisType
-        print('<p class="info"> Add Glossary Type <strong>' + thisType +
-              '</strong> <i>(Files: ' + files + ')</i></p>')
+    def parse_stream(self):
+        """Parse log messages from makeglossaries.
 
-    def runXindy(self, m, line):
-        lang = m.group(1)
-        file = m.group(2)
-        thisType = self.types[file]
-        print '<h3>Run xindy for glossary type ' + thisType + '</h3>'
-        print '<p class="info">Language: ' + lang + '</p>'
+        Examples:
 
-    def finishMarkup(self, m, line):
-        mkFile = m.group(1)
-        thisType = self.types[mkFile[-3:]]
-        print('<p class="info">  Finished glossary for type <strong>' +
-              thisType + '</strong>. Output is in <a href="' +
-              make_link(os.path.join(os.getcwd(), mkFile), '1') + '">' +
-              mkFile + '</a></p>')
+            >>> status = None
+            >>> filepath = 'Tests/Log/makeglossaries.log'
+            >>> with open(filepath) as log:  # doctest:+ELLIPSIS
+            ...     parser = MakeGlossariesParser(log, False)
+            ...     status = parser.parse_stream()
+            <h2>Make Glossaries</h2><p class="info" >Version: <i>...</i></p>
+            <p class="info">Add...main... (Files: glg,gls,glo)</i></p>
+            ...
+            <p class="info">Run <strong>Makeindex</strong>, version ...<p>
+            <p class="info">Scanning...makeglossaries.ist:...29 a...0 i...
+            ...
+            <p class="info">Sorting entries: <strong>0 comparisons</strong><p>
+            ...Generating...makeglossaries.gls:...6 lines written, 0...
+            ...Out... <a href="txmt://open/?url=file://.../...gls&line=1">...
+            ...
+            <h3>Run xindy for glossary type main...Language: english...
+            ...Finished ...main...Out...in <a ...makeglossaries.gls...</p>
+            >>> status
+            (False, 0, 0)
 
-    def warning(self, m, line):
-        """Using one print command works more reliably
-           than using several lines"""
-        print '<p class="warning">' + line + '</p>'
-        self.number_warnings += 1
+        """
+        return super(MakeGlossariesParser, self).parse_stream()
 
-    def error(self, m, line):
-        """Using one print command works more reliably
-           than using several lines"""
-        print '<p class="error">' + line + '</p>'
-        self.number_warnings += 1
+    def begin_run(self, match, line):
+        version = match.group(1)
+        print('<h2>Make Glossaries</h2>' +
+              '<p class="info" >Version: <i>{}</i></p>'''.format(version))
+
+    def add_type(self, match, line):
+        glossary_type = match.group(1)
+        files = match.group(2)
+        for file in files.split(','):
+            self.types[file] = glossary_type
+        print('<p class="info">Add Glossary Type <strong>' +
+              '{}</strong><i> (Files: {})</i></p>'.format(glossary_type,
+                                                          files))
+
+    def run_makeindex(self, match, line):
+        version = match.group(1)
+        print('<p class="info">Run <strong>Makeindex</strong>, ' +
+              'version {}<p>'.format(version))
+
+    def run_xindy(self, match, line):
+        language = match.group(1)
+        file = match.group(2)
+        glossary_type = self.types[file]
+        print('<h3>Run xindy for glossary type {}</h3>'.format(glossary_type) +
+              '<p class="info">Language: {}</p>'.format(language))
+
+    def sorting(self, match, line):
+        status = match.group(1)
+        print('<p class="info">Sorting entries: <strong>' +
+              '{}</strong><p>'.format(status))
+
+    def written(self, match, line):
+        description = match.group(1)
+        filename = match.group(2)
+        filepath = make_link(join(getcwd(), filename))
+        print('<p class="info">{} <a href="{}">{}</a></p>'.format(
+              description, filepath, filename))
+
+    def work_with_file(self, match, line):
+        description = match.group(1)
+        filename = match.group(2)
+        status = match.group(3)
+        print('<p class="info">{} {}: <strong>{}</strong>'.format(description,
+              filename, status))
+
+    def finish_markup(self, m, line):
+        mkfile = m.group(1)
+        glossary_type = self.types[mkfile[-3:]]
+        print('<p class="info">Finished glossary for type <strong>' +
+              '{}</strong>. Output is in <a href="{}">{}</a></p>'.format(
+              glossary_type, make_link(join(getcwd(), mkfile), 1), mkfile))
 
 
 class LaTexParser(TexParser):
