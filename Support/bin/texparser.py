@@ -1,11 +1,10 @@
-import sys
 import re
 import os.path
 import os
 
-from re import compile
+from re import compile, search
 from os import getcwd
-from os.path import join
+from os.path import basename, join
 from sys import stdout
 from urllib import quote
 
@@ -411,119 +410,193 @@ class MakeGlossariesParser(TexParser):
 
 
 class LaTexParser(TexParser):
-    """Parse Output From Latex"""
+    """Parse log messages from latex."""
 
-    def __init__(self, input_stream, verbose, fileName):
+    def __init__(self, input_stream, verbose, filename):
+        """Initialize the regex patterns for the LaTexParser."""
         super(LaTexParser, self).__init__(input_stream, verbose)
-        self.suffix = fileName[fileName.rfind('.')+1:]
-        self.currentFile = fileName
-        self.patterns += [
-            #(re.compile('^This is') , self.info),
-            (re.compile('^Document Class'), self.info),
-            (re.compile('.*?\((\.\/[^\)]*?\.(tex|'+self.suffix+')( |$))'),
-             self.detectNewFile),
-            (re.compile('.*\<use (.*?)\>'), self.detectInclude),
-            (re.compile('^Output written'), self.info),
-            (re.compile('LaTeX Warning:.*?input line (\d+)(\.|$)'),
-             self.handleWarning),
-            (re.compile('LaTeX Warning:.*'), self.warning),
-            (re.compile('^([^:]*):(\d+):\s+(pdfTeX warning.*)'),
-             self.handleFileLineWarning),
-            (re.compile('.*pdfTeX warning.*'), self.warning),
-            (re.compile('LaTeX Font Warning:.*'), self.warning),
-            (re.compile('Overfull.*wide'), self.warning_format),
-            (re.compile('Underfull.*badness'), self.warning_format),
-            (re.compile('^([\.\/\w\x7f-\xff\- ]+(?:\.sty|\.tex|\.' +
-                        self.suffix+')):(\d+):\s+(.*)'),
-             self.handleError),
-            (re.compile('([^:]*):(\d+): LaTeX Error:(.*)'), self.handleError),
-            (re.compile('([^:]*):(\d+): (Emergency stop)'), self.handleError),
-            (re.compile('Runaway argument'), self.pdfLatexError),
+        self.suffix = filename[:filename.rfind('.')]
+        self.filename = self.current_file = filename
+        self.patterns.extend([
+            (compile('^Document Class'), self.info),
+            (compile('.*?\(\.\/([^\)]*?\.(tex|{})( |$))'.format(self.suffix)),
+             self.detect_new_file),
+            (compile('.*\<use (.*?)\>'), self.detect_include),
+            (compile('^Output written'), self.info),
+            (compile('LaTeX Warning:.*?input line (\d+)(\.|$)'),
+             self.handle_warning),
+            (compile('LaTeX Warning:.*'), self.warning),
+            (compile('.*pdfTeX warning.*'), self.warning),
+            (compile('LaTeX Font Warning:.*'), self.warning),
+            (compile('Overfull.*wide'), self.warning_format),
+            (compile('Underfull.*badness'), self.warning_format),
+            (compile('^([\.\/\w\x7f-\xff\-]+' +
+                     '(?:\.sty|\.tex|\.{}))'.format(self.suffix) +
+                     ':(\d+):\s+(.*)'),
+             self.handle_error),
+            (compile('([^:]*):(\d+): LaTeX Error:(.*)'), self.handle_error),
+            (compile('([^:]*):(\d+): (Emergency stop)'), self.handle_error),
+            (compile('Runaway argument'), self.pdf_latex_error),
             # We need the (.*) at the beginning of the regular expression
             # since in some edge cases cases the output about the transcript
             # might actually not start at the beginning of the line.
-            (re.compile('(.*)Transcript written on (.*)\.$'), self.finishRun),
-            (re.compile('^Error: pdflatex'), self.pdfLatexError),
-            (re.compile('\!.*'), self.handleOldStyleErrors),
-            (re.compile('^\s+==>'), self.fatal)
-        ]
-        self.blankLine = re.compile(r'^\s*$')
+            (compile('(.*)Transcript written on (.*)\.$'), self.finish_run),
+            (compile('\!.*'), self.handle_old_style_errors),
+            (compile('^\s+==>'), self.fatal)
+        ])
 
-    def detectNewFile(self, m, line):
-        self.currentFile = m.group(1).rstrip()
-        print "<h4>Processing: " + self.currentFile + "</h4>"
+    def parse_stream(self):
+        """Parse log messages from makeglossaries.
 
-    def detectInclude(self, m, line):
-        print "<ul><li>Including: " + m.group(1)
-        print "</li></ul>"
+        Examples:
 
-    def handleWarning(self, m, line):
-        print('<p class="warning"><a href="' +
-              make_link(os.path.join(os.getcwd(), self.currentFile),
-                        m.group(1)) + '">' + line + "</a></p>")
+            >>> status = None
+            >>> filepath = 'Tests/Log/latex.log'
+            >>> with open(filepath) as log: # doctest:+ELLIPSIS
+            ...                             # doctest:+NORMALIZE_WHITESPACE
+            ...     parser = LaTexParser(log, False, filepath)
+            ...     status = parser.parse_stream()
+            <h4>Processing: Embedded Operating Systems.tex</h4>
+            <p class="info">Document Class: article...LaTeX document class</p>
+            <ul><li>Including: Figures/Operating_System_Layer.pdf</li></ul>
+            <p class="warning"><a
+                href="txmt://open/?url=file:/...%20Systems.tex&line=159">LaTeX
+                Warning: Reference `figure:Operating_System_Layer' on page 3
+                undefined on input line 159.</a></p>
+            <p class="fmtWarning">Underfull \hbox ... lines 159--160</p>
+            <p class="warning"><a
+                href=".../Embedded%20Operating%20Systems.tex&line=161">LaTeX
+                Warning: Citation `Software_Entwicklung' on page 3 undefined
+                on input line 161.</a></p>
+            <p class="warning"><a
+                href="txmt://open/?url=file:/...Systems.tex&line=194">LaTeX
+                Warning: Citation `Embedded_OS_Market_Share_2005' on page 5
+                undefined on input line 194.</a></p>
+            <p class="warning">LaTeX Font Warning: Font shape `OT1/cmss/m/n'
+                in size <4> not available</p>
+            <p class="warning">pdfTeX warning: pdflatex
+                (file ./figure/figure_1.pdf): PDF inclusion: found PDF version
+                <1.6>, but at most version <1.5> allowed</p>
+            <p class="error">Latex Error: <a
+                href="....tex&line=22">./makeglossaries.tex:22</a> Undefined
+                control sequence.</p>
+            <p class="warning">LaTeX Warning:
+                There were undefined references.</p>
+            <p class="warning">LaTeX Warning: Label(s) may have changed.
+                Rerun to get cross-references right.</p>
+            <p class="info">Output written on "Embedded Operating Systems.pdf"
+                (28 pages, 474379 bytes).</p>
+            <p>Complete transcript is in
+                <a href="...%20Operating%20Systems.log&line=1">Embedded
+                Operating Systems.log</a></p>
+            >>> status
+            (False, 1, 7)
+            >>> parser.done
+            True
+            >>> status = None
+            >>> filepath = 'Tests/Log/latex_error.log'
+            >>> with open(filepath) as log: # doctest:+ELLIPSIS
+            ...                             # doctest:+NORMALIZE_WHITESPACE
+            ...     parser = LaTexParser(log, False, filepath)
+            ...     status = parser.parse_stream()
+            <h4>Processing: makeglossaries.tex</h4>
+            <p class="error">! LaTeX Error: File `Word.sty' not found.</p>
+            <p class="error">
+            <pre>{ \par bla \par \printglossaries \par \end {document}</pre>
+            </p>
+            <p class="warning">! File ended while scanning use of
+                \@xdblarg.</p>
+            <p class="error">! LaTeX Error: There's no line here to end</p>
+            <p class="error">Latex Error: <a
+                href=...makeglossaries.tex&line=6">./makeglossaries.tex:6</a>
+                Emergency stop.</p>
+            <p class="error">Latex Error: <a href="...line=6">...</a>
+                ==> Fatal error occurred, no output PDF file produced!</p>
+            <p>Complete transcript is in <...line=1">makeglossaries.log</a></p>
+            >>> status
+            (True, 5, 1)
+            >>> parser.done
+            True
+
+        """
+        return super(LaTexParser, self).parse_stream()
+
+    def detect_new_file(self, match, line):
+        self.current_file = match.group(1).rstrip()
+        print("<h4>Processing: {}</h4>".format(self.current_file))
+
+    def detect_include(self, match, line):
+        filepath = match.group(1)
+        print("<ul><li>Including: {}</li></ul>".format(filepath))
+
+    def handle_warning(self, match, line):
+        filepath = join(getcwd(), self.current_file)
+        linenumber = match.group(1)
+        print('<p class="warning"><a href="{}">{}</a></p>'.format(
+              make_link(filepath, linenumber), line))
         self.number_warnings += 1
 
-    def handleFileLineWarning(self, m, line):
-        """Display warning. match m should contain file, line, warning
-        message"""
-        print('<p class="warning"><a href="' +
-              make_link(os.path.join(os.getcwd(), m.group(1)), m.group(2)) +
-              '">' + m.group(3) + "</a></p>")
-        self.number_warnings += 1
-
-    def handleError(self, m, line):
-        print '<p class="error">'
-        print('Latex Error: <a  href="' +
-              make_link(os.path.join(os.getcwd(), m.group(1)), m.group(2)) +
-              '">' + m.group(1) + ":" + m.group(2) + '</a> '+m.group(3)+'</p>')
+    def handle_error(self, match, line):
+        filename = match.group(1)
+        linenumber = match.group(2)
+        description = match.group(3)
+        filepath = join(getcwd(), filename)
+        print('<p class="error">Latex Error: <a href="' +
+              '{}">{}:{}</a> {}</p>'.format(make_link(filepath, linenumber),
+                                            filename, linenumber, description))
         self.number_errors += 1
+        if search('Fatal error', description):
+            self.fatal_error = True
 
-    def finishRun(self, m, line):
-        logFile = m.group(2).strip('"')
-        print '<p>  Complete transcript is in '
-        print('<a href="' +
-              make_link(os.path.join(os.getcwd(), logFile), '1') + '">' +
-              logFile + '</a>')
-        print '</p>'
-        self.done = True
-
-    def handleOldStyleErrors(self, m, line):
-        if re.search('[Ee]rror', line):
-            print '<p class="error">'
-            print line
-            print '</p>'
+    def handle_old_style_errors(self, match, line):
+        if search('[Ee]rror', line):
+            print('<p class="error">{}</p>'.format(line))
             self.number_errors += 1
         else:
-            print '<p class="warning">'
-            print line
-            print '</p>'
+            print('<p class="warning">{}</p>'.format(line))
             self.number_warnings += 1
 
-    def pdfLatexError(self, m, line):
-        """docstring for pdfLatexError"""
+    def pdf_latex_error(self, match, line):
         self.number_errors += 1
-        print '<p class="error">'
-        print line
+        print ('<p class="error">'.format(line))
         line = self.input_stream.readline()
         if line and re.match('^ ==> Fatal error occurred', line):
-            print line.rstrip("\n")
-            print '</p>'
+            print('{}'.format(line.rstrip('\n')))
             self.fatal_error = True
+        elif line:
+            print('<pre>{}</pre>'.format(line.rstrip('\n')))
+        print('</p>')
+        stdout.flush()
+
+    def warning(self, match, line):
+        # We might have gotten here by matching $1 of the following regex:
+        #   (LaTeX Warning:.*) ?input line (\d+)(\.|$)
+        # Lets read the next line and check if we find the remaining regex
+        # pattern
+        next_line = self.input_stream.readline().strip('\n')
+        match_next_line = re.match('.*?input line (\d+)(\.|$)', next_line)
+        if match_next_line:
+            return (self.handle_warning(match_next_line,
+                                        '{} {}'.format(line, next_line)))
         else:
-            if line:
-                print '<pre>    ' + line.rstrip("\n") + '</pre>'
-            print '</p>'
-        sys.stdout.flush()
+            # We discard `next_line` here in the hope that it did not contain
+            # any essential information.
+            return super(LaTexParser, self).warning(match, line)
+
+    def finish_run(self, match, line):
+        filename = match.group(2).strip('"')
+        filepath = make_link(join(getcwd(), filename))
+        print('<p>Complete transcript is in <a href="{}">{}</a></p>'.format(
+              filepath, filename))
+        self.done = True
 
     def bad_run(self):
-        """docstring for finishRun"""
-        print '<p class="error">A fatal error occurred, log file is in '
-        logFile = os.path.basename(os.getenv('TM_FILEPATH'))
-        logFile = logFile.replace(self.suffix, 'log')
-        print('<a href="' +
-              make_link(os.path.join(os.getcwd(), logFile), '1') + '">' +
-              logFile + '</a>')
-        print '</p>'
+        logfile = basename(self.filename)
+        logfile = logfile.replace(self.suffix, 'log')
+        logpath = join(getcwd(), logfile)
+        print('<p class="error">A fatal error occurred, log file is in ' +
+              '<a href="{}">{}</a></p>'.format(make_link(logpath, logfile),
+                                               logfile))
 
 
 class ParseLatexMk(TexParser):
