@@ -64,7 +64,7 @@ from sys import argv, exit, stderr, stdout
 from urllib import quote
 
 from texparser import (BibTexParser, BiberParser, ChkTeXParser, LaTexParser,
-                       MakeGlossariesParser, ParseLatexMk, TexParser)
+                       MakeGlossariesParser, LaTexMkParser, TexParser)
 from tmprefs import Preferences
 
 # -- Module Import ------------------------------------------------------------
@@ -1151,7 +1151,7 @@ if __name__ == '__main__':
             print("Latexmk command: {}".format(command))
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
-        command_parser = ParseLatexMk(process.stdout, verbose, filename)
+        command_parser = LaTexMkParser(process.stdout, verbose, filename)
         status = command_parser.parse_stream()
         fatal_error, number_errors, number_warnings = status
         tex_status = process.wait()
@@ -1162,7 +1162,7 @@ if __name__ == '__main__':
                 number_errors > 1 or number_warnings > 0
                 and tm_preferences['latexKeepLogWin'],
                 'pdfsync' in packages or synctex, line_number)
-        number_runs = command_parser.numRuns
+        number_runs = command_parser.number_runs
 
     elif command == 'bibtex':
         tex_status, fatal_error, number_errors, number_warnings = bibtex()

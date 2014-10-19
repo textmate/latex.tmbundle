@@ -599,65 +599,120 @@ class LaTexParser(TexParser):
                                                logfile))
 
 
-class ParseLatexMk(TexParser):
-    """docstring for ParseLatexMk"""
+class LaTexMkParser(TexParser):
+    """Parse log messages from latexmk."""
 
     def __init__(self, input_stream, verbose, filename):
-        super(ParseLatexMk, self).__init__(input_stream, verbose)
-        self.fileName = filename
-        self.patterns += [
-            (re.compile('This is (pdfTeX|latex2e|latex|XeTeX)'),
-             self.startLatex),
-            (re.compile('This is BibTeX'), self.startBibtex),
-            (re.compile('^.*This is biber'), self.startBiber),
-            (re.compile('^Latexmk: All targets \(.*?\) are up-to-date'),
-             self.finishRun),
-            (re.compile('This is makeindex'), self.startBibtex),
-            (re.compile('^Latexmk'), self.ltxmk),
-            (re.compile('Run number'), self.newRun)
-        ]
-        self.numRuns = 0
+        """Initialize the regex patterns for the LaTexMkParser."""
+        super(LaTexMkParser, self).__init__(input_stream, verbose)
+        self.filename = filename
+        self.patterns.extend([
+            (compile('This is (pdfTeX|latex2e|latex|XeTeX)'),
+             self.start_latex),
+            (compile('This is BibTeX'), self.start_bibtex),
+            (compile('.*This is Biber'), self.start_biber),
+            (compile('^Latexmk: All targets \(.*?\) are up-to-date'),
+             self.finish_run),
+            (compile('This is makeindex'), self.start_bibtex),
+            (compile('^Latexmk'), self.latexmk),
+            (compile('Run number'), self.new_run)
+        ])
+        self.number_runs = 0
 
-    def startBibtex(self, m, line):
-        print '<div class="bibtex">'
-        print '<h3>' + line[:-1] + '</h3>'
-        bp = BibTexParser(self.input_stream, self.verbose)
-        f, e, w = bp.parse_stream()
-        self.number_errors += e
-        self.number_warnings += w
+    def parse_stream(self):
+        """Parse log messages from latexmk.
 
-    def startBiber(self, m, line):
-        print '<div class="biber">'
-        print '<h3>' + line + '</h3>'
-        bp = BiberParser(self.input_stream, self.verbose)
-        f, e, w = bp.parse_stream()
-        self.number_errors += e
-        self.number_warnings += w
+        Examples:
 
-    def startLatex(self, m, line):
-        print '<div class="latex">'
-        print '<hr>'
-        print '<h3>' + line[:-1] + '</h3>'
-        bp = LaTexParser(self.input_stream, self.verbose, self.fileName)
-        f, e, w = bp.parse_stream()
-        self.number_errors += e
-        self.number_warnings += w
+            >>> status = None
+            >>> filepath = 'Tests/Log/latexmk_makeindex.log'
+            >>> with open(filepath) as log: # doctest:+ELLIPSIS
+            ...                             # doctest:+NORMALIZE_WHITESPACE
+            ...     parser = LaTexMkParser(log, False, filepath)
+            ...     status = parser.parse_stream()
+            <p class="ltxmk">Latexmk: This is Latexmk,...</p>
+            ...This is pdfTeX...
+            ...This is makeindex...
+            ...This is pdfTeX...
+            ...
+            ...All targets (makeindex.pdf) are up-to-date...
+            >>> status
+            (False, 0, 0)
+            >>> parser.done
+            True
 
-    def newRun(self, m, line):
-        if self.numRuns > 0:
-            print '<hr />'
-            print("<p> {} Errors {} Warnings in this run.</p>".format(
-                  self.number_errors, self.number_warnings))
+            >>> filepath = 'Tests/Log/latexmk_external_bibliography_biber.log'
+            >>> with open(filepath) as log: # doctest:+ELLIPSIS
+            ...                             # doctest:+NORMALIZE_WHITESPACE
+            ...     parser = LaTexMkParser(log, False, filepath)
+            ...     status = parser.parse_stream()
+            <p class="ltxmk">Latexmk: This is Latexmk...
+            ...This is pdfTeX...
+            ...This is Biber...
+            ...This is pdfTeX...
+            ...This is pdfTeX...
+            ...All targets...are up-to-date...
+            >>> status
+            (False, 0, 0)
+            >>> parser.number_runs
+            4
+            >>> parser.done
+            True
+
+            >>> filepath = 'Tests/Log/latexmk_external_bibliography.log'
+            >>> with open(filepath) as log: # doctest:+ELLIPSIS
+            ...                             # doctest:+NORMALIZE_WHITESPACE
+            ...     parser = LaTexMkParser(log, False, filepath)
+            ...     status = parser.parse_stream()
+            <p class="ltxmk">Latexmk: This is Latexmk...
+            ...This is pdfTeX...
+            ...This is BibTeX...
+            ...This is pdfTeX...
+            ...This is pdfTeX...
+            ...All targets...are up-to-date...
+            >>> status
+            (False, 0, 0)
+            >>> parser.done
+            True
+
+        """
+        return super(LaTexMkParser, self).parse_stream()
+
+    def start_bibtex(self, match, line):
+        print('<div class="bibtex"><h3>{}</h3>'.format(line[:-1]))
+        parser = BibTexParser(self.input_stream, self.verbose)
+        fatal_error, number_errors, number_warnings = parser.parse_stream()
+        self.number_errors += number_errors
+        self.number_warnings += number_warnings
+
+    def start_biber(self, match, line):
+        print('<div class="biber"><h3>{}</h3>'.format(line))
+        parser = BiberParser(self.input_stream, self.verbose)
+        fatal_error, number_errors, number_warnings = parser.parse_stream()
+        self.number_errors += number_errors
+        self.number_warnings += number_warnings
+
+    def start_latex(self, match, line):
+        print('<div class="latex"><hr><h3>{}</h3>'.format(line[:-1]))
+        parser = LaTexParser(self.input_stream, self.verbose, self.filename)
+        fatal_error, number_errors, number_warnings = parser.parse_stream()
+        self.number_errors += number_errors
+        self.number_warnings += number_warnings
+
+    def new_run(self, match, line):
+        if self.number_runs > 0:
+            print('<hr><p> {} Errors {} Warnings in this run.</p>'.format(
+                self.number_errors, self.number_warnings))
         self.number_warnings = 0
         self.number_errors = 0
-        self.numRuns += 1
+        self.number_runs += 1
 
-    def finishRun(self, m, line):
-        self.ltxmk(m, line)
+    def finish_run(self, match, line):
+        self.latexmk(match, line)
         self.done = True
 
-    def ltxmk(self, m, line):
-        print '<p class="ltxmk">%s</p>' % line
+    def latexmk(self, match, line):
+        print('<p class="ltxmk">{}</p>'.format(line))
 
 
 class ChkTeXParser(TexParser):
@@ -672,7 +727,7 @@ class ChkTeXParser(TexParser):
             (re.compile('Error \d+ in (.*.tex) line (\d+):(.*)'),
              self.handleError),
         ]
-        self.numRuns = 0
+        self.number_runs = 0
 
     def handleWarning(self, m, line):
         """Display warning. match m should contain file, line, warning
