@@ -10,8 +10,9 @@
 
 Just try to translate the program using `latex`
 
-  $ texmate.py latex | grep 'Output written' | countlines
-  1
+  $ output=`texmate.py latex | grep 'Output written' | countlines`
+  $ if [ $output -ge 1 ]; then echo 'OK'; fi
+  OK
 
 Check if clean removes all auxiliary files.
 
