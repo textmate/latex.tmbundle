@@ -785,10 +785,3 @@ class ChkTexParser(TexParser):
 
     def finish_run(self, matching, line):
         self.done = True
-
-if __name__ == '__main__':
-    # test
-    stream = open('../tex/test.log')
-    lp = LaTexParser(stream, False, "test.tex")
-    lp = BiberParser(stream, False)
-    f, e, w = lp.parseStream()
