@@ -14,11 +14,6 @@ Just try to translate the program using `latex`
   $ if [ $output -ge 1 ]; then echo 'OK'; fi
   OK
 
-We use 3 runs to process a file.
-
-  $ texmate.py builtin | grep 'Output written' | countlines
-  3
-
 Check if clean removes all auxiliary files.
 
   $ texmate.py clean > /dev/null

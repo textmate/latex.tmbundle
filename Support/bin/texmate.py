@@ -1185,19 +1185,6 @@ if __name__ == '__main__':
         else:
             print('<p class"info">Clean: No Auxiliary files found'.format())
 
-    elif command == 'builtin':
-        # The latex, bibtex, index, latex, latex sequence should cover 80% of
-        # the cases that latexmk does
-        _, command = latex()
-        number_runs += 1
-        bibtex()
-        index()
-        for runs in range(2):
-            status = run_latex(command, filename, verbose)
-            number_runs += 1
-
-        tex_status, fatal_error, number_errors, number_warnings = status
-
     elif command == 'latex':
         status, _ = latex()
         tex_status, fatal_error, number_errors, number_warnings = status
