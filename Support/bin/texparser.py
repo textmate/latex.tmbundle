@@ -1,6 +1,4 @@
 import re
-import os.path
-import os
 
 from re import compile, search
 from os import getcwd
@@ -715,42 +713,80 @@ class LaTexMkParser(TexParser):
         print('<p class="ltxmk">{}</p>'.format(line))
 
 
-class ChkTeXParser(TexParser):
-    """Parse the output from chktex"""
+class ChkTexParser(TexParser):
+    """Parse the output from chktex."""
+
     def __init__(self, input_stream, verbose, filename):
-        super(ChkTeXParser, self).__init__(input_stream, verbose)
+        """Initialize the regex patterns for the ChkTexParser."""
+        super(ChkTexParser, self).__init__(input_stream, verbose)
         self.fileName = filename
-        self.patterns += [
-            (re.compile('^ChkTeX'), self.info),
-            (re.compile('Warning \d+ in (.*.tex) line (\d+):(.*)'),
-             self.handleWarning),
-            (re.compile('Error \d+ in (.*.tex) line (\d+):(.*)'),
-             self.handleError),
-        ]
+        self.patterns.extend([
+            (compile('^ChkTeX'), self.info),
+            (compile('Warning \d+ in (.*.tex) line (\d+):(.*)'),
+             self.handle_warning),
+            (compile('Error \d+ in (.*.tex) line (\d+):(.*)'),
+             self.handle_error),
+            (compile('(\d+) errors printed; (\d+) warnings printed;'),
+             self.finish_run)
+        ])
         self.number_runs = 0
 
-    def handleWarning(self, m, line):
-        """Display warning. match m should contain file, line, warning
-        message"""
-        print('<p class="warning">Warning: <a href="' +
-              make_link(os.path.join(os.getcwd(), m.group(1)), m.group(2)) +
-              '">' + m.group(1) + ": " + m.group(2) + ":</a>" + m.group(3) +
-              "</p>")
-        warnDetail = self.input_stream.readline()
-        if len(warnDetail) > 2:
-            print '<pre>', warnDetail[:-1]
-            print self.input_stream.readline()[:-1], '</pre>'
-        self.number_warnings += 1
+    def parse_stream(self):
+        r"""Parse log messages from chktex.
 
-    def handleError(self, m, line):
-        print '<p class="error">'
-        print('Error: <a  href="' +
-              make_link(os.path.join(os.getcwd(), m.group(1)), m.group(2)) +
-              '">' + m.group(1) + ":" + m.group(2) + ':</a> ' + m.group(3) +
-              '</p>')
-        print '<pre>', self.input_stream.readline()[:-1]
-        print self.input_stream.readline()[:-1], '</pre>'
-        self.number_errors += 1
+        Examples:
+
+            >>> status = None
+            >>> filepath = 'Tests/Log/chktex.log'
+            >>> with open(filepath) as log: # doctest:+ELLIPSIS
+            ...                             # doctest:+NORMALIZE_WHITESPACE
+            ...     parser = ChkTexParser(log, False, filepath)
+            ...     status = parser.parse_stream()
+            <p class="info">ChkTeX ...</p>
+            <p class="warning">Warning:
+                <a href="...makeglossaries.tex&line=4">makeglossaries.tex:
+                Command terminated with space.</a></p>
+            <pre>        \makeglossaries
+                                       ^</pre>
+            ...
+            <p class="error">Error:
+                <a href="...dodo.tex&line=4">dodo.tex: Could not find argument
+                for command.</a></p>
+            <pre>         \verb*!something!
+                     ^^^^^</pre>
+            >>> status
+            (False, 1, 2)
+            >>> parser.done
+            True
+
+        """
+        return super(ChkTexParser, self).parse_stream()
+
+    def handle(self, match, line, error_class='warning'):
+        filename = match.group(1)
+        linenumber = match.group(2)
+        description = match.group(3)
+        print('<p class="{}">{}: <a href="{}">{}:{}</a></p>'.format(
+              error_class, 'Error' if error_class == 'error' else 'Warning',
+              make_link(join(getcwd(), filename), linenumber), filename,
+              description))
+        details = self.input_stream.readline()
+        if len(details) > 2:
+            print('<pre>{}\n{}</pre>'.format(details[:-1],
+                  self.input_stream.readline()[:-1])),
+        if error_class == 'error':
+            self.number_errors += 1
+        else:
+            self.number_warnings += 1
+
+    def handle_warning(self, match, line):
+        self.handle(match, line)
+
+    def handle_error(self, match, line):
+        self.handle(match, line, 'error')
+
+    def finish_run(self, match, line):
+        self.done = True
 
 if __name__ == '__main__':
     # test

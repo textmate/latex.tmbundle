@@ -63,7 +63,7 @@ from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import argv, exit, stderr, stdout
 from urllib import quote
 
-from texparser import (BibTexParser, BiberParser, ChkTeXParser, LaTexParser,
+from texparser import (BibTexParser, BiberParser, ChkTexParser, LaTexParser,
                        MakeGlossariesParser, LaTexMkParser, TexParser)
 from tmprefs import Preferences
 
@@ -1241,7 +1241,7 @@ if __name__ == '__main__':
         command = "{} '{}'".format(command, filename)
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
-        parser = ChkTeXParser(process.stdout, verbose, filename)
+        parser = ChkTexParser(process.stdout, verbose, filename)
         fatal_error, number_errors, number_warnings = parser.parse_stream()
         tex_status = process.wait()
 
