@@ -1,6 +1,4 @@
-import re
-
-from re import compile, search
+from re import compile, match, search
 from os import getcwd
 from os.path import basename, join
 from sys import stdout
@@ -144,9 +142,9 @@ class TexParser(object):
 
             # Process matching patterns until we find one
             for patttern, function in self.patterns:
-                match = patttern.match(line)
-                if match:
-                    function(match, line)
+                matching = patttern.match(line)
+                if matching:
+                    function(matching, line)
                     stdout.flush()
                     found_match = True
                     break
@@ -158,20 +156,20 @@ class TexParser(object):
             self.bad_run()
         return self.fatal_error, self.number_errors, self.number_warnings
 
-    def info(self, match, line):
+    def info(self, matching, line):
         """Print a message containing ``line``.
 
-        The functions of the form ``function(self, match, line)`` in this
+        The functions of the form ``function(self, matching, line)`` in this
         class and all subclasses use the same interface. We will therefore
         describe their behaviour only here once.
 
         Arguments:
 
-            match
+            matching
 
-                A regex match containing the match for the given line. What the
-                match contains is dependent on the regex, which lead to the
-                call of this function.
+                A regex match containing the match for the given line. What
+                ``matching`` contains is dependent on the regex, which lead to
+                the call of this function.
 
             line
 
@@ -183,18 +181,18 @@ class TexParser(object):
         """
         print('<p class="info">{}</p>'.format(line))
 
-    def error(self, match, line):
+    def error(self, matching, line):
         print('<p class="error">{}</p>'.format(line))
         self.number_errors += 1
 
-    def warning(self, match, line):
+    def warning(self, matching, line):
         print('<p class="warning">{}</p>'.format(line))
         self.number_warnings += 1
 
-    def warning_format(self, match, line):
+    def warning_format(self, matching, line):
         print('<p class="fmtWarning">{}</p>'.format(line))
 
-    def fatal(self, match, line):
+    def fatal(self, matching, line):
         print('<p class="error">{}</p>'.format(line))
         self.fatal_error = True
 
@@ -251,7 +249,7 @@ class BibTexParser(TexParser):
         """
         return super(BibTexParser, self).parse_stream()
 
-    def finish_run(self, match, line):
+    def finish_run(self, matching, line):
         self.done = True
 
 
@@ -291,8 +289,8 @@ class BiberParser(TexParser):
         """
         return super(BiberParser, self).parse_stream()
 
-    def finish_run(self, match, line):
-        log = match.group(1)
+    def finish_run(self, matching, line):
+        log = matching.group(1)
         print('<p>Complete transcript is in <a href="{}">{}</a></p>'.format(
               make_link(join(getcwd(), log)), log))
         self.done = True
@@ -354,48 +352,48 @@ class MakeGlossariesParser(TexParser):
         """
         return super(MakeGlossariesParser, self).parse_stream()
 
-    def begin_run(self, match, line):
-        version = match.group(1)
+    def begin_run(self, matching, line):
+        version = matching.group(1)
         print('<h2>Make Glossaries</h2>' +
               '<p class="info" >Version: <i>{}</i></p>'''.format(version))
 
-    def add_type(self, match, line):
-        glossary_type = match.group(1)
-        files = match.group(2)
+    def add_type(self, matching, line):
+        glossary_type = matching.group(1)
+        files = matching.group(2)
         for file in files.split(','):
             self.types[file] = glossary_type
         print('<p class="info">Add Glossary Type <strong>' +
               '{}</strong><i> (Files: {})</i></p>'.format(glossary_type,
                                                           files))
 
-    def run_makeindex(self, match, line):
-        version = match.group(1)
+    def run_makeindex(self, matching, line):
+        version = matching.group(1)
         print('<p class="info">Run <strong>Makeindex</strong>, ' +
               'version {}<p>'.format(version))
 
-    def run_xindy(self, match, line):
-        language = match.group(1)
-        file = match.group(2)
+    def run_xindy(self, matching, line):
+        language = matching.group(1)
+        file = matching.group(2)
         glossary_type = self.types[file]
         print('<h3>Run xindy for glossary type {}</h3>'.format(glossary_type) +
               '<p class="info">Language: {}</p>'.format(language))
 
-    def sorting(self, match, line):
-        status = match.group(1)
+    def sorting(self, matching, line):
+        status = matching.group(1)
         print('<p class="info">Sorting entries: <strong>' +
               '{}</strong><p>'.format(status))
 
-    def written(self, match, line):
-        description = match.group(1)
-        filename = match.group(2)
+    def written(self, matching, line):
+        description = matching.group(1)
+        filename = matching.group(2)
         filepath = make_link(join(getcwd(), filename))
         print('<p class="info">{} <a href="{}">{}</a></p>'.format(
               description, filepath, filename))
 
-    def work_with_file(self, match, line):
-        description = match.group(1)
-        filename = match.group(2)
-        status = match.group(3)
+    def work_with_file(self, matching, line):
+        description = matching.group(1)
+        filename = matching.group(2)
+        status = matching.group(3)
         print('<p class="info">{} {}: <strong>{}</strong>'.format(description,
               filename, status))
 
@@ -519,25 +517,25 @@ class LaTexParser(TexParser):
         """
         return super(LaTexParser, self).parse_stream()
 
-    def detect_new_file(self, match, line):
-        self.current_file = match.group(1).rstrip()
+    def detect_new_file(self, matching, line):
+        self.current_file = matching.group(1).rstrip()
         print("<h4>Processing: {}</h4>".format(self.current_file))
 
-    def detect_include(self, match, line):
-        filepath = match.group(1)
+    def detect_include(self, matching, line):
+        filepath = matching.group(1)
         print("<ul><li>Including: {}</li></ul>".format(filepath))
 
-    def handle_warning(self, match, line):
+    def handle_warning(self, matching, line):
         filepath = join(getcwd(), self.current_file)
-        linenumber = match.group(1)
+        linenumber = matching.group(1)
         print('<p class="warning"><a href="{}">{}</a></p>'.format(
               make_link(filepath, linenumber), line))
         self.number_warnings += 1
 
-    def handle_error(self, match, line):
-        filename = match.group(1)
-        linenumber = match.group(2)
-        description = match.group(3)
+    def handle_error(self, matching, line):
+        filename = matching.group(1)
+        linenumber = matching.group(2)
+        description = matching.group(3)
         filepath = join(getcwd(), filename)
         print('<p class="error">Latex Error: <a href="' +
               '{}">{}:{}</a> {}</p>'.format(make_link(filepath, linenumber),
@@ -546,7 +544,7 @@ class LaTexParser(TexParser):
         if search('Fatal error', description):
             self.fatal_error = True
 
-    def handle_old_style_errors(self, match, line):
+    def handle_old_style_errors(self, matching, line):
         if search('[Ee]rror', line):
             print('<p class="error">{}</p>'.format(line))
             self.number_errors += 1
@@ -554,11 +552,11 @@ class LaTexParser(TexParser):
             print('<p class="warning">{}</p>'.format(line))
             self.number_warnings += 1
 
-    def pdf_latex_error(self, match, line):
+    def pdf_latex_error(self, matching, line):
         self.number_errors += 1
         print ('<p class="error">'.format(line))
         line = self.input_stream.readline()
-        if line and re.match('^ ==> Fatal error occurred', line):
+        if line and match('^ ==> Fatal error occurred', line):
             print('{}'.format(line.rstrip('\n')))
             self.fatal_error = True
         elif line:
@@ -566,23 +564,23 @@ class LaTexParser(TexParser):
         print('</p>')
         stdout.flush()
 
-    def warning(self, match, line):
+    def warning(self, matching, line):
         # We might have gotten here by matching $1 of the following regex:
         #   (LaTeX Warning:.*) ?input line (\d+)(\.|$)
         # Lets read the next line and check if we find the remaining regex
         # pattern
         next_line = self.input_stream.readline().strip('\n')
-        match_next_line = re.match('.*?input line (\d+)(\.|$)', next_line)
+        match_next_line = match('.*?input line (\d+)(\.|$)', next_line)
         if match_next_line:
             return (self.handle_warning(match_next_line,
                                         '{} {}'.format(line, next_line)))
         else:
             # We discard `next_line` here in the hope that it did not contain
             # any essential information.
-            return super(LaTexParser, self).warning(match, line)
+            return super(LaTexParser, self).warning(matching, line)
 
-    def finish_run(self, match, line):
-        filename = match.group(2).strip('"')
+    def finish_run(self, matching, line):
+        filename = matching.group(2).strip('"')
         filepath = make_link(join(getcwd(), filename))
         print('<p>Complete transcript is in <a href="{}">{}</a></p>'.format(
               filepath, filename))
@@ -676,28 +674,28 @@ class LaTexMkParser(TexParser):
         """
         return super(LaTexMkParser, self).parse_stream()
 
-    def start_bibtex(self, match, line):
+    def start_bibtex(self, matching, line):
         print('<div class="bibtex"><h3>{}</h3>'.format(line[:-1]))
         parser = BibTexParser(self.input_stream, self.verbose)
         fatal_error, number_errors, number_warnings = parser.parse_stream()
         self.number_errors += number_errors
         self.number_warnings += number_warnings
 
-    def start_biber(self, match, line):
+    def start_biber(self, matching, line):
         print('<div class="biber"><h3>{}</h3>'.format(line))
         parser = BiberParser(self.input_stream, self.verbose)
         fatal_error, number_errors, number_warnings = parser.parse_stream()
         self.number_errors += number_errors
         self.number_warnings += number_warnings
 
-    def start_latex(self, match, line):
+    def start_latex(self, matching, line):
         print('<div class="latex"><hr><h3>{}</h3>'.format(line[:-1]))
         parser = LaTexParser(self.input_stream, self.verbose, self.filename)
         fatal_error, number_errors, number_warnings = parser.parse_stream()
         self.number_errors += number_errors
         self.number_warnings += number_warnings
 
-    def new_run(self, match, line):
+    def new_run(self, matching, line):
         if self.number_runs > 0:
             print('<hr><p> {} Errors {} Warnings in this run.</p>'.format(
                 self.number_errors, self.number_warnings))
@@ -705,11 +703,11 @@ class LaTexMkParser(TexParser):
         self.number_errors = 0
         self.number_runs += 1
 
-    def finish_run(self, match, line):
-        self.latexmk(match, line)
+    def finish_run(self, matching, line):
+        self.latexmk(matching, line)
         self.done = True
 
-    def latexmk(self, match, line):
+    def latexmk(self, matching, line):
         print('<p class="ltxmk">{}</p>'.format(line))
 
 
@@ -762,10 +760,10 @@ class ChkTexParser(TexParser):
         """
         return super(ChkTexParser, self).parse_stream()
 
-    def handle(self, match, line, error_class='warning'):
-        filename = match.group(1)
-        linenumber = match.group(2)
-        description = match.group(3)
+    def handle(self, matching, line, error_class='warning'):
+        filename = matching.group(1)
+        linenumber = matching.group(2)
+        description = matching.group(3)
         print('<p class="{}">{}: <a href="{}">{}:{}</a></p>'.format(
               error_class, 'Error' if error_class == 'error' else 'Warning',
               make_link(join(getcwd(), filename), linenumber), filename,
@@ -779,13 +777,13 @@ class ChkTexParser(TexParser):
         else:
             self.number_warnings += 1
 
-    def handle_warning(self, match, line):
-        self.handle(match, line)
+    def handle_warning(self, matching, line):
+        self.handle(matching, line)
 
-    def handle_error(self, match, line):
-        self.handle(match, line, 'error')
+    def handle_error(self, matching, line):
+        self.handle(matching, line, 'error')
 
-    def finish_run(self, match, line):
+    def finish_run(self, matching, line):
         self.done = True
 
 if __name__ == '__main__':
