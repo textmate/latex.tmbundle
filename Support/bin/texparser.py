@@ -1,9 +1,13 @@
+# -- Imports ------------------------------------------------------------------
+
 from re import compile, match, search
 from os import getcwd
 from os.path import basename, join
 from sys import stdout
 from urllib import quote
 
+
+# -- Functions ----------------------------------------------------------------
 
 def make_link(file, line=1):
     """Create a TextMate link for ``file`` pointing to ``line``.
@@ -31,6 +35,8 @@ def make_link(file, line=1):
     """
     return "txmt://open/?url=file://{}&line={}".format(quote(file), line)
 
+
+# -- Classes ------------------------------------------------------------------
 
 class TexParser(object):
     """Parse TeX typesetting streams.
