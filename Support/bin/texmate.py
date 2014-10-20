@@ -1058,7 +1058,7 @@ if __name__ == '__main__':
         engine_options = construct_engine_options(typesetting_directives,
                                                   tm_preferences, synctex)
         command = "{} {}".format(engine, engine_options)
-        return run_latex(command, filename, verbose), command
+        return run_latex(command, filename, verbose)
 
     # Get preferences from TextMate
     tm_preferences = Preferences()
@@ -1186,7 +1186,7 @@ if __name__ == '__main__':
             print('<p class"info">Clean: No Auxiliary files found'.format())
 
     elif command == 'latex':
-        status, _ = latex()
+        status = latex()
         tex_status, fatal_error, number_errors, number_warnings = status
         number_runs += 1
 
