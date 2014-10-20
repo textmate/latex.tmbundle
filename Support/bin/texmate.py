@@ -55,12 +55,13 @@
 
 import sys
 
+from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
 from os import chdir, getenv, putenv, remove
 from os.path import basename, dirname, exists, isfile, join, normpath, realpath
 from re import compile, match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
-from sys import argv, exit, stderr, stdout
+from sys import exit, stdout
 from urllib import quote
 
 from texparser import (BibTexParser, BiberParser, ChkTexParser, LaTexParser,
@@ -839,7 +840,7 @@ def find_tex_directives(texfile=getenv('TM_FILEPATH')):
     return directives
 
 
-def construct_engine_options(ts_directives, tm_preferences, synctex=True):
+def construct_engine_options(ts_directives, tm_engine_options, synctex=True):
     """Construct a string of command line options.
 
     The options come from two different sources:
@@ -857,13 +858,12 @@ def construct_engine_options(ts_directives, tm_preferences, synctex=True):
             key ``TS-options`` then this value will be used to construct the
             options.
 
-        tm_preferences
+        tm_engine_options
 
-            A ``Preferences`` object containing preference items from
-            TextMate. The settings specified in the key ``latexEngineOptions``
-            will be used to extend the options only if ts_directives does not
-            contain typesetting options. Otherwise the settings specified in
-            this item will be ignored.
+            A string containing the default typesetting options set inside
+            TextMate. This string will be used to extend the options only if
+            ts_directives does not contain typesetting options. Otherwise the
+            settings specified in this item will be ignored.
 
         synctex
 
@@ -874,19 +874,16 @@ def construct_engine_options(ts_directives, tm_preferences, synctex=True):
 
     Examples:
 
-        # We “simulate” the ``Preference`` object in the following examples by
-        # using a dictionary
-        >>> tm_preferences = {'latexEngineOptions': ''}
-        >>> construct_engine_options({}, tm_preferences, True)
+        >>> construct_engine_options({}, '', True)
         ...     # doctest:+ELLIPSIS
         '-interaction=nonstopmode -file-line-error-style -synctex=1'
         >>> construct_engine_options({'TS-options': '-draftmode'},
-        ...                          tm_preferences, False)
+        ...                          '', False)
         '-interaction=nonstopmode -file-line-error-style -draftmode'
-        >>> construct_engine_options({'TS-options': '-draftmode'},
-        ...                          {'latexEngineOptions': '-8bit'}, False)
+        >>> construct_engine_options({'TS-options': '-draftmode'}, '-8bit',
+        ...                          False)
         '-interaction=nonstopmode -file-line-error-style -draftmode'
-        >>> construct_engine_options({}, {'latexEngineOptions': '-8bit'})
+        >>> construct_engine_options({}, '-8bit')
         '-interaction=nonstopmode -file-line-error-style -synctex=1 -8bit'
 
     """
@@ -896,15 +893,14 @@ def construct_engine_options(ts_directives, tm_preferences, synctex=True):
     if 'TS-options' in ts_directives:
         options += ' {}'.format(ts_directives['TS-options'])
     else:
-        latex_options = tm_preferences['latexEngineOptions'].strip()
-        options += ' {}'.format(latex_options) if latex_options else ''
+        options += ' {}'.format(tm_engine_options) if tm_engine_options else ''
 
     if DEBUG:
         print('<pre>Engine options = {}</pre>'.format(options))
     return options
 
 
-def construct_engine_command(ts_directives, tm_preferences, packages):
+def construct_engine_command(ts_directives, tm_engine, packages):
     """Decide which tex engine to use according to the given arguments.
 
     The value of the engine is calculated according to the first applicable
@@ -926,12 +922,11 @@ def construct_engine_command(ts_directives, tm_preferences, packages):
             key ``TS-program`` then this value will be used as the typesetting
             engine.
 
-        tm_preferences
+        tm_engine
 
-            A ``Preferences`` object containing preference items from
-            TextMate. The settings specified in the key ``latexEngine`` will
-            be used as typesetting engine if ``TS-program`` is not set and non
-            of the packages contain engine-specific code.
+            A sting containing the default tex engine used in TextMate. The
+            default engine will be used if ``TS-program`` is not set and none
+            of the specified packages contain engine-specific code.
 
         packages
 
@@ -941,15 +936,12 @@ def construct_engine_command(ts_directives, tm_preferences, packages):
 
     Examples:
 
-        # We “simulate” the ``Preference`` object in the following examples by
-        # using a dictionary
-        >>> tm_preferences = {'latexEngine': 'latex'}
-        >>> construct_engine_command({'TS-program': 'pdflatex'},
-        ...                          tm_preferences, set())
+        >>> construct_engine_command({'TS-program': 'pdflatex'}, 'latex',
+        ...                          set())
         'pdflatex'
-        >>> construct_engine_command({}, tm_preferences, {'fontspec'})
+        >>> construct_engine_command({}, 'latex', {'fontspec'})
         'xelatex'
-        >>> construct_engine_command({}, tm_preferences, set())
+        >>> construct_engine_command({}, 'latex', set())
         'latex'
 
     """
@@ -963,7 +955,7 @@ def construct_engine_command(ts_directives, tm_preferences, packages):
     elif packages.intersection(xelatexIndicators):
         engine = 'xelatex'
     else:
-        engine = tm_preferences['latexEngine']
+        engine = tm_engine
 
     if call("type {} > /dev/null".format(engine), shell=True) != 0:
         print('''<p class="error">Error: {} was not found,
@@ -1037,6 +1029,101 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
                         "-file-line-error-style {}';".format(options))
 
 
+def get_command_line_arguments():
+    """Specify and get command line arguments.
+
+    This function returns a ``Namespace`` containing the arguments specified on
+    the command line. The most important arguments in the ``Namespace`` are:
+
+        addoutput
+
+            A boolean that tells us if we should generate HTML output for an
+            already existing HTML output window.
+
+        command
+
+            The tex command which should be run by this script.
+
+        filename
+
+            The path to the tex file we want to process.
+
+    Returns: ``Namespace``
+
+    """
+
+    def file_exists(filename):
+        if not exists(filename):
+            raise ArgumentTypeError(
+                "No such file or directory: {0}".format(filename))
+        return filename
+
+    parser_file = ArgumentParser(add_help=False)
+    parser_file.add_argument(
+        'filepath', type=file_exists, nargs='?', default=getenv('TM_FILEPATH'),
+        help='Specify the file which should be processed.')
+    parser_latex = ArgumentParser(add_help=False)
+    parser_latex.add_argument(
+        '-latexmk', default=None,
+        choices={'yes', 'no'},
+        help='''Specify if latexmk should be used to translate the document.
+                If you do not set this option, then value set inside
+                TextMate will be used.''')
+    parser_latex.add_argument(
+        '-engine', default=None,
+        choices={'latex', 'pdflatex', 'xelatex', 'texexec'},
+        help='''Set the default engine for tex documents. If you do not set
+                this option explicitly, then the value currently set inside the
+                TextMate preferences will be used.''')
+    parser_latex.add_argument(
+        '-options', default=None, dest='engine_options',
+        help='''Set the default engine options for tex documents. If you do
+                not set this option explicitly, then the engine options set
+                inside the TextMate preferences will be used.''')
+
+    parser = ArgumentParser(
+        description='Execute common TeX commands.')
+    parser.add_argument(
+        '-addoutput', action='store_true', default=False,
+        help=('Tell %(prog)s to generate HTML output for an existing HTML ' +
+              'output window'))
+    parser.add_argument(
+        '-suppressview', action='store_true', default=False,
+        help=('''Tell %(prog)s to not open the PDF viewer application.'''))
+
+    subparsers = parser.add_subparsers(title="Commands", dest='command')
+    subparsers.add_parser('bibtex', parents=[parser_file],
+                          help='Run bibtex/biber for the specified file.')
+    subparsers.add_parser('clean', parents=[parser_file],
+                          help='Remove auxiliary files')
+    subparsers.add_parser('chktex', parents=[parser_file],
+                          help='Check the specified file with chktex.')
+    subparsers.add_parser(
+        'index', parents=[parser_file],
+        help='''Create a index for the specified file using either
+                makeglossaries or makeindex.''')
+    subparsers.add_parser(
+        'latex', parents=[parser_file, parser_latex],
+        help='Typeset the specified file using latex.')
+    subparsers.add_parser(
+        'sync', parents=[parser_file],
+        help='''Open the specified PDF file at the position corresponding to
+                the currently selected tex code. Instead of providing the
+                path to the PDF it is also possible to just use the path of
+                the tex file. This command assumes that path to the PDF and
+                the tex file only differ in their extension!''')
+    subparsers.add_parser(
+        'view', parents=[parser_file],
+        help='''View the PDF corresponding to the specified tex file using
+                either the currently selected viewer or the viewer specified
+                as argument.''')
+    subparsers.add_parser(
+        'version', parents=[parser_file, parser_latex],
+        help='Return a version string for the currently selected engine.')
+
+    return parser.parse_args()
+
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -1056,49 +1143,58 @@ if __name__ == '__main__':
     def latex():
         """Run latex for the tex file."""
         engine_options = construct_engine_options(typesetting_directives,
-                                                  tm_preferences, synctex)
+                                                  tm_engine_options, synctex)
         command = "{} {}".format(engine, engine_options)
         return run_latex(command, filename, verbose)
 
     # Get preferences from TextMate
     tm_preferences = Preferences()
-    number_runs = 0
+    # Parse command line parameters...
+    arguments = get_command_line_arguments()
+
+    command = arguments.command
     viewer_status = 0
-    first_run = False
+    filepath = arguments.filepath
+    first_run = not arguments.addoutput
     line_number = getenv('TM_SELECTION').split(':')[0]
     number_errors = 0
+    number_runs = 0
     number_warnings = 0
+    suppress_viewer = arguments.suppressview
     synctex = False
     tex_status = 0
+    tm_autoview = tm_preferences['latexAutoView']
     tm_bundle_support = getenv('TM_BUNDLE_SUPPORT')
-    use_latexmk = tm_preferences['latexUselatexmk']
+    tm_engine = tm_preferences['latexEngine']
+    tm_engine_options = tm_preferences['latexEngineOptions'].strip()
+    use_latexmk = False
     verbose = True if tm_preferences['latexVerbose'] == 1 else False
     viewer = tm_preferences['latexViewer']
-
-    # Parse command line parameters...
-    if len(argv) > 2:
-        first_run = True  # A little hack to make the buttons work nicer.
-    if len(argv) > 1:
-        command = argv[1]
-    else:
-        stderr.write("Usage: {} tex-command first_run\n".format(argv[0]))
-        exit(255)
 
     if int(tm_preferences['latexDebug']) == 1:
         DEBUG = True
         print('<pre>Turning on Debug</pre>')
 
-    typesetting_directives = find_tex_directives()
-    chdir(determine_typesetting_directory(typesetting_directives))
+    if command == 'latex' or command == 'version':
+        if(arguments.latexmk == 'yes' or (not arguments.latexmk and
+                                          tm_preferences['latexUselatexmk'])):
+            use_latexmk = True
+            if command == 'latex':
+                command = 'latexmk'
+        if arguments.engine:
+            tm_engine = arguments.engine
+        if arguments.engine_options:
+            tm_engine_options = arguments.engine_options
 
-    if command == 'latex' and use_latexmk:
-            command = 'latexmk'
-
-    filename, file_path = find_file_to_typeset(typesetting_directives)
+    typesetting_directives = find_tex_directives(filepath)
+    chdir(determine_typesetting_directory(typesetting_directives,
+                                          tex_file=filepath))
+    filename, file_path = find_file_to_typeset(typesetting_directives,
+                                               tex_file=filepath)
     file_without_suffix = get_filename_without_extension(filename)
 
     packages = find_tex_packages(filename)
-    engine = construct_engine_command(typesetting_directives, tm_preferences,
+    engine = construct_engine_command(typesetting_directives, tm_engine,
                                       packages)
 
     synctex = not(bool(call("{} --help | grep -q synctex".format(engine),
@@ -1143,7 +1239,7 @@ if __name__ == '__main__':
     # Run the command passed on the command line or modified by preferences
     if command == 'latexmk':
         engine_options = construct_engine_options(typesetting_directives,
-                                                  tm_preferences, synctex)
+                                                  tm_engine_options, synctex)
         write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')
         command = "latexmk -pdf{} -f -r /tmp/latexmkrc '{}'".format(
             'ps' if engine == 'latex' else '', filename)
@@ -1156,7 +1252,7 @@ if __name__ == '__main__':
         fatal_error, number_errors, number_warnings = status
         tex_status = process.wait()
         remove("/tmp/latexmkrc")
-        if tm_preferences['latexAutoView'] and number_errors < 1:
+        if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
                 viewer, filename, file_path,
                 number_errors > 1 or number_warnings > 0
@@ -1194,14 +1290,14 @@ if __name__ == '__main__':
             call("dvips {0}.dvi -o '{0}.ps'".format(file_without_suffix),
                  shell=True)
             call("ps2pdf '{}.ps'".format(file_without_suffix), shell=True)
-        if tm_preferences['latexAutoView'] and number_errors < 1:
+        if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
                 viewer, filename, file_path,
                 number_errors > 1 or number_warnings > 0 and
                 tm_preferences['latexKeepLogWin'],
                 'pdfsync' in packages or synctex, line_number)
 
-    elif command == 'view':
+    elif command == 'view' and not suppress_viewer:
         viewer_status = run_viewer(
             viewer, filename, file_path,
             number_errors > 1 or number_warnings > 0 and

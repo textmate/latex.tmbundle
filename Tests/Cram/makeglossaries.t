@@ -10,9 +10,9 @@
 
 Translate the file to create the files needed by `makeglossaries`
 
-  $ output=`texmate.py latex 2>&- | grep "Output written" | countlines`
-  $ if [ $output -ge 1 ]; then echo 'OK'; fi
-  OK
+  $ texmate.py -suppressview latex -latexmk yes -engine latex 2>&- \
+  > | grep "Output written" | countlines
+  2
 
 Generate the index for the file
 
@@ -31,7 +31,7 @@ Restore the file changes made by previous commands.
 
   $ git checkout *.aux *.bcf *.ist
 
-Remove the generated PDF files
+Remove the generated files
 
-  $ rm -f *.pdf
+  $ rm -f *.dvi *.pdf *.ps
 

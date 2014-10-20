@@ -10,7 +10,8 @@
 
 We try to process the files using `latexmk`.
 
-  $ texmate.py latexmk | grep -e 'All .* up-to-date' | countlines
+  $ texmate.py -suppressview latex -latexmk yes -e pdflatex -options ' -8bit' \
+  > | grep -e 'All.*up-to-date' | countlines
   1
 
 Check if clean removes all auxiliary files.

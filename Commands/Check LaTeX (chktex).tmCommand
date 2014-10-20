@@ -12,7 +12,7 @@
 # Prepare output window.
 html_header 'ChkTeX' "$FILE"
 
-texmate.py chktex 1
+texmate.py chktex
 
 html_footer
 </string>

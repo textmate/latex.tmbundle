@@ -25,7 +25,7 @@ function displayIncrementalOutput(id,className,mess) {
 
 function runCommand(theCmd){
 	cmd  = 'cd "${TM_PROJECT_DIRECTORY:-$TM_DIRECTORY}"; '
-	cmd += '"$TM_BUNDLE_SUPPORT"/bin/texmate.py ' + theCmd;
+	cmd += '"$TM_BUNDLE_SUPPORT"/bin/texmate.py -addoutput ' + theCmd;
 	TextMate.isBusy = true;
 	myCommand = TextMate.system(cmd, function(task) { TextMate.isBusy = false; } );
 	myCommand.onreadoutput = latexReadOutput;

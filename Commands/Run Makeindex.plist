@@ -13,7 +13,7 @@
 # Prepare output window.
 html_header 'Run MakeIndex'
 
-texmate.py index 1
+texmate.py index
 </string>
 	<key>input</key>
 	<string>none</string>
