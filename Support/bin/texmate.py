@@ -1,14 +1,12 @@
 #!/usr/bin/env python -u
 # encoding: utf-8
 
-# This is a rewrite of latexErrWarn.py
-#
+# -----------------------------------------------------------------------------
 # Goals:
 #
 #   1. Modularize the processing of a latex run to better capture and parse
 #      errors
-#   2. Replace latexmk
-#   3. Provide a nice pushbutton interface for manually running
+#   2. Provide a nice pushbutton interface for manually running
 #      latex, bibtex, makeindex, and viewing
 #
 # Overview:
@@ -28,24 +26,9 @@
 #   method is also stored in the dictionary. Pattern matching callback methods
 #   must each take the match object as well as the current line as a parameter.
 #
-#   Progress:
-#
-#       7/17/07  -- Brad Miller
-#
-#       Implemented  TexParse, BibTexParser, and LaTexParser classes see the
-#       TODO's sprinkled in the code below
-#
-#       7/24/07  -- Brad Miller
-#
-#       Spiffy new configuration window added
-#       pushbutton interface at the end of the latex output is added the
-#       confusing mass of code that was Typeset & View has been replaced by
-#       this one
-#
-#   Future:
-#
-#       Think about replacing latexmk with a simpler python version.  If only
-#       rubber worked reliably..
+#   Original Author: Brad Miller
+#   Modified by:     René Schwaiger (sanssecours@f-m.fm)
+# -----------------------------------------------------------------------------
 
 # -- Imports ------------------------------------------------------------------
 
