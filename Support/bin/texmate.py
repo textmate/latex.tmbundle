@@ -28,10 +28,6 @@
 #   method is also stored in the dictionary. Pattern matching callback methods
 #   must each take the match object as well as the current line as a parameter.
 #
-#   To enable debug mode without modifying this file:
-#
-#       defaults write com.macromates.textmate latexDebug 1
-#
 #   Progress:
 #
 #       7/17/07  -- Brad Miller
@@ -72,11 +68,6 @@ from tmprefs import Preferences
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
-
-
-# -- Global Variables ---------------------------------------------------------
-
-DEBUG = False
 
 
 # -- Functions ----------------------------------------------------------------
@@ -235,8 +226,6 @@ def run_latex(ltxcmd, texfile, verbose=False):
         >>> chdir('../..')
 
     """
-    if DEBUG:
-        print("<pre>run_latex: {} '{}'</pre>".format(ltxcmd, texfile))
     run_object = Popen("{} '{}'".format(ltxcmd, texfile), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     lp = LaTexParser(run_object.stdout, verbose, texfile)
@@ -410,9 +399,6 @@ def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
         sync_command = ("'{}/Contents/SharedSupport/displayline' ".format(
                         path_to_viewer) + "{} '{}' '{}'".format(line_number,
                         path_pdf, path_tex_file))
-    if DEBUG:
-        print("Path to PDF viewer:      {}".format(path_to_viewer))
-        print("Synchronization command: {}".format(sync_command))
     return path_to_viewer, sync_command
 
 
@@ -604,9 +590,6 @@ def determine_typesetting_directory(ts_directives,
     if master_path == '' or not master_path.startswith('/'):
         master_path = normpath(realpath(join(tex_file_dir, master_path)))
 
-    if DEBUG:
-        print("<pre>Typesetting Directory = {}</pre>".format(master_path))
-
     return master_path
 
 
@@ -667,8 +650,6 @@ def find_file_to_typeset(tyesetting_directives,
     else:
         master = tex_file
 
-    if DEBUG:
-        print('<pre>Master File = {}</pre>'.format(master))
     return (basename(master),
             determine_typesetting_directory(tyesetting_directives,
                                             master_document, tex_file))
@@ -758,8 +739,6 @@ def find_tex_packages(file_name):
         package_list.extend([package.strip()
                              for package in package.split(',')])
 
-    if DEBUG:
-        print('<pre>TEX package list = {}</pre>'.format(package_list))
     return set(package_list)
 
 
@@ -834,9 +813,6 @@ def find_tex_directives(texfile=getenv('TM_FILEPATH')):
             texfile = new_tex_file
             root_chain.append(texfile)
 
-    if DEBUG:
-        print('<pre>%!TEX Directives: {}</pre>'.format(directives))
-
     return directives
 
 
@@ -895,8 +871,6 @@ def construct_engine_options(ts_directives, tm_engine_options, synctex=True):
     else:
         options += ' {}'.format(tm_engine_options) if tm_engine_options else ''
 
-    if DEBUG:
-        print('<pre>Engine options = {}</pre>'.format(options))
     return options
 
 
@@ -1171,10 +1145,6 @@ if __name__ == '__main__':
     verbose = True if tm_preferences['latexVerbose'] == 1 else False
     viewer = tm_preferences['latexViewer']
 
-    if int(tm_preferences['latexDebug']) == 1:
-        DEBUG = True
-        print('<pre>Turning on Debug</pre>')
-
     if command == 'latex' or command == 'version':
         if(arguments.latexmk == 'yes' or (not arguments.latexmk and
                                           tm_preferences['latexUselatexmk'])):
@@ -1205,17 +1175,6 @@ if __name__ == '__main__':
     texinputs += "{}/tex//".format(tm_bundle_support)
     putenv('TEXINPUTS', texinputs)
 
-    if DEBUG:
-        print('<pre>')
-        print('Engine: {}'.format(engine))
-        print('Command: {}'.format(command))
-        print('Viewer: {}'.format(viewer))
-        print('TeX Inputs: {}'.format(texinputs))
-        print('Filename: {}'.format(filename))
-        print('Use Latexmk: {}'.format(use_latexmk))
-        print('Synctex: {}'.format(synctex))
-        print('</pre>')
-
     if command == "version":
         process = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
         print process.stdout.read().split('\n')[0]
@@ -1243,8 +1202,6 @@ if __name__ == '__main__':
         write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')
         command = "latexmk -pdf{} -f -r /tmp/latexmkrc '{}'".format(
             'ps' if engine == 'latex' else '', filename)
-        if DEBUG:
-            print("Latexmk command: {}".format(command))
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
         command_parser = LaTexMkParser(process.stdout, verbose, filename)
