@@ -36,7 +36,7 @@ import sys
 
 from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
-from os import chdir, getenv, putenv, remove
+from os import chdir, getenv, putenv, remove, EX_OSFILE
 from os.path import basename, dirname, exists, isfile, join, normpath, realpath
 from re import compile, match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
@@ -51,6 +51,16 @@ from tmprefs import Preferences
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
+
+
+# -- Exit Codes ---------------------------------------------------------------
+
+EXIT_LOOP_IN_TEX_ROOT = -1
+EXIT_SUCCESS = 0
+EXIT_TEX_ENGINE_NOT_FOUND = 1
+EXIT_FILE_ERROR = EX_OSFILE
+EXIT_DISCARD = 200
+EXIT_SHOW_TOOL_TIP = 206
 
 
 # -- Functions ----------------------------------------------------------------
@@ -673,7 +683,7 @@ def find_tex_packages(file_name):
               '{} to check for packages</p>'.format(file_name))
         print('<p class="error">This is most likely a problem with ' +
               'TM_LATEX_MASTER</p>')
-        exit(1)
+        exit(EXIT_FILE_ERROR)
     option_regex = r'\[[^\{]+\]'
     argument_regex = r'\{([^\}]+)\}'
     input_regex = compile(r'[^%]*?\\input{}'.format(argument_regex))
@@ -791,7 +801,7 @@ def find_tex_directives(texfile=getenv('TM_FILEPATH')):
                                        directives.</p>
                      <p class="error"> Chain: {}</p>
                      <p class="error"> Exiting.</p>'''.format(root_chain))
-            exit(-1)
+            exit(EXIT_LOOP_IN_TEX_ROOT)
         else:
             texfile = new_tex_file
             root_chain.append(texfile)
@@ -918,7 +928,7 @@ def construct_engine_command(ts_directives, tm_engine, packages):
         print('''<p class="error">Error: {} was not found,
                  Please make sure that LaTeX is installed and your PATH is
                  setup properly.</p>'''.format(engine))
-        exit(1)
+        exit(EXIT_TEX_ENGINE_NOT_FOUND)
 
     return engine
 
@@ -1161,7 +1171,7 @@ if __name__ == '__main__':
     if command == "version":
         process = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
         print process.stdout.read().split('\n')[0]
-        exit(0)
+        exit()
 
     # Print out header information to begin the run
     if first_run:
@@ -1258,7 +1268,7 @@ if __name__ == '__main__':
         else:
             print("Either you need to include `pdfsync.sty` in your document" +
                   "or you need to use an engine that supports pdfsync.")
-            exit(206)
+            exit(EXIT_SHOW_TOOL_TIP)
 
     elif command == 'chktex':
         command = "{} '{}'".format(command, filename)
@@ -1273,9 +1283,6 @@ if __name__ == '__main__':
         print('<p class="error"><strong>Error {} '.format(viewer_status) +
               'opening viewer</strong></p>')
 
-    # Check the status of any runs...
-    exit_code = 0
-
     if tex_status > 0:
         print('<p class="warning"> Command {} '.format(command) +
               'exited with status {}'.format(tex_status))
@@ -1289,13 +1296,8 @@ if __name__ == '__main__':
               number_runs, '' if number_runs == 1 else 's'))
 
     # Decide what to do with the Latex & View log window
-    if not tm_preferences['latexKeepLogWin']:
-        if number_errors == 0 and viewer != 'TextMate':
-            exit_code = 200
-        else:
-            exit_code = 0
-    else:
-        exit_code = 0
+    exit_code = (EXIT_DISCARD if not tm_preferences['latexKeepLogWin'] and
+                 number_errors == 0 and viewer != 'TextMate' else EXIT_SUCCESS)
 
     # Output buttons at the bottom of the window
     if first_run:
