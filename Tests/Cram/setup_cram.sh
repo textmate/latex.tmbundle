@@ -19,10 +19,9 @@ export TM_BUNDLE_SUPPORT="$BUNDLE_DIR/Support"
 export PATH="$BUNDLE_DIR/Support/bin":$PATH
 export TM_SELECTION='1:1'
 
-auxiliary_files_regex='(.aux)|(.acr)|(.alg)|(.bbl)|(.bcf)|(.blg)|'
-auxiliary_files_regex+='(.fdb_latexmk)|(.fls)|(.fmt)|(.glg)|(.gls)|(.ini)|'
-auxiliary_files_regex+='(.log)|(.out)|(.maf)|(.mtc)|(.mtc1)|(.pdfsync)|'
-auxiliary_files_regex+='(.run.xml)|(.synctex.gz)|(.toc)'
+auxiliary_files_regex='./(aux|acr|alg|bbl|bcf|blg|fdb_latexmk|fls|fmt|glg|gls|'
+auxiliary_files_regex+='ini|log|out|maf|mtc|mtc1|pdfsync|run.xml|synctex.gz|'
+auxiliary_files_regex+='toc)'
 
 # -- Aliases ------------------------------------------------------------------
 

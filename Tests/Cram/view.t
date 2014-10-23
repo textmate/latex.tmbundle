@@ -20,7 +20,7 @@ Check if opening the PDF works with the current viewer
 Check if clean removes all auxiliary files.
 
   $ texmate.py clean > /dev/null
-  $ ls | grep $auxiliary_files_regex
+  $ ls | grep -E $auxiliary_files_regex
   [1]
 
 -- Cleanup --------------------------------------------------------------------

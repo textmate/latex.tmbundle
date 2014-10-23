@@ -22,7 +22,7 @@ Generate the index for the file
 Check if clean removes all auxiliary files.
 
   $ texmate.py clean > /dev/null
-  $ ls | grep $auxiliary_files_regex
+  $ ls | grep -E $auxiliary_files_regex
   [1]
 
 -- Cleanup --------------------------------------------------------------------
