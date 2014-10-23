@@ -1038,7 +1038,7 @@ def get_command_line_arguments():
                 TextMate will be used.''')
     parser_latex.add_argument(
         '-engine', default=None,
-        choices={'latex', 'pdflatex', 'xelatex', 'texexec'},
+        choices={'latex', 'lualatex', 'pdflatex', 'xelatex', 'texexec'},
         help='''Set the default engine for tex documents. If you do not set
                 this option explicitly, then the value currently set inside the
                 TextMate preferences will be used.''')
