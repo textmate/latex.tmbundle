@@ -1184,7 +1184,7 @@ if __name__ == '__main__':
               "See log for errors/warnings</h2>")
 
     if synctex and 'pdfsync' in packages:
-        print("<p class='warning'>Warning: {} supports ".fomat(engine) +
+        print("<p class='warning'>Warning: {} supports ".format(engine) +
               "synctex but you have included pdfsync. You can safely remove " +
               "\usepackage{pdfsync}</p>")
 
