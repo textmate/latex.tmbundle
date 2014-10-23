@@ -41,6 +41,7 @@ from os.path import basename, dirname, exists, isfile, join, normpath, realpath
 from re import compile, match
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import exit, stdout
+from textwrap import dedent
 from urllib import quote
 
 from texparser import (BibTexParser, BiberParser, ChkTexParser, LaTexParser,
@@ -984,16 +985,23 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
         >>> write_latexmkrc(engine='latex', options='8bit')
         >>> with open('/tmp/latexmkrc') as latexmkrc_file:
         ...     print(latexmkrc_file.read())  # doctest:+ELLIPSIS
-        $latex = '...8bit...';
+        $latex = '...8bit';
         ...
 
     """
     with open("/tmp/latexmkrc", 'w') as latexmkrc:
-        latexmkrc.write("$latex = 'latex -interaction=nonstopmode " +
-                        "-file-line-error-style {}';\n".format(options) +
-                        "$pdflatex = '{} ".format(engine) +
-                        "-interaction=nonstopmode " +
-                        "-file-line-error-style {}';".format(options))
+        # The code for adding the dependencies for `makeglossaries` is taken
+        # from http://tex.stackexchange.com/posts/21088/revisions
+        latexmkrc.write(dedent("""\
+        $latex = 'latex -interaction=nonstopmode -file-line-error-style {0}';
+        $pdflatex = '{1} -interaction=nonstopmode -file-line-error-style {0}';
+
+        add_cus_dep('glo', 'gls', 0, 'makeglo2gls');
+        add_cus_dep('acn', 'acr', 0, 'makeglo2gls');
+        sub makeglo2gls {{
+            system("makeglossaries $_[0]");
+        }}
+        """.format(options, engine)))
 
 
 def get_command_line_arguments():

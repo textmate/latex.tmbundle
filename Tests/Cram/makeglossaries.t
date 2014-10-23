@@ -12,7 +12,7 @@ Translate the file to create the files needed by `makeglossaries`
 
   $ texmate.py -suppressview latex -latexmk yes -engine latex 2>&- \
   > | grep "Output written" | countlines
-  2
+  3
 
 Generate the index for the file
 
