@@ -151,7 +151,7 @@ main_loop();
 #
 #   We assume `test.tex` contains the line `%!TEX TS-program = pdflatex`
 #   $ guess_tex_engine(test.tex)
-#   "latex"
+#   "pdflatex"
 #
 sub guess_tex_engine {
     open( my $fh, "<", @_ )
