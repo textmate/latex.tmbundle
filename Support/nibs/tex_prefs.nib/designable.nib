@@ -318,6 +318,17 @@
 											<string key="NSAction">_popUpItemAction:</string>
 											<reference key="NSTarget" ref="1046275387"/>
 										</object>
+										<object class="NSMenuItem" id="81628980">
+											<reference key="NSMenu" ref="712347111"/>
+											<string key="NSTitle">lualatex</string>
+											<string key="NSKeyEquiv"/>
+											<int key="NSKeyEquivModMask">1048576</int>
+											<int key="NSMnemonicLoc">2147483647</int>
+											<reference key="NSOnImage" ref="835911140"/>
+											<reference key="NSMixedImage" ref="697471517"/>
+											<string key="NSAction">_popUpItemAction:</string>
+											<reference key="NSTarget" ref="1046275387"/>
+										</object>
 										<object class="NSMenuItem" id="937858782">
 											<reference key="NSMenu" ref="712347111"/>
 											<string key="NSTitle">xelatex</string>
@@ -556,7 +567,7 @@
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="619626383"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 877}}</string>
 				<string key="NSMinSize">{213, 129}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
@@ -1039,6 +1050,7 @@
 							<reference ref="1058931784"/>
 							<reference ref="1050900362"/>
 							<reference ref="937858782"/>
+							<reference ref="81628980"/>
 						</array>
 						<reference key="parent" ref="1046275387"/>
 					</object>
@@ -1093,6 +1105,11 @@
 						<int key="objectID">223</int>
 						<reference key="object" ref="785619059"/>
 						<reference key="parent" ref="836285387"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">224</int>
+						<reference key="object" ref="81628980"/>
+						<reference key="parent" ref="712347111"/>
 					</object>
 				</array>
 			</object>
@@ -1159,6 +1176,7 @@
 				<string key="221.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="222.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="223.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="224.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="YES" key="5.NSWindowTemplate.visibleAtLaunch"/>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1169,7 +1187,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">223</int>
+			<int key="maxID">224</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
