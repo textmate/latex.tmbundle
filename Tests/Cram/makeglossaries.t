@@ -11,8 +11,8 @@
 Translate the file to create the files needed by `makeglossaries`
 
   $ texmate.py -suppressview latex -latexmk yes -engine latex 2>&- \
-  > | grep "Output written" | countlines
-  3
+  > | grep "All targets .* are up-to-date" | countlines
+  1
 
 Generate the index for the file
 
