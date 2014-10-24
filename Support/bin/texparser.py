@@ -609,7 +609,7 @@ class LaTexMkParser(TexParser):
         super(LaTexMkParser, self).__init__(input_stream, verbose)
         self.filename = filename
         self.patterns.extend([
-            (compile('This is (pdfTeX|latex2e|latex|XeTeX)'),
+            (compile('This is (pdfTeX|latex2e|latex|LuaTeX|XeTeX)'),
              self.start_latex),
             (compile('This is BibTeX'), self.start_bibtex),
             (compile('.*This is Biber'), self.start_biber),
