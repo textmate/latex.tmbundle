@@ -225,6 +225,7 @@ def run_latex(ltxcmd, texfile, verbose=False):
     lp = LaTexParser(run_object.stdout, verbose, texfile)
     fatal, errors, warnings = lp.parse_stream()
     stat = run_object.wait()
+    update_marks([(texfile, 'error'), (texfile, 'warning')], lp.marks)
     return stat, fatal, errors, warnings
 
 
@@ -1004,6 +1005,73 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
         """.format(options, engine)))
 
 
+def update_marks(marks_to_remove=[], marks_to_set=[]):
+    """Set or remove gutter marks.
+
+    This function starts by removing marks from the files specified in
+    ``remove_marks``. After that it sets all marks specified in
+    ``marks_to_set``.
+
+    marks_to_remove
+
+        A list of tuples containing the path to a file where a certain mark
+        should be removed.
+
+    marks_to_set
+
+        A list of tuples of the form ``(file_path, line_number, marker_type,
+        message)``, where file_path and line_number specify the location where
+        a marker of type ``marker_type`` together with an optional message
+        should be placed.
+
+    Examples:
+
+        >>> marks_to_set = [('Tests/TeX/lualatex.tex', 1, 'note',
+        ...                  'Lua was created in 1993.'),
+        ...                 ('Tests/TeX/lualatex.tex', 4, 'warning',
+        ...                  'Lua means "Moon" in Portuguese.'),
+        ...                 ('Tests/TeX/lualatex.tex', 6, 'error', None)]
+        >>> marks_to_remove = [('Tests/TeX/lualatex.tex', 'note'),
+        ...                    ('Tests/TeX/lualatex.tex', 'warning'),
+        ...                    ('Tests/TeX/lualatex.tex', 'error')]
+        >>> update_marks(marks_to_remove, marks_to_set)
+        >>> update_marks(marks_to_remove)
+
+    """
+    marks_remove = {}
+    for filepath, mark in marks_to_remove:
+        path = normpath(realpath(filepath))
+        marks = marks_remove.get(path)
+        if marks:
+            marks.append(mark)
+        else:
+            marks_remove[path] = [mark]
+
+    marks_add = {}
+    for filepath, line, mark, message in marks_to_set:
+        path = normpath(realpath(filepath))
+        marks = marks_add.get(path)
+        if marks:
+            marks.append((line, mark, message))
+        else:
+            marks_add[path] = [(line, mark, message)]
+
+    commands = {filepath: 'mate {}'.format(' '.join(['-c {}'.format(mark) for
+                                                     mark in marks]))
+                for filepath, marks in marks_remove.iteritems()}
+
+    for filepath, markers in marks_add.iteritems():
+        command = ' '.join(['-l {} -s {}{}'.format(line, mark,
+                                                   ":'{}'".format(message) if
+                                                   message else '')
+                            for line, mark, message in markers])
+        commands[filepath] = '{} {}'.format(commands.get(filepath, 'mate'),
+                                            command)
+
+    for filepath, command in commands.iteritems():
+        call("{} '{}'".format(command, filepath), shell=True)
+
+
 def get_command_line_arguments():
     """Specify and get command line arguments.
 
@@ -1115,13 +1183,6 @@ if __name__ == '__main__':
         return (run_makeglossaries(filename, verbose) if use_makeglossaries
                 else run_makeindex(filename))
 
-    def latex():
-        """Run latex for the tex file."""
-        engine_options = construct_engine_options(typesetting_directives,
-                                                  tm_engine_options, synctex)
-        command = "{} {}".format(engine, engine_options)
-        return run_latex(command, filename, verbose)
-
     # Get preferences from TextMate
     tm_preferences = Preferences()
     # Parse command line parameters...
@@ -1207,6 +1268,8 @@ if __name__ == '__main__':
                         stderr=STDOUT, close_fds=True)
         command_parser = LaTexMkParser(process.stdout, verbose, filename)
         status = command_parser.parse_stream()
+        update_marks([(filename, 'error'), (filename, 'warning')],
+                     command_parser.marks)
         fatal_error, number_errors, number_warnings = status
         tex_status = process.wait()
         remove("/tmp/latexmkrc")
@@ -1240,7 +1303,10 @@ if __name__ == '__main__':
             print('<p class"info">Clean: No Auxiliary files found'.format())
 
     elif command == 'latex':
-        status = latex()
+        engine_options = construct_engine_options(typesetting_directives,
+                                                  tm_engine_options, synctex)
+        command = "{} {}".format(engine, engine_options)
+        status = run_latex(command, filename, verbose)
         tex_status, fatal_error, number_errors, number_warnings = status
         number_runs += 1
 
