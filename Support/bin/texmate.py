@@ -1223,7 +1223,7 @@ if __name__ == '__main__':
 
     if command == "version":
         process = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
-        print process.stdout.read().split('\n')[0]
+        print(process.stdout.readline().rstrip('\n'))
         exit()
 
     # Print out header information to begin the run
@@ -1298,7 +1298,7 @@ if __name__ == '__main__':
         command = "{} {}".format(engine, engine_options)
         status = run_latex(command, filename, verbose)
         tex_status, fatal_error, number_errors, number_warnings = status
-        number_runs += 1
+        number_runs = 1
 
         if engine == 'latex':
             call("dvips {0}.dvi -o '{0}.ps'".format(file_without_suffix),
