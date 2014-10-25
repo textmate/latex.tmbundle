@@ -1375,7 +1375,8 @@ if __name__ == '__main__':
                  <div id="texActions">
                  <input type="button" value="Run {}"
                   onclick="runLatex(); return false">
-                 <input type="button" value="Run Bib" onclick="runBibtex();
+                 <input type="button" value="Create Bibliography"
+                  onclick="runBibtex();
                   return false">'''.format(texlib_location, engine))
 
         print('''<input type="button" value="Create Index"
