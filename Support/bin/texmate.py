@@ -1204,11 +1204,10 @@ if __name__ == '__main__':
             tm_engine_options = arguments.engine_options
 
     typesetting_directives = find_tex_directives(filepath)
-    chdir(determine_typesetting_directory(typesetting_directives,
-                                          tex_file=filepath))
     filename, file_path = find_file_to_typeset(typesetting_directives,
                                                tex_file=filepath)
     file_without_suffix = get_filename_without_extension(filename)
+    chdir(file_path)
 
     packages = find_tex_packages(filename)
     engine = construct_engine_command(typesetting_directives, tm_engine,
