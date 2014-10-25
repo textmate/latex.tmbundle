@@ -8,10 +8,9 @@
 	<string>#!/usr/bin/env bash
 [[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
 
-. "${TM_SUPPORT_PATH}/lib/html.sh"
 . "${TM_SUPPORT_PATH}/lib/webpreview.sh"
 
-# Prepare output window.
+# Prepare output window
 html_header 'Clean Auxiliary Files'
 
 texmate.py clean</string>
