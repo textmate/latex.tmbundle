@@ -1170,19 +1170,6 @@ def get_command_line_arguments():
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
-
-    def bibtex():
-        """Generate the bibliography for the tex file."""
-        use_biber = exists('{}.bcf'.format(file_without_suffix))
-        return (run_biber(texfile=filename) if use_biber else
-                run_bibtex(texfile=filename))
-
-    def index():
-        """Generate the index for the tex file"""
-        use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
-        return (run_makeglossaries(filename, verbose) if use_makeglossaries
-                else run_makeindex(filename))
-
     # Get preferences from TextMate
     tm_preferences = Preferences()
     # Parse command line parameters...
@@ -1282,10 +1269,16 @@ if __name__ == '__main__':
         number_runs = command_parser.number_runs
 
     elif command == 'bibtex':
-        tex_status, fatal_error, number_errors, number_warnings = bibtex()
+        use_biber = exists('{}.bcf'.format(file_without_suffix))
+        status = (run_biber(texfile=filename) if use_biber else
+                  run_bibtex(texfile=filename))
+        tex_status, fatal_error, number_errors, number_warnings = status
 
     elif command == 'index':
-        tex_status, fatal_error, number_errors, number_warnings = index()
+        use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
+        status = (run_makeglossaries(filename, verbose) if use_makeglossaries
+                  else run_makeindex(filename))
+        tex_status, fatal_error, number_errors, number_warnings = status
 
     elif command == 'clean':
         auxiliary_file_regex = ('.*\.(acr|alg|aux|bbl|bcf|blg|fdb_latexmk|' +
