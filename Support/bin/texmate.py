@@ -735,7 +735,7 @@ def find_tex_packages(file_name):
     return set(package_list)
 
 
-def find_tex_directives(texfile=getenv('TM_FILEPATH')):
+def find_tex_directives(texfile):
     """Build a dictionary of %!TEX directives.
 
     The main ones we are concerned with are:
