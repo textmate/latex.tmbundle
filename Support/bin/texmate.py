@@ -96,10 +96,10 @@ def expand_name(filename, program='pdflatex'):
     return run_object.stdout.read().strip()
 
 
-def run_bibtex(texfile, verbose=False):
-    """Run bibtex for a certain tex file.
+def run_bibtex(filename, verbose=False):
+    """Run bibtex for a certain file.
 
-    Run bibtex for ``texfile`` and return the following values:
+    Run bibtex for ``filename`` and return the following values:
 
     - The return value of the bibtex runs done by this function: This value
       will be ``0`` after a successful run. Any other value indicates that
@@ -115,10 +115,10 @@ def run_bibtex(texfile, verbose=False):
 
     Arguments:
 
-        texfile
+        filename
 
-            Specifies the name of the tex file. This information will be used
-            to find the bibliography.
+            Specifies the name of the tex file without its extension. This
+            information will be used to find the bibliography.
 
         verbose
 
@@ -130,16 +130,15 @@ def run_bibtex(texfile, verbose=False):
     Examples:
 
         >>> chdir('Tests/TeX')
-        >>> run_bibtex('external_bibliography.tex') # doctest:+ELLIPSIS
+        >>> run_bibtex('external_bibliography') # doctest:+ELLIPSIS
         <h4>Processing: ...
         ...
         (0, False, 0, 0)
         >>> chdir('../..')
 
     """
-    name_without_suffix = texfile[:texfile.rfind('.')]
-    directory = dirname(texfile) if dirname(texfile) else '.'
-    regex_auxfiles = (r'.*/({}|bu\d+)\.aux$'.format(name_without_suffix))
+    directory = dirname(filename) if dirname(filename) else '.'
+    regex_auxfiles = (r'.*/({}|bu\d+)\.aux$'.format(filename))
     auxfiles = [f for f in glob("{}/*.aux".format(directory))
                 if match(regex_auxfiles, f)]
 
@@ -157,25 +156,24 @@ def run_bibtex(texfile, verbose=False):
     return stat, fatal, errors, warnings
 
 
-def run_biber(texfile, verbose=False):
-    """Run biber for a certain tex file.
+def run_biber(filename, verbose=False):
+    """Run biber for a certain file.
 
     The interface for this function is exactly the same as the one for
     ``run_bibtex``. For the list of arguments and return values please take a
-    look at the doc-string of ``run_bibtex``.
+    look at the doc string of ``run_bibtex``.
 
     Examples:
 
         >>> chdir('Tests/TeX')
-        >>> run_biber('external_bibliography_biber.tex') # doctest:+ELLIPSIS
+        >>> run_biber('external_bibliography_biber') # doctest:+ELLIPSIS
         <...
         ...
         (0, False, 0, 0)
         >>> chdir('../..')
 
     """
-    file_no_suffix = get_filename_without_extension(texfile)
-    run_object = Popen("biber '{}'".format(file_no_suffix), shell=True,
+    run_object = Popen("biber '{}'".format(filename), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     bp = BiberParser(run_object.stdout, verbose)
     fatal, errors, warnings = bp.parse_stream()
@@ -1270,8 +1268,8 @@ if __name__ == '__main__':
 
     elif command == 'bibtex':
         use_biber = exists('{}.bcf'.format(file_without_suffix))
-        status = (run_biber(texfile=filename) if use_biber else
-                  run_bibtex(texfile=filename))
+        status = (run_biber(file_without_suffix) if use_biber else
+                  run_bibtex(file_without_suffix))
         tex_status, fatal_error, number_errors, number_warnings = status
 
     elif command == 'index':
