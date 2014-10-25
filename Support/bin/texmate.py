@@ -1367,7 +1367,6 @@ if __name__ == '__main__':
     if first_run:
         print('</div></div>')  # Close divs `preText` and `commandOutput`
         pdf_file = '{}.pdf'.format(file_without_suffix)
-        use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
         # only need to include the javascript library once
         texlib_location = quote('{}/bin/texlib.js'.format(tm_bundle_support))
 
@@ -1379,10 +1378,9 @@ if __name__ == '__main__':
                  <input type="button" value="Run Bib" onclick="runBibtex();
                   return false">'''.format(texlib_location, engine))
 
-        print('''<input type="button" value="{}"
-                  onclick="runMakeIndex(); return false">'''.format(
-              'Make Glossaries' if use_makeglossaries else 'Run Makeindex'))
-        print('''<input type="button" value="Clean" onclick="runClean();
+        print('''<input type="button" value="Create Index"
+                  onclick="runMakeIndex(); return false">
+                 <input type="button" value="Clean" onclick="runClean();
                   return false">''')
 
         if viewer == 'TextMate':
