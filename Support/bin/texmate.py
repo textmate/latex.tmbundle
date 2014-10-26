@@ -912,15 +912,18 @@ def construct_engine_command(ts_directives, tm_engine, packages):
         'latex'
 
     """
-    latexIndicators = {'pstricks', 'xyling', 'pst-asr', 'OTtablx', 'epsfig'}
-    xelatexIndicators = {'xunicode', 'fontspec'}
+    latex_indicators = {'pstricks', 'xyling', 'pst-asr', 'OTtablx', 'epsfig'}
+    xelatex_indicators = {'xunicode', 'fontspec'}
+    lualatex_indicators = {'luacode'}
 
     if 'TS-program' in ts_directives:
         engine = ts_directives['TS-program']
-    elif packages.intersection(latexIndicators):
+    elif packages.intersection(latex_indicators):
         engine = 'latex'
-    elif packages.intersection(xelatexIndicators):
+    elif packages.intersection(xelatex_indicators):
         engine = 'xelatex'
+    elif packages.intersection(lualatex_indicators):
+        engine = 'lualatex'
     else:
         engine = tm_engine
 
