@@ -47,7 +47,7 @@ from textwrap import dedent
 from urllib import quote
 
 from texparser import (BibTexParser, BiberParser, ChkTexParser, LaTexParser,
-                       MakeGlossariesParser, LaTexMkParser, TexParser)
+                       MakeGlossariesParser, MakeIndexParser, LaTexMkParser)
 from tmprefs import Preferences
 
 # -- Module Import ------------------------------------------------------------
@@ -229,7 +229,7 @@ def run_latex(ltxcmd, texfile, verbose=False):
     return stat, fatal, errors, warnings
 
 
-def run_makeindex(filename):
+def run_makeindex(filename, verbose=False):
     """Run the makeindex command.
 
     Generate the index for the given file returning
@@ -255,8 +255,7 @@ def run_makeindex(filename):
 
         >>> chdir('Tests/TeX')
         >>> run_makeindex('makeindex.tex') # doctest:+ELLIPSIS
-        This is makeindex...
-        ...
+        <p class="info">Run...Makeindex...
         (0, False, 0, 0)
         >>> chdir('../..')
 
@@ -264,7 +263,7 @@ def run_makeindex(filename):
     run_object = Popen("makeindex '{}.idx'".format(
                        get_filename_without_extension(filename)), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
-    ip = TexParser(run_object.stdout, True)
+    ip = MakeIndexParser(run_object.stdout, verbose)
     fatal, errors, warnings = ip.parse_stream()
     stat = run_object.wait()
     return stat, fatal, errors, warnings
@@ -1356,7 +1355,7 @@ if __name__ == '__main__':
     elif command == 'index':
         use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
         status = (run_makeglossaries(filename, verbose) if use_makeglossaries
-                  else run_makeindex(filename))
+                  else run_makeindex(filename, verbose))
         tex_status, fatal_error, number_errors, number_warnings = status
 
     elif command == 'clean':

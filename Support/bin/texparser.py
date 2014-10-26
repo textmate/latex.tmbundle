@@ -302,7 +302,80 @@ class BiberParser(TexParser):
         self.done = True
 
 
-class MakeGlossariesParser(TexParser):
+class MakeIndexParser(TexParser):
+    """Parse and format messages from makeindex."""
+
+    def __init__(self, input_stream, verbose):
+        """Initialize the regex patterns for the MakeIndexParser"""
+        super(MakeIndexParser, self).__init__(input_stream, verbose)
+        self.patterns.extend([
+            (compile(r'This is makeindex, version (\d+\.\d+)'),
+             self.run_makeindex),
+            (compile(r'(\w+ \w+ file) (?:\./)?' +
+                     r'(.*\.(?:(?:idx)|(?:ind))).*\((.*)\)'),
+             self.work_with_file),
+            (compile(r'Sorting entries.*\((.*)\)'), self.sorting),
+            (compile(r'(Transcript written in) (.*)\.$'),
+             self.transcript_written),
+            (compile(r'(\w+ written in) (.*)\.$'), self.written)
+        ])
+
+    def parse_stream(self):
+        """Parse log messages from makeindex.
+
+        Examples:
+
+        >>> filepath = 'Tests/Log/makeindex.log'
+        >>> with open(filepath) as log:  # doctest:+ELLIPSIS
+        ...                              # doctest:+NORMALIZE_WHITESPACE
+        ...     parser = MakeIndexParser(log, False)
+        ...     status = parser.parse_stream()
+        <p class="info">Run...Makeindex...<p>
+        <p class="info">Scanning...2 entries accepted, 0 rejected...
+        <p class="info">Sorting entries: <strong>2 comparisons</strong><p>
+        <p class="info">Generating...makeindex.ind:...9 lines written, 0...
+        <p class="info">Output written in <a
+            href="txmt://...makeindex.ind&line=1">makeindex.ind</a></p>
+        <p class="info">Transcript written in <a
+            href="txmt:...makeindex.ilg&line=1">makeindex.ilg</a></p>
+        >>> status
+        (False, 0, 0)
+        >>> parser.done
+        True
+
+        """
+        return super(MakeIndexParser, self).parse_stream()
+
+    def run_makeindex(self, matching, line):
+        version = matching.group(1)
+        print('<p class="info">Run <strong>Makeindex</strong>, ' +
+              'version {}<p>'.format(version))
+
+    def sorting(self, matching, line):
+        status = matching.group(1)
+        print('<p class="info">Sorting entries: <strong>' +
+              '{}</strong><p>'.format(status))
+
+    def work_with_file(self, matching, line):
+        description = matching.group(1)
+        filename = matching.group(2)
+        status = matching.group(3)
+        print('<p class="info">{} {}: <strong>{}</strong>'.format(description,
+              filename, status))
+
+    def written(self, matching, line):
+        description = matching.group(1)
+        filename = matching.group(2)
+        filepath = make_link(join(getcwd(), filename))
+        print('<p class="info">{} <a href="{}">{}</a></p>'.format(
+              description, filepath, filename))
+
+    def transcript_written(self, matching, line):
+        self.written(matching, line)
+        self.done = True
+
+
+class MakeGlossariesParser(MakeIndexParser):
     """Parse and format messages from makeglossaries."""
 
     def __init__(self, input_stream, verbose):
@@ -312,13 +385,10 @@ class MakeGlossariesParser(TexParser):
             (compile('^.*makeglossaries version (.*)$'), self.begin_run),
             (compile('^.*added glossary type \'(.*)\' \((.*)\).*$'),
              self.add_type),
-            (compile(r'This is makeindex, version (\d+\.\d+)'),
-             self.run_makeindex),
             (compile(r'(\w+ \w+ file) (?:\./)?' +
                      r'(.*\.(?:(?:acr)|(?:ist)|(?:glo)|(?:gls))).*\((.*)\)'),
              self.work_with_file),
             (compile(r'(\w+ written in) (.*)\.$'), self.written),
-            (compile(r'Sorting entries.*\((.*)\)'), self.sorting),
             (compile('^.*Markup written into file "(.*)".$'),
              self.finish_markup),
             (compile('^.*xindy.*-L (.*) -I.*-t ".*\.(.*)" -o.*$'),
@@ -372,11 +442,6 @@ class MakeGlossariesParser(TexParser):
               '{}</strong><i> (Files: {})</i></p>'.format(glossary_type,
                                                           files))
 
-    def run_makeindex(self, matching, line):
-        version = matching.group(1)
-        print('<p class="info">Run <strong>Makeindex</strong>, ' +
-              'version {}<p>'.format(version))
-
     def run_xindy(self, matching, line):
         language = matching.group(1)
         file = matching.group(2)
@@ -384,24 +449,8 @@ class MakeGlossariesParser(TexParser):
         print('<h3>Run xindy for glossary type {}</h3>'.format(glossary_type) +
               '<p class="info">Language: {}</p>'.format(language))
 
-    def sorting(self, matching, line):
-        status = matching.group(1)
-        print('<p class="info">Sorting entries: <strong>' +
-              '{}</strong><p>'.format(status))
-
-    def written(self, matching, line):
-        description = matching.group(1)
-        filename = matching.group(2)
-        filepath = make_link(join(getcwd(), filename))
-        print('<p class="info">{} <a href="{}">{}</a></p>'.format(
-              description, filepath, filename))
-
-    def work_with_file(self, matching, line):
-        description = matching.group(1)
-        filename = matching.group(2)
-        status = matching.group(3)
-        print('<p class="info">{} {}: <strong>{}</strong>'.format(description,
-              filename, status))
+    def transcript_written(self, matching, line):
+        self.written(matching, line)
 
     def finish_markup(self, m, line):
         mkfile = m.group(1)
