@@ -36,9 +36,11 @@ import sys
 
 from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
-from os import chdir, getenv, putenv, remove, EX_OSFILE
-from os.path import basename, dirname, exists, isfile, join, normpath, realpath
-from re import compile, match
+from os import chdir, getcwd, getenv, putenv, remove, EX_OSFILE  # noqa
+from os.path import (basename, dirname, exists, getmtime, isfile, join,
+                     normpath, realpath)
+from pickle import load, dump
+from re import compile, match, sub
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import exit, stdout
 from textwrap import dedent
@@ -1073,6 +1075,90 @@ def update_marks(marks_to_remove=[], marks_to_set=[]):
         call("{} '{}'".format(command, filepath), shell=True)
 
 
+def get_typesetting_data(filepath, tm_engine,
+                         tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
+    """Return a dictionary containing up-to-date typesetting data.
+
+    This function changes the current directory to the location of
+    ``filepath``!
+
+    Arguments:
+
+        filepath
+
+            The filepath of the file we want to typeset.
+
+        tm_engine
+
+            A string representing the current default latex engine.
+
+        tm_bundle_support
+
+            The location of the “LaTeX Bundle” support folder.
+
+    Returns: ``{str: str}``
+
+    Examples:
+
+        >>> current_directory = getcwd()
+        >>> data = get_typesetting_data('Tests/TeX/lualatex.tex', 'pdflatex')
+        >>> data['engine']
+        'lualatex'
+        >>> data['synctex']
+        True
+        >>> chdir(current_directory)
+
+    """
+
+    filepath = normpath(realpath(filepath))
+    cache_filename = '/tmp/{}.pickle'.format(sub('[ /.]', '', filepath))
+
+    try:
+        # Try to read from cache
+        if(getmtime(cache_filename) > getmtime(filepath)):
+            with open(cache_filename, 'rb') as storage:
+                typesetting_data = load(storage)
+                chdir(typesetting_data['file_path'])
+        else:
+            raise Exception()
+    except:
+        # Get data and save it in the cache
+        typesetting_directives = find_tex_directives(filepath)
+        filename, file_path = find_file_to_typeset(typesetting_directives,
+                                                   tex_file=filepath)
+        file_without_suffix = get_filename_without_extension(filename)
+        chdir(file_path)
+
+        packages = find_tex_packages(filename)
+        engine = construct_engine_command(typesetting_directives, tm_engine,
+                                          packages)
+
+        synctex = not(bool(call("{} --help | grep -q synctex".format(engine),
+                           shell=True)))
+
+        texinputs = ('{}:'.format(getenv('TEXINPUTS')) if getenv('TEXINPUTS')
+                     else '.::')
+        texinputs += "{}/tex//".format(tm_bundle_support)
+
+        typesetting_data = {'engine': engine,
+                            'filename': filename,
+                            'file_path': file_path,
+                            'file_without_suffix': file_without_suffix,
+                            'packages': packages,
+                            'synctex': synctex,
+                            'texinputs': texinputs,
+                            'typesetting_directives': typesetting_directives}
+        try:
+            with open(cache_filename, 'wb') as storage:
+                dump(typesetting_data, storage)
+        except:
+            print('<p class="warning"> Could not write cache file!<p>')
+
+    putenv('TEXINPUTS', typesetting_data['texinputs'])
+
+    return typesetting_data
+
+
 def get_command_line_arguments():
     """Specify and get command line arguments.
 
@@ -1206,23 +1292,16 @@ if __name__ == '__main__':
         if arguments.engine_options:
             tm_engine_options = arguments.engine_options
 
-    typesetting_directives = find_tex_directives(filepath)
-    filename, file_path = find_file_to_typeset(typesetting_directives,
-                                               tex_file=filepath)
-    file_without_suffix = get_filename_without_extension(filename)
-    chdir(file_path)
+    typesetting_data = get_typesetting_data(filepath, tm_engine,
+                                            tm_bundle_support)
 
-    packages = find_tex_packages(filename)
-    engine = construct_engine_command(typesetting_directives, tm_engine,
-                                      packages)
-
-    synctex = not(bool(call("{} --help | grep -q synctex".format(engine),
-                       shell=True)))
-
-    texinputs = ('{}:'.format(getenv('TEXINPUTS')) if getenv('TEXINPUTS') else
-                 '.::')
-    texinputs += "{}/tex//".format(tm_bundle_support)
-    putenv('TEXINPUTS', texinputs)
+    typesetting_directives = typesetting_data['typesetting_directives']
+    filename = typesetting_data['filename']
+    file_path = typesetting_data['file_path']
+    file_without_suffix = typesetting_data['file_without_suffix']
+    packages = typesetting_data['packages']
+    engine = typesetting_data['engine']
+    synctex = typesetting_data['synctex']
 
     if command == "version":
         process = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
