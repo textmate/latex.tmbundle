@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
-# Date:    2014-10-15
+# Date:    2014-10-27
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 7
+# Version: 8
 #
 # Run tests for this bundle. To execute the tests:
 #
@@ -26,7 +26,8 @@ clean:
 		*.glg *.gls *.ilg *.ind *.log *.ps *.pdf
 
 nosetests:
-	nosetests --with-doctest Support/bin/texmate.py Support/bin/texparser.py
+	nosetests --with-doctest Support/bin/texmate.py Support/bin/texparser.py \
+		Support/bin/itemize.py
 
 cramtests: clean
 	cd Tests/Cram && cram *.t
