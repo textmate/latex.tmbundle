@@ -69,13 +69,13 @@ elsif ($prefs{engine} eq "lualatex"
     push( @tex, qw(-pdf) );
 
     if ( $prefs{engine} eq "pdflatex" ) {
-        push( @tex, qw(-pdflatex='pdflatex -synctex=1') );
+        push( @tex, "-pdflatex=pdflatex $prefs{options} -synctex=1" );
     }
     elsif ( $prefs{engine} eq "lualatex" ) {
-        push( @tex, qw(-pdflatex='lualatex -synctex=1') );
+        push( @tex, "-pdflatex=lualatex $prefs{options} -synctex=1" );
     }
     else {
-        push( @tex, qw(-pdflatex='xelatex -synctex=1') );
+        push( @tex, "-pdflatex=xelatex $prefs{options} -synctex=1" );
     }
 
     if ( $prefs{viewer} eq 'TextMate' ) {
