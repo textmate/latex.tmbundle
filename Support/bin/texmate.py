@@ -501,13 +501,8 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
     else:
         path_to_viewer, sync_command = get_app_path_and_sync_command(
             viewer, path_pdf, path_file, line_number)
-        # PDF viewer is installed and it supports pdfsync
-        if sync_command and use_pdfsync:
-            call(sync_command, shell=True)
         # PDF viewer is installed
-        elif path_to_viewer:
-            if use_pdfsync:
-                print("{} does not supported pdfsync".format(viewer))
+        if path_to_viewer:
             # If this is not done, the next line will thrown an encoding
             # exception when the PDF file contains non-ASCII characters.
             viewer = viewer.encode('utf-8')
@@ -519,6 +514,12 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
             else:
                 status = call("open -a '{}.app' '{}'".format(viewer, path_pdf),
                               shell=True)
+            # PDF viewer supports pdfsync
+            if sync_command and use_pdfsync:
+                call(sync_command, shell=True)
+            elif not sync_command and use_pdfsync:
+                print("{} does not supported pdfsync".format(viewer))
+
         # PDF viewer could not be found
         else:
             print('<strong class="error"> {} does not appear '.format(viewer) +
