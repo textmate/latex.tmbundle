@@ -508,8 +508,8 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
             # exception when the PDF file contains non-ASCII characters.
             viewer = viewer.encode('utf-8')
             pdf_already_open = not(bool(
-                call("'{}/bin/check_open' '{}' '{}'".format(tm_bundle_support,
-                     viewer, path_pdf), shell=True)))
+                call("'{}/bin/check_open' '{}' '{}' > /dev/null".format(
+                     tm_bundle_support, viewer, path_pdf), shell=True)))
             if pdf_already_open:
                 refresh_viewer(viewer, path_pdf)
             else:
