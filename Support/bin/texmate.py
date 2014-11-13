@@ -480,7 +480,8 @@ def run_viewer(viewer, file_name, file_path, suppress_pdf_output_textmate,
         0
         >>> run_viewer('Skim', 'makeindex.tex', '.',
         ...            suppress_pdf_output_textmate=None, use_pdfsync=True,
-        ...            line_number=10, tm_bundle_support=realpath('..'))
+        ...            line_number=10,
+        ...            tm_bundle_support=realpath('../../Support'))
         0
         >>> chdir('../..')
 
