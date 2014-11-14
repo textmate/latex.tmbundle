@@ -3,7 +3,7 @@ import newplistlib as plistlib
 import string
 
 try:
-    from Foundation import *
+    from Foundation import NSDictionary
     haspyobjc = True
 except:
     haspyobjc = False
