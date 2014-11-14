@@ -38,7 +38,7 @@ class Preferences(object):
     def __init__(self):
         super(Preferences, self).__init__()
         self.defaults = {
-            'latexAutoView' : 1, 
+            'latexAutoView' : 1,
             'latexEngine' : "pdflatex",
             'latexEngineOptions' : "",
             'latexVerbose' : 0,
@@ -49,7 +49,7 @@ class Preferences(object):
         }
         self.prefs = self.defaults.copy()
         self.prefs.update(self.readTMPrefs())
-        
+
     def __getitem__(self,key):
         """docstring for __getitem__"""
         return self.prefs.get(key,None)
@@ -86,7 +86,7 @@ class Preferences(object):
             except:
                 print '<p class="error">Problem removing temporary prefs file</p>'
         return plDict
-        
+
     def toDefString(self):
         """docstring for toDefString"""
         instr = plistlib.writePlistToString(self.defaults)
@@ -103,5 +103,5 @@ if __name__ == '__main__':
     print test['Foo']
     useLatexMk = test['latexUselatexmk']
     print useLatexMk
-    
-    
+
+
