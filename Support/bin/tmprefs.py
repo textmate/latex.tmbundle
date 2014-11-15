@@ -1,31 +1,8 @@
 import os
 import newplistlib as plistlib
-import string
 
-try:
-    from Foundation import NSDictionary
-    haspyobjc = True
-except:
-    haspyobjc = False
-
-
-try:
-    from subprocess import *
-except:
-    PIPE = 1
-    STDOUT=1
-    class Popen(object):
-        """Popen:  This class provides backward compatibility for Tiger
-           Do not assume anything about this works other than access
-           to stdin, stdout and the wait method."""
-        def __init__(self, command, **kwargs):
-            super(Popen, self).__init__()
-            self.command = command
-            self.stdin, self.stdout = os.popen4(command)
-
-        def wait(self):
-            stat = self.stdout.close()
-            return stat
+from Foundation import NSDictionary
+from subprocess import PIPE, STDOUT, Popen
 
 # The preference file for textmate to retrieve the prefs from
 if os.environ.has_key('TM_APP_IDENTIFIER'):
@@ -63,29 +40,7 @@ class Preferences(object):
         latexUselatexmk = 0
         latexViewer = Skim
         """
-        # ugly as this is it is the only way I have found so far to convert a binary plist file into something
-        # decent in Python without requiring the PyObjC module.  I would prefer to use popen but
-        # plutil apparently tries to do something to /dev/stdout which causes an error message to be appended
-        # to the output.
-        #
-        plDict = {}
-        if haspyobjc:
-            plDict = NSDictionary.dictionaryWithContentsOfFile_(os.environ["HOME"]+"/Library/Preferences/" + TM_PREFERENCE_FILE)
-        else:   # TODO remove all this once everyone is on leopard
-            os.system("plutil -convert xml1 \"$HOME/Library/Preferences/"+TM_PREFERENCE_FILE+"\" -o /tmp/tmltxprefs1.plist")
-            null_tt = "".join([chr(i) for i in range(256)])
-            non_printables = null_tt.translate(null_tt, string.printable)
-            plist_str = open('/tmp/tmltxprefs1.plist').read()
-            plist_str = plist_str.translate(null_tt,non_printables)
-            try:
-                plDict = plistlib.readPlistFromString(plist_str)
-            except:
-                print '<p class="error">There was a problem reading the preferences file, continuing with defaults</p>'
-            try:
-                os.remove("/tmp/tmltxprefs1.plist")
-            except:
-                print '<p class="error">Problem removing temporary prefs file</p>'
-        return plDict
+        return NSDictionary.dictionaryWithContentsOfFile_(os.environ["HOME"]+"/Library/Preferences/" + TM_PREFERENCE_FILE)
 
     def toDefString(self):
         """docstring for toDefString"""
