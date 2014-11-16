@@ -2,7 +2,7 @@
 
 from Foundation import NSDictionary
 from os import environ
-from newplistlib import writePlistToString
+from plistlib import writePlistToString
 from subprocess import PIPE, STDOUT, Popen
 
 
