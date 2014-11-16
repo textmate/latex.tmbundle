@@ -29,8 +29,8 @@ Restore the file changes made by previous commands.
 
   $ git checkout *.aux *.bcf *.ist
 
-Remove the generated PDF files
+Remove the generated files
 
-  $ rm -f *.pdf
+  $ rm -f *.ilg *.ind *.pdf
 
 

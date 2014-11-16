@@ -20,6 +20,10 @@ Check if clean removes all auxiliary files.
 
 -- Cleanup --------------------------------------------------------------------
 
+Restore the file changes made by previous commands.
+
+  $ git checkout *.aux *.bcf
+
 Remove the generated PDF files
 
   $ rm -f *.pdf

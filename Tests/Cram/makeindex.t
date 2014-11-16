@@ -20,7 +20,7 @@ Translate the LaTeX file
 
 -- Cleanup --------------------------------------------------------------------
 
-Remove the generated PDF files
+Remove the generated files
 
-  $ rm -f *.pdf
+  $ rm -f *.ilg *.ind *.log *.pdf
 
