@@ -86,6 +86,10 @@ def update_marks(marks_to_remove=[], marks_to_set=[]):
     marks_add = {}
     for filepath, line, mark, message in marks_to_set:
         path = normpath(realpath(filepath))
+        # Escape single quotes so we can use them inside gutter mark messages
+        # for mate
+        if message:
+            message = message.replace("'", "'\\''")
         marks = marks_add.get(path)
         if marks:
             marks.append((line, mark, message))
