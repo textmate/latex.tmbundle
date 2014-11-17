@@ -83,15 +83,23 @@ html_footer</string>
 	<string>word</string>
 	<key>input</key>
 	<string>document</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string>@O</string>
 	<key>name</key>
 	<string>Show Outline</string>
-	<key>output</key>
-	<string>showAsHTML</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>html</string>
+	<key>outputLocation</key>
+	<string>newWindow</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
