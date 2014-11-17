@@ -663,7 +663,7 @@ class LaTexParser(TexParser):
         linenumber = matching.group(1)
         print('<p class="warning"><a href="{}">{}</a></p>'.format(
               make_link(filepath, linenumber), line))
-        self.marks.append((filepath, linenumber, 'warning', None))
+        self.marks.append((filepath, linenumber, 'warning', line))
         self.number_warnings += 1
 
     def handle_error(self, matching, line):
