@@ -86,7 +86,7 @@ html_footer</string>
 	<key>inputFormat</key>
 	<string>text</string>
 	<key>keyEquivalent</key>
-	<string>@O</string>
+	<string>~@o</string>
 	<key>name</key>
 	<string>Show Outline</string>
 	<key>outputCaret</key>
