@@ -1,8 +1,13 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
 # -- Imports ------------------------------------------------------------------
 
+from argparse import ArgumentParser, FileType
 from re import compile, match, search
 from os import getcwd
-from os.path import basename, join
+from os.path import basename, join, normpath, realpath
+from subprocess import call
 from sys import stdout
 from urllib import quote
 
@@ -34,6 +39,73 @@ def make_link(file, line=1):
 
     """
     return "txmt://open/?url=file://{}&line={}".format(quote(file), line)
+
+
+def update_marks(marks_to_remove=[], marks_to_set=[]):
+    """Set or remove gutter marks.
+
+    This function starts by removing marks from the files specified in
+    ``remove_marks``. After that it sets all marks specified in
+    ``marks_to_set``.
+
+    marks_to_remove
+
+        A list of tuples containing the path to a file where a certain mark
+        should be removed.
+
+    marks_to_set
+
+        A list of tuples of the form ``(file_path, line_number, marker_type,
+        message)``, where file_path and line_number specify the location where
+        a marker of type ``marker_type`` together with an optional message
+        should be placed.
+
+    Examples:
+
+        >>> marks_to_set = [('Tests/TeX/lualatex.tex', 1, 'note',
+        ...                  'Lua was created in 1993.'),
+        ...                 ('Tests/TeX/lualatex.tex', 4, 'warning',
+        ...                  'Lua means "Moon" in Portuguese.'),
+        ...                 ('Tests/TeX/lualatex.tex', 6, 'error', None)]
+        >>> marks_to_remove = [('Tests/TeX/lualatex.tex', 'note'),
+        ...                    ('Tests/TeX/lualatex.tex', 'warning'),
+        ...                    ('Tests/TeX/lualatex.tex', 'error')]
+        >>> update_marks(marks_to_remove, marks_to_set)
+        >>> update_marks(marks_to_remove)
+
+    """
+    marks_remove = {}
+    for filepath, mark in marks_to_remove:
+        path = normpath(realpath(filepath))
+        marks = marks_remove.get(path)
+        if marks:
+            marks.append(mark)
+        else:
+            marks_remove[path] = [mark]
+
+    marks_add = {}
+    for filepath, line, mark, message in marks_to_set:
+        path = normpath(realpath(filepath))
+        marks = marks_add.get(path)
+        if marks:
+            marks.append((line, mark, message))
+        else:
+            marks_add[path] = [(line, mark, message)]
+
+    commands = {filepath: 'mate {}'.format(' '.join(['-c {}'.format(mark) for
+                                                     mark in marks]))
+                for filepath, marks in marks_remove.iteritems()}
+
+    for filepath, markers in marks_add.iteritems():
+        command = ' '.join(['-l {} -s {}{}'.format(line, mark,
+                                                   ":'{}'".format(message) if
+                                                   message else '')
+                            for line, mark, message in markers])
+        commands[filepath] = '{} {}'.format(commands.get(filepath, 'mate'),
+                                            command)
+
+    for filepath, command in commands.iteritems():
+        call("{} '{}'".format(command, filepath), shell=True)
 
 
 # -- Classes ------------------------------------------------------------------
@@ -846,3 +918,20 @@ class ChkTexParser(TexParser):
 
     def finish_run(self, matching, line):
         self.done = True
+
+if __name__ == '__main__':
+
+    parser = ArgumentParser(
+        description='Parse output from latexmk.')
+    parser.add_argument(
+        'file', type=FileType('r'),
+        help="""The location of the log file that should be parsed. Use -
+                to read from STDIN.""")
+    arguments = parser.parse_args()
+    file = arguments.file
+    filename = file.name
+
+    texparser = LaTexMkParser(file, verbose=False, filename=filename)
+    texparser.parse_stream()
+    update_marks([(filename, 'error'), (filename, 'warning')],
+                 texparser.marks)
