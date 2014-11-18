@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.5";
+our $VERSION = "3.6";
 
 #  - by Robin Houston, 2007, 2008.
 #  - by René Schwaiger, 2014
@@ -66,17 +66,7 @@ elsif ($prefs{engine} eq "lualatex"
     || $prefs{engine} eq "xelatex" )
 {
     $mode = "PDF";
-    push( @tex, qw(-pdf) );
-
-    if ( $prefs{engine} eq "pdflatex" ) {
-        push( @tex, "-pdflatex=pdflatex $prefs{options} -synctex=1" );
-    }
-    elsif ( $prefs{engine} eq "lualatex" ) {
-        push( @tex, "-pdflatex=lualatex $prefs{options} -synctex=1" );
-    }
-    else {
-        push( @tex, "-pdflatex=xelatex $prefs{options} -synctex=1" );
-    }
+    push( @tex, "-pdf -pdflatex=$prefs{engine} $prefs{options} -synctex=1" );
 
     if ( $prefs{viewer} eq 'TextMate' ) {
         print "Latex Watch: Cannot use TextMate to preview.",
@@ -1030,3 +1020,9 @@ Changes
 
 3.5:
     - Remove support for TeXniscope
+
+3.6:
+    - Support engine options
+
+      Add support for options like `--shell-escape`. You can specify these
+      options inside the preferences of the LaTeX bundle. (Nemesit Amasis)
