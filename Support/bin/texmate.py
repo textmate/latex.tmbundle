@@ -362,8 +362,7 @@ def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
 
         path_pdf:
 
-            The path to the PDF file generated from the tex file located at
-            ``path_tex_file``.
+            The path to the generated PDF file.
 
         path_tex_file
 
@@ -438,7 +437,8 @@ def refresh_viewer(viewer, pdf_path):
     return 1
 
 
-def run_viewer(viewer, texfile_path, suppress_pdf_output_textmate,
+def run_viewer(viewer, texfile_path, pdffile_path,
+               suppress_pdf_output_textmate,
                use_pdfsync, line_number,
                tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
     """Open the PDF viewer containing the PDF generated from ``file_name``.
@@ -475,7 +475,7 @@ def run_viewer(viewer, texfile_path, suppress_pdf_output_textmate,
         >>> chdir('Tests/TeX')
         >>> call("pdflatex makeindex.tex > /dev/null", shell=True)
         0
-        >>> run_viewer('Skim', './makeindex.tex',
+        >>> run_viewer('Skim', './makeindex.tex', './makeindex.pdf',
         ...            suppress_pdf_output_textmate=None, use_pdfsync=True,
         ...            line_number=10,
         ...            tm_bundle_support=realpath('../../Support'))
@@ -484,19 +484,18 @@ def run_viewer(viewer, texfile_path, suppress_pdf_output_textmate,
 
     """
     status = 0
-    path_pdf = "{}.pdf".format(get_filename_without_extension(texfile_path))
 
     if viewer == 'TextMate':
         if not suppress_pdf_output_textmate:
-            if isfile(path_pdf):
+            if isfile(pdffile_path):
                 print('''<script type="text/javascript">
                          window.location="file://{}"
-                         </script>'''.format(quote(path_pdf)))
+                         </script>'''.format(quote(pdffile_path)))
             else:
-                print("File does not exist: '{}'".format(path_pdf))
+                print("File does not exist: '{}'".format(pdffile_path))
     else:
         path_to_viewer, sync_command = get_app_path_and_sync_command(
-            viewer, path_pdf, texfile_path, line_number)
+            viewer, pdffile_path, texfile_path, line_number)
         # PDF viewer is installed
         if path_to_viewer:
             # If this is not done, the next line will thrown an encoding
@@ -504,12 +503,12 @@ def run_viewer(viewer, texfile_path, suppress_pdf_output_textmate,
             viewer = viewer.encode('utf-8')
             pdf_already_open = not(bool(
                 call("'{}/bin/check_open' '{}' '{}' > /dev/null".format(
-                     tm_bundle_support, viewer, path_pdf), shell=True)))
+                     tm_bundle_support, viewer, pdffile_path), shell=True)))
             if pdf_already_open:
-                refresh_viewer(viewer, path_pdf)
+                refresh_viewer(viewer, pdffile_path)
             else:
-                status = call("open -a '{}.app' '{}'".format(viewer, path_pdf),
-                              shell=True)
+                status = call("open -a '{}.app' '{}'".format(viewer,
+                              pdffile_path), shell=True)
             # PDF viewer supports pdfsync
             if sync_command and use_pdfsync:
                 call(sync_command, shell=True)
@@ -1232,7 +1231,7 @@ if __name__ == '__main__':
     engine = typesetting_data['engine']
     synctex = typesetting_data['synctex']
 
-    masterfile_path = "{}/{}".format(file_path, filename)
+    pdffile_path = "{}/{}.pdf".format(file_path, file_without_suffix)
 
     if command == "version":
         process = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
@@ -1272,7 +1271,7 @@ if __name__ == '__main__':
         remove("/tmp/latexmkrc")
         if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
-                viewer, masterfile_path,
+                viewer, filepath, pdffile_path,
                 number_errors > 1 or number_warnings > 0
                 and tm_preferences['latexKeepLogWin'],
                 'pdfsync' in packages or synctex, line_number)
@@ -1319,14 +1318,14 @@ if __name__ == '__main__':
             call("ps2pdf '{}.ps'".format(file_without_suffix), shell=True)
         if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
-                viewer, masterfile_path,
+                viewer, filepath, pdffile_path,
                 number_errors > 1 or number_warnings > 0 and
                 tm_preferences['latexKeepLogWin'],
                 'pdfsync' in packages or synctex, line_number)
 
     elif command == 'view' and not suppress_viewer:
         viewer_status = run_viewer(
-            viewer, masterfile_path,
+            viewer, filepath, pdffile_path,
             number_errors > 1 or number_warnings > 0 and
             tm_preferences['latexKeepLogWin'],
             'pdfsync' in packages or synctex, line_number)
