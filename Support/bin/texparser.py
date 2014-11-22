@@ -7,6 +7,7 @@ from argparse import ArgumentParser, FileType
 from re import compile, match, search
 from os import getcwd
 from os.path import basename, join, normpath, realpath
+from pipes import quote as shellquote
 from subprocess import call
 from sys import stdout
 from urllib import quote
@@ -86,10 +87,7 @@ def update_marks(marks_to_remove=[], marks_to_set=[]):
     marks_add = {}
     for filepath, line, mark, message in marks_to_set:
         path = normpath(realpath(filepath))
-        # Escape single quotes so we can use them inside gutter mark messages
-        # for mate
-        if message:
-            message = message.replace("'", "'\\''")
+        message = shellquote(message) if message else None
         marks = marks_add.get(path)
         if marks:
             marks.append((line, mark, message))
@@ -102,14 +100,14 @@ def update_marks(marks_to_remove=[], marks_to_set=[]):
 
     for filepath, markers in marks_add.iteritems():
         command = ' '.join(['-l {} -s {}{}'.format(line, mark,
-                                                   ":'{}'".format(message) if
+                                                   ":{}".format(message) if
                                                    message else '')
                             for line, mark, message in markers])
         commands[filepath] = '{} {}'.format(commands.get(filepath, 'mate'),
                                             command)
 
     for filepath, command in commands.iteritems():
-        call("{} '{}'".format(command, filepath), shell=True)
+        call("{} {}".format(command, shellquote(filepath)), shell=True)
 
 
 # -- Classes ------------------------------------------------------------------

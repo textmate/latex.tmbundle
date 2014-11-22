@@ -40,6 +40,7 @@ from os import chdir, getcwd, getenv, putenv, remove, EX_OSFILE  # noqa
 from os.path import (basename, dirname, exists, getmtime, isfile, join,
                      normpath, realpath)
 from pickle import load, dump
+from pipes import quote as shellquote
 from re import compile, match, sub
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import exit, stdout
@@ -94,8 +95,8 @@ def expand_name(filename, program='pdflatex'):
 
     """
     stdout.flush()
-    run_object = Popen("kpsewhich -progname='{}' '{}'".format(
-        program, filename), shell=True, stdout=PIPE)
+    run_object = Popen("kpsewhich -progname='{}' {}".format(
+        program, shellquote(filename)), shell=True, stdout=PIPE)
     return run_object.stdout.read().strip()
 
 
@@ -148,8 +149,9 @@ def run_bibtex(filename, verbose=False):
     stat, fatal, errors, warnings = 0, False, 0, 0
     for bib in auxfiles:
         print('<h4>Processing: {} </h4>'.format(bib))
-        run_object = Popen("bibtex '{}'".format(bib), shell=True, stdout=PIPE,
-                           stdin=PIPE, stderr=STDOUT, close_fds=True)
+        run_object = Popen("bibtex {}".format(shellquote(bib)), shell=True,
+                           stdout=PIPE, stdin=PIPE, stderr=STDOUT,
+                           close_fds=True)
         bp = BibTexParser(run_object.stdout, verbose)
         f, e, w = bp.parse_stream()
         fatal |= f
@@ -176,7 +178,7 @@ def run_biber(filename, verbose=False):
         >>> chdir('../..')
 
     """
-    run_object = Popen("biber '{}'".format(filename), shell=True,
+    run_object = Popen("biber {}".format(shellquote(filename)), shell=True,
                        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     bp = BiberParser(run_object.stdout, verbose)
     fatal, errors, warnings = bp.parse_stream()
@@ -221,8 +223,9 @@ def run_latex(ltxcmd, texfile, verbose=False):
         >>> chdir('../..')
 
     """
-    run_object = Popen("{} '{}'".format(ltxcmd, texfile), shell=True,
-                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+    run_object = Popen("{} {}".format(ltxcmd, shellquote(texfile)),
+                       shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
+                       close_fds=True)
     lp = LaTexParser(run_object.stdout, verbose, texfile)
     fatal, errors, warnings = lp.parse_stream()
     stat = run_object.wait()
@@ -261,9 +264,9 @@ def run_makeindex(filename, verbose=False):
         >>> chdir('../..')
 
     """
-    run_object = Popen("makeindex '{}.idx'".format(
-                       get_filename_without_extension(filename)), shell=True,
-                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+    run_object = Popen("makeindex {}".format(shellquote("{}.idx".format(
+        get_filename_without_extension(filename)))), shell=True,
+        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
     ip = MakeIndexParser(run_object.stdout, verbose)
     fatal, errors, warnings = ip.parse_stream()
     stat = run_object.wait()
@@ -299,9 +302,10 @@ def run_makeglossaries(filename, verbose=False):
         >>> chdir('../..')
 
     """
-    run_object = Popen("makeglossaries '{}'".format(
-                       get_filename_without_extension(filename)), shell=True,
-                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+    run_object = Popen("makeglossaries {}".format(
+                       shellquote(get_filename_without_extension(filename))),
+                       shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
+                       close_fds=True)
     bp = MakeGlossariesParser(run_object.stdout, verbose)
     fatal, errors, warnings = bp.parse_stream()
     stat = run_object.wait()
@@ -380,7 +384,7 @@ def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
         >>> get_app_path_and_sync_command('Skim', 'test.pdf', 'test.tex', 1)
         ...     # doctest:+ELLIPSIS +NORMALIZE_WHITESPACE
         ('.../Skim.app',
-         "'.../Skim.app/.../displayline' 1 'test.pdf' 'test.tex'")
+         "'.../Skim.app/.../displayline' 1 test.pdf test.tex")
 
         # Preview has no pdfsync support
         >>> get_app_path_and_sync_command('Preview', 'test.pdf', 'test.tex', 1)
@@ -391,12 +395,13 @@ def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
     path_to_viewer = get_app_path(viewer)
     if path_to_viewer and viewer == 'Skim':
         sync_command = ("'{}/Contents/SharedSupport/displayline' ".format(
-                        path_to_viewer) + "{} '{}' '{}'".format(line_number,
-                        path_pdf, path_tex_file))
+                        path_to_viewer) + "{} {} {}".format(line_number,
+                        shellquote(path_pdf), shellquote(path_tex_file)))
     return path_to_viewer, sync_command
 
 
-def refresh_viewer(viewer, pdf_path):
+def refresh_viewer(viewer, pdf_path,
+                   tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
     """Tell the specified PDF viewer to refresh the PDF output.
 
     If the viewer does not support refreshing PDFs (e.g. “Preview”) then this
@@ -415,25 +420,27 @@ def refresh_viewer(viewer, pdf_path):
 
             The path to the PDF file for which we want to refresh the output.
 
+        tm_bundle_support
+
+            The location of the “LaTeX Bundle” support folder
+
     Returns: ``int``
 
     Examples:
 
-        >>> refresh_viewer('Skim', 'test.pdf')
+        >>> refresh_viewer('Skim', 'test.pdf',
+        ...                tm_bundle_support=realpath('Support'))
         <p class="info">Tell Skim to refresh 'test.pdf'</p>
         0
 
     """
     print('<p class="info">Tell {} to refresh \'{}\'</p>').format(viewer,
                                                                   pdf_path)
-    if viewer == 'Skim':
-        return call("osascript -e 'tell application \"{}\" ".format(viewer) +
-                    "to revert (documents whose path is " +
-                    "\"{}\")'".format(pdf_path), shell=True)
-    elif viewer == 'TeXShop':
-        return call("osascript -e 'tell application \"{}\" ".format(viewer) +
-                    "to tell documents whose path is " +
-                    "\"{}\" to refreshpdf'".format(pdf_path), shell=True)
+
+    if viewer in ['Skim', 'TeXShop']:
+        return call("'{}/bin/refresh_viewer.scpt' {} {} ".format(
+                    tm_bundle_support, viewer, shellquote(pdf_path)),
+                    shell=True)
     return 1
 
 
@@ -492,7 +499,7 @@ def run_viewer(viewer, texfile_path, pdffile_path,
                          window.location="file://{}"
                          </script>'''.format(quote(pdffile_path)))
             else:
-                print("File does not exist: '{}'".format(pdffile_path))
+                print("File does not exist: {}".format(pdffile_path))
     else:
         path_to_viewer, sync_command = get_app_path_and_sync_command(
             viewer, pdffile_path, texfile_path, line_number)
@@ -502,13 +509,14 @@ def run_viewer(viewer, texfile_path, pdffile_path,
             # exception when the PDF file contains non-ASCII characters.
             viewer = viewer.encode('utf-8')
             pdf_already_open = not(bool(
-                call("'{}/bin/check_open' '{}' '{}' > /dev/null".format(
-                     tm_bundle_support, viewer, pdffile_path), shell=True)))
+                call("'{}/bin/check_open' '{}' {} > /dev/null".format(
+                     tm_bundle_support, viewer, shellquote(pdffile_path)),
+                     shell=True)))
             if pdf_already_open:
                 refresh_viewer(viewer, pdffile_path)
             else:
-                status = call("open -a '{}.app' '{}'".format(viewer,
-                              pdffile_path), shell=True)
+                status = call("open -a '{}.app' {}".format(viewer,
+                              shellquote(pdffile_path)), shell=True)
             # PDF viewer supports pdfsync
             if sync_command and use_pdfsync:
                 call(sync_command, shell=True)
@@ -1258,8 +1266,8 @@ if __name__ == '__main__':
         engine_options = construct_engine_options(typesetting_directives,
                                                   tm_engine_options, synctex)
         write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')
-        command = "latexmk -pdf{} -f -r /tmp/latexmkrc '{}'".format(
-            'ps' if engine == 'latex' else '', filename)
+        command = "latexmk -pdf{} -f -r /tmp/latexmkrc {}".format(
+            'ps' if engine == 'latex' else '', shellquote(filename))
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
         command_parser = LaTexMkParser(process.stdout, verbose, filename)
