@@ -1261,8 +1261,12 @@ if __name__ == '__main__':
               "synctex but you have included pdfsync. You can safely remove " +
               "\usepackage{pdfsync}</p>")
 
+    if filename.find('"') >= 0:
+        print('''<p class="error">The filename: {} contains double quotes!
+                 Please remove them.<strong></strong></p>
+              '''.format(filename))
     # Run the command passed on the command line or modified by preferences
-    if command == 'latexmk':
+    elif command == 'latexmk':
         engine_options = construct_engine_options(typesetting_directives,
                                                   tm_engine_options, synctex)
         write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')

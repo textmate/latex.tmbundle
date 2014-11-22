@@ -9,7 +9,12 @@
 Test if using file names containing special characters works
 
   $ texmate.py -suppressview latex -latexmk yes -engine pdflatex \
-  > c\'mplicated\ filename.tex | grep 'Output written' |  countlines
+  > c\'mplicated\ filename.tex | grep 'Output written' | countlines
+  1
+
+  $ texmate.py -suppressview latex \"balanced\ quotes\".tex \
+  > | grep 'The filename: "balanced quotes".tex contains double quotes!' \
+  > | countlines
   1
 
 Check if clean removes all auxiliary files.
