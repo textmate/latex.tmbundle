@@ -41,7 +41,7 @@ from os.path import (basename, dirname, exists, getmtime, isfile, join,
                      normpath, realpath)
 from pickle import load, dump
 from pipes import quote as shellquote
-from re import compile, match, sub
+from re import compile, match, search, sub
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import exit, stdout
 from textwrap import dedent
@@ -1261,10 +1261,13 @@ if __name__ == '__main__':
               "synctex but you have included pdfsync. You can safely remove " +
               "\usepackage{pdfsync}</p>")
 
-    if filename.find('"') >= 0:
-        print('''<p class="error">The filename: {} contains double quotes!
-                 Please remove them.<strong></strong></p>
-              '''.format(filename))
+    problematic_characters = search('[$"]', filename)
+    if problematic_characters:
+        print('''<p class="error"><strong>
+                 The filename {0} contains a problematic character: {1}<br>
+                 Please remove all occurrences of {1} in the filename.
+                 </strong></p>
+              '''.format(filename, problematic_characters.group(0)))
     # Run the command passed on the command line or modified by preferences
     elif command == 'latexmk':
         engine_options = construct_engine_options(typesetting_directives,

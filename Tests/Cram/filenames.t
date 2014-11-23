@@ -13,7 +13,7 @@ Test if using file names containing special characters works
   1
 
   $ texmate.py -suppressview latex \"balanced\ quotes\".tex \
-  > | grep 'The filename: "balanced quotes".tex contains double quotes!' \
+  > | grep '"balanced quotes".tex contains a problematic character: "' \
   > | countlines
   1
 
