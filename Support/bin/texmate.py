@@ -1246,11 +1246,12 @@ if __name__ == '__main__':
         print(process.stdout.readline().rstrip('\n'))
         exit()
 
-    # Print out header information to begin the run
-    if first_run:
-        print('<div id="commandOutput"><div id="preText">')
-    else:
-        print('<hr>')
+    if command != 'sync':
+        # Print out header information to begin the run
+        if first_run:
+            print('<div id="commandOutput"><div id="preText">')
+        else:
+            print('<hr>')
 
     if filename == file_without_suffix:
         print("<h2 class='warning'>Warning: LaTeX file has no extension. " +
@@ -1353,8 +1354,8 @@ if __name__ == '__main__':
             if sync_command:
                 viewer_status = call(sync_command, shell=True)
             else:
-                print("{} does not support pdfsync".format(viewer))
-                viewer_status = 1
+                print("The viewer {} does not support pdfsync".format(viewer))
+                exit(EXIT_SHOW_TOOL_TIP)
 
         else:
             print("Either you need to include `pdfsync.sty` in your document" +
