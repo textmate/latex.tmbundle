@@ -1349,8 +1349,7 @@ if __name__ == '__main__':
     elif command == 'sync':
         if 'pdfsync' in packages or synctex:
             _, sync_command = get_app_path_and_sync_command(
-                viewer, '{}.pdf'.format(file_without_suffix), filename,
-                line_number)
+                viewer, pdffile_path, filepath, line_number)
             if sync_command:
                 viewer_status = call(sync_command, shell=True)
             else:
