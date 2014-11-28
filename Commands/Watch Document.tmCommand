@@ -79,7 +79,7 @@ jobs -p %% &gt; "$pid_file"
 	<key>keyEquivalent</key>
 	<string>^@w</string>
 	<key>name</key>
-	<string>Watch document</string>
+	<string>Watch Document</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>
