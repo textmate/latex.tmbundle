@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Author:    René Schwaiger (sanssecours@f-m.fm)
 # Date:      2014-11-28
-# Version:   1
+# Version:   2
 #
 # The following code is used by `latexmk` when typesetting a file.
 # This code will be invoked by
@@ -14,5 +14,5 @@
 add_cus_dep('glo', 'gls', 0, 'makeglo2gls');
 add_cus_dep('acn', 'acr', 0, 'makeglo2gls');
 sub makeglo2gls {{
-    system("makeglossaries $_[0]");
+    system("makeglossaries '$_[0]'");
 }}
