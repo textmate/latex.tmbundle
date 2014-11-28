@@ -313,8 +313,9 @@ sub clean_up {
     debug_msg("Cleaning up");
     unlink(
         map( "$wd/$name.$_",
-            qw(aux bbl bcf blg fdb_latexmk fls fmt ini latexmk.log log maf mtc
-              mtc1 out pdfsync run.xml synctex.gz toc) )
+            qw(acn acr alg aux bbl bcf blg fdb_latexmk fls fmt glo glg gls idx
+              ilg ind ini ist latexmk.log log maf mtc mtc1 out pdfsync
+              run.xml synctex.gz toc) )
     ) if defined($wd);
 
     $cleanup_viewer->() if defined $cleanup_viewer;

@@ -24,7 +24,7 @@ Check if clean removes all auxiliary files.
 
 Restore the file changes made by previous commands.
 
-  $ git checkout *.aux *.bcf
+  $ restore_aux_files_git
 
 Remove the generated PDF files
 

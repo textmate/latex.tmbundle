@@ -28,3 +28,4 @@ auxiliary_files_regex+='toc)'
 # Remove leading and trailing whitespace
 alias strip="sed -e 's/^ *//' -e 's/ *$//'"
 alias countlines="wc -l | strip"
+alias restore_aux_files_git='git checkout *.acn *.aux *.bcf *.glo *.idx *.ist'
