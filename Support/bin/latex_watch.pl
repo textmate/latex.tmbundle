@@ -66,7 +66,9 @@ elsif ($prefs{engine} eq "lualatex"
     || $prefs{engine} eq "xelatex" )
 {
     $mode = "PDF";
-    push( @tex, "-pdf -pdflatex=$prefs{engine} $prefs{options} -synctex=1" );
+    push( @tex,
+            "-pdf -pdflatex='$prefs{engine} $prefs{options} -synctex=1 "
+          . "-file-line-error-style'" );
 
     if ( $prefs{viewer} eq 'TextMate' ) {
         print "Latex Watch: Cannot use TextMate to preview.",
