@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.6";
+our $VERSION = "3.7";
 
 #  - by Robin Houston, 2007, 2008.
 #  - by René Schwaiger, 2014
@@ -45,6 +45,7 @@ my %prefs = get_prefs();
 my ( $mode, $viewer_option, $viewer, @tex );
 
 @tex = qw(latexmk -interaction=nonstopmode);
+push( @tex, "-r '$ENV{TM_BUNDLE_SUPPORT}/config/latexmkrc'" );
 if ( $prefs{engine} eq 'latex' ) {
     $mode = "PS";
 
@@ -1028,3 +1029,6 @@ Changes
 
       Add support for options like `--shell-escape`. You can specify these
       options inside the preferences of the LaTeX bundle. (Nemesit Amasis)
+
+3.7:
+    - Use the bundles `latexmkrc` file
