@@ -997,17 +997,9 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
 
     """
     with open("/tmp/latexmkrc", 'w') as latexmkrc:
-        # The code for adding the dependencies for `makeglossaries` is taken
-        # from http://tex.stackexchange.com/posts/21088/revisions
         latexmkrc.write(dedent("""\
         $latex = 'latex -interaction=nonstopmode -file-line-error-style {0}';
         $pdflatex = '{1} -interaction=nonstopmode -file-line-error-style {0}';
-
-        add_cus_dep('glo', 'gls', 0, 'makeglo2gls');
-        add_cus_dep('acn', 'acr', 0, 'makeglo2gls');
-        sub makeglo2gls {{
-            system("makeglossaries $_[0]");
-        }}
         """.format(options, engine)))
 
 
@@ -1274,8 +1266,10 @@ if __name__ == '__main__':
         engine_options = construct_engine_options(typesetting_directives,
                                                   tm_engine_options, synctex)
         write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')
-        command = "latexmk -pdf{} -f -r /tmp/latexmkrc {}".format(
-            'ps' if engine == 'latex' else '', shellquote(filename))
+        latexmkrc_path = "{}/config/latexmkrc".format(tm_bundle_support)
+        command = "latexmk -pdf{} -f -r /tmp/latexmkrc -r {} {}".format(
+            'ps' if engine == 'latex' else '', shellquote(latexmkrc_path),
+            shellquote(filename))
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
         command_parser = LaTexMkParser(process.stdout, verbose, filename)
