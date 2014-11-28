@@ -275,6 +275,7 @@ sub main_loop {
         if ( document_has_changed() ) {
             debug_msg("Reloading file");
             compile() and view();
+            parse_log();
             if ( defined($progressbar_pid) ) {
                 debug_msg("Closing progress bar window ($progressbar_pid)");
                 kill( 9, $progressbar_pid )
@@ -443,6 +444,7 @@ sub compile {
         sub {
             if ( $? == 1 || $? == 2 || $? == 12 ) {
                 # An error in the document
+                parse_log();
                 offer_to_show_log();
                 $error = 1;
             }
@@ -475,6 +477,10 @@ sub compile {
             return;      # Failure
         }
     }
+}
+
+sub parse_log {
+    fail_unless_system( "texparser.py", "$name.latexmk.log", "$wd/$name.tex" );
 }
 
 sub offer_to_show_log {

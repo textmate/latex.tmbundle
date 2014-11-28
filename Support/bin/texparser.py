@@ -926,14 +926,18 @@ if __name__ == '__main__':
     parser = ArgumentParser(
         description='Parse output from latexmk.')
     parser.add_argument(
-        'file', type=FileType('r'),
+        'logfile', type=FileType('r'),
         help="""The location of the log file that should be parsed. Use -
                 to read from STDIN.""")
+    parser.add_argument(
+        'texfile',
+        help="""The location of the (master) tex file. This has to be the
+                file from which the output in `logfile` was generated.""")
     arguments = parser.parse_args()
-    file = arguments.file
+    logfile = arguments.logfile
     filename = file.name
+    texfile = arguments.texfile
 
-    texparser = LaTexMkParser(file, verbose=False, filename=filename)
+    texparser = LaTexMkParser(logfile, verbose=False, filename=texfile)
     texparser.parse_stream()
-    update_marks([(filename, 'error'), (filename, 'warning')],
-                 texparser.marks)
+    update_marks([(texfile, 'error'), (texfile, 'warning')], texparser.marks)
