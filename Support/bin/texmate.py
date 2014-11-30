@@ -186,7 +186,7 @@ def run_biber(filename, verbose=False):
     return stat, fatal, errors, warnings
 
 
-def run_latex(ltxcmd, texfile, verbose=False):
+def run_latex(ltxcmd, texfile, cache_filename, verbose=False):
     """Run the flavor of latex specified by ltxcmd on texfile.
 
     This function returns:
@@ -202,6 +202,12 @@ def run_latex(ltxcmd, texfile, verbose=False):
 
     Arguments:
 
+        cache_filename
+
+            The path to the cache file for the current tex project. This file
+            is used to store information about gutter marks between runs of
+            ``texmate``.
+
         ltxcmd
 
             The latex command which should be used translate ``texfile``.
@@ -216,6 +222,7 @@ def run_latex(ltxcmd, texfile, verbose=False):
 
         >>> chdir('Tests/TeX')
         >>> run_latex(ltxcmd='pdflatex',
+        ...           cache_filename='.external_bibliography.lb',
         ...           texfile='external_bibliography.tex') # doctest:+ELLIPSIS
         <h4>...
         ...
@@ -229,7 +236,7 @@ def run_latex(ltxcmd, texfile, verbose=False):
     lp = LaTexParser(run_object.stdout, verbose, texfile)
     fatal, errors, warnings = lp.parse_stream()
     stat = run_object.wait()
-    update_marks([(texfile, 'error'), (texfile, 'warning')], lp.marks)
+    update_marks(cache_filename, lp.marks)
     return stat, fatal, errors, warnings
 
 
@@ -1037,12 +1044,55 @@ def get_typesetting_data(filepath, tm_engine,
         >>> chdir(current_directory)
 
     """
+    def get_cached_data():
+        """Get current data and update cache."""
+        cache_read = False
+        typesetting_data = {}
+
+        try:
+            with open(cache_filename, 'rb') as storage:
+                typesetting_data = load(storage)
+                cache_read = True
+
+            cache_data_outdated = (getmtime(file_path) <
+                                   getmtime(cache_filename) >
+                                   getmtime(filepath))
+
+            # Write new cache data if the current data does not contain
+            # the necessary up to date information - This might be the case if
+            # only `texparser` has written to the cache file
+            if not 'engine' in typesetting_data or cache_data_outdated:
+                raise Exception()
+
+        except:
+            # Get data and save it in the cache
+            packages = find_tex_packages(filename)
+            engine = construct_engine_command(typesetting_directives,
+                                              tm_engine, packages)
+            synctex = not(bool(call("{} --help | grep -q synctex".format(
+                                    engine), shell=True)))
+            typesetting_data.update({'engine': engine,
+                                     'packages': packages,
+                                     'synctex': synctex})
+            if not cache_read:
+                typesetting_data['files_with_guttermarks'] = {filename}
+
+        try:
+            with open(cache_filename, 'wb') as storage:
+                dump(typesetting_data, storage)
+        except:
+            print('<p class="warning"> Could not write cache file!</p>')
+
+        return typesetting_data
+
     filepath = normpath(realpath(filepath))
     typesetting_directives = find_tex_directives(filepath)
     filename, file_path = find_file_to_typeset(typesetting_directives,
                                                tex_file=filepath)
     file_without_suffix = get_filename_without_extension(filename)
     chdir(file_path)
+    cache_filename = '.{}.lb'.format(file_without_suffix)
+    typesetting_data = get_cached_data()
 
     # We add the tex files in the bundle directory to the possible input
     # files. If `TEXINPUTS` was not set before then we also add the current
@@ -1053,33 +1103,8 @@ def get_typesetting_data(filepath, tm_engine,
         tm_bundle_support)
     putenv('TEXINPUTS', texinputs)
 
-    cache_filename = '.{}.lb'.format((file_without_suffix))
-
-    try:
-        # Try to read from cache
-        if(getmtime(file_path) < getmtime(cache_filename) >
-           getmtime(filepath)):
-            with open(cache_filename, 'rb') as storage:
-                typesetting_data = load(storage)
-        else:
-            raise Exception()
-    except:
-        # Get data and save it in the cache
-        packages = find_tex_packages(filename)
-        engine = construct_engine_command(typesetting_directives, tm_engine,
-                                          packages)
-        synctex = not(bool(call("{} --help | grep -q synctex".format(engine),
-                           shell=True)))
-        typesetting_data = {'engine': engine,
-                            'packages': packages,
-                            'synctex': synctex}
-        try:
-            with open(cache_filename, 'wb') as storage:
-                dump(typesetting_data, storage)
-        except:
-            print('<p class="warning"> Could not write cache file!</p>')
-
-    typesetting_data.update({'filename': filename,
+    typesetting_data.update({'cache_filename': cache_filename,
+                             'filename': filename,
                              'file_path': file_path,
                              'file_without_suffix': file_without_suffix,
                              'typesetting_directives': typesetting_directives})
@@ -1224,6 +1249,7 @@ if __name__ == '__main__':
                                             tm_bundle_support)
 
     typesetting_directives = typesetting_data['typesetting_directives']
+    cache_filename = typesetting_data['cache_filename']
     filename = typesetting_data['filename']
     file_path = typesetting_data['file_path']
     file_without_suffix = typesetting_data['file_without_suffix']
@@ -1274,8 +1300,7 @@ if __name__ == '__main__':
                         stderr=STDOUT, close_fds=True)
         command_parser = LaTexMkParser(process.stdout, verbose, filename)
         status = command_parser.parse_stream()
-        update_marks([(filename, 'error'), (filename, 'warning')],
-                     command_parser.marks)
+        update_marks(cache_filename, command_parser.marks)
         fatal_error, number_errors, number_warnings = status
         tex_status = process.wait()
         remove("/tmp/latexmkrc")
@@ -1319,7 +1344,7 @@ if __name__ == '__main__':
         engine_options = construct_engine_options(typesetting_directives,
                                                   tm_engine_options, synctex)
         command = "{} {}".format(engine, engine_options)
-        status = run_latex(command, filename, verbose)
+        status = run_latex(command, filename, cache_filename, verbose)
         tex_status, fatal_error, number_errors, number_warnings = status
         number_runs = 1
 

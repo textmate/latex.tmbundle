@@ -317,6 +317,8 @@ sub clean_up {
               ilg ind ini ist latexmk.log log maf mtc mtc1 out pdfsync
               run.xml synctex.gz toc) )
     ) if defined($wd);
+    # Remove LaTeX bundle cache file
+    unlink("$wd/.$name.lb") if defined($wd);
 
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
@@ -481,7 +483,7 @@ sub compile {
 }
 
 sub parse_log {
-    fail_unless_system( "texparser.py", "$name.latexmk.log", "$wd/$name.tex" );
+    fail_unless_system( "texparser.py", "$name.latexmk.log", "$wd/$name" );
 }
 
 sub offer_to_show_log {
