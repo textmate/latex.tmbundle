@@ -41,7 +41,7 @@ from os.path import (basename, dirname, exists, getmtime, isfile, join,
                      normpath, realpath)
 from pickle import load, dump
 from pipes import quote as shellquote
-from re import compile, match, search, sub
+from re import compile, match, search
 from subprocess import call, check_output, Popen, PIPE, STDOUT
 from sys import exit, stdout
 from textwrap import dedent
@@ -1037,52 +1037,52 @@ def get_typesetting_data(filepath, tm_engine,
         >>> chdir(current_directory)
 
     """
-
     filepath = normpath(realpath(filepath))
-    cache_filename = '/tmp/{}.pickle'.format(sub('[ /.]', '', filepath))
+    typesetting_directives = find_tex_directives(filepath)
+    filename, file_path = find_file_to_typeset(typesetting_directives,
+                                               tex_file=filepath)
+    file_without_suffix = get_filename_without_extension(filename)
+    chdir(file_path)
+
+    # We add the tex files in the bundle directory to the possible input
+    # files. If `TEXINPUTS` was not set before then we also add the current
+    # directory `.` and the central default repository `::` to the start
+    # of `TEXINPUTS`
+    texinputs = "{}:{}/tex//".format(
+        getenv('TEXINPUTS') if getenv('TEXINPUTS') else '.::',
+        tm_bundle_support)
+    putenv('TEXINPUTS', texinputs)
+
+    cache_filename = '.{}.lb'.format((file_without_suffix))
 
     try:
         # Try to read from cache
-        if(getmtime(cache_filename) > getmtime(filepath)):
+        if(getmtime(file_path) < getmtime(cache_filename) >
+           getmtime(filepath)):
             with open(cache_filename, 'rb') as storage:
                 typesetting_data = load(storage)
-                chdir(typesetting_data['file_path'])
         else:
             raise Exception()
     except:
         # Get data and save it in the cache
-        typesetting_directives = find_tex_directives(filepath)
-        filename, file_path = find_file_to_typeset(typesetting_directives,
-                                                   tex_file=filepath)
-        file_without_suffix = get_filename_without_extension(filename)
-        chdir(file_path)
-
         packages = find_tex_packages(filename)
         engine = construct_engine_command(typesetting_directives, tm_engine,
                                           packages)
-
         synctex = not(bool(call("{} --help | grep -q synctex".format(engine),
                            shell=True)))
-
-        texinputs = ('{}:'.format(getenv('TEXINPUTS')) if getenv('TEXINPUTS')
-                     else '.::')
-        texinputs += "{}/tex//".format(tm_bundle_support)
-
         typesetting_data = {'engine': engine,
-                            'filename': filename,
-                            'file_path': file_path,
-                            'file_without_suffix': file_without_suffix,
                             'packages': packages,
-                            'synctex': synctex,
-                            'texinputs': texinputs,
-                            'typesetting_directives': typesetting_directives}
+                            'synctex': synctex}
         try:
             with open(cache_filename, 'wb') as storage:
                 dump(typesetting_data, storage)
         except:
-            print('<p class="warning"> Could not write cache file!<p>')
+            print('<p class="warning"> Could not write cache file!</p>')
 
-    putenv('TEXINPUTS', typesetting_data['texinputs'])
+    typesetting_data.update({'filename': filename,
+                             'file_path': file_path,
+                             'file_without_suffix': file_without_suffix,
+                             'typesetting_directives': typesetting_directives})
 
     return typesetting_data
 
@@ -1302,7 +1302,7 @@ if __name__ == '__main__':
     elif command == 'clean':
         auxiliary_file_regex = (
             '.*\.(acn|acr|alg|aux|bbl|bcf|blg|fdb_latexmk|fls|fmt|glg|glo|gls|'
-            'idx|ilg|ind|ini|ist|log|out|maf|mtc|mtc1|pdfsync|run.xml|'
+            'idx|ilg|ind|ini|ist|lb|log|out|maf|mtc|mtc1|pdfsync|run.xml|'
             'synctex.gz|toc)$')
         command = ("find -E . -maxdepth 1 -type f -regex " +
                    "'{}' -delete -print".format(auxiliary_file_regex))
