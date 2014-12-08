@@ -11,7 +11,7 @@
 
 TM_TEX_CUR_DIR=$(dirname "${TM_FILEPATH}")
 OPTIONS=($TM_TEXCOUNT_OPTIONS)
-texcount -nocol -utf8 -inc "${OPTIONS[@]}" -dir="${TM_TEX_CUR_DIR}" - &lt; "$TM_FILEPATH" | sed "1 d"</string>
+texcount -nocol -utf8 -inc "${OPTIONS[@]}" -dir="${TM_TEX_CUR_DIR}" - &lt; "$TM_FILEPATH"</string>
 	<key>input</key>
 	<string>none</string>
 	<key>inputFormat</key>
