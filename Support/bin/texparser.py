@@ -43,8 +43,7 @@ def make_link(file, line=1):
     return "txmt://open/?url=file://{}&line={}".format(quote(file), line)
 
 
-def notify(title='LaTeX Watch', summary='', messages=[], token=None,
-           close=False):
+def notify(title='LaTeX Watch', summary='', messages=[], token=None):
     """Display a list of messages via a notification window.
 
     This function returns a notification token that can be used to reuse the
@@ -70,11 +69,6 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None,
             A token that can be used to reuse an already existing notification
             window.
 
-        close
-
-            This value specifies if we want to close the notification window
-            instead of opening it.
-
     Returns: ``str``
 
     Examples:
@@ -91,16 +85,13 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None,
     nib_location = '{}/nibs/SimpleNotificationWindow.nib'.format(tm_support)
     log = '\n'.join(messages)
 
-    if close:
-        command = "{} nib --dispose {}".format(shellquote(dialog), token)
-    else:
-        command = "{} nib {} --model ".format(shellquote(dialog),
-                  "--update {}".format(token) if token else
-                  "--load {}".format(shellquote(nib_location)))
+    command = "{} nib {} --model ".format(shellquote(dialog),
+              "--update {}".format(token) if token else
+              "--load {}".format(shellquote(nib_location)))
 
-        command += shellquote(
-            """{{ title = "{}"; summary = "{}"; log = "{}"; }}""".format(
-            title, summary, log))
+    command += shellquote(
+        """{{ title = "{}"; summary = "{}"; log = "{}"; }}""".format(
+        title, summary, log))
 
     notification_output = check_output(command, shell=True)
     return token if not notification_output else notification_output
