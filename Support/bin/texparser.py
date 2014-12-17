@@ -9,7 +9,7 @@ from os import getcwd, getenv
 from os.path import basename, dirname, join, normpath, realpath
 from pickle import load, dump
 from pipes import quote as shellquote
-from subprocess import call, check_output
+from subprocess import call, check_output, STDOUT
 from sys import stdout
 from urllib import quote
 
@@ -69,7 +69,7 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
             A token that can be used to reuse an already existing notification
             window.
 
-    Returns: ``str``
+    Returns: ``int``
 
     Examples:
 
@@ -85,16 +85,30 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
     nib_location = '{}/nibs/SimpleNotificationWindow.nib'.format(tm_support)
     log = '\n'.join(messages)
 
-    command = "{} nib {} --model ".format(shellquote(dialog),
-              "--update {}".format(token) if token else
-              "--load {}".format(shellquote(nib_location)))
-
-    command += shellquote(
+    command = "{} nib".format(shellquote(dialog))
+    content = shellquote(
         """{{ title = "{}"; summary = "{}"; log = "{}"; }}""".format(
         title, summary, log))
 
-    notification_output = check_output(command, shell=True)
-    return token if not notification_output else notification_output
+    # Update notification window
+    if token:
+        command_update = "{} --update {} --model {}".format(
+                         command, token, content)
+        notification_output = check_output(command_update, stderr=STDOUT,
+                                           shell=True)
+        # If the window still exists and we could therefore update it here we
+        # return the token of the old window. If we could not update the
+        # window we get an error message. In this case we try to open a new
+        # notification window.
+        if notification_output.strip() == '':
+            return(int(token))
+
+    # Create new notification window
+    command_load = "{} --load {} --model {}".format(command,
+                   shellquote(nib_location), content)
+    notification_output = check_output(command_load, shell=True)
+
+    return int(notification_output)
 
 
 def update_marks(cache_filename, marks_to_set=[]):
