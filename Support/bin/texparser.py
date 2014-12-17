@@ -1046,8 +1046,9 @@ if __name__ == '__main__':
     texparser = LaTexMkParser(logfile, verbose=False, filename=texfile)
     texparser.parse_stream()
     update_marks(cachefile, texparser.marks)
-    messages = ["Line{:>5}:\t{}".format(line, message)
-                for (_, line, _, message)
+    messages = ["{:>7} {}:{} — {}".format(severity.upper(),
+                basename(filename), line, message)
+                for (filename, line, severity, message)
                 in texparser.marks]
 
     if notification_token != '':
