@@ -150,15 +150,17 @@ sub guess_tex_engine {
     open( my $fh, "<", @_ )
       or die "cannot open @_: $!";
 
+    my $engine = "";
     # TS-program is case insensitive e.g. `LaTeX` should be the same as `latex`
     my $engines = "(?i)latex|lualatex|pdflatex|xelatex(?-i)";
     while ( my $line = <$fh> ) {
         if ( $line =~ /%!TEX(?:\s+)(?:TS-)program(?:\s*)=(?:\s*)($engines)/ ) {
-            return lc("$1");
-            close($fh);
+            $engine = lc($1);
+            last;
         }
     }
-    return "";
+    close($fh);
+    return $engine;
 }
 
 sub get_prefs {
