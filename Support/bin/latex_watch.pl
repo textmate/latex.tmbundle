@@ -265,7 +265,8 @@ sub parse_file_path {
 }
 
 # Persistent state
-my ( %files_mtimes, $cleanup_viewer, $ping_viewer, $notification_token );
+my ( %files_mtimes, $cleanup_viewer, $ping_viewer, $notification_token,
+    $typesetting_errors );
 
 #############
 # Main loop #
@@ -273,6 +274,7 @@ my ( %files_mtimes, $cleanup_viewer, $ping_viewer, $notification_token );
 
 sub main_loop {
     my $ping_counter = 10;
+    $typesetting_errors = 0;
     $notification_token = '';
     while (1) {
         if ( document_has_changed() ) {
@@ -493,10 +495,10 @@ sub parse_log {
 
         # An error occurred during typesetting
 
+        $typesetting_errors = 1;
         my $texparser_command = "texparser.py '$logname' "
           . "'$wd/$name' -notify $notification_token";
         my $output = `$texparser_command`;
-        debug_msg("TeX Parser Output: $output");
         $output =~ /.*Notification\ Token:\ \|(\d+)\|/;
         $notification_token = $1;
     }
@@ -508,6 +510,7 @@ sub parse_log {
         # document. If there were any significant changes then the log should be
         # longer than that.
 
+        $typesetting_errors = 0;
         fail_unless_system( "texparser.py", "$logname", "$wd/$name" );
 
         # Close notification window if it is open
@@ -516,6 +519,32 @@ sub parse_log {
                 "$notification_token" );
             $notification_token = '';
         }
+    }
+    elsif ($typesetting_errors) {
+
+        # We might have closed the notification window although there still
+        # were errors. Lets reopen it if it was closed
+
+        my $open_windows  = `"$ENV{DIALOG}" nib --list`;
+        my $window_closed = 1;
+
+        for ( split /^/, $open_windows ) {
+            debug_msg( "Line:", $_ );
+            if (/^$notification_token/) {
+                $window_closed = 0;
+                last;
+            }
+        }
+
+        if ($window_closed) {
+            debug_msg(
+                "Window $notification_token closed." . " Opening new window." );
+
+            my $output = `texparser.py '$logname' '$wd/$name' -notify reload`;
+            $output =~ /.*Notification\ Token:\ \|(\d+)\|/;
+            $notification_token = $1;
+        }
+
     }
 }
 
