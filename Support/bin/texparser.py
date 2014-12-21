@@ -290,7 +290,7 @@ class TexParser(object):
             if not line:
                 return statement
             statement += line.rstrip('\n')
-            if not (len(line) == 80 and not line[78] in {'!', '.'}):
+            if not (len(line) == 80 and not line[78] in {'!', '.', ')'}):
                 break
         return statement + '\n'
 
