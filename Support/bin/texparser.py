@@ -339,7 +339,7 @@ class TexParser(object):
                     found_match = True
                     break
             if self.verbose and not found_match:
-                print(line)
+                print('<p>{}</p>'.format(line))
 
             line = self.get_rewrapped_line()
         if not self.done:
