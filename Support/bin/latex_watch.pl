@@ -552,24 +552,6 @@ sub close_notification_window {
     }
 }
 
-sub offer_to_show_log {
-    my $button = cocoa_dialog(
-        "msgbox",
-        "--title" => "LaTeX Watch: compilation error",
-        "--text"  => "Error compiling $name.tex",
-        "--informative-text" =>
-          "TeX gave an error compiling the file. Shall I show the log?",
-        "--button1" => "Show Log",
-        "--button2" => "Don’t Show"
-    );
-    show_log() if $button == 1;
-}
-
-sub show_log {
-    # OK button pressed
-    fail_unless_system( "mate", "$wd/$name.latexmk.log" );
-}
-
 #####################
 # Viewer invocation #
 #####################
