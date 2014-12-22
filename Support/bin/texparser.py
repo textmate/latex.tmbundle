@@ -1076,11 +1076,12 @@ if __name__ == '__main__':
     else:
         texparser = LaTexMkParser(logfile, verbose=False, filename=texfile)
         texparser.parse_stream()
-        update_marks(cachefile, texparser.marks)
+        # Sort marks by line number
+        marks = sorted(texparser.marks, key=lambda marks: marks[1])
+        update_marks(cachefile, marks)
         messages = ["{:<7} {}:{} — {}".format(severity.upper(),
                     basename(filename), line, message)
-                    for (filename, line, severity, message)
-                    in texparser.marks]
+                    for (filename, line, severity, message) in marks]
 
         try:
             # Try to update data in cache file
