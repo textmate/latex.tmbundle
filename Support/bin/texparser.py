@@ -653,7 +653,7 @@ class LaTexParser(TexParser):
         self.suffix = filename[:filename.rfind('.')]
         self.filename = self.current_file = filename
         # Save gutter marks for errors and warnings
-        self.marks = []
+        self.marks = set()
         self.patterns.extend([
             (compile('^Document Class'), self.info),
             (compile('.*?\(\.\/([^\)]*?\.(tex|{})( |$))'.format(self.suffix)),
@@ -768,21 +768,21 @@ class LaTexParser(TexParser):
 
     def handle_warning(self, matching, line):
         filepath = join(getcwd(), self.current_file)
-        linenumber = matching.group(1)
+        linenumber = int(matching.group(1))
         print('<p class="warning"><a href="{}">{}</a></p>'.format(
               make_link(filepath, linenumber), line))
-        self.marks.append((filepath, linenumber, 'warning', line))
+        self.marks.add((filepath, linenumber, 'warning', line))
         self.number_warnings += 1
 
     def handle_error(self, matching, line):
         filename = matching.group(1)
-        linenumber = matching.group(2)
+        linenumber = int(matching.group(2))
         description = matching.group(3)
         filepath = join(getcwd(), filename)
         print('<p class="error">Latex Error: <a href="' +
               '{}">{}:{}</a> {}</p>'.format(make_link(filepath, linenumber),
                                             filename, linenumber, description))
-        self.marks.append((filepath, linenumber, 'error', description))
+        self.marks.add((filepath, linenumber, 'error', description))
         self.number_errors += 1
         if search('Fatal error', description):
             self.fatal_error = True
@@ -845,7 +845,7 @@ class LaTexMkParser(TexParser):
         """Initialize the regex patterns for the LaTexMkParser."""
         super(LaTexMkParser, self).__init__(input_stream, verbose)
         self.filename = filename
-        self.marks = []
+        self.marks = set()
         self.patterns.extend([
             (compile('This is (pdfTeX|latex2e|latex|LuaTeX|XeTeX)'),
              self.start_latex),
