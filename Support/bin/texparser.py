@@ -1082,6 +1082,12 @@ if __name__ == '__main__':
         messages = ["{:<7} {}:{} — {}".format(severity.upper(),
                     basename(filename), line, message)
                     for (filename, line, severity, message) in marks]
+        if not messages:
+            messages = [
+                "Could not find any messages containing line information.",
+                "Please take a look at the log file {}.latexmk.log. to " +
+                "find the source of the problem.".format(
+                arguments.file)]
 
         try:
             # Try to update data in cache file
