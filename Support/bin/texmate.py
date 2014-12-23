@@ -1318,6 +1318,14 @@ if __name__ == '__main__':
                                  format(tm_bundle_support))
             print('''<script src="file://{}" type="text/javascript"
                       charset="utf-8"></script>'''.format(texlib_location))
+
+            print('''<input type="button" value="Preferences"
+                      onclick="runConfig(); return false">
+                     <p>
+                     <input type="checkbox" id="hv_warn" name="fmtWarnings"
+                     onclick="makeFmtWarnVisible(); return false">
+                     <label for="hv_warn">Show hbox, vbox Warnings </label>
+                     ''')
             
             print('''<input type="checkbox" id="ltxmk_warn"
                       name="ltxmkWarnings" onclick="makeLatexmkVisible();
