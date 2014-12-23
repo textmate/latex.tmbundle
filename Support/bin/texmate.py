@@ -525,7 +525,7 @@ def run_viewer(viewer, texfile_path, pdffile_path,
                 status = call("open -a '{}.app' {}".format(viewer,
                               shellquote(pdffile_path)), shell=True)
             # PDF viewer supports pdfsync
-            if sync_command and use_pdfsync:
+            if (line_number>0) and sync_command and use_pdfsync:
                 call(sync_command, shell=True)
             elif not sync_command and use_pdfsync:
                 print("{} does not supported pdfsync".format(viewer))
@@ -1150,7 +1150,7 @@ def get_command_line_arguments():
         '-latexmk', default=None,
         choices={'yes', 'no'},
         help='''Specify if latexmk should be used to translate the document.
-                If you choose "no", then the value set inside
+                If you do not set this option, then value set inside
                 TextMate will be used.''')
     parser_latex.add_argument(
         '-engine', default=None,
@@ -1236,8 +1236,8 @@ if __name__ == '__main__':
     viewer = tm_preferences['latexViewer']
 
     if command == 'latex' or command == 'version':
-        if(arguments.latexmk == 'yes' or 
-              (not arguments.latexmk and tm_preferences['latexUselatexmk'])):
+        if(arguments.latexmk == 'yes' or (not arguments.latexmk and
+        -                                          tm_preferences['latexUselatexmk'])):
             use_latexmk = True
             if command == 'latex':
                 command = 'latexmk'
@@ -1306,8 +1306,7 @@ if __name__ == '__main__':
         def finished(fatal_error, number_errors, number_warnings):
             update_marks(cache_filename, command_parser.marks)
 
-            line_number = getenv('TM_SELECTION').split(':')[0]
-            #print('line number:'+line_number)
+            line_number = -1; #don't want sync as it doesn't work with multiple source files
             if tm_autoview and number_errors < 1 and not suppress_viewer:
                 viewer_status = run_viewer(
                     viewer, filepath, pdffile_path,
