@@ -15,7 +15,7 @@ from subprocess import call
 from sys import path, stdin, stdout
 
 path.append(environ['TM_BUNDLE_SUPPORT'] + '/bin')
-from itemize import *
+from itemize import itemize
 
 # -- Main ---------------------------------------------------------------------
 
