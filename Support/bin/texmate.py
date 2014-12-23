@@ -525,7 +525,7 @@ def run_viewer(viewer, texfile_path, pdffile_path,
                 status = call("open -a '{}.app' {}".format(viewer,
                               shellquote(pdffile_path)), shell=True)
             # PDF viewer supports pdfsync
-            if (line_number>0) and sync_command and use_pdfsync:
+            if sync_command and use_pdfsync:
                 call(sync_command, shell=True)
             elif not sync_command and use_pdfsync:
                 print("{} does not supported pdfsync".format(viewer))
@@ -1305,14 +1305,15 @@ if __name__ == '__main__':
 
         def finished(fatal_error, number_errors, number_warnings):
             update_marks(cache_filename, command_parser.marks)
-
-            line_number = -1; #don't want sync as it doesn't work with multiple source files
+            
+            #don't want sync as it doesn't work with multiple source files
+            use_pdfsync = False; #'pdfsync' in packages or synctex
             if tm_autoview and number_errors < 1 and not suppress_viewer:
                 viewer_status = run_viewer(
                     viewer, filepath, pdffile_path,
                     number_errors > 1 or number_warnings > 0
                     and tm_preferences['latexKeepLogWin'],
-                    'pdfsync' in packages or synctex, line_number)
+                    use_pdfsync, line_number)
             return tm_bundle_support
 
         
