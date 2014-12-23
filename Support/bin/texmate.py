@@ -1150,7 +1150,7 @@ def get_command_line_arguments():
         '-latexmk', default=None,
         choices={'yes', 'no'},
         help='''Specify if latexmk should be used to translate the document.
-                If you do not set this option, then value set inside
+                If you choose "no", then the value set inside
                 TextMate will be used.''')
     parser_latex.add_argument(
         '-engine', default=None,
@@ -1231,12 +1231,13 @@ if __name__ == '__main__':
     tm_engine = tm_preferences['latexEngine']
     tm_engine_options = tm_preferences['latexEngineOptions'].strip()
     use_latexmk = False
+    use_pvc = True # the pvc mode for latexmk
     verbose = True if tm_preferences['latexVerbose'] == 1 else False
     viewer = tm_preferences['latexViewer']
 
     if command == 'latex' or command == 'version':
-        if(arguments.latexmk == 'yes' or (not arguments.latexmk and
-                                          tm_preferences['latexUselatexmk'])):
+        if(arguments.latexmk == 'yes' or 
+              (not arguments.latexmk and tm_preferences['latexUselatexmk'])):
             use_latexmk = True
             if command == 'latex':
                 command = 'latexmk'
@@ -1293,24 +1294,40 @@ if __name__ == '__main__':
                                                   tm_engine_options, synctex)
         write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')
         latexmkrc_path = "{}/config/latexmkrc".format(tm_bundle_support)
-        command = "latexmk -pdf{} -f -r /tmp/latexmkrc -r {} {}".format(
-            'ps' if engine == 'latex' else '', shellquote(latexmkrc_path),
+        command = "latexmk -pdf{} {} -f -r /tmp/latexmkrc -r {} {}".format(
+            'ps' if engine == 'latex' else '', 
+            '-pvc' if use_pvc else '',
+            shellquote(latexmkrc_path),
             shellquote(filename))
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
-        command_parser = LaTexMkParser(process.stdout, verbose, filename)
-        status = command_parser.parse_stream()
-        update_marks(cache_filename, command_parser.marks)
-        fatal_error, number_errors, number_warnings = status
+        
+
+        def finished(fatal_error, number_errors, number_warnings):
+            update_marks(cache_filename, command_parser.marks)
+
+            line_number = getenv('TM_SELECTION').split(':')[0]
+            #print('line number:'+line_number)
+            if tm_autoview and number_errors < 1 and not suppress_viewer:
+                viewer_status = run_viewer(
+                    viewer, filepath, pdffile_path,
+                    number_errors > 1 or number_warnings > 0
+                    and tm_preferences['latexKeepLogWin'],
+                    'pdfsync' in packages or synctex, line_number)
+            return tm_bundle_support
+
+        
+        command_parser = LaTexMkParser(process.stdout, verbose, 
+                                       filename, use_pvc, finished)
+
+        status = command_parser.parse_stream()        
+        fatal_error, number_errors, number_warnings = status        
+        number_runs = command_parser.number_runs
+        
         tex_status = process.wait()
         remove("/tmp/latexmkrc")
-        if tm_autoview and number_errors < 1 and not suppress_viewer:
-            viewer_status = run_viewer(
-                viewer, filepath, pdffile_path,
-                number_errors > 1 or number_warnings > 0
-                and tm_preferences['latexKeepLogWin'],
-                'pdfsync' in packages or synctex, line_number)
-        number_runs = command_parser.number_runs
+        
+        finished(fatal_error, number_errors, number_warnings)
 
     elif command == 'bibtex':
         use_biber = exists('{}.bcf'.format(file_without_suffix))
