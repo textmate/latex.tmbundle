@@ -258,7 +258,7 @@ class TexParser(object):
 
         """
         line = self.get_rewrapped_line()
-        while line and not self.done:
+        while line and not self.done:        
             line = line.rstrip("\n")
             found_match = False
 
@@ -580,7 +580,7 @@ class LaTexParser(TexParser):
     """Parse log messages from latex."""
 
     def __init__(self, input_stream, verbose, filename):
-        """Initialize the regex patterns for the LaTexParser."""
+        """Initialize the regex patterns for the LaTexParser """
         super(LaTexParser, self).__init__(input_stream, verbose)
         self.suffix = filename[:filename.rfind('.')]
         self.filename = self.current_file = filename
@@ -759,7 +759,9 @@ class LaTexParser(TexParser):
         filepath = make_link(join(getcwd(), filename))
         print('<p>Complete transcript is in <a href="{}">{}</a></p>'.format(
               filepath, filename))
-        self.done = True
+        print('</div>') #Latex div
+        
+        self.done = True 
 
     def bad_run(self):
         logfile = basename(self.filename)
@@ -773,18 +775,24 @@ class LaTexParser(TexParser):
 class LaTexMkParser(TexParser):
     """Parse log messages from latexmk."""
 
-    def __init__(self, input_stream, verbose, filename):
-        """Initialize the regex patterns for the LaTexMkParser."""
+    def __init__(self, input_stream, verbose, filename, use_pvc, round_finished):
+        """Initialize the regex patterns for the LaTexMkParser.
+           The parameter use_pvc is a boolean indicating whether 
+           the -pvc option should be passed to latexmk            
+        """
         super(LaTexMkParser, self).__init__(input_stream, verbose)
         self.filename = filename
+        self.use_pvc = use_pvc
+        self.round_finished = round_finished
         self.marks = []
         self.patterns.extend([
             (compile('This is (pdfTeX|latex2e|latex|LuaTeX|XeTeX)'),
              self.start_latex),
             (compile('This is BibTeX'), self.start_bibtex),
             (compile('.*This is Biber'), self.start_biber),
-            (compile('^Latexmk: All targets \(.*?\) are up-to-date'),
-             self.finish_run),
+            # (compile('^Latexmk: All targets \(.*?\) are up-to-date'),
+#              self.finish_run),
+            (compile('^Latexmk: Log file says output to'), self.finish_run),
             (compile('This is makeindex'), self.start_bibtex),
             (compile('^Latexmk'), self.latexmk),
             (compile('Run number'), self.new_run)
@@ -882,7 +890,27 @@ class LaTexMkParser(TexParser):
 
     def finish_run(self, matching, line):
         self.latexmk(matching, line)
-        self.done = True
+#        print('pvc '+use_pvc)
+#        self.done = True
+        if self.use_pvc: #never finish running            
+            tm_bundle_support = self.round_finished(self.fatal_error, self.number_errors, self.number_warnings)
+            texlib_location = quote('{}/bin/texlib.js'.format(tm_bundle_support))
+            print('''<script src="file://{}" type="text/javascript"
+                      charset="utf-8"></script>'''.format(texlib_location))
+            
+            print('''<input type="checkbox" id="ltxmk_warn"
+                      name="ltxmkWarnings" onclick="makeLatexmkVisible();
+                      return false">
+                     <label for="ltxmk_warn">Show Latexmk Messages </label>''')
+#            print('</p></div>')            
+            
+        #     # super(LaTexMkParser, self).finish_run(self, matching, line)
+        #     # self.done = False
+        #     ;
+        # else:            
+        else:
+            self.done = True
+
 
     def latexmk(self, matching, line):
         print('<p class="ltxmk">{}</p>'.format(line))
