@@ -258,7 +258,7 @@ class TexParser(object):
 
         """
         line = self.get_rewrapped_line()
-        while line and not self.done:        
+        while line and not self.done:
             line = line.rstrip("\n")
             found_match = False
 
@@ -580,7 +580,7 @@ class LaTexParser(TexParser):
     """Parse log messages from latex."""
 
     def __init__(self, input_stream, verbose, filename):
-        """Initialize the regex patterns for the LaTexParser """
+        """Initialize the regex patterns for the LaTexParser."""
         super(LaTexParser, self).__init__(input_stream, verbose)
         self.suffix = filename[:filename.rfind('.')]
         self.filename = self.current_file = filename
@@ -791,7 +791,7 @@ class LaTexMkParser(TexParser):
             (compile('This is BibTeX'), self.start_bibtex),
             (compile('.*This is Biber'), self.start_biber),
             # (compile('^Latexmk: All targets \(.*?\) are up-to-date'),
-#              self.finish_run),
+            #  self.finish_run),
             (compile('^Latexmk: Log file says output to'), self.finish_run),
             (compile('This is makeindex'), self.start_bibtex),
             (compile('^Latexmk'), self.latexmk),
@@ -890,8 +890,7 @@ class LaTexMkParser(TexParser):
 
     def finish_run(self, matching, line):
         self.latexmk(matching, line)
-#        print('pvc '+use_pvc)
-#        self.done = True
+
         if self.use_pvc: #never finish running            
             tm_bundle_support = self.round_finished(self.fatal_error, self.number_errors, self.number_warnings)
             texlib_location = quote('{}/bin/texlib.js'.format(tm_bundle_support))
@@ -902,12 +901,7 @@ class LaTexMkParser(TexParser):
                       name="ltxmkWarnings" onclick="makeLatexmkVisible();
                       return false">
                      <label for="ltxmk_warn">Show Latexmk Messages </label>''')
-#            print('</p></div>')            
             
-        #     # super(LaTexMkParser, self).finish_run(self, matching, line)
-        #     # self.done = False
-        #     ;
-        # else:            
         else:
             self.done = True
 
