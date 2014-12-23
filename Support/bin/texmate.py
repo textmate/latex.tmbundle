@@ -1237,7 +1237,7 @@ if __name__ == '__main__':
 
     if command == 'latex' or command == 'version':
         if(arguments.latexmk == 'yes' or (not arguments.latexmk and
-        -                                          tm_preferences['latexUselatexmk'])):
+                                          tm_preferences['latexUselatexmk'])):
             use_latexmk = True
             if command == 'latex':
                 command = 'latexmk'
@@ -1302,8 +1302,8 @@ if __name__ == '__main__':
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
                         stderr=STDOUT, close_fds=True)
         
-
-        def finished(fatal_error, number_errors, number_warnings):
+        #callback function executed after each round of latexmk
+        def round_finished(fatal_error, number_errors, number_warnings):
             update_marks(cache_filename, command_parser.marks)
             
             #don't want sync as it doesn't work with multiple source files
@@ -1314,11 +1314,19 @@ if __name__ == '__main__':
                     number_errors > 1 or number_warnings > 0
                     and tm_preferences['latexKeepLogWin'],
                     use_pdfsync, line_number)
-            return tm_bundle_support
+            texlib_location = quote('{}/bin/texlib.js'.
+                                 format(tm_bundle_support))
+            print('''<script src="file://{}" type="text/javascript"
+                      charset="utf-8"></script>'''.format(texlib_location))
+            
+            print('''<input type="checkbox" id="ltxmk_warn"
+                      name="ltxmkWarnings" onclick="makeLatexmkVisible();
+                      return false">
+                     <label for="ltxmk_warn">Show Latexmk Messages </label>''')
 
         
         command_parser = LaTexMkParser(process.stdout, verbose, 
-                                       filename, use_pvc, finished)
+                                       filename, use_pvc, round_finished)
 
         status = command_parser.parse_stream()        
         fatal_error, number_errors, number_warnings = status        
@@ -1326,8 +1334,15 @@ if __name__ == '__main__':
         
         tex_status = process.wait()
         remove("/tmp/latexmkrc")
+                
+        if tm_autoview and number_errors < 1 and not suppress_viewer:
+            viewer_status = run_viewer(
+                viewer, filepath, pdffile_path,
+                number_errors > 1 or number_warnings > 0
+                and tm_preferences['latexKeepLogWin'],
+                'pdfsync' in packages or synctex, line_number)
         
-        finished(fatal_error, number_errors, number_warnings)
+
 
     elif command == 'bibtex':
         use_biber = exists('{}.bcf'.format(file_without_suffix))

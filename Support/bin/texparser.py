@@ -778,7 +778,8 @@ class LaTexMkParser(TexParser):
     def __init__(self, input_stream, verbose, filename, use_pvc, round_finished):
         """Initialize the regex patterns for the LaTexMkParser.
            The parameter use_pvc is a boolean indicating whether 
-           the -pvc option should be passed to latexmk            
+           the -pvc option should be passed to latexmk.
+           round_finished is a callback function executed after each round of latexmk
         """
         super(LaTexMkParser, self).__init__(input_stream, verbose)
         self.filename = filename
@@ -892,15 +893,7 @@ class LaTexMkParser(TexParser):
         self.latexmk(matching, line)
 
         if self.use_pvc: #never finish running            
-            tm_bundle_support = self.round_finished(self.fatal_error, self.number_errors, self.number_warnings)
-            texlib_location = quote('{}/bin/texlib.js'.format(tm_bundle_support))
-            print('''<script src="file://{}" type="text/javascript"
-                      charset="utf-8"></script>'''.format(texlib_location))
-            
-            print('''<input type="checkbox" id="ltxmk_warn"
-                      name="ltxmkWarnings" onclick="makeLatexmkVisible();
-                      return false">
-                     <label for="ltxmk_warn">Show Latexmk Messages </label>''')
+            self.round_finished(self.fatal_error, self.number_errors, self.number_warnings)
             
         else:
             self.done = True
