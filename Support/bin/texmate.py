@@ -1336,7 +1336,8 @@ if __name__ == '__main__':
         command_parser = LaTexMkParser(process.stdout, verbose, 
                                        filename, use_pvc, round_finished)
 
-        status = command_parser.parse_stream()        
+        status = command_parser.parse_stream()
+        update_marks(cache_filename, command_parser.marks)
         fatal_error, number_errors, number_warnings = status        
         number_runs = command_parser.number_runs
         
