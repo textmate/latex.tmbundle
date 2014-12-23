@@ -12,16 +12,16 @@ def reformat(table_content)
   cols = data.map { |i| i.length }.max
   widths = []
   cols.times do |i|
-    widths << data.inject(0) do |maximum, line|
-      if line.length <= i then maximum else [maximum, line[i].length].max end
+    widths << data.reduce(0) do |maximum, line|
+      (line.length <= i) ? maximum : [maximum, line[i].length].max
     end
   end
   pattern = widths.map { |i| "%#{i}s" }.join(' & ')
   print s.chomp
   prev = false
-  for line in data do
+  data.each do |line|
     print(prev ? "\\\\\n" : "\n")
-    if line.length <= 1 then
+    if line.length <= 1
       print line
       prev = false
     else
