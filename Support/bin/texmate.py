@@ -1303,8 +1303,8 @@ if __name__ == '__main__':
                         stderr=STDOUT, close_fds=True)
         
         #callback function executed after each round of latexmk
-        def round_finished(fatal_error, number_errors, number_warnings):
-            update_marks(cache_filename, command_parser.marks)
+        def round_finished(parser, fatal_error, number_errors, number_warnings):
+            update_marks(cache_filename, parser.marks)
             
             #don't want sync as it doesn't work with multiple source files
             use_pdfsync = False; #'pdfsync' in packages or synctex
@@ -1337,6 +1337,8 @@ if __name__ == '__main__':
                                        filename, use_pvc, round_finished)
 
         status = command_parser.parse_stream()
+
+        #the following will never be reached if use_pvc
         update_marks(cache_filename, command_parser.marks)
         fatal_error, number_errors, number_warnings = status        
         number_runs = command_parser.number_runs

@@ -893,7 +893,7 @@ class LaTexMkParser(TexParser):
         self.latexmk(matching, line)
 
         if self.use_pvc: #never finish running            
-            self.round_finished(self.fatal_error, self.number_errors, self.number_warnings)
+            self.round_finished(self, self.fatal_error, self.number_errors, self.number_warnings)
             
         else:
             self.done = True
