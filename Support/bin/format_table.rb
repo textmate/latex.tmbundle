@@ -7,7 +7,7 @@ def reformat(table_content)
   lines.gsub!(/(\\hline\s*)(?!\n)/, '\\hline\\\\\\\\')
   lines = lines.split(/\\\\/)
   data = lines.map do |line|
-    line.split(/&/).map { |i| i.strip }
+    line.split(/[^\\]&/).map { |i| i.strip }
   end
   cols = data.map { |i| i.length }.max
   widths = []
