@@ -1085,9 +1085,9 @@ if __name__ == '__main__':
         if not messages:
             messages = [
                 "Could not find any messages containing line information.",
-                "Please take a look at the log file {}.latexmk.log. to " +
-                "find the source of the problem.".format(
-                arguments.file)]
+                "Please take a look at the log file {}.latexmk.log ".format(
+                basename(arguments.file)) +
+                "to find the source of the problem."]
 
         try:
             # Try to update data in cache file
