@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby18
+#!/usr/bin/env ruby
 
 def reformat(table_content)
   lines = table_content
@@ -22,7 +22,7 @@ def reformat(table_content)
   data.each do |line|
     print(prev ? "\\\\\n" : "\n")
     if line.length <= 1
-      print line
+      print line.join('')
       prev = false
     else
       line.fill('', (line.length + 1)..cols)
