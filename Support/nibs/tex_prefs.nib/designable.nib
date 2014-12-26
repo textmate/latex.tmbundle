@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">101000</int>
-		<string key="IBDocument.SystemVersion">14A389</string>
-		<string key="IBDocument.InterfaceBuilderVersion">6250</string>
-		<string key="IBDocument.AppKitVersion">1343.14</string>
+		<string key="IBDocument.SystemVersion">14B25</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6254</string>
+		<string key="IBDocument.AppKitVersion">1343.16</string>
 		<string key="IBDocument.HIToolboxVersion">755.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">6250</string>
+			<string key="NS.object.0">6254</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSArrayController</string>
@@ -366,7 +366,7 @@
 							<string key="NSFrame">{{164, 270}, {119, 18}}</string>
 							<reference key="NSSuperview" ref="821574120"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="1006077185"/>
+							<reference key="NSNextKeyView" ref="578402353"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="800711848">
 								<int key="NSCellFlags">67108864</int>
@@ -374,6 +374,30 @@
 								<string key="NSContents">Use Latexmk</string>
 								<reference key="NSSupport" ref="785281613"/>
 								<reference key="NSControlView" ref="650807153"/>
+								<int key="NSButtonFlags">1211912448</int>
+								<int key="NSButtonFlags2">2</int>
+								<reference key="NSAlternateImage" ref="1047943522"/>
+								<string key="NSAlternateContents"/>
+								<string key="NSKeyEquivalent"/>
+								<int key="NSPeriodicDelay">200</int>
+								<int key="NSPeriodicInterval">25</int>
+							</object>
+							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+						</object>
+						<object class="NSButton" id="578402353">
+							<reference key="NSNextResponder" ref="821574120"/>
+							<int key="NSvFlags">256</int>
+							<string key="NSFrame">{{274, 270}, {119, 18}}</string>
+							<reference key="NSSuperview" ref="821574120"/>
+							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView" ref="1006077185"/>
+							<bool key="NSEnabled">YES</bool>
+							<object class="NSButtonCell" key="NSCell" id="23030453">
+								<int key="NSCellFlags">67108864</int>
+								<int key="NSCellFlags2">0</int>
+								<string key="NSContents">Use pvc</string>
+								<reference key="NSSupport" ref="785281613"/>
+								<reference key="NSControlView" ref="578402353"/>
 								<int key="NSButtonFlags">1211912448</int>
 								<int key="NSButtonFlags2">2</int>
 								<reference key="NSAlternateImage" ref="1047943522"/>
@@ -567,7 +591,7 @@
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="619626383"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 877}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1280, 777}}</string>
 				<string key="NSMinSize">{213, 129}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
@@ -809,6 +833,22 @@
 					</object>
 					<int key="connectionID">202</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: values.latexUselatexmkpvc</string>
+						<reference key="source" ref="578402353"/>
+						<reference key="destination" ref="548912418"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="578402353"/>
+							<reference key="NSDestination" ref="548912418"/>
+							<string key="NSLabel">value: values.latexUselatexmkpvc</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">values.latexUselatexmkpvc</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">229</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -854,6 +894,7 @@
 							<reference ref="1006077185"/>
 							<reference ref="619626383"/>
 							<reference ref="83671823"/>
+							<reference ref="578402353"/>
 						</array>
 						<reference key="parent" ref="373545310"/>
 					</object>
@@ -1111,6 +1152,19 @@
 						<reference key="object" ref="81628980"/>
 						<reference key="parent" ref="712347111"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">225</int>
+						<reference key="object" ref="578402353"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="23030453"/>
+						</array>
+						<reference key="parent" ref="821574120"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">226</int>
+						<reference key="object" ref="23030453"/>
+						<reference key="parent" ref="578402353"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -1177,8 +1231,20 @@
 				<string key="222.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="223.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="224.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<object class="NSMutableDictionary" key="225.IBAttributePlaceholdersKey">
+					<string key="NS.key.0">ToolTip</string>
+					<object class="IBToolTipAttribute" key="NS.object.0">
+						<string key="name">ToolTip</string>
+						<reference key="object" ref="578402353"/>
+						<string key="toolTip">latexmk with the pvc option (preview continuous) runs continuously and compiles each time a source file is modified</string>
+					</object>
+				</object>
+				<string key="225.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="225.userInterfaceItemIdentifier">Use pvc</string>
+				<string key="226.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="YES" key="5.NSWindowTemplate.visibleAtLaunch"/>
+				<reference key="6.IBNSViewMetadataGestureRecognizers" ref="0"/>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="7.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="91.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1187,7 +1253,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">224</int>
+			<int key="maxID">249</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
