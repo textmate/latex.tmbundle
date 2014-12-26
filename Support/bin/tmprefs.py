@@ -40,6 +40,7 @@ class Preferences(object):
             'latexEngineOptions': "",
             'latexVerbose': 0,
             'latexUselatexmk': 0,
+            'latexUselatexmkpvc': 0,
             'latexViewer': "TextMate",
             'latexKeepLogWin': 1,
             'latexDebug': 0,

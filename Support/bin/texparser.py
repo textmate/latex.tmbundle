@@ -791,7 +791,7 @@ class LaTexMkParser(TexParser):
              self.start_latex),
             (compile('This is BibTeX'), self.start_bibtex),
             (compile('.*This is Biber'), self.start_biber),
-            # (compile('^Latexmk: All targets \(.*?\) are up-to-date'),
+            #(compile('^Latexmk: All targets \(.*?\) are up-to-date'),
             #  self.finish_run),
             (compile('^Latexmk: Log file says output to'), self.finish_run),
             (compile('This is makeindex'), self.start_bibtex),
@@ -892,7 +892,7 @@ class LaTexMkParser(TexParser):
     def finish_run(self, matching, line):
         self.latexmk(matching, line)
 
-        if self.use_pvc: #never finish running            
+        if self.use_pvc: #never finish running
             self.round_finished(self, self.fatal_error, self.number_errors, self.number_warnings)
             
         else:
