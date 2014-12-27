@@ -1309,13 +1309,6 @@ if __name__ == '__main__':
 
             print('''<script src="file://{}" type="text/javascript"
                       charset="utf-8"></script>'''.format(texlib_location))
-
-            # print('''<div id="texActions">
-            #          <input type="button" value="Run {}"
-            #           onclick="runLatex(); return false">
-            #          <input type="button" value="Create Bibliography"
-            #           onclick="runBibtex();
-            #           return false">'''.format(engine))
             
             print('''<input id="latexmk_button" type="button" value="Stop latexmk"
                      onclick="stopLatexmkpvc(); return false">''')
