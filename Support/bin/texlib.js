@@ -12,7 +12,14 @@ Then we just need to redisplay the captured html...
 // and should give good looking asynchronous output
 // The idea for this comes from Javascript the definitive guide p 330 which shows
 // a fully featured logging script.
+
 function displayIncrementalOutput(id,className,mess) {
+	isAtBottom = false;
+
+	if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+		isAtBottom = true;
+	}	
+	
 	if(mess != null && mess != '')	{
         content = document.getElementById('preText');
         if (typeof this.entry === 'undefined') {
@@ -21,7 +28,15 @@ function displayIncrementalOutput(id,className,mess) {
         this.entry.innerHTML += mess
         content.appendChild(this.entry);
 	}
+
+	if (isAtBottom) 
+		gotoEnd();
 }
+
+function gotoEnd() {
+	window.scrollTo(0,document.body.scrollHeight);
+}
+
 
 function runCommand(theCmd){
 	cmd  = 'cd "${TM_PROJECT_DIRECTORY:-$TM_DIRECTORY}"; '
@@ -31,6 +46,7 @@ function runCommand(theCmd){
 	myCommand.onreadoutput = latexReadOutput;
 	myCommand.onreaderror = latexReadError;
 };
+
 
 function runLatex(){
     runCommand('latex')
@@ -94,4 +110,41 @@ function makeLatexmkVisible() {
     for(var i=0;i<warnElements.length;i++) {
         warnElements[i].style.display = (warnElements[i].style.display == "none" || warnElements[i].style.display == "" ? "block" : "none");
     }
+}
+
+
+function runLatexmkpvc(){
+	stopLatexmkpvc(); //if it's already running, stop it
+		
+	latexReadOutput("Starting latexmk -pvc.<br>");
+	
+	cmd  = 'cd "${TM_PROJECT_DIRECTORY:-$TM_DIRECTORY}"; '
+	cmd += '"$TM_BUNDLE_SUPPORT"/bin/texmate.py -addoutput ' + 'latex -latexmk pvc';
+
+	TextMate.isBusy = true;
+	myCommand = TextMate.system(cmd, 
+		function(task) { 
+			TextMate.isBusy = false; 
+			
+			var button = document.getElementById("latexmk_button");
+			button.value = "Run latexmk";
+			button.setAttribute('onclick',"runLatexmkpvc(); return false");
+		} );
+
+	myCommand.onreadoutput = latexReadOutput;
+	myCommand.onreaderror = latexReadError;	
+	
+	var button = document.getElementById("latexmk_button");
+	button.value = "Stop latexmk";
+	button.setAttribute('onclick',"stopLatexmkpvc(); latexReadOutput('Stopped latexmk.<br>'); return false");
+}
+
+function stopLatexmkpvc() {
+//sends signal to stop the continuous latexmk process
+	cmd = "ps aux |grep perl | grep 'latexmk \-pdf \-pvc'| awk {'print $2'} | xargs kill -2";
+
+	myCommand = TextMate.system(cmd, null);
+	
+	myCommand.onreadoutput = latexReadOutput;
+	myCommand.onreaderror = latexReadError;	
 }

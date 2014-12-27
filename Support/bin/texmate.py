@@ -1146,10 +1146,12 @@ def get_command_line_arguments():
         'filepath', type=file_exists, nargs='?', default=getenv('TM_FILEPATH'),
         help='Specify the file which should be processed.')
     parser_latex = ArgumentParser(add_help=False)
+
     parser_latex.add_argument(
         '-latexmk', default=None,
-        choices={'yes', 'no'},
+        choices={'yes', 'no', 'pvc'},
         help='''Specify if latexmk should be used to translate the document.
+                The value 'pvc' specifies the 'previous continuous' mode.
                 If you do not set this option, then value set inside
                 TextMate will be used.''')
     parser_latex.add_argument(
@@ -1231,20 +1233,27 @@ if __name__ == '__main__':
     tm_engine = tm_preferences['latexEngine']
     tm_engine_options = tm_preferences['latexEngineOptions'].strip()
     use_latexmk = False
+    use_pvc = False # the pvc mode for latexmk
+    
     verbose = True if tm_preferences['latexVerbose'] == 1 else False
     viewer = tm_preferences['latexViewer']
-
+        
     if command == 'latex' or command == 'version':
-        if(arguments.latexmk == 'yes' or (not arguments.latexmk and
-                                          tm_preferences['latexUselatexmk'])):
-            use_latexmk = True
-            if command == 'latex':
-                command = 'latexmk'
+        use_latexmk = ((arguments.latexmk == 'yes') or 
+            (not arguments.latexmk and tm_preferences['latexUselatexmk']))
+                                          
+        use_pvc = ((arguments.latexmk == 'pvc') or 
+            (use_latexmk and tm_preferences['latexUselatexmkpvc']))
+                
+        if (use_latexmk) and (command == 'latex') and (not use_pvc):
+            command = 'latexmk'
+        if (use_pvc) and (command == 'latex'):
+            command = 'latexmkpvc'
         if arguments.engine:
             tm_engine = arguments.engine
         if arguments.engine_options:
             tm_engine_options = arguments.engine_options
-
+        
     typesetting_data = get_typesetting_data(filepath, tm_engine,
                                             tm_bundle_support)
 
@@ -1275,7 +1284,7 @@ if __name__ == '__main__':
         print("<h2 class='warning'>Warning: LaTeX file has no extension. " +
               "See log for errors/warnings</h2>")
 
-    if synctex and 'pdfsync' in packages:
+    if synctex and 'pdfsync' in packages and first_run:
         print("<p class='warning'>Warning: {} supports ".format(engine) +
               "synctex but you have included pdfsync. You can safely remove " +
               "\usepackage{pdfsync}</p>")
@@ -1288,29 +1297,140 @@ if __name__ == '__main__':
                  </strong></p>
               '''.format(filename, problematic_characters.group(0)))
     # Run the command passed on the command line or modified by preferences
-    elif command == 'latexmk':
+    elif command == 'latexmkpvc':
+        if first_run: 
+            #immediately create buttons at the bottom and 
+            #start second run with -addoutput option
+            #which will produce output above the buttons
+            print('</div></div>')  # Close divs `preText` and `commandOutput`
+            pdf_file = '{}.pdf'.format(file_without_suffix)
+            # only need to include the javascript library once
+            texlib_location = quote('{}/bin/texlib.js'.format(tm_bundle_support))
+
+            print('''<script src="file://{}" type="text/javascript"
+                      charset="utf-8"></script>'''.format(texlib_location))
+            
+            print('''<input id="latexmk_button" type="button" value="Stop latexmk"
+                     onclick="stopLatexmkpvc(); return false">''')
+
+            print('''<input type="button" value="Create Index"
+                      onclick="runMakeIndex(); return false">
+                     <input type="button" value="Clean" onclick="runClean();
+                      return false">''')
+
+            if viewer == 'TextMate':
+                print('''<input type="button" value="View in TextMate"
+                          onclick="window.location='file://{}'"/>'''.format(
+                      quote('{}/{}'.format(file_path, pdf_file))))
+            else:
+                print('''<input type="button" value="View in {}"
+                         onclick="runView(); return false">'''.format(viewer))
+
+            print('''<input type="button" value="Preferences"
+                      onclick="runConfig(); return false">
+                     <p>
+                     <input type="checkbox" id="hv_warn" name="fmtWarnings"
+                     onclick="makeFmtWarnVisible(); return false">
+                     <label for="hv_warn">Show hbox, vbox Warnings </label>
+                     ''')
+
+
+            print('''<input type="checkbox" id="ltxmk_warn"
+                      name="ltxmkWarnings" onclick="makeLatexmkVisible();
+                      return false">
+                     <label for="ltxmk_warn">Show Latexmk Messages </label>''')
+
+            print('</p></div>') #div texActions
+            
+            print('''<script type="text/javascript">runLatexmkpvc()</script>''') #run the second run with -addoutput
+
+            exit(EXIT_SUCCESS)
+        
+        else: #not first_run
+            engine_options = construct_engine_options(typesetting_directives,
+                                                      tm_engine_options, synctex)
+            write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')
+            latexmkrc_path = "{}/config/latexmkrc".format(tm_bundle_support)
+            command = "latexmk -pdf{} {} -f -r /tmp/latexmkrc -r {} {}".format(
+                'ps' if engine == 'latex' else '', 
+                '-pvc' if use_pvc else '',
+                shellquote(latexmkrc_path),
+                shellquote(filename))
+                        
+            process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
+                            stderr=STDOUT, close_fds=True)        
+        
+            
+            def round_finished(parser, fatal_error, number_errors, number_warnings):
+                update_marks(cache_filename, parser.marks)
+        
+                #don't want sync as it doesn't work with multiple source files
+                use_pdfsync = False; #'pdfsync' in packages or synctex
+                if tm_autoview and number_errors < 1 and not suppress_viewer:
+                    viewer_status = run_viewer(
+                        viewer, filepath, pdffile_path,
+                        number_errors > 1 or number_warnings > 0
+                        and tm_preferences['latexKeepLogWin'],
+                        use_pdfsync, line_number)
+
+            command_parser = LaTexMkParser(process.stdout, verbose, 
+                                           filename, use_pvc, round_finished)
+
+            status = command_parser.parse_stream()
+             
+            tex_status = process.wait()
+            #wait until user kills latexmk            
+        
+            if (tex_status == -2):
+                #latexmk interrupted, everything is ok
+                tex_status=0
+            
+            fatal_error, number_errors, number_warnings = status
+            number_runs = command_parser.number_runs
+
+            remove("/tmp/latexmkrc")            
+        
+            # Decide what to do with the Latex & View log window
+            exit_code = (EXIT_DISCARD if not tm_preferences['latexKeepLogWin'] and
+                         number_errors == 0 and viewer != 'TextMate' else EXIT_SUCCESS)
+        
+            exit(exit_code)
+
+            #end if not first_run
+        #end if 'latexmkpvc'
+
+    elif command == 'latexmk':  
         engine_options = construct_engine_options(typesetting_directives,
                                                   tm_engine_options, synctex)
         write_latexmkrc(engine, engine_options, '/tmp/latexmkrc')
         latexmkrc_path = "{}/config/latexmkrc".format(tm_bundle_support)
         command = "latexmk -pdf{} -f -r /tmp/latexmkrc -r {} {}".format(
-            'ps' if engine == 'latex' else '', shellquote(latexmkrc_path),
+            'ps' if engine == 'latex' else '', 
+            shellquote(latexmkrc_path),
             shellquote(filename))
+                    
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
-                        stderr=STDOUT, close_fds=True)
-        command_parser = LaTexMkParser(process.stdout, verbose, filename)
+                        stderr=STDOUT, close_fds=True)                
+        
+        command_parser = LaTexMkParser(process.stdout, verbose, 
+                                       filename, False, None)
+
         status = command_parser.parse_stream()
+
+        tex_status = process.wait()            
+        
         update_marks(cache_filename, command_parser.marks)
         fatal_error, number_errors, number_warnings = status
-        tex_status = process.wait()
+        number_runs = command_parser.number_runs
+
         remove("/tmp/latexmkrc")
+            
         if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
                 viewer, filepath, pdffile_path,
                 number_errors > 1 or number_warnings > 0
                 and tm_preferences['latexKeepLogWin'],
                 'pdfsync' in packages or synctex, line_number)
-        number_runs = command_parser.number_runs
 
     elif command == 'bibtex':
         use_biber = exists('{}.bcf'.format(file_without_suffix))
@@ -1418,13 +1538,14 @@ if __name__ == '__main__':
         texlib_location = quote('{}/bin/texlib.js'.format(tm_bundle_support))
 
         print('''<script src="file://{}" type="text/javascript"
-                  charset="utf-8"></script>
-                 <div id="texActions">
+                  charset="utf-8"></script>'''.format(texlib_location))
+
+        print('''<div id="texActions">
                  <input type="button" value="Run {}"
                   onclick="runLatex(); return false">
                  <input type="button" value="Create Bibliography"
                   onclick="runBibtex();
-                  return false">'''.format(texlib_location, engine))
+                  return false">'''.format(engine))
 
         print('''<input type="button" value="Create Index"
                   onclick="runMakeIndex(); return false">
@@ -1453,6 +1574,6 @@ if __name__ == '__main__':
                       return false">
                      <label for="ltxmk_warn">Show Latexmk Messages </label>''')
 
-        print('</p></div>')
+        print('</p></div>') #div texActions
 
     exit(exit_code)
