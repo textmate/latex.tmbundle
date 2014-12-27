@@ -1,7 +1,7 @@
 # -- Imports ------------------------------------------------------------------
 
-from Foundation import NSDictionary
-from os import environ
+from Foundation import CFPreferencesAppSynchronize, CFPreferencesCopyAppValue
+from os import getenv
 from plistlib import writePlistToString
 from subprocess import PIPE, STDOUT, Popen
 
@@ -29,9 +29,11 @@ class Preferences(object):
             True
 
         """
-        tm_preference_file = ('{}.plist'.format(environ['TM_APP_IDENTIFIER'])
-                              if 'TM_APP_IDENTIFIER' in environ
-                              else 'com.macromates.textmate.plist')
+        tm_identifier = (
+            getenv('TM_APP_IDENTIFIER') if getenv('TM_APP_IDENTIFIER') else
+            'com.macromates.textmate')
+        CFPreferencesAppSynchronize(tm_identifier)
+
         self.default_values = {
             'latexAutoView': 1,
             'latexEngine': "pdflatex",
@@ -43,13 +45,11 @@ class Preferences(object):
             'latexDebug': 0,
         }
         self.prefs = self.default_values.copy()
-        tm_prefs = NSDictionary.dictionaryWithContentsOfFile_(
-            "{}/Library/Preferences/{}".format(environ["HOME"],
-                                               tm_preference_file))
-        # Only save the values we really need
+
         for key in self.prefs:
-            if key in tm_prefs:
-                self.prefs[key] = tm_prefs[key]
+            preference_value = CFPreferencesCopyAppValue(key, tm_identifier)
+            if preference_value:
+                self.prefs[key] = preference_value
 
     def __getitem__(self, key):
         """Return a value stored inside Preferences.
