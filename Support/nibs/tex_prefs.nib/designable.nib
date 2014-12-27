@@ -849,6 +849,22 @@
 					</object>
 					<int key="connectionID">229</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: values.latexUselatexmk</string>
+						<reference key="source" ref="578402353"/>
+						<reference key="destination" ref="548912418"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="578402353"/>
+							<reference key="NSDestination" ref="548912418"/>
+							<string key="NSLabel">enabled: values.latexUselatexmk</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">values.latexUselatexmk</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">256</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -1253,7 +1269,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">249</int>
+			<int key="maxID">256</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
