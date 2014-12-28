@@ -457,7 +457,7 @@ sub compile {
                   . "-notify $notification_token";
                 my $output = `$texparser_command`;
                 $output =~ /.*Notification\ Token:\ \|(\d+)\|/;
-                $notification_token = lc("$1");
+                $notification_token = $1;
                 $error              = 1;
             }
             else {
