@@ -320,8 +320,8 @@ sub clean_up {
     unlink(
         map( "$wd/$name.$_",
             qw(acn acr alg aux bbl bcf blg fdb_latexmk fls fmt glo glg gls idx
-              ilg ind ini ist latexmk.log log maf mtc mtc1 out pdfsync
-              run.xml synctex.gz toc) )
+              ilg ind ini ist latexmk.log log maf mtc mtc1 nav out pdfsync
+              run.xml snm synctex.gz toc) )
     ) if defined($wd);
     # Remove LaTeX bundle cache file
     unlink("$wd/.$name.lb") if defined($wd);

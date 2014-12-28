@@ -1327,8 +1327,8 @@ if __name__ == '__main__':
     elif command == 'clean':
         auxiliary_file_regex = (
             '.*\.(acn|acr|alg|aux|bbl|bcf|blg|fdb_latexmk|fls|fmt|glg|glo|gls|'
-            'idx|ilg|ind|ini|ist|lb|log|out|maf|mtc|mtc1|pdfsync|run.xml|'
-            'synctex.gz|toc)$')
+            'idx|ilg|ind|ini|ist|lb|log|out|maf|mtc|mtc1|nav|pdfsync|run.xml|'
+            'snm|synctex.gz|toc)$')
         command = ("find -E . -maxdepth 1 -type f -regex " +
                    "'{}' -delete -print".format(auxiliary_file_regex))
         removed_files = check_output(command, shell=True).strip()
