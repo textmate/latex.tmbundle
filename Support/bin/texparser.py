@@ -5,11 +5,11 @@
 
 from argparse import ArgumentParser, FileType
 from re import compile, match, search
-from os import getcwd
+from os import getcwd, getenv
 from os.path import basename, dirname, join, normpath, realpath
 from pickle import load, dump
 from pipes import quote as shellquote
-from subprocess import call
+from subprocess import call, check_output
 from sys import stdout
 from urllib import quote
 
@@ -41,6 +41,69 @@ def make_link(file, line=1):
 
     """
     return "txmt://open/?url=file://{}&line={}".format(quote(file), line)
+
+
+def notify(title='LaTeX Watch', summary='', messages=[], token=None,
+           close=False):
+    """Display a list of messages via a notification window.
+
+    This function returns a notification token that can be used to reuse the
+    opened notification window.
+
+    Arguments:
+
+        title
+
+            The (window) title for the notification window.
+
+        summary
+
+            A summary explaining the reasoning why we show this notification
+            window.
+
+        messages
+
+            A list of strings containing informative messages.
+
+        token
+
+            A token that can be used to reuse an already existing notification
+            window.
+
+        close
+
+            This value specifies if we want to close the notification window
+            instead of opening it.
+
+    Returns: ``str``
+
+    Examples:
+
+        >>> token = notify(summary='Mahatma Gandhi', messages=[
+        ...     "An eye for an eye only ends up making the whole world " +
+        ...     "blind."])
+        >>> # The token the function returns is a number
+        >>> token = int(token)
+
+    """
+    dialog = getenv('DIALOG')
+    tm_support = getenv('TM_SUPPORT_PATH')
+    nib_location = '{}/nibs/SimpleNotificationWindow.nib'.format(tm_support)
+    log = '\n'.join(messages)
+
+    if close:
+        command = "{} nib --dispose {}".format(shellquote(dialog), token)
+    else:
+        command = "{} nib {} --model ".format(shellquote(dialog),
+                  "--update {}".format(token) if token else
+                  "--load {}".format(shellquote(nib_location)))
+
+        command += shellquote(
+            """{{ title = "{}"; summary = "{}"; log = "{}"; }}""".format(
+            title, summary, log))
+
+    notification_output = check_output(command, shell=True)
+    return token if not notification_output else notification_output
 
 
 def update_marks(cache_filename, marks_to_set=[]):
@@ -968,6 +1031,11 @@ if __name__ == '__main__':
     parser = ArgumentParser(
         description='Parse output from latexmk.')
     parser.add_argument(
+        '-notify', default='', nargs='?',
+        help="""Open a notification window to show warning and error messages.
+                To reuse a notification window already opened, just provide
+                its notification token.""")
+    parser.add_argument(
         'logfile', type=FileType('r'),
         help="""The location of the log file that should be parsed. Use -
                 to read from STDIN.""")
@@ -977,7 +1045,9 @@ if __name__ == '__main__':
                 This has to be the file from which the output in `logfile` was
                 generated.""")
     arguments = parser.parse_args()
+
     logfile = arguments.logfile
+    notification_token = arguments.notify
     texfile = '{}.tex'.format(arguments.file)
     cachefile = '{}/.{}.lb'.format(dirname(arguments.file),
                                    basename(arguments.file))
@@ -985,3 +1055,12 @@ if __name__ == '__main__':
     texparser = LaTexMkParser(logfile, verbose=False, filename=texfile)
     texparser.parse_stream()
     update_marks(cachefile, texparser.marks)
+    messages = ["Line{:>5}:\t{}".format(line, message)
+                for (_, line, _, message)
+                in texparser.marks]
+
+    if notification_token != '':
+        new_token = notify(
+            summary='Errors While Typesetting {}'.format(basename(texfile)),
+            messages=messages, token=notification_token)
+        print("Notification Token: |{}|".format(new_token))

@@ -263,7 +263,7 @@ sub parse_file_path {
 }
 
 # Persistent state
-my ( %files_mtimes, $cleanup_viewer, $ping_viewer );
+my ( %files_mtimes, $cleanup_viewer, $ping_viewer, $notification_token );
 
 #############
 # Main loop #
@@ -271,6 +271,7 @@ my ( %files_mtimes, $cleanup_viewer, $ping_viewer );
 
 sub main_loop {
     my $ping_counter = 10;
+    $notification_token = '';
     while (1) {
         if ( document_has_changed() ) {
             debug_msg("Reloading file");
@@ -447,9 +448,15 @@ sub compile {
         sub {
             if ( $? == 1 || $? == 2 || $? == 12 ) {
                 # An error in the document
-                parse_log();
-                offer_to_show_log();
-                $error = 1;
+                print( "[LaTeX Watch] ",
+                    "Typesetting command failed with error code $?\n" );
+                my $texparser_command =
+                    "texparser.py '$name.latexmk.log' '$wd/$name' "
+                  . "-notify $notification_token";
+                my $output = `$texparser_command`;
+                $output =~ /.*Notification\ Token:\ \|(\d+)\|/;
+                $notification_token = lc("$1");
+                $error              = 1;
             }
             else {
                 fail( "Failed to compile document",

@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
-# Date:    2014-11-16
+# Date:    2014-12-14
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 9
+# Version: 10
 #
 # Run tests for this bundle. To execute the tests:
 #
@@ -13,7 +13,16 @@
 # need to install “Skim” inside `/Applications`
 # -----------------------------------------------------------------------------
 
-.PHONY: run all clean cramtests nosetests
+.PHONY: run all clean cramtests nosetests latex_watch
+
+# -- Variables -----------------------------------------------------------------
+
+# We need to set the bundle support location to the support folder of the LaTeX
+# bundle. If we do not set this variable explicitly, then `TM_BUNDLE_SUPPORT`
+# will be set to the location of the bundle support folder for the `Make`
+# bundle. This will lead to errors since `latex_watch` expects that
+# `TM_BUNDLE_SUPPORT` is set “correctly”.
+export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 
 # -- Rules --------------------------------------------------------------------
 
@@ -34,3 +43,8 @@ nosetests:
 
 cramtests: clean
 	cd Tests/Cram && cram *.t
+
+latex_watch:
+	TM_PID=$(shell pgrep TextMate)
+	Support/bin/latex_watch.pl -d --textmate-pid=$(TM_PID) \
+		"$(CURDIR)/Tests/TeX/makeindex.tex"
