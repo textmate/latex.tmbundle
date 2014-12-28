@@ -464,6 +464,12 @@ sub compile {
             }
         }
     );
+    # Close notification window if it is open and there are no more errors
+    if ( !$error && $notification_token ne '' ) {
+        fail_unless_system( "$ENV{DIALOG}", "nib", "--dispose",
+            "$notification_token" );
+        $notification_token = '';
+    }
 
     parse_file_list( \%files_mtimes );
 
