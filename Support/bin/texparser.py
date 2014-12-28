@@ -1060,7 +1060,7 @@ if __name__ == '__main__':
     texparser = LaTexMkParser(logfile, verbose=False, filename=texfile)
     texparser.parse_stream()
     update_marks(cachefile, texparser.marks)
-    messages = ["{:>7} {}:{} — {}".format(severity.upper(),
+    messages = ["{:<7} {}:{} — {}".format(severity.upper(),
                 basename(filename), line, message)
                 for (filename, line, severity, message)
                 in texparser.marks]
