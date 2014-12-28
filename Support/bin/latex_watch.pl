@@ -331,6 +331,7 @@ sub clean_up {
         debug_msg("Closing progress bar window as part of cleanup");
         kill( 9, $progressbar_pid );
     }
+    close_notification_window() if defined($notification_token);
     if ( defined $name ) {
         unlink "$wd/.$name.watcher_pid"    # Do this last
           or debug_msg("Failed to unlink $wd/.$name.watcher_pid: $!");
@@ -511,14 +512,9 @@ sub parse_log {
         # longer than that.
 
         $typesetting_errors = 0;
+        close_notification_window();
         fail_unless_system( "texparser.py", "$logname", "$wd/$name" );
 
-        # Close notification window if it is open
-        if ( $notification_token ne '' ) {
-            fail_unless_system( "$ENV{DIALOG}", "nib", "--dispose",
-                "$notification_token" );
-            $notification_token = '';
-        }
     }
     elsif ($typesetting_errors) {
 
@@ -545,6 +541,14 @@ sub parse_log {
             $notification_token = $1;
         }
 
+    }
+}
+
+sub close_notification_window {
+    if ( $notification_token ne '' ) {
+        fail_unless_system( "$ENV{DIALOG}", "nib", "--dispose",
+            "$notification_token" );
+        $notification_token = '';
     }
 }
 
