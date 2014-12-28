@@ -83,7 +83,7 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
     dialog = getenv('DIALOG')
     tm_support = getenv('TM_SUPPORT_PATH')
     nib_location = '{}/nibs/SimpleNotificationWindow.nib'.format(tm_support)
-    log = '\n'.join(messages)
+    log = '\n'.join(messages).replace('"', '\\"')
 
     command = "{} nib".format(shellquote(dialog))
     content = shellquote(
