@@ -1039,7 +1039,13 @@ if __name__ == '__main__':
         '-notify', default='', nargs='?',
         help="""Open a notification window to show warning and error messages.
                 To reuse a notification window already opened, just provide
-                its notification token.""")
+                its notification token.
+
+                To open a new window containing old messages stored in the
+                cache provide the argument `reload`. If the cache file does
+                not exist yet or the old messages could not be read for some
+                other reasons, then `reload` will just fail silently.""")
+
     parser.add_argument(
         'logfile', type=FileType('r'),
         help="""The location of the log file that should be parsed. Use -
@@ -1057,13 +1063,34 @@ if __name__ == '__main__':
     cachefile = '{}/.{}.lb'.format(dirname(arguments.file),
                                    basename(arguments.file))
 
-    texparser = LaTexMkParser(logfile, verbose=False, filename=texfile)
-    texparser.parse_stream()
-    update_marks(cachefile, texparser.marks)
-    messages = ["{:<7} {}:{} — {}".format(severity.upper(),
-                basename(filename), line, message)
-                for (filename, line, severity, message)
-                in texparser.marks]
+    if notification_token == 'reload':
+        try:
+            # Try to read from cache
+            with open(cachefile, 'rb') as storage:
+                typesetting_data = load(storage)
+                messages = typesetting_data['messages']
+            notification_token = None
+        except:
+            # Fail silently
+            exit(0)
+    else:
+        texparser = LaTexMkParser(logfile, verbose=False, filename=texfile)
+        texparser.parse_stream()
+        update_marks(cachefile, texparser.marks)
+        messages = ["{:<7} {}:{} — {}".format(severity.upper(),
+                    basename(filename), line, message)
+                    for (filename, line, severity, message)
+                    in texparser.marks]
+
+        try:
+            # Try to update data in cache file
+            with open(cachefile, 'r+b') as storage:
+                typesetting_data = load(storage)
+                typesetting_data['messages'] = messages
+                storage.seek(0)
+                dump(typesetting_data, storage)
+        except:
+            print('Could not access cache file {}!'.format(cachefile))
 
     if notification_token != '':
         new_token = notify(
