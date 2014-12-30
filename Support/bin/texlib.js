@@ -13,6 +13,12 @@ Then we just need to redisplay the captured html...
 // The idea for this comes from Javascript the definitive guide p 330 which shows
 // a fully featured logging script.
 function displayIncrementalOutput(id,className,mess) {
+	isAtBottom = false;
+
+	if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+		isAtBottom = true;
+	}
+
 	if(mess != null && mess != '')	{
         content = document.getElementById('preText');
         if (typeof this.entry === 'undefined') {
@@ -21,6 +27,13 @@ function displayIncrementalOutput(id,className,mess) {
         this.entry.innerHTML += mess
         content.appendChild(this.entry);
 	}
+
+	if (isAtBottom)
+		gotoEnd();
+}
+
+function gotoEnd() {
+	window.scrollTo(0,document.body.scrollHeight);
 }
 
 function runCommand(theCmd){
