@@ -48,7 +48,7 @@ class Preferences(object):
 
         for key in self.prefs:
             preference_value = CFPreferencesCopyAppValue(key, tm_identifier)
-            if preference_value:
+            if preference_value is not None:
                 self.prefs[key] = preference_value
 
     def __getitem__(self, key):
