@@ -19,7 +19,8 @@ Test if using file names containing special characters works
 
 Check if clean removes all auxiliary files.
 
-  $ texmate.py clean c\'mplicated\ filename.tex > /dev/null
+  $ texmate.py clean c\'mplicated\ filename.tex > /dev/null; \
+  > exit_success_or_discard
   $ ls | grep -E $auxiliary_files_regex
   [1]
 

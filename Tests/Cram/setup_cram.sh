@@ -2,8 +2,8 @@
 
 # -----------------------------------------------------------------------------
 # Author:    René Schwaiger (sanssecours@f-m.fm)
-# Date:      2014-10-12
-# Version:   2
+# Date:      2015-01-02
+# Version:   3
 #
 # This script setups common variables and aliases for the cram tests inside
 # this directory
@@ -28,4 +28,5 @@ auxiliary_files_regex+='toc)'
 # Remove leading and trailing whitespace
 alias strip="sed -e 's/^ *//' -e 's/ *$//'"
 alias countlines="wc -l | strip"
+alias exit_success_or_discard="echo $? | grep -E '^0|200$' > /dev/null"
 alias restore_aux_files_git='git checkout *.acn *.aux *.bcf *.glo *.idx *.ist'

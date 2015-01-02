@@ -14,7 +14,7 @@ Just try to translate the program using `latex`
 
 Check if clean removes all auxiliary files.
 
-  $ texmate.py clean lualatex.tex > /dev/null
+  $ texmate.py clean lualatex.tex > /dev/null; exit_success_or_discard
   $ ls | grep -E $auxiliary_files_regex
   [1]
 
