@@ -17,18 +17,18 @@ def reformat(table_content)
     end
   end
   pattern = widths.map { |i| "%#{i}s" }.join(' & ')
-  print s.chomp
+  output = s ? s.chomp : ''
   prev = false
   data.each do |line|
-    print(prev ? "\\\\\n" : "\n")
+    output += prev ? "\\\\\n" : "\n"
     if line.length <= 1
-      print line.join('')
+      output += line.join ''
       prev = false
     else
       line.fill('', (line.length + 1)..cols)
-      printf(pattern, *line)
+      output += sprintf(pattern, *line)
       prev = true
     end
   end
-  print "\n"
+  output + "\n"
 end
