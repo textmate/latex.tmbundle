@@ -1,5 +1,18 @@
 #!/usr/bin/env ruby
 
+# doctest: Reformat a table containing only one line
+# >> reformat 'First Item & Second Item'
+# => "\nFirst Item & Second Item\n"
+#
+# doctest: Reformat a table containing an escaped `&` sign
+# >> output = reformat('First Item & Second Item\\\\He \& Ho & Hi')
+# >> expected =
+#    '
+#    First Item & Second Item\\\\
+#      He \& Ho &          Hi
+#    '
+# >> output.eql? expected
+# => true
 def reformat(table_content)
   lines = table_content
   s = lines.slice!(/^.*?\}\s*\n/)

@@ -1,19 +1,26 @@
-# -----------------------------------------------------------------------------
-# Date:    2014-12-14
+# ------------------------------------------------------------------------------
+# Date:    2015-01-02
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 10
+# Version: 11
 #
-# Run tests for this bundle. To execute the tests:
+#                   Run various tests for this bundle
+#
+# To execute the tests:
 #
 #   1. Open the root folder of this bundle inside TextMate
 #   2. Run the command “Build” (⌘B) located inside the Make bundle
 #
-# The tests require the nose test framework (http://nose.readthedocs.org) and
-# cram (https://bitheap.org/cram/). For all tests to work correctly you also
-# need to install “Skim” inside `/Applications`
-# -----------------------------------------------------------------------------
+# The tests require the following test frameworks:
+#
+# - [nose](http://nose.readthedocs.org)
+# - [cram](https://bitheap.org/cram/)
+# - [rubydoctest](https://github.com/tablatom/rubydoctest)
+#
+# For all tests to work correctly you also need to install “Skim” inside
+# the folder `/Applications`.
+# ------------------------------------------------------------------------------
 
-.PHONY: run all clean cramtests nosetests latex_watch
+.PHONY: all clean latex_watch cramtests nosetests rubydoctests
 
 # -- Variables -----------------------------------------------------------------
 
@@ -24,15 +31,31 @@
 # `TM_BUNDLE_SUPPORT` is set “correctly”.
 export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 
-# -- Rules --------------------------------------------------------------------
+# -- Rules ---------------------------------------------------------------------
 
 run: all
 
-all: nosetests cramtests
+all: nosetests rubydoctests cramtests
 
 clean:
 	cd Tests/TeX && rm -vf *.acr *.alg *.bbl *.blg *.dvi *.fdb_latexmk *.fls \
 		*.glg *.gls *.ilg *.ind *.log *.ps *.pdf
+
+# ================
+# = Manual Tests =
+# ================
+
+latex_watch:
+	TM_PID=$(shell pgrep TextMate)
+	Support/bin/latex_watch.pl -d --textmate-pid=$(TM_PID) \
+		"$(CURDIR)/Tests/TeX/makeindex.tex"
+
+# ===================
+# = Automated Tests =
+# ===================
+
+cramtests: clean
+	cd Tests/Cram && cram *.t
 
 nosetests:
 	nosetests --with-doctest 	 \
@@ -41,10 +64,5 @@ nosetests:
 		Support/bin/texparser.py \
 		Support/bin/tmprefs.py
 
-cramtests: clean
-	cd Tests/Cram && cram *.t
-
-latex_watch:
-	TM_PID=$(shell pgrep TextMate)
-	Support/bin/latex_watch.pl -d --textmate-pid=$(TM_PID) \
-		"$(CURDIR)/Tests/TeX/makeindex.tex"
+rubydoctests:
+	rubydoctest Support/bin/format_table.rb
