@@ -30,33 +30,32 @@
 #   => true
 #
 def reformat(table_content)
-  lines = table_content
-  s = lines.slice!(/^.*?\}\s*\n/)
+  before_table = table_content.slice!(/^.*?\}\s*\n/)
   # Place any \hline's not on a line of their own in their own line
-  lines.gsub!(/(\\hline\s*)(?!\n)/, '\\hline\\\\\\\\')
-  lines = lines.split(/\\\\/)
-  data = lines.map do |line|
-    line.split(/[^\\]&/).map { |i| i.strip }
+  table_content.gsub!(/(\\hline\s*)(?!\n)/, '\\hline\\\\\\\\')
+  lines = table_content.split(/\\\\/)
+  cells = lines.map do |line|
+    line.split(/[^\\]&/).map { |cell| cell.strip }
   end
-  cols = data.map { |i| i.length }.max
+  max_number_columns = cells.map { |line| line.length }.max
   widths = []
-  cols.times do |i|
-    widths << data.reduce(0) do |maximum, line|
-      (line.length <= i) ? maximum : [maximum, line[i].length].max
+  max_number_columns.times do |column|
+    widths << cells.reduce(0) do |maximum, line|
+      (column >= line.length) ? maximum : [maximum, line[column].length].max
     end
   end
-  pattern = widths.map { |i| "%#{i}s" }.join(' & ')
-  output = s ? s.chomp : ''
-  prev = false
-  data.each do |line|
-    output += prev ? "\\\\\n" : "\n"
+  pattern = widths.map { |width| "%#{width}s" }.join(' & ')
+  output = before_table ? before_table.chomp : ''
+  previous_line_contained_cells = false
+  cells.each do |line|
+    output += previous_line_contained_cells ? "\\\\\n" : "\n"
     if line.length <= 1
       output += line.join ''
-      prev = false
+      previous_line_contained_cells = false
     else
-      line.fill('', (line.length + 1)..cols)
+      line.fill('', (line.length + 1)..max_number_columns)
       output += sprintf(pattern, *line)
-      prev = true
+      previous_line_contained_cells = true
     end
   end
   output + "\n"
