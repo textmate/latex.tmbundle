@@ -413,8 +413,9 @@ def refresh_viewer(viewer, pdf_path,
 
     If the viewer does not support refreshing PDFs (e.g. “Preview”) then this
     command will do nothing. This command will return a non-zero value if the
-    the viewer could not be found or the PDF viewer does not support a “manual”
-    refresh.
+    the viewer could not be found or the PDF viewer does not support a
+    “manual” refresh. For this method to work correctly ``viewer`` needs to be
+    open beforehand.
 
     Arguments:
 
@@ -435,6 +436,10 @@ def refresh_viewer(viewer, pdf_path,
 
     Examples:
 
+        >>> # The viewer application needs to be open before we call the
+        >>> # function
+        >>> call('open -a Skim', shell=True)
+        0
         >>> refresh_viewer('Skim', 'test.pdf',
         ...                tm_bundle_support=realpath('Support'))
         <p class="info">Tell Skim to refresh 'test.pdf'</p>
