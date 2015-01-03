@@ -1,18 +1,34 @@
 #!/usr/bin/env ruby
 
+##
+# Format a latex tabular environment.
+#
+# = Arguments
+#
+# [table_content] A string containing the tabular environment
+#
+# = Output
+#
+# The function returns a string containing a properly formatted latex table.
+#
+# = Examples
+#
 # doctest: Reformat a table containing only one line
-# >> reformat 'First Item & Second Item'
-# => "\nFirst Item & Second Item\n"
+#
+#   >> reformat 'First Item & Second Item'
+#   => "\nFirst Item & Second Item\n"
 #
 # doctest: Reformat a table containing an escaped `&` sign
-# >> output = reformat('First Item & Second Item\\\\He \& Ho & Hi')
-# >> expected =
+#
+#   >> output = reformat('First Item & Second Item\\\\He \& Ho & Hi')
+#   >> expected =
 #    '
 #    First Item & Second Item\\\\
 #      He \& Ho &          Hi
 #    '
-# >> output.eql? expected
-# => true
+#   >> output.eql? expected
+#   => true
+#
 def reformat(table_content)
   lines = table_content
   s = lines.slice!(/^.*?\}\s*\n/)
