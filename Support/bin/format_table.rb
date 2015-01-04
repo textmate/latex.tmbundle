@@ -42,11 +42,29 @@
 #   >> output.eql? expected
 #   => true
 #
+# doctest: Reformat a table containing manual spacing
+#
+#   >> output = reformat('1 & 2\\\\[1cm]\hline Three & Four')
+#   >> expected =
+#    '
+#         1 &    2\\\\[1cm]
+#    \\hline
+#     Three & Four
+#    '
+#   >> output.eql? expected
+#   => true
+#
 def reformat(table_content)
   before_table = table_content.slice!(/^.*?\}\s*\n/)
   # Place any \hline's not on a line of their own in their own line
   table_content.gsub!(/(\\hline\s*)(?!\n)/, '\\hline\\\\\\\\')
   lines = table_content.split(/\\\\/)
+
+  # Check for manual horizontal spacing in the form [space] e.g.: [1cm]
+  space_markers = lines.map do |line|
+    line.slice!(/\s*\[\.?\d+.*\]/)
+  end
+
   cells = lines.map do |line|
     line.split(/[^\\]&|^&/).map { |cell| cell.strip }
   end
@@ -60,8 +78,9 @@ def reformat(table_content)
   pattern = widths.map { |width| "%#{width}s" }.join(' & ')
   output = before_table ? before_table.chomp : ''
   previous_line_contained_cells = false
-  cells.each do |line|
-    output += previous_line_contained_cells ? "\\\\\n" : "\n"
+  cells.each_with_index do |line, index|
+    output +=
+      previous_line_contained_cells ? "\\\\#{space_markers[index]}\n" : "\n"
     if line.length <= 1
       output += line.join ''
       previous_line_contained_cells = false
