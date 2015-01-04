@@ -29,13 +29,26 @@
 #   >> output.eql? expected
 #   => true
 #
+# doctest: Reformat a table containing empty cells
+#
+#   >> output = reformat(' & 2\\\\\\hline & 4 \\\\ Turbostaat & 6')
+#   >> expected =
+#    '
+#               & 2\\\\
+#    \\hline
+#               & 4\\\\
+#    Turbostaat & 6
+#    '
+#   >> output.eql? expected
+#   => true
+#
 def reformat(table_content)
   before_table = table_content.slice!(/^.*?\}\s*\n/)
   # Place any \hline's not on a line of their own in their own line
   table_content.gsub!(/(\\hline\s*)(?!\n)/, '\\hline\\\\\\\\')
   lines = table_content.split(/\\\\/)
   cells = lines.map do |line|
-    line.split(/[^\\]&/).map { |cell| cell.strip }
+    line.split(/[^\\]&|^&/).map { |cell| cell.strip }
   end
   max_number_columns = cells.map { |line| line.length }.max
   widths = []
