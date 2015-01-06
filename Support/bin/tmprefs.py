@@ -2,8 +2,6 @@
 
 from Foundation import CFPreferencesAppSynchronize, CFPreferencesCopyAppValue
 from os import getenv
-from plistlib import writePlistToString
-from subprocess import PIPE, STDOUT, Popen
 
 
 # -- Class --------------------------------------------------------------------
@@ -89,16 +87,16 @@ class Preferences(object):
                latexKeepLogWin = 1;
                latexUselatexmk = 0;
                latexVerbose = 0;
-               latexViewer = TextMate;}'
+               latexViewer = TextMate; }'
 
         """
-        instr = writePlistToString(self.default_values)
-        process = Popen('pl', shell=True, stdout=PIPE, stdin=PIPE,
-                        stderr=STDOUT, close_fds=True)
-        process.stdin.write(instr)
-        process.stdin.close()
-        defstr = process.stdout.read()
-        return defstr.replace('\n', '')
+        preference_items = [
+            '{} = {};'.format(preference,
+                              self.default_values[preference] if
+                              str(self.default_values[preference]) else '""')
+            for preference in sorted(self.default_values)]
+        return '{{ {} }}'.format(' '.join(preference_items))
+
 
 if __name__ == '__main__':
     from doctest import testmod
