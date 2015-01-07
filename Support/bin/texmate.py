@@ -450,7 +450,7 @@ def refresh_viewer(viewer, pdf_path,
                                                                   pdf_path)
 
     if viewer in ['Skim', 'TeXShop']:
-        return call("'{}/bin/refresh_viewer.scpt' {} {} ".format(
+        return call("osascript '{}/bin/refresh_viewer.scpt' {} {} ".format(
                     tm_bundle_support, viewer, shellquote(pdf_path)),
                     shell=True)
     return 1
