@@ -1066,7 +1066,7 @@ def get_typesetting_data(filepath, tm_engine,
             # Write new cache data if the current data does not contain
             # the necessary up to date information - This might be the case if
             # only `texparser` has written to the cache file
-            if not 'engine' in typesetting_data or cache_data_outdated:
+            if 'engine' not in typesetting_data or cache_data_outdated:
                 raise Exception()
 
         except:
@@ -1408,8 +1408,8 @@ if __name__ == '__main__':
 
     if number_warnings > 0 or number_errors > 0:
         print('<p class="info">Found {} errors, and '.format(number_errors) +
-              '{} warnings in {} run{}</p>'.format(number_warnings,
-              number_runs, '' if number_runs == 1 else 's'))
+              '{} warnings in {} run{}</p>'.format(
+              number_warnings, number_runs, '' if number_runs == 1 else 's'))
 
     # Decide what to do with the Latex & View log window
     exit_code = (EXIT_DISCARD if not tm_preferences['latexKeepLogWin'] and

@@ -88,7 +88,7 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
     command = "{} nib".format(shellquote(dialog))
     content = shellquote(
         """{{ title = "{}"; summary = "{}"; log = "{}"; }}""".format(
-        title, summary, log))
+            title, summary, log))
 
     # Update notification window
     if token:
@@ -104,8 +104,8 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
             return(int(token))
 
     # Create new notification window
-    command_load = "{} --load {} --model {}".format(command,
-                   shellquote(nib_location), content)
+    command_load = "{} --load {} --model {}".format(
+                   command, shellquote(nib_location), content)
     notification_output = check_output(command_load, shell=True)
 
     return int(notification_output)
@@ -210,9 +210,9 @@ def update_marks(cache_filename, marks_to_set=[]):
 
     for filepath, markers in marks_add.iteritems():
         command = ' '.join(['-l {} -s {}{}'.format(line, mark,
-                                                   ":{}".format(message) if
-                                                   message else '')
-                            for line, mark, message in markers])
+                                                   ":{}".format(content) if
+                                                   content else '')
+                            for line, mark, content in markers])
         commands[filepath] = '{} {}'.format(commands.get(filepath, 'mate'),
                                             command)
 
@@ -641,7 +641,7 @@ class MakeGlossariesParser(MakeIndexParser):
         glossary_type = self.types[mkfile[-3:]]
         print('<p class="info">Finished glossary for type <strong>' +
               '{}</strong>. Output is in <a href="{}">{}</a></p>'.format(
-              glossary_type, make_link(join(getcwd(), mkfile), 1), mkfile))
+                  glossary_type, make_link(join(getcwd(), mkfile), 1), mkfile))
 
 
 class LaTexParser(TexParser):
@@ -1086,7 +1086,7 @@ if __name__ == '__main__':
             messages = [
                 "Could not find any messages containing line information.",
                 "Please take a look at the log file {}.latexmk.log ".format(
-                basename(arguments.file)) +
+                    basename(arguments.file)) +
                 "to find the source of the problem."]
 
         try:
