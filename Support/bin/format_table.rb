@@ -65,10 +65,8 @@ def reformat(table_content)
     line.slice!(/\s*\[\.?\d+.*\]/)
   end
 
-  cells = lines.map do |line|
-    line.split(/[^\\]&|^&/).map { |cell| cell.strip }
-  end
-  max_number_columns = cells.map { |line| line.length }.max
+  cells = lines.map { |line| line.split(/[^\\]&|^&/).map(&:strip) }
+  max_number_columns = cells.map(&:length).max
   widths = []
   max_number_columns.times do |column|
     widths << cells.reduce(0) do |maximum, line|
