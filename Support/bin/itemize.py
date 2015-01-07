@@ -118,9 +118,7 @@ def itemize(text, use_spaces_to_indent=True, number_of_spaces_for_indent=4,
              len(line_split[0]) > characters_till_description_sign)):
             description_environment = False
             break
-        item = line_split[0]
-        description = line_split[1].strip()
-        descriptions.append((whitespace, item, description))
+        descriptions.append((whitespace, line_split[0], line_split[1].strip()))
 
     # Create the environment
     indent = (' ' * number_of_spaces_for_indent if use_spaces_to_indent
