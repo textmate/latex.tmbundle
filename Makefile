@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
-# Date:    2015-01-02
+# Date:    2015-01-07
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 11
+# Version: 12
 #
 #                   Run various tests for this bundle
 #
@@ -20,7 +20,7 @@
 # the folder `/Applications`.
 # ------------------------------------------------------------------------------
 
-.PHONY: all clean latex_watch cramtests nosetests rubydoctests
+.PHONY: all clean checkstyle latex_watch cramtests nosetests rubydoctests
 
 # -- Variables -----------------------------------------------------------------
 
@@ -30,6 +30,9 @@
 # bundle. This will lead to errors since `latex_watch` expects that
 # `TM_BUNDLE_SUPPORT` is set “correctly”.
 export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
+
+BINARY_DIRECTORY = Support/bin
+PYTHON_FILES = itemize.py texmate.py texparser.py tmprefs.py
 
 # -- Rules ---------------------------------------------------------------------
 
@@ -42,12 +45,21 @@ clean:
 		*.glg *.gls *.ilg *.ind *.log *.ps *.pdf
 
 # ================
+# = Style Checks =
+# ================
+
+checkstyle: checkstyle_python
+
+checkstyle_python:
+	cd $(BINARY_DIRECTORY) && flake8 $(PYTHON_FILES)
+
+# ================
 # = Manual Tests =
 # ================
 
 latex_watch:
 	TM_PID=$(shell pgrep TextMate)
-	Support/bin/latex_watch.pl -d --textmate-pid=$(TM_PID) \
+	$(BINARY_DIRECTORY)/latex_watch.pl -d --textmate-pid=$(TM_PID) \
 		"$(CURDIR)/Tests/TeX/makeindex.tex"
 
 # ===================
@@ -57,12 +69,12 @@ latex_watch:
 cramtests: clean
 	cd Tests/Cram && cram *.t
 
-nosetests:
+nosetests: checkstyle_python
 	nosetests --with-doctest 	 \
-		Support/bin/itemize.py   \
-		Support/bin/texmate.py   \
-		Support/bin/texparser.py \
-		Support/bin/tmprefs.py
+		$(BINARY_DIRECTORY)/itemize.py   \
+		$(BINARY_DIRECTORY)/texmate.py   \
+		$(BINARY_DIRECTORY)/texparser.py \
+		$(BINARY_DIRECTORY)/tmprefs.py
 
 rubydoctests:
 	rubydoctest Support/bin/format_table.rb
