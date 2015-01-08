@@ -1,11 +1,12 @@
 # ------------------------------------------------------------------------------
 # Author:  René Schwaiger (sanssecurs@f-m.fm)
-# Date:    2015-01-07
-# Version: 1
+# Date:    2015-01-08
+# Version: 2
 #
 #                       TextMate project settings
 # ------------------------------------------------------------------------------
 
 projectDirectory = "$CWD"
 
-include  = "{$include,.rubocop.yml}"
+include = "{$include,.rubocop.yml}"
+exclude = "{$exclude,*.scpt}"
