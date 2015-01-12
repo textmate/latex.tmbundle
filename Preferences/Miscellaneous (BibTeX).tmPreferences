@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>name</key>
-	<string>Miscellaneous (BibTeX)</string>
+	<string>Smart Typing: BibTeX</string>
 	<key>scope</key>
 	<string>text.bibtex</string>
 	<key>settings</key>
