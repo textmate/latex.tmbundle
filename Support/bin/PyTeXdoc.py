@@ -1,11 +1,19 @@
 #!/usr/bin/env python2.7
 
+from __future__ import absolute_import
+
 import sys
 import os
 import re
-from texmate import find_tex_packages, find_tex_directives, find_file_to_typeset
 import cPickle
 import time
+
+if __name__ == '__main__' and __package__ is None:
+    from os import sys, path
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from lib.tex import (find_tex_packages, find_tex_directives,
+                     find_file_to_typeset)
 
 # PyTeXDoc
 # Author:  Brad Miller

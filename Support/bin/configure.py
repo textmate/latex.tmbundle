@@ -3,7 +3,12 @@
 # -- Imports ------------------------------------------------------------------
 
 from subprocess import Popen, PIPE, STDOUT
-from tmprefs import Preferences
+
+if __name__ == '__main__' and __package__ is None:
+    from os import sys, path
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from lib.tmprefs import Preferences
 
 # -- Main ---------------------------------------------------------------------
 

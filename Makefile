@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Date:    2015-01-18
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 14
+# Version: 15
 #
 #                   Run various tests for this bundle
 #
@@ -34,7 +34,7 @@ export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib
-PYTHON_FILES = texmate.py texparser.py tmprefs.py
+PYTHON_FILES = configure.py texmate.py texparser.py
 
 # -- Rules ---------------------------------------------------------------------
 
@@ -77,10 +77,10 @@ cramtests_non_python:
 
 nosetests: checkstyle_python
 	nosetests --with-doctest             \
-		$(LIBRARY_DIRECTORY)/itemize.py  \
+		$(LIBRARY_DIRECTORY)/*.py        \
+		$(BINARY_DIRECTORY)/configure.py \
 		$(BINARY_DIRECTORY)/texmate.py   \
 		$(BINARY_DIRECTORY)/texparser.py \
-		$(BINARY_DIRECTORY)/tmprefs.py
 
 rubydoctests:
 	rubydoctest Support/bin/format_table.rb
