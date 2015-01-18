@@ -1,5 +1,8 @@
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from Foundation import CFPreferencesAppSynchronize, CFPreferencesCopyAppValue
 from os import getenv
 
@@ -79,15 +82,15 @@ class Preferences(object):
         Examples:
 
             >>> preferences = Preferences()
-            >>> preferences.defaults() # doctest:+NORMALIZE_WHITESPACE
-            '{ latexAutoView = 1;
-               latexDebug = 0;
-               latexEngine = pdflatex;
-               latexEngineOptions = "";
-               latexKeepLogWin = 1;
-               latexUselatexmk = 0;
-               latexVerbose = 0;
-               latexViewer = TextMate; }'
+            >>> print(preferences.defaults()) # doctest:+NORMALIZE_WHITESPACE
+            { latexAutoView = 1;
+              latexDebug = 0;
+              latexEngine = pdflatex;
+              latexEngineOptions = "";
+              latexKeepLogWin = 1;
+              latexUselatexmk = 0;
+              latexVerbose = 0;
+              latexViewer = TextMate; }
 
         """
         preference_items = [

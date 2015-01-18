@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7 -u
+#!/usr/bin/env python -u
 # encoding: utf-8
 
 # -----------------------------------------------------------------------------
@@ -32,10 +32,14 @@
 
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import sys
 
 from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
+from io import open
 from os import chdir, getcwd, getenv, putenv, remove, EX_OSFILE  # noqa
 from os.path import (basename, dirname, exists, getmtime, isfile, join,
                      normpath, realpath)
@@ -43,9 +47,12 @@ from pickle import load, dump
 from pipes import quote as shellquote
 from re import compile, match, search
 from subprocess import call, check_output, Popen, PIPE, STDOUT
-from sys import exit, stdout
+from sys import exit, stdout, version_info
 from textwrap import dedent
-from urllib import quote
+try:
+    from urllib.parse import quote  # Python 3
+except ImportError:
+    from urllib import quote  # Python 2
 
 from texparser import (update_marks, BibTexParser, BiberParser, ChkTexParser,
                        LaTexParser, MakeGlossariesParser, MakeIndexParser,
@@ -54,9 +61,13 @@ from tmprefs import Preferences
 
 # -- Module Import ------------------------------------------------------------
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
-
+try:
+    # Python 2
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
+except NameError:
+    # Python 3
+    pass
 
 # -- Exit Codes ---------------------------------------------------------------
 
@@ -88,15 +99,16 @@ def expand_name(filename, program='pdflatex'):
 
     Examples:
 
-        >>> expand_name('Tests/TeX/text.tex')
-        './Tests/TeX/text.tex'
-        >>> expand_name('non_existent_file.tex')
-        ''
+        >>> print(expand_name('Tests/TeX/text.tex'))
+        ./Tests/TeX/text.tex
+        >>> expand_name('non_existent_file.tex') == ''
+        True
 
     """
     stdout.flush()
     run_object = Popen("kpsewhich -progname='{}' {}".format(
-        program, shellquote(filename)), shell=True, stdout=PIPE)
+        program, shellquote(filename)), shell=True, stdout=PIPE,
+        universal_newlines=True)
     return run_object.stdout.read().strip()
 
 
@@ -151,7 +163,7 @@ def run_bibtex(filename, verbose=False):
         print('<h4>Processing: {} </h4>'.format(bib))
         run_object = Popen("bibtex {}".format(shellquote(bib)), shell=True,
                            stdout=PIPE, stdin=PIPE, stderr=STDOUT,
-                           close_fds=True)
+                           close_fds=True, universal_newlines=True)
         bp = BibTexParser(run_object.stdout, verbose)
         f, e, w = bp.parse_stream()
         fatal |= f
@@ -179,7 +191,8 @@ def run_biber(filename, verbose=False):
 
     """
     run_object = Popen("biber {}".format(shellquote(filename)), shell=True,
-                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True,
+                       universal_newlines=True)
     bp = BiberParser(run_object.stdout, verbose)
     fatal, errors, warnings = bp.parse_stream()
     stat = run_object.wait()
@@ -232,7 +245,7 @@ def run_latex(ltxcmd, texfile, cache_filename, verbose=False):
     """
     run_object = Popen("{} {}".format(ltxcmd, shellquote(texfile)),
                        shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
-                       close_fds=True)
+                       close_fds=True, universal_newlines=True)
     lp = LaTexParser(run_object.stdout, verbose, texfile)
     fatal, errors, warnings = lp.parse_stream()
     stat = run_object.wait()
@@ -273,7 +286,8 @@ def run_makeindex(filename, verbose=False):
     """
     run_object = Popen("makeindex {}".format(shellquote("{}.idx".format(
         get_filename_without_extension(filename)))), shell=True,
-        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True)
+        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True,
+        universal_newlines=True)
     ip = MakeIndexParser(run_object.stdout, verbose)
     fatal, errors, warnings = ip.parse_stream()
     stat = run_object.wait()
@@ -312,7 +326,7 @@ def run_makeglossaries(filename, verbose=False):
     run_object = Popen("makeglossaries {}".format(
                        shellquote(get_filename_without_extension(filename))),
                        shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
-                       close_fds=True)
+                       close_fds=True, universal_newlines=True)
     bp = MakeGlossariesParser(run_object.stdout, verbose)
     fatal, errors, warnings = bp.parse_stream()
     stat = run_object.wait()
@@ -338,8 +352,8 @@ def get_app_path(application, tm_support_path=getenv("TM_SUPPORT_PATH")):
     Returns: ``str``
 
         # We assume that Skim is installed in the ``/Applications`` folder
-        >>> get_app_path('Skim')
-        '/Applications/Skim.app'
+        >>> print(get_app_path('Skim'))
+        /Applications/Skim.app
         >>> get_app_path('NonExistentApp') # Returns ``None``
 
     """
@@ -388,14 +402,18 @@ def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
     Examples:
 
         # We assume that Skim is installed
-        >>> get_app_path_and_sync_command('Skim', 'test.pdf', 'test.tex', 1)
-        ...     # doctest:+ELLIPSIS +NORMALIZE_WHITESPACE
-        ('.../Skim.app',
-         "'.../Skim.app/.../displayline' 1 test.pdf test.tex")
+        >>> app_path, sync_command = get_app_path_and_sync_command(
+        ...     'Skim', 'test.pdf', 'test.tex', 1)
+        >>> print('({}, {})'.format(app_path,
+        ...                         sync_command)) # doctest:+ELLIPSIS
+        (.../Skim.app, .../Skim.app/.../displayline' 1 test.pdf test.tex)
 
         # Preview has no pdfsync support
-        >>> get_app_path_and_sync_command('Preview', 'test.pdf', 'test.tex', 1)
-        ('/Applications/Preview.app', None)
+        >>> app_path, sync_command = get_app_path_and_sync_command(
+        ...     'Preview', 'test.pdf', 'test.tex', 1)
+        >>> print('({}, {})'.format(app_path,
+        ...                         sync_command)) # doctest:+ELLIPSIS
+        (/Applications/Preview.app, None)
 
     """
     sync_command = None
@@ -446,8 +464,8 @@ def refresh_viewer(viewer, pdf_path,
         0
 
     """
-    print('<p class="info">Tell {} to refresh \'{}\'</p>').format(viewer,
-                                                                  pdf_path)
+    print('<p class="info">Tell {} to refresh \'{}\'</p>'.format(viewer,
+                                                                 pdf_path))
 
     if viewer in ['Skim', 'TeXShop']:
         return call("osascript '{}/bin/refresh_viewer.scpt' {} {} ".format(
@@ -517,9 +535,10 @@ def run_viewer(viewer, texfile_path, pdffile_path,
             viewer, pdffile_path, texfile_path, line_number)
         # PDF viewer is installed
         if path_to_viewer:
-            # If this is not done, the next line will thrown an encoding
-            # exception when the PDF file contains non-ASCII characters.
-            viewer = viewer.encode('utf-8')
+            if version_info <= (3, 0):
+                # If this is not done, the next line will thrown an encoding
+                # exception when the PDF file contains non-ASCII characters.
+                viewer = viewer.encode('utf-8')
             pdf_already_open = not(bool(
                 call("'{}/bin/check_open' '{}' {} > /dev/null".format(
                      tm_bundle_support, viewer, shellquote(pdffile_path)),
@@ -581,11 +600,12 @@ def determine_typesetting_directory(ts_directives,
     Examples:
 
         >>> ts_directives = {'root' : 'Tests/makeindex.tex'}
-        >>> determine_typesetting_directory(ts_directives) # doctest:+ELLIPSIS
-        '.../Tests'
-        >>> determine_typesetting_directory( # doctest:+ELLIPSIS
-        ...     {}, master_document='Tests/external_bibliography')
-        '.../Tests'
+        >>> print(determine_typesetting_directory(ts_directives))
+        ...     # doctest:+ELLIPSIS
+        /.../Tests
+        >>> print(determine_typesetting_directory( # doctest:+ELLIPSIS
+        ...     {}, master_document='Tests/external_bibliography'))
+        /.../Tests
 
     """
     tex_file_dir = dirname(tex_file)
@@ -638,19 +658,27 @@ def find_file_to_typeset(tyesetting_directives,
 
     Examples:
 
-        >>> find_file_to_typeset({'root': 'Tests/makeindex.tex'})
-        ...     # doctest:+ELLIPSIS
-        ('makeindex.tex', '.../Tests')
-        >>> find_file_to_typeset({},
+        >>> file, directory = find_file_to_typeset({'root':
+        ...                                         'Tests/makeindex.tex'})
+        >>> print('({}, {})'.format(file, directory))  # doctest:+ELLIPSIS
+        (makeindex.tex, .../Tests)
+
+        >>> file, directory = find_file_to_typeset({},
         ...     master_document='../packages.tex',
-        ...     tex_file='Tests/input/packages_input1.tex') # doctest:+ELLIPSIS
-        ('packages.tex', '.../Tests')
-        >>> find_file_to_typeset({'root': '../packages.tex'}, None,
-        ...     tex_file='Tests/input/packages_input1.tex') # doctest:+ELLIPSIS
-        ('packages.tex', '.../Tests')
-        >>> find_file_to_typeset({}, None, 'Tests/packages.tex')
-        ...     # doctest:+ELLIPSIS
-        ('packages.tex', '.../Tests')
+        ...     tex_file='Tests/input/packages_input1.tex')
+        >>> print('({}, {})'.format(file, directory))  # doctest:+ELLIPSIS
+        (packages.tex, .../Tests)
+
+        >>> file, directory = find_file_to_typeset(
+        ...     {'root': '../packages.tex'}, None,
+        ...     tex_file='Tests/input/packages_input1.tex')
+        >>> print('({}, {})'.format(file, directory))  # doctest:+ELLIPSIS
+        (packages.tex, .../Tests)
+
+        >>> file, directory = find_file_to_typeset({}, None,
+        ...                                        'Tests/packages.tex')
+        >>> print('({}, {})'.format(file, directory))  # doctest:+ELLIPSIS
+        (packages.tex, .../Tests)
 
     """
     if 'root' in tyesetting_directives:
@@ -687,14 +715,19 @@ def find_tex_packages(file_name):
         >>> packages = find_tex_packages('packages.tex')
         >>> isinstance(packages, set)
         True
-        >>> sorted(packages) # doctest:+NORMALIZE_WHITESPACE
-        ['csquotes', 'framed', 'mathtools', 'polyglossia', 'unicode-math',
-         'xcolor']
+        >>> for package in sorted(packages):
+        ...     print(package)
+        csquotes
+        framed
+        mathtools
+        polyglossia
+        unicode-math
+        xcolor
         >>> chdir('../..')
 
     """
     try:
-        file = open(expand_name(file_name))
+        file = open(expand_name(file_name), encoding='utf-8')
     except:
         print('<p class="error">Error: Could not open ' +
               '{} to check for packages</p>'.format(file_name))
@@ -786,9 +819,11 @@ def find_tex_directives(texfile):
     Examples:
 
         >>> chdir('Tests/TeX')
-        >>> find_tex_directives('input/packages_input1.tex')
-        ...     # doctest:+ELLIPSIS
-        {'root': .../Tests/TeX/packages.tex', 'TS-program': 'xelatex'}
+        >>> directives = find_tex_directives('input/packages_input1.tex')
+        >>> print(directives['root']) # doctest:+ELLIPSIS
+        /.../Tests/TeX/packages.tex
+        >>> print(directives['TS-program'])
+        xelatex
         >>> find_tex_directives('makeindex.tex')
         {}
         >>> chdir('../..')
@@ -798,7 +833,8 @@ def find_tex_directives(texfile):
     directive_regex = compile(r'%!TEX\s+([\w-]+)\s?=\s?(.*)')
     directives = {}
     while True:
-        lines = [line for (line_number, line) in enumerate(open(texfile))
+        lines = [line for (line_number, line)
+                 in enumerate(open(texfile, encoding='utf-8'))
                  if line_number < 20]
         new_directives = {directive.group(1): directive.group(2).rstrip()
                           for directive
@@ -860,17 +896,16 @@ def construct_engine_options(ts_directives, tm_engine_options, synctex=True):
 
     Examples:
 
-        >>> construct_engine_options({}, '', True)
-        ...     # doctest:+ELLIPSIS
-        '-interaction=nonstopmode -file-line-error-style -synctex=1'
-        >>> construct_engine_options({'TS-options': '-draftmode'},
-        ...                          '', False)
-        '-interaction=nonstopmode -file-line-error-style -draftmode'
-        >>> construct_engine_options({'TS-options': '-draftmode'}, '-8bit',
-        ...                          False)
-        '-interaction=nonstopmode -file-line-error-style -draftmode'
-        >>> construct_engine_options({}, '-8bit')
-        '-interaction=nonstopmode -file-line-error-style -synctex=1 -8bit'
+        >>> print(construct_engine_options({}, '', True))
+        -interaction=nonstopmode -file-line-error-style -synctex=1
+        >>> print(construct_engine_options({'TS-options': '-draftmode'},
+        ...                                 '', False))
+        -interaction=nonstopmode -file-line-error-style -draftmode
+        >>> print(construct_engine_options({'TS-options': '-draftmode'},
+        ...                                 '-8bit', False))
+        -interaction=nonstopmode -file-line-error-style -draftmode
+        >>> print(construct_engine_options({}, '-8bit'))
+        -interaction=nonstopmode -file-line-error-style -synctex=1 -8bit
 
     """
     options = "-interaction=nonstopmode -file-line-error-style{}".format(
@@ -920,13 +955,13 @@ def construct_engine_command(ts_directives, tm_engine, packages):
 
     Examples:
 
-        >>> construct_engine_command({'TS-program': 'pdflatex'}, 'latex',
-        ...                          set())
-        'pdflatex'
-        >>> construct_engine_command({}, 'latex', {'fontspec'})
-        'xelatex'
-        >>> construct_engine_command({}, 'latex', set())
-        'latex'
+        >>> print(construct_engine_command({'TS-program': 'pdflatex'},
+        ...                                'latex', set()))
+        pdflatex
+        >>> print(construct_engine_command({}, 'latex', {'fontspec'}))
+        xelatex
+        >>> print(construct_engine_command({}, 'latex', set()))
+        latex
 
     """
     latex_indicators = {'pstricks', 'xyling', 'pst-asr', 'OTtablx', 'epsfig'}
@@ -970,10 +1005,10 @@ def get_filename_without_extension(filename):
 
     Examples:
 
-        >>> get_filename_without_extension('../hello_world.tex')
-        '../hello_world'
-        >>> get_filename_without_extension('Makefile')
-        'Makefile'
+        >>> print(get_filename_without_extension('../hello_world.tex'))
+        ../hello_world
+        >>> print(get_filename_without_extension('Makefile'))
+        Makefile
 
     """
     suffix_index = filename.rfind(".")
@@ -1042,8 +1077,8 @@ def get_typesetting_data(filepath, tm_engine,
 
         >>> current_directory = getcwd()
         >>> data = get_typesetting_data('Tests/TeX/lualatex.tex', 'pdflatex')
-        >>> data['engine']
-        'lualatex'
+        >>> print(data['engine'])
+        lualatex
         >>> data['synctex']
         True
         >>> chdir(current_directory)
@@ -1265,7 +1300,8 @@ if __name__ == '__main__':
     pdffile_path = "{}/{}.pdf".format(file_path, file_without_suffix)
 
     if command == "version":
-        process = Popen("{} --version".format(engine), stdout=PIPE, shell=True)
+        process = Popen("{} --version".format(engine), stdout=PIPE, shell=True,
+                        universal_newlines=True)
         print(process.stdout.readline().rstrip('\n'))
         exit()
 
@@ -1283,7 +1319,7 @@ if __name__ == '__main__':
     if synctex and 'pdfsync' in packages:
         print("<p class='warning'>Warning: {} supports ".format(engine) +
               "synctex but you have included pdfsync. You can safely remove " +
-              "\usepackage{pdfsync}</p>")
+              "\\usepackage{pdfsync}</p>")
 
     problematic_characters = search('[$"]', filename)
     if problematic_characters:
@@ -1302,7 +1338,7 @@ if __name__ == '__main__':
             'ps' if engine == 'latex' else '', shellquote(latexmkrc_path),
             shellquote(filename))
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
-                        stderr=STDOUT, close_fds=True)
+                        stderr=STDOUT, close_fds=True, universal_newlines=True)
         command_parser = LaTexMkParser(process.stdout, verbose, filename)
         status = command_parser.parse_stream()
         update_marks(cache_filename, command_parser.marks)
@@ -1336,7 +1372,8 @@ if __name__ == '__main__':
             'snm|synctex.gz|toc)$')
         command = ("find -E . -maxdepth 1 -type f -regex " +
                    "'{}' -delete -print".format(auxiliary_file_regex))
-        removed_files = check_output(command, shell=True).strip()
+        removed_files = check_output(command, shell=True,
+                                     universal_newlines=True).strip()
         # Remove leading './' to get nicer looking output
         removed_files = removed_files.replace('./', '')
         if removed_files:
@@ -1389,7 +1426,7 @@ if __name__ == '__main__':
     elif command == 'chktex':
         command = "{} '{}'".format(command, filename)
         process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
-                        stderr=STDOUT, close_fds=True)
+                        stderr=STDOUT, close_fds=True, universal_newlines=True)
         parser = ChkTexParser(process.stdout, verbose, filename)
         fatal_error, number_errors, number_warnings = parser.parse_stream()
         tex_status = process.wait()

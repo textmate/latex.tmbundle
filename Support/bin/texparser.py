@@ -1,7 +1,10 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # encoding: utf-8
 
 # -- Imports ------------------------------------------------------------------
+
+from __future__ import print_function
+from __future__ import unicode_literals
 
 from argparse import ArgumentParser, FileType
 from re import compile, match, search
@@ -11,7 +14,10 @@ from pickle import load, dump
 from pipes import quote as shellquote
 from subprocess import call, check_output, STDOUT
 from sys import stdout
-from urllib import quote
+try:
+    from urllib.parse import quote  # Python 3
+except ImportError:
+    from urllib import quote  # Python 2
 
 
 # -- Functions ----------------------------------------------------------------
@@ -34,10 +40,10 @@ def make_link(file, line=1):
 
     Examples:
 
-        >>> make_link('Tests/TeX/makeindex.tex', 1)
-        'txmt://open/?url=file://Tests/TeX/makeindex.tex&line=1'
-        >>> make_link('Wide Open Spaces.txt', 20)
-        'txmt://open/?url=file://Wide%20Open%20Spaces.txt&line=20'
+        >>> print(make_link('Tests/TeX/makeindex.tex', 1))
+        txmt://open/?url=file://Tests/TeX/makeindex.tex&line=1
+        >>> print(make_link('Wide Open Spaces.txt', 20))
+        txmt://open/?url=file://Wide%20Open%20Spaces.txt&line=20
 
     """
     return "txmt://open/?url=file://{}&line={}".format(quote(file), line)
@@ -95,7 +101,7 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
         command_update = "{} --update {} --model {}".format(
                          command, token, content)
         notification_output = check_output(command_update, stderr=STDOUT,
-                                           shell=True)
+                                           shell=True, universal_newlines=True)
         # If the window still exists and we could therefore update it here we
         # return the token of the old window. If we could not update the
         # window we get an error message. In this case we try to open a new
@@ -106,8 +112,8 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
     # Create new notification window
     command_load = "{} --load {} --model {}".format(
                    command, shellquote(nib_location), content)
-    notification_output = check_output(command_load, shell=True)
-
+    notification_output = check_output(command_load, shell=True,
+                                       universal_newlines=True)
     return int(notification_output)
 
 
@@ -206,9 +212,9 @@ def update_marks(cache_filename, marks_to_set=[]):
 
     commands = {filepath: 'mate {}'.format(' '.join(['-c {}'.format(mark) for
                                                      mark in marks]))
-                for filepath, marks in marks_remove.iteritems()}
+                for filepath, marks in marks_remove.items()}
 
-    for filepath, markers in marks_add.iteritems():
+    for filepath, markers in marks_add.items():
         command = ' '.join(['-l {} -s {}{}'.format(line, mark,
                                                    ":{}".format(content) if
                                                    content else '')
@@ -216,7 +222,7 @@ def update_marks(cache_filename, marks_to_set=[]):
         commands[filepath] = '{} {}'.format(commands.get(filepath, 'mate'),
                                             command)
 
-    for filepath, command in commands.iteritems():
+    for filepath, command in commands.items():
         call("{} {}".format(command, shellquote(filepath)), shell=True)
 
 
