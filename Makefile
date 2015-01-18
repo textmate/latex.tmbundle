@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Date:    2015-01-18
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 15
+# Version: 16
 #
 #                   Run various tests for this bundle
 #
@@ -34,7 +34,6 @@ export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib
-PYTHON_FILES = configure.py texmate.py texparser.py
 
 # -- Rules ---------------------------------------------------------------------
 
@@ -53,7 +52,7 @@ clean:
 checkstyle: checkstyle_python
 
 checkstyle_python:
-	cd $(BINARY_DIRECTORY) && flake8 $(PYTHON_FILES)
+	cd $(BINARY_DIRECTORY) && flake8 *.py
 	cd $(LIBRARY_DIRECTORY) && flake8 *.py
 
 # ================
@@ -76,11 +75,7 @@ cramtests_non_python:
 	cd Tests/Cram && cram check_filenames.t
 
 nosetests: checkstyle_python
-	nosetests --with-doctest             \
-		$(LIBRARY_DIRECTORY)/*.py        \
-		$(BINARY_DIRECTORY)/configure.py \
-		$(BINARY_DIRECTORY)/texmate.py   \
-		$(BINARY_DIRECTORY)/texparser.py \
+	nosetests --with-doctest $(LIBRARY_DIRECTORY)/*.py $(BINARY_DIRECTORY)/*.py
 
 rubydoctests:
 	rubydoctest Support/bin/format_table.rb

@@ -2,9 +2,7 @@
 
 from __future__ import absolute_import
 
-import sys
 import os
-import re
 import cPickle
 import time
 
@@ -17,36 +15,44 @@ from lib.tex import (find_tex_packages, find_tex_directives,
 
 # PyTeXDoc
 # Author:  Brad Miller
-# Last Update: 12/27/2006	-- try to make command compatible with multiple tex distros
-#              3/4/2007		-- removed colours from stylesheet (and added underlines) to
-#								avoid problems with dark themes
+# Last Update:
+#
+# 12/27/2006 try to make command compatible with multiple tex distros
+#  3/4/2007  removed colours from stylesheet (and added underlines) to
+# avoid problems with dark themes
+#
 # This script is a hacked together set of heuristics to try and bring some
 # order out of the various bits and pieces of documentation that are strewn
 # around any given LaTeX distro.
+#
 # texdoctk provides a nice list of packages, along with paths to the documents
 # that are relative to one or more roots.  The root for these documents varies.
-# the catalogue/entries directory contains a set of html files for packages from
-# CPAN....  Sometimes the links to the real documentation are inside these html
-# files and are correct and sometimes they are not.
-# So this script attempts to use find the right path to as many bits of documentation
-# that really exist on your system and make it easy for you to get to them.
+# the catalogue/entries directory contains a set of html files for packages
+# from CPAN....  Sometimes the links to the real documentation are inside these
+# html files and are correct and sometimes they are not. So this script
+# attempts to use find the right path to as many bits of documentation that
+# really exist on your system and make it easy for you to get to them.
+#
 # The packages are displayed in two groups:
 # The first group is the set of packages that you use in your document.
-# The second group is the set of packages as organized in the texdoctk.dat file (if you have one)
-# Finally, if you call the command when your curosor is on a word in TextMate this script will
-# attempt to find the best match for that word as a package and open the documentaiton for that
-# package immediately.
+# The second group is the set of packages as organized in the texdoctk.dat
+# file (if you have one)
+# Finally, if you call the command when your curosor is on a word in TextMate
+# this script will attempt to find the best match for that word as a package
+# and open the documentaiton for that package immediately.
 #
-# because good dvi viewers are quite rare on OS X, I also provide a simple viewDoc.sh script.
+# because good dvi viewers are quite rare on OS X, I also provide a simple
+# viewDoc.sh script.
 # viewDoc.sh converts a dvi file (using dvipdfm) and opens it in Previewer.
 
-#TODO make the viewing command configurable
-#TODO: modify this script to produce opml
-#TODO: See if there is a way to simplify all this....
+# TODO make the viewing command configurable
+# TODO: modify this script to produce opml
+# TODO: See if there is a way to simplify all this....
 
 pathDict = {}
 descDict = {}
 headings = {}
+
 
 def findBestDoc(myDir):
     """findBestDoc
@@ -76,9 +82,11 @@ def makeDocList():
        might be documentation...
     """
     docDict = {}
-    dviPipe = os.popen("find `kpsewhich --expand-path '$TEXMF'  | tr : ' '` -name \*.dvi")
+    dviPipe = os.popen("find `kpsewhich --expand-path '$TEXMF' | " +
+                       "tr : ' '` -name \*.dvi")
     dviFiles = dviPipe.readlines()
-    pdfPipe = os.popen("find `kpsewhich --expand-path '$TEXMF'  | tr : ' '` -name \*.pdf")
+    pdfPipe = os.popen("find `kpsewhich --expand-path '$TEXMF' | " +
+                       "tr : ' '` -name \*.pdf")
     pdfFiles = pdfPipe.readlines()
     for doc in dviFiles:
         key = doc[doc.rfind('/')+1:doc.rfind('.dvi')]
@@ -88,11 +96,10 @@ def makeDocList():
         docDict[key] = doc[:-1]
     return docDict
 
-## Part 1
-## Find all the packages included in this file or its inputs
-##
+# Part 1
+# Find all the packages included in this file or its inputs
 tsDirs = find_tex_directives(os.environ["TM_FILEPATH"])
-fileName,filePath = find_file_to_typeset(tsDirs)
+fileName, filePath = find_file_to_typeset(tsDirs)
 mList = find_tex_packages(fileName)
 
 home = os.environ["HOME"]
@@ -102,20 +109,19 @@ ninty_days_ago = time.time() - (90 * 86400)
 cachedIndex = False
 
 if os.path.exists(docdbfile) and os.path.getmtime(docdbfile) > ninty_days_ago:
-    infile = open(docdbfile,'rb')
+    infile = open(docdbfile, 'rb')
     path_desc_list = cPickle.load(infile)
     pathDict = path_desc_list[0]
     descDict = path_desc_list[1]
     headings = path_desc_list[2]
     cachedIndex = True
 else:
-    ## Part 2
-    ## Parse the texdoctk database of packages
-    ##
+    # Part 2
+    # Parse the texdoctk database of packages
     texMFbase = os.environ["TM_LATEX_DOCBASE"]
     docIndex = os.environ["TEXDOCTKDB"]
 
-    docBase = texMFbase + "/" #+ "doc/"
+    docBase = texMFbase + "/"  # + "doc/"
     if docBase[-5:].rfind('doc') < 0:
         docBase = docBase + "doc/"
 
@@ -130,7 +136,7 @@ else:
     docDict = makeDocList()
 
     try:
-        docIndexFile = open(docIndex,'r')
+        docIndexFile = open(docIndex, 'r')
     except:
         docIndexFile = []
     for line in docIndexFile:
@@ -153,7 +159,8 @@ else:
                 path = docBase + "tex/" + path
             else:
                 path = docBase + path
-                if not os.path.exists(path):  # sometimes texdoctk.dat is misleading...
+                if not os.path.exists(path):
+                    # sometimes texdoctk.dat is misleading...
                     altkey = path[path.rfind("/")+1:path.rfind(".")]
                     if key in docDict:
                         path = docDict[key]
@@ -166,9 +173,8 @@ else:
             pathDict[key] = path.strip()
             descDict[key] = desc.strip()
 
-    ## Part 3
-    ## supplement texdoctk index with the regular texdoc catalog
-    ##
+    # Part 3
+    # supplement texdoctk index with the regular texdoc catalog
     try:
         catList = os.listdir(catalogDir)
     except:
@@ -180,9 +186,8 @@ else:
             descDict[key] = key
             if key in docDict:
                 pathDict[key] = docDict[key]
-    ##
-    ## Continue to supplement with searched for files
-    ##
+
+    # Continue to supplement with searched for files
     for p in docDict.keys()+myDict.keys():
         if p not in pathDict:
             if p in docDict:
@@ -198,23 +203,21 @@ else:
         if not os.path.exists(docdbpath):
             os.mkdir(docdbpath)
         outfile = open(docdbfile, 'wb')
-        cPickle.dump([pathDict,descDict,headings],outfile)
+        cPickle.dump([pathDict, descDict, headings], outfile)
     except:
         print "<p>Error: Could not cache documentation index</p>"
 
-## Part 4
-## if a word was selected then view the documentation for that word
-## using the best available version of the doc as determined above
-##
-cwPackage = os.environ.get("TM_CURRENT_WORD",None)
+# Part 4
+# if a word was selected then view the documentation for that word
+# using the best available version of the doc as determined above
+cwPackage = os.environ.get("TM_CURRENT_WORD", None)
 if cwPackage in pathDict:
     os.system("viewDoc.sh " + pathDict[cwPackage])
     sys.exit()
 
-## Part 5
-## Print out the results in html/javascript
-## The java script gives us the nifty expand collapse outline look
-##
+# Part 5
+# Print out the results in html/javascript
+# The java script gives us the nifty expand collapse outline look
 print """
 <style type="text/css"><!--
 .save{
@@ -269,10 +272,12 @@ print "<ul>"
 for p in mList:
     print '<div id="mypkg">'
     if p in pathDict:
-        print """<li><a href="javascript:TextMate.system('\\'%s/bin/viewDoc.sh\\' %s', null);" >%s</a>
-             </li> """%(os.environ["TM_BUNDLE_SUPPORT"],pathDict[p],descDict[p])
+        print """<li><a href=
+            "javascript:TextMate.system('\\'%s/bin/viewDoc.sh\\' %s', null);" >
+            %s</a></li>
+            """ % (os.environ["TM_BUNDLE_SUPPORT"], pathDict[p], descDict[p])
     else:
-        print """<li>%s</li>"""%(p)
+        print """<li>%s</li>""" % (p)
     print '</div>'
 print "</ul>"
 
@@ -280,17 +285,25 @@ print "<hr />"
 print "<h1>Packages Browser</h1>"
 print "<ul>"
 for h in headings:
-    print '<li><a href="javascript:dsp(this)" class="dsphead" onclick="dsp(this)">%s</a></li>'%(h)
+    print('<li><a href="javascript:dsp(this)" class="dsphead" ' +
+          'onclick="dsp(this)">{}</a></li>'.format(h))
     print '<div class="dspcont">'
     print "<ul>"
     for p in headings[h]:
         if os.path.exists(pathDict[p]):
-            print """<li><a href="javascript:TextMate.system('\\'%s/bin/viewDoc.sh\\' %s', null);">%s</a>
-                </li> """%(os.environ["TM_BUNDLE_SUPPORT"],pathDict[p],descDict[p])
+            print(
+                """<li><a href=
+                  "javascript:TextMate.system(
+                      '\\'%s/bin/viewDoc.sh\\' %s', null);">
+                  %s</a></li>""" % (os.environ["TM_BUNDLE_SUPPORT"],
+                                    pathDict[p], descDict[p]))
         else:
-            print """<li>%s</li>"""%(p)
+            print """<li>%s</li>""" % (p)
     print "</ul>"
     print '</div>'
 print "</ul>"
 if cachedIndex:
-    print "<p>You are using a saved version of the LaTeX documentation index.  This index is automatically updated every 90 days.  If you want to force an update simply remove the file %s </p>" % docdbfile
+    print("""<p>You are using a saved version of the LaTeX documentation
+             index.  This index is automatically updated every 90 days. If you
+             want to force an update simply remove the file %s </p>
+          """ % docdbfile)
