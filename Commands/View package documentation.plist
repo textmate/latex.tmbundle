@@ -39,7 +39,7 @@ cd "$DIR"
 
 html_header 'Package Documentation'
 echo '&lt;p&gt;&lt;small&gt;Hint: Cursor on package name shows doc for package.  Otherwise show package doc browser.&lt;/small&gt;&lt;/p&gt;'
-PyTeXdoc.py</string>
+texdoc.py</string>
 	<key>input</key>
 	<string>none</string>
 	<key>inputFormat</key>
