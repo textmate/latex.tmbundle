@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Date:    2015-01-18
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 13
+# Version: 14
 #
 #                   Run various tests for this bundle
 #
@@ -33,7 +33,8 @@
 export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 
 BINARY_DIRECTORY = Support/bin
-PYTHON_FILES = itemize.py texmate.py texparser.py tmprefs.py
+LIBRARY_DIRECTORY = Support/lib
+PYTHON_FILES = texmate.py texparser.py tmprefs.py
 
 # -- Rules ---------------------------------------------------------------------
 
@@ -53,6 +54,7 @@ checkstyle: checkstyle_python
 
 checkstyle_python:
 	cd $(BINARY_DIRECTORY) && flake8 $(PYTHON_FILES)
+	cd $(LIBRARY_DIRECTORY) && flake8 *.py
 
 # ================
 # = Manual Tests =
@@ -74,8 +76,8 @@ cramtests_non_python:
 	cd Tests/Cram && cram check_filenames.t
 
 nosetests: checkstyle_python
-	nosetests --with-doctest 	 \
-		$(BINARY_DIRECTORY)/itemize.py   \
+	nosetests --with-doctest             \
+		$(LIBRARY_DIRECTORY)/itemize.py  \
 		$(BINARY_DIRECTORY)/texmate.py   \
 		$(BINARY_DIRECTORY)/texparser.py \
 		$(BINARY_DIRECTORY)/tmprefs.py
