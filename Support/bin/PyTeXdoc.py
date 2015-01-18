@@ -3,7 +3,7 @@
 import sys
 import os
 import re
-from texmate import findTexPackages, find_TEX_directives, findFileToTypeset
+from texmate import find_tex_packages, find_tex_directives, find_file_to_typeset
 import cPickle
 import time
 
@@ -83,9 +83,9 @@ def makeDocList():
 ## Part 1
 ## Find all the packages included in this file or its inputs
 ##
-tsDirs = find_TEX_directives()
-fileName,filePath = findFileToTypeset(tsDirs)
-mList = findTexPackages(fileName)
+tsDirs = find_tex_directives(os.environ["TM_FILEPATH"])
+fileName,filePath = find_file_to_typeset(tsDirs)
+mList = find_tex_packages(fileName)
 
 home = os.environ["HOME"]
 docdbpath = home + "/Library/Caches/TextMate"
