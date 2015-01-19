@@ -9,7 +9,7 @@
 
 # -- Imports -------------------------------------------------------------------
 
-require ENV['TM_BUNDLE_SUPPORT'] + '/bin/format_table'
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/format_table'
 
 # -- Main ----------------------------------------------------------------------
 

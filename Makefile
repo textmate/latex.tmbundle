@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
-# Date:    2015-01-18
+# Date:    2015-01-19
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 16
+# Version: 17
 #
 #                   Run various tests for this bundle
 #
@@ -78,7 +78,7 @@ nosetests: checkstyle_python
 	nosetests --with-doctest $(LIBRARY_DIRECTORY)/*.py $(BINARY_DIRECTORY)/*.py
 
 rubydoctests:
-	rubydoctest Support/bin/format_table.rb
+	rubydoctest Support/lib/format_table.rb
 
 toxtests: checkstyle_python
 	tox
