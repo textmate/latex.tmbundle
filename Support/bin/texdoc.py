@@ -37,9 +37,9 @@ from lib.tex import (find_tex_packages, find_tex_directives,
 # The first group is the set of packages that you use in your document.
 # The second group is the set of packages as organized in the texdoctk.dat
 # file (if you have one)
-# Finally, if you call the command when your curosor is on a word in TextMate
+# Finally, if you call the command when your cursor is on a word in TextMate
 # this script will attempt to find the best match for that word as a package
-# and open the documentaiton for that package immediately.
+# and open the documentation for that package immediately.
 #
 # because good dvi viewers are quite rare on OS X, I also provide a simple
 # viewDoc.sh script.
@@ -57,7 +57,7 @@ headings = {}
 def findBestDoc(myDir):
     """findBestDoc
        Given a directory that should contain documentation find the best format
-       of the documentation available.  peferring pdf, then dvi files.
+       of the documentation available.  preferring pdf, then dvi files.
     """
     bestDoc = ""
     for doc in os.listdir(myDir):
