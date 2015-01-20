@@ -1,4 +1,33 @@
 #!/usr/bin/env python2.7
+"""Display documentation for tex packages.
+
+This script is a hacked together set of heuristics to try and bring some
+order out of the various bits and pieces of documentation that are strewn
+around any given LaTeX distro.
+
+``texdoctk`` provides a nice list of packages, along with paths to the
+documents that are relative to one or more roots. The root for these documents
+varies. the catalogue/entries directory contains a set of html files for
+packages from CPAN. Sometimes the links to the real documentation are inside
+these html files and are correct and sometimes they are not. So this script
+attempts to use find the right path to as many bits of documentation that
+really exist on your system and make it easy for you to get to them.
+
+The packages are displayed in two groups:
+
+- The first group is the set of packages that you use in your document.
+- The second group is the set of packages as organized in the texdoctk.dat
+  file (if you have one)
+
+Finally, if you call the command when your cursor is on a word in TextMate
+this script will attempt to find the best match for that word as a package and
+open the documentation for that package immediately.
+
+Because good dvi viewers are quite rare on OS X, I also provide a simple
+``viewDoc.sh script``. ``viewDoc.sh`` converts a dvi file (using ``dvipdfm``)
+and opens it in Previewer.
+
+"""
 
 from __future__ import absolute_import
 
@@ -13,37 +42,6 @@ if __name__ == '__main__' and __package__ is None:
 from lib.tex import (find_tex_packages, find_tex_directives,
                      find_file_to_typeset)
 
-# PyTeXDoc
-# Author:  Brad Miller
-# Last Update:
-#
-# 12/27/2006 try to make command compatible with multiple tex distros
-#  3/4/2007  removed colours from stylesheet (and added underlines) to
-# avoid problems with dark themes
-#
-# This script is a hacked together set of heuristics to try and bring some
-# order out of the various bits and pieces of documentation that are strewn
-# around any given LaTeX distro.
-#
-# texdoctk provides a nice list of packages, along with paths to the documents
-# that are relative to one or more roots.  The root for these documents varies.
-# the catalogue/entries directory contains a set of html files for packages
-# from CPAN....  Sometimes the links to the real documentation are inside these
-# html files and are correct and sometimes they are not. So this script
-# attempts to use find the right path to as many bits of documentation that
-# really exist on your system and make it easy for you to get to them.
-#
-# The packages are displayed in two groups:
-# The first group is the set of packages that you use in your document.
-# The second group is the set of packages as organized in the texdoctk.dat
-# file (if you have one)
-# Finally, if you call the command when your cursor is on a word in TextMate
-# this script will attempt to find the best match for that word as a package
-# and open the documentation for that package immediately.
-#
-# because good dvi viewers are quite rare on OS X, I also provide a simple
-# viewDoc.sh script.
-# viewDoc.sh converts a dvi file (using dvipdfm) and opens it in Previewer.
 
 # TODO make the viewing command configurable
 # TODO: modify this script to produce opml
