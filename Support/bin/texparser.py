@@ -6,16 +6,15 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from os import sys, path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
 from argparse import ArgumentParser, FileType
 from os import getenv
 from os.path import basename, dirname
 from pickle import load, dump
 from pipes import quote as shellquote
 from subprocess import check_output, STDOUT
-
-if __name__ == '__main__' and __package__ is None:
-    from os import sys, path
-    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from lib.util import update_marks
 from lib.parsing import LaTexMkParser

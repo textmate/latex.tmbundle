@@ -36,6 +36,9 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from os import sys, path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
 from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
 from io import open
@@ -51,10 +54,6 @@ try:
     from urllib.parse import quote  # Python 3
 except ImportError:
     from urllib import quote  # Python 2
-
-if __name__ == '__main__' and __package__ is None:
-    from os import sys, path
-    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from lib.tex import (find_file_to_typeset, find_tex_directives,
                      find_tex_packages)
