@@ -53,9 +53,14 @@ import pickle
 import time
 
 from glob import glob
+from os import getenv
 from os.path import basename, exists, splitext
 from pipes import quote as shellquote
 from subprocess import check_output
+try:
+    from urllib.parse import quote  # Python 3
+except ImportError:
+    from urllib import quote  # Python 2
 
 from lib.tex import (find_tex_packages, find_tex_directives,
                      find_file_to_typeset)
@@ -250,55 +255,13 @@ if __name__ == '__main__':
     # Part 5
     # Print out the results in html/javascript
     # The java script gives us the nifty expand collapse outline look
-    print("""
-    <style type="text/css"><!--
-    .save{
-       behavior:url(#default#savehistory);}
-    a.dsphead{
-       text-decoration:none;
-       font-family: "Lucida Grand", sans-serif
-       font-size: 120%;
-       font-weight: bold;
-       margin-left:0.5em;}
-    a.dsphead:hover{
-       text-decoration:underline;}
-    .dspcont{
-       display:none;
-       text-decoration:none;
-       font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
-       margin: 0px 20px 0px 20px;}
-    .dspcont a{
-        text-decoration: none;
-    }
-    .dspcont a:hover{
-        text-decoration:underline;
-    }
-    div#mypkg{
-       text-decoration:none;
-       font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
-    }
-    div#mypkg a{
-       text-decoration:none;
-       font-family: "Bitstream Vera Sans Mono", "Monaco", monospace;
-    }
-    div#mypkg a:hover{
-       text-decoration:none;
-    }
-
-    //--></style>
-
-
-    <script type="text/javascript"><!--
-    function dsp(loc){
-       if(document.getElementById){
-          foc=loc.parentNode.nextSibling.style?
-             loc.parentNode.nextSibling:
-             loc.parentNode.nextSibling.nextSibling;
-          foc.style.display=foc.style.display=='block'?'none':'block';}}
-
-    //-->
-    </script>
-    """)
+    tm_bundle_support = getenv('TM_BUNDLE_SUPPORT')
+    css_location = quote('{}/css/texdoc.css'.format(tm_bundle_support))
+    js_location = quote('{}/lib/texdoc.js'.format(tm_bundle_support))
+    print("""<link rel="stylesheet" href="file://{}">
+             <script type="text/javascript" src="file://{}"
+                 charset="utf-8">
+             </script>""".format(css_location, js_location))
     print("<h1>Your Packages</h1>")
     print("<ul>")
     for p in mList:
