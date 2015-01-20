@@ -5,7 +5,7 @@
 # Date:    2015-01-20
 # Authors: Brad Miller
 #          René Schwaiger (sanssecours@f-m.fm)
-# Version: 1
+# Version: 2
 # -----------------------------------------------------------------------------
 
 """Display documentation for tex packages.
@@ -53,8 +53,9 @@ import pickle
 import time
 
 from glob import glob
-from os.path import exists
-from subprocess import check_output  # noqa
+from os.path import basename, exists, splitext
+from pipes import quote as shellquote
+from subprocess import check_output
 
 from lib.tex import (find_tex_packages, find_tex_directives,
                      find_file_to_typeset)
@@ -94,25 +95,30 @@ def find_best_documentation(directory):
     return ''
 
 
-def makeDocList():
-    """getDocList
-       search all directories under the texmf root for dvi or pdf files that
-       might be documentation...
+def get_documentation_files():
+    """Get a dictionary containing tex documentation files.
+
+    This function searches all directories under the ``texmf`` root for dvi or
+    pdf files that might be documentation. It returns a dictionary containing
+    file-paths. The dictionary uses the filenames without their extensions as
+    keys.
+
+    Returns: ``{str: str}``
+
+    Examples:
+
+        >>> documentation_files = get_documentation_files()
+        >>> print(documentation_files['lastpage']) # doctest:+ELLIPSIS
+        /.../lastpage.pdf
+
     """
-    docDict = {}
-    dviPipe = os.popen("find `kpsewhich --expand-path '$TEXMF' | " +
-                       "tr : ' '` -name \*.dvi")
-    dviFiles = dviPipe.readlines()
-    pdfPipe = os.popen("find `kpsewhich --expand-path '$TEXMF' | " +
-                       "tr : ' '` -name \*.pdf")
-    pdfFiles = pdfPipe.readlines()
-    for doc in dviFiles:
-        key = doc[doc.rfind('/')+1:doc.rfind('.dvi')]
-        docDict[key] = doc[:-1]
-    for doc in pdfFiles:
-        key = doc[doc.rfind('/')+1:doc.rfind('.pdf')]
-        docDict[key] = doc[:-1]
-    return docDict
+    texmf_directory = check_output("kpsewhich --expand-path '$TEXMFMAIN'",
+                                   shell=True, universal_newlines=True).strip()
+    doc_files = check_output("find -E {} -regex '.*\.(pdf|dvi)' -type f".
+                             format(shellquote(texmf_directory)),
+                             shell=True, universal_newlines=True).splitlines()
+    return {basename(splitext(line)[0]): line.strip() for line in doc_files}
+
 
 # -- Main ---------------------------------------------------------------------
 
@@ -159,7 +165,7 @@ if __name__ == '__main__':
             key = p[p.rfind('/')+1:]
             myDict[key] = p
 
-        docDict = makeDocList()
+        docDict = get_documentation_files()
 
         try:
             docIndexFile = open(docIndex, 'r')
