@@ -42,6 +42,8 @@ and opens it in Previewer.
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import absolute_import
+from __future__ import print_function
+from __future__ import unicode_literals
 
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -50,8 +52,9 @@ import os
 import pickle
 import time
 
+from glob import glob
 from os.path import exists
-
+from subprocess import check_output  # noqa
 
 from lib.tex import (find_tex_packages, find_tex_directives,
                      find_file_to_typeset)
@@ -59,26 +62,36 @@ from lib.tex import (find_tex_packages, find_tex_directives,
 
 # -- Functions ----------------------------------------------------------------
 
-def findBestDoc(myDir):
-    """findBestDoc
-       Given a directory that should contain documentation find the best format
-       of the documentation available.  preferring pdf, then dvi files.
+def find_best_documentation(directory):
+    """Find the “best” tex documentation in a given directory.
+
+    Given a directory that should contain documentation find the “best” format
+    of the documentation available.
+
+    Arguments:
+
+        directory
+
+            The directory where the documentation is located
+
+    Returns: ``str``
+
+    Examples:
+
+        >>> texmf_directory = check_output(
+        ...     "kpsewhich --expand-path '$TEXMFMAIN'",
+        ...     shell=True, universal_newlines=True).strip()
+        >>> print(find_best_documentation("{}/doc/latex/lastpage/".format(
+        ...                               texmf_directory)))
+        /usr/local/texlive/2014/texmf-dist/doc/latex/lastpage/lastpage.pdf
+
     """
-    bestDoc = ""
-    for doc in os.listdir(myDir):
-        if doc.find('.pdf') > 0:
-            bestDoc = doc
-        elif bestDoc == "" and doc.find('.dvi') > 0:
-            bestDoc = doc
-        elif bestDoc == "" and doc.find('.txt') > 0:
-            bestDoc = doc
-        elif bestDoc == "" and doc.find('.tex') > 0:
-            bestDoc = doc
-        elif bestDoc == "" and doc.find('.sty') > 0:
-            bestDoc = doc
-        elif bestDoc == "" and doc.find('README') >= 0:
-            bestDoc = doc
-    return myDir + '/' + bestDoc
+    filename_endings = ['.pdf', '.dvi', '.txt', '.tex', '.sty', 'README']
+    for ending in filename_endings:
+        doc_files = glob('{}*{}'.format(directory, ending))
+        if doc_files:
+            return doc_files[-1]
+    return ''
 
 
 def makeDocList():
@@ -181,7 +194,7 @@ if __name__ == '__main__':
                             path = docDict[altkey]
                         else:
                             if key in myDict:
-                                path = findBestDoc(myDict[key])
+                                path = find_best_documentation(myDict[key])
 
                 pathDict[key] = path.strip()
                 descDict[key] = desc.strip()
@@ -208,7 +221,7 @@ if __name__ == '__main__':
                     descDict[p] = p
                 else:
                     if p in myDict:
-                        path = findBestDoc(myDict[p])
+                        path = find_best_documentation(myDict[p])
                         pathDict[p] = path.strip()
                         descDict[p] = p
 
