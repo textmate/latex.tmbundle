@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
-# Date:    2015-01-19
+# Date:    2015-01-20
 # Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 17
+# Version: 18
 #
 #                   Run various tests for this bundle
 #
@@ -52,8 +52,7 @@ clean:
 checkstyle: checkstyle_python
 
 checkstyle_python:
-	cd $(BINARY_DIRECTORY) && flake8 *.py
-	cd $(LIBRARY_DIRECTORY) && flake8 *.py
+	flake8 $(BINARY_DIRECTORY)/*.py $(LIBRARY_DIRECTORY)/*.py
 
 # ================
 # = Manual Tests =
