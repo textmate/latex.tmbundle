@@ -43,9 +43,6 @@ from lib.tex import (find_tex_packages, find_tex_directives,
                      find_file_to_typeset)
 
 
-# TODO make the viewing command configurable
-# TODO: modify this script to produce opml
-# TODO: See if there is a way to simplify all this....
 
 pathDict = {}
 descDict = {}
