@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python
+	<string>#!/usr/bin/python
 # coding=utf-8
 
 # -- Imports ------------------------------------------------------------------
@@ -18,7 +18,7 @@ from itemize import itemize
 
 # -- Main ---------------------------------------------------------------------
 
-stdout.write(itemize(text=stdin.read(), 
+stdout.write(itemize(text=stdin.read(),
                      use_spaces_to_indent=environ['TM_SOFT_TABS'] == 'YES',
                      number_of_spaces_for_indent=int(environ['TM_TAB_SIZE'])))</string>
 	<key>input</key>

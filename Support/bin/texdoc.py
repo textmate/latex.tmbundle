@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# Date:    2015-01-20
+# Date:    2015-01-21
 # Authors: Brad Miller
 #          René Schwaiger (sanssecours@f-m.fm)
-# Version: 2
+# Version: 3
 # -----------------------------------------------------------------------------
 
 """Display documentation for tex packages.
