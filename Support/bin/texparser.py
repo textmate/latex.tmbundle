@@ -12,7 +12,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from argparse import ArgumentParser
 from io import open
 from os import getenv
-from os.path import basename, dirname
+from os.path import basename, dirname, join
 from pickle import load, dump
 from pipes import quote as shellquote
 from subprocess import check_output, STDOUT
@@ -120,8 +120,8 @@ if __name__ == '__main__':
     logfile = arguments.logfile
     notification_token = arguments.notify
     texfile = '{}.tex'.format(arguments.file)
-    cachefile = '{}/.{}.lb'.format(dirname(arguments.file),
-                                   basename(arguments.file))
+    cachefile = join(dirname(arguments.file),
+                     basename('.{}.lb'.format(arguments.file)))
 
     if notification_token == 'reload':
         try:
