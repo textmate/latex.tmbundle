@@ -14,14 +14,23 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from re import compile, match, search
+from re import compile, match, search, UNICODE
 from os import getcwd
 from os.path import basename, join
-from sys import stdout
+from sys import stdout, version_info
 try:
     from urllib.parse import quote  # Python 3
 except ImportError:
     from urllib import quote  # Python 2
+
+# -- Module Import ------------------------------------------------------------
+
+PYTHON2 = version_info <= (3, 0)
+
+if PYTHON2:
+    import sys
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
 
 
 # -- Functions ----------------------------------------------------------------
@@ -50,7 +59,8 @@ def make_link(file, line=1):
         txmt://open/?url=file://Wide%20Open%20Spaces.txt&line=20
 
     """
-    return "txmt://open/?url=file://{}&line={}".format(quote(file), line)
+    return "txmt://open/?url=file://{}&line={}".format(
+           quote(file.encode('utf-8')), line)
 
 
 # -- Classes ------------------------------------------------------------------
@@ -403,7 +413,8 @@ class MakeGlossariesParser(MakeIndexParser):
             (compile('^.*added glossary type \'(.*)\' \((.*)\).*$'),
              self.add_type),
             (compile(r'(\w+ \w+ file) (?:\./)?' +
-                     r'(.*\.(?:(?:acr)|(?:ist)|(?:glo)|(?:gls))).*\((.*)\)'),
+                     r'(.*\.(?:(?:acr)|(?:ist)|(?:glo)|(?:gls))).*\((.*)\)',
+                     UNICODE),
              self.work_with_file),
             (compile(r'(\w+ written in) (.*)\.$'), self.written),
             (compile('^.*Markup written into file "(.*)".$'),
@@ -500,9 +511,9 @@ class LaTexParser(TexParser):
             (compile('LaTeX Font Warning:.*'), self.warning),
             (compile('Overfull.*wide'), self.warning_format),
             (compile('Underfull.*badness'), self.warning_format),
-            (compile('^([\.\/\w\x7f-\xff\-]+' +
+            (compile('^([\.\/\w\x7f-\xff\-\u0308]+' +
                      '(?:\.sty|\.tex|\.{}))'.format(self.suffix) +
-                     ':(\d+):\s+(.*)'),
+                     ':(\d+):\s+(.*)', UNICODE),
              self.handle_error),
             (compile('([^:]*):(\d+): LaTeX Error:(.*)'), self.handle_error),
             (compile('([^:]*):(\d+): (Emergency stop)'), self.handle_error),

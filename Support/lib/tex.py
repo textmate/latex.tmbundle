@@ -193,7 +193,7 @@ def find_tex_packages(file_name):
     match_begin = False
     while included_files and not match_begin:
         try:
-            file = open(expand_name(included_files.pop()))
+            file = open(expand_name(included_files.pop()), encoding='utf-8')
         except:
             print('<p class="warning">Warning: Could not open ' +
                   '{} to check for packages</p>'.format(included_file))

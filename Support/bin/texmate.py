@@ -715,7 +715,7 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
         ...
 
     """
-    with open("/tmp/latexmkrc", 'w') as latexmkrc:
+    with open("/tmp/latexmkrc", 'w', encoding='utf-8') as latexmkrc:
         latexmkrc.write(dedent("""\
         $latex = 'latex -interaction=nonstopmode -file-line-error-style {0}';
         $pdflatex = '{1} -interaction=nonstopmode -file-line-error-style {0}';
