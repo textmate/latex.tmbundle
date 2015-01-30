@@ -1,0 +1,2 @@
+# Do not ignore `.log` files that we use to test the bundle commands
+!/Tests/Log/*.log
