@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+# rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+
 ##
 # Format a latex tabular environment.
 #

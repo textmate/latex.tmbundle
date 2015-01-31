@@ -1,7 +1,5 @@
 # ------------------------------------------------------------------------------
-# Date:    2015-01-20
-# Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 18
+# Author: René Schwaiger (sanssecours@f-m.fm)
 #
 #                   Run various tests for this bundle
 #
@@ -49,10 +47,13 @@ clean:
 # = Style Checks =
 # ================
 
-checkstyle: checkstyle_python
+checkstyle: checkstyle_python checkstyle_ruby
 
 checkstyle_python:
 	flake8 $(BINARY_DIRECTORY)/*.py $(LIBRARY_DIRECTORY)/*.py
+
+checkstyle_ruby:
+	rubocop Support/lib/format_table.rb
 
 # ================
 # = Manual Tests =
@@ -76,7 +77,7 @@ cramtests_non_python:
 nosetests: checkstyle_python
 	nosetests --with-doctest $(LIBRARY_DIRECTORY)/*.py $(BINARY_DIRECTORY)/*.py
 
-rubydoctests:
+rubydoctests: checkstyle_ruby
 	rubydoctest Support/lib/format_table.rb
 
 toxtests: checkstyle_python
