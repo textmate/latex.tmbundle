@@ -1,10 +1,10 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.7";
+our $VERSION = "3.8";
 
 #  - by Robin Houston, 2007, 2008.
-#  - by René Schwaiger, 2014
+#  - by René Schwaiger, 2014, 2015.
 
 # Usage: latex_watch.pl [ options ] file.tex
 #
@@ -1106,3 +1106,8 @@ Changes
 
 3.7:
     - Use the bundles `latexmkrc` file
+
+3.8:
+    - We now display a notification window in the case of an error. The window
+    displays all errors containing line information that `texparser` finds in
+    the log output of `latexmk`.
