@@ -121,7 +121,7 @@ if __name__ == '__main__':
     notification_token = arguments.notify
     texfile = '{}.tex'.format(arguments.file)
     cachefile = join(dirname(arguments.file),
-                     basename('.{}.lb'.format(arguments.file)))
+                     '.{}.lb'.format(basename(arguments.file)))
 
     if notification_token == 'reload':
         try:
