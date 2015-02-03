@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>name</key>
@@ -8,6 +8,30 @@
 	<string>text.tex.latex</string>
 	<key>settings</key>
 	<dict>
+		<key>foldingIndentedBlockIgnore</key>
+		<string>(?x)
+    (?# We ignore everything except the commands listed in
+        `foldingIndentedBlockStart`.
+    )
+    ^(?!.*\\(?:part|chapter|(?:sub){0,2}section|(?:sub){0,1}paragraph)\*?{).*$</string>
+		<key>foldingIndentedBlockStart</key>
+		<string>(?x)
+    (?# The following commands introduce a section of a document:
+
+        - \part{part}
+        - \chapter{chapter}
+        - \section{section}
+        - \subsection{subsection}
+        - \subsubsection{subsubsection}
+        - \paragraph{paragraph}
+        - \subparagraph{subparagraph}
+
+        To use a section without including it in the index we can also add a
+        `*` to the command. E.g.:
+
+            \section*{A Section Not Included in the Index}
+    )
+    \\(?:part|chapter|(?:sub){0,2}section|(?:sub){0,1}paragraph)\*?\{[^\{]*\}</string>
 		<key>foldingStartMarker</key>
 		<string>\\begin\{.*\}|%.*\(fold\)\s*$</string>
 		<key>foldingStopMarker</key>
