@@ -48,15 +48,13 @@ from __future__ import unicode_literals
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-import os
-import pickle
-import time
-
 from glob import glob
-from os import getenv
-from os.path import basename, exists, splitext
+from os import getenv, listdir, mkdir
+from os.path import basename, exists, getmtime, splitext
+from pickle import load, dump
 from pipes import quote as shellquote
-from subprocess import check_output
+from subprocess import check_output, call
+from time import time
 try:
     from urllib.parse import quote  # Python 3
 except ImportError:
@@ -135,19 +133,19 @@ if __name__ == '__main__':
 
     # Part 1
     # Find all the packages included in this file or its inputs
-    tsDirs = find_tex_directives(os.environ["TM_FILEPATH"])
+    tsDirs = find_tex_directives(getenv("TM_FILEPATH"))
     fileName, filePath = find_file_to_typeset(tsDirs)
     mList = find_tex_packages(fileName)
 
-    home = os.environ["HOME"]
+    home = getenv("HOME")
     docdbpath = home + "/Library/Caches/TextMate"
     docdbfile = docdbpath + "/latexdocindex"
-    ninty_days_ago = time.time() - (90 * 86400)
+    ninty_days_ago = time() - (90 * 86400)
     cachedIndex = False
 
-    if (exists(docdbfile) and os.path.getmtime(docdbfile) > ninty_days_ago):
+    if (exists(docdbfile) and getmtime(docdbfile) > ninty_days_ago):
         infile = open(docdbfile, 'rb')
-        path_desc_list = pickle.load(infile)
+        path_desc_list = load(infile)
         pathDict = path_desc_list[0]
         descDict = path_desc_list[1]
         headings = path_desc_list[2]
@@ -155,16 +153,16 @@ if __name__ == '__main__':
     else:
         # Part 2
         # Parse the texdoctk database of packages
-        texMFbase = os.environ["TM_LATEX_DOCBASE"]
-        docIndex = os.environ["TEXDOCTKDB"]
+        texMFbase = getenv("TM_LATEX_DOCBASE")
+        docIndex = getenv("TEXDOCTKDB")
 
         docBase = texMFbase + "/"  # + "doc/"
         if docBase[-5:].rfind('doc') < 0:
             docBase = docBase + "doc/"
 
-        catalogDir = os.environ["TM_LATEX_HELP_CATALOG"]
+        catalogDir = getenv("TM_LATEX_HELP_CATALOG")
 
-        texdocs = os.environ["TMTEXDOCDIRS"].split(':')
+        texdocs = getenv("TMTEXDOCDIRS").split(':')
         myDict = {}
         for p in texdocs:
             key = p[p.rfind('/')+1:]
@@ -196,7 +194,7 @@ if __name__ == '__main__':
                     path = docBase + "tex/" + path
                 else:
                     path = docBase + path
-                    if not os.path.exists(path):
+                    if not exists(path):
                         # sometimes texdoctk.dat is misleading...
                         altkey = path[path.rfind("/")+1:path.rfind(".")]
                         if key in docDict:
@@ -213,7 +211,7 @@ if __name__ == '__main__':
         # Part 3
         # supplement texdoctk index with the regular texdoc catalog
         try:
-            catList = os.listdir(catalogDir)
+            catList = listdir(catalogDir)
         except:
             catList = []
         for fname in catList:
@@ -237,20 +235,20 @@ if __name__ == '__main__':
                         descDict[p] = p
 
         try:
-            if not os.path.exists(docdbpath):
-                os.mkdir(docdbpath)
+            if not exists(docdbpath):
+                mkdir(docdbpath)
             outfile = open(docdbfile, 'wb')
-            pickle.dump([pathDict, descDict, headings], outfile)
+            dump([pathDict, descDict, headings], outfile)
         except:
             print("<p>Error: Could not cache documentation index</p>")
 
     # Part 4
     # if a word was selected then view the documentation for that word
     # using the best available version of the doc as determined above
-    cwPackage = os.environ.get("TM_CURRENT_WORD", None)
+    cwPackage = getenv("TM_CURRENT_WORD")
     if cwPackage in pathDict:
-        os.system("viewDoc.sh " + pathDict[cwPackage])
-        sys.exit()
+        call("viewDoc.sh " + pathDict[cwPackage], shell=True)
+        exit()
 
     # Part 5
     # Print out the results in html/javascript
@@ -270,7 +268,7 @@ if __name__ == '__main__':
             print("""<li><a href= "javascript:
                      TextMate.system('\\'%s/bin/viewDoc.sh\\' %s', null);">
                      %s</a></li>
-                  """ % (os.environ["TM_BUNDLE_SUPPORT"], pathDict[p],
+                  """ % (getenv("TM_BUNDLE_SUPPORT"), pathDict[p],
                          descDict[p]))
         else:
             print("""<li>%s</li>""" % (p))
@@ -286,10 +284,10 @@ if __name__ == '__main__':
         print('<div class="dspcont">')
         print("<ul>")
         for p in headings[h]:
-            if os.path.exists(pathDict[p]):
+            if exists(pathDict[p]):
                 print("""<li><a href="javascript:TextMate.system(""" +
                       """'\\'{}/bin/viewDoc.sh\\' """.format(
-                          os.environ["TM_BUNDLE_SUPPORT"]) +
+                          getenv("TM_BUNDLE_SUPPORT")) +
                       """{}', null);"> {}</a></li>""".format(
                           pathDict[p], descDict[p]))
             else:
