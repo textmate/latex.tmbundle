@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# Date:    2015-01-21
 # Authors: Brad Miller
 #          René Schwaiger (sanssecours@f-m.fm)
-# Version: 3
 # -----------------------------------------------------------------------------
 
 """Display documentation for tex packages.
@@ -16,25 +14,22 @@ around any given LaTeX distro.
 
 ``texdoctk`` provides a nice list of packages, along with paths to the
 documents that are relative to one or more roots. The root for these documents
-varies. the catalogue/entries directory contains a set of html files for
-packages from CPAN. Sometimes the links to the real documentation are inside
-these html files and are correct and sometimes they are not. So this script
-attempts to use find the right path to as many bits of documentation that
-really exist on your system and make it easy for you to get to them.
+varies. This script attempts to find the right path to documentation that
+really exist on your system and make it easy for you to get to it.
 
 The packages are displayed in two groups:
 
-- The first group is the set of packages that you use in your document.
+- The first group is the set of packages that you included in your document.
 - The second group is the set of packages as organized in the texdoctk.dat
-  file (if you have one)
+  file
 
 Finally, if you call the command when your cursor is on a word in TextMate
 this script will attempt to find the best match for that word as a package and
 open the documentation for that package immediately.
 
-Because good dvi viewers are quite rare on OS X, I also provide a simple
+Because good dvi viewers are quite rare on OS X, we also provide a simple
 ``viewDoc.sh script``. ``viewDoc.sh`` converts a dvi file (using ``dvipdfm``)
-and opens it in Previewer.
+and opens it in Preview.
 
 """
 
@@ -48,9 +43,9 @@ from __future__ import unicode_literals
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from glob import glob
-from os import getenv, listdir, mkdir
-from os.path import basename, exists, getmtime, splitext
+from io import open
+from os import chdir, getenv, mkdir
+from os.path import basename, exists, expanduser, getmtime, splitext
 from pickle import load, dump
 from pipes import quote as shellquote
 from subprocess import check_output, call
@@ -65,38 +60,6 @@ from lib.tex import (find_tex_packages, find_tex_directives,
 
 
 # -- Functions ----------------------------------------------------------------
-
-def find_best_documentation(directory):
-    """Find the “best” tex documentation in a given directory.
-
-    Given a directory that should contain documentation find the “best” format
-    of the documentation available.
-
-    Arguments:
-
-        directory
-
-            The directory where the documentation is located
-
-    Returns: ``str``
-
-    Examples:
-
-        >>> texmf_directory = check_output(
-        ...     "kpsewhich --expand-path '$TEXMFMAIN'",
-        ...     shell=True, universal_newlines=True).strip()
-        >>> print(find_best_documentation("{}/doc/latex/lastpage/".format(
-        ...                               texmf_directory)))
-        /usr/local/texlive/2014/texmf-dist/doc/latex/lastpage/lastpage.pdf
-
-    """
-    filename_endings = ['.pdf', '.dvi', '.txt', '.tex', '.sty', 'README']
-    for ending in filename_endings:
-        doc_files = glob('{}*{}'.format(directory, ending))
-        if doc_files:
-            return doc_files[-1]
-    return ''
-
 
 def get_documentation_files():
     """Get a dictionary containing tex documentation files.
@@ -123,180 +86,200 @@ def get_documentation_files():
     return {basename(splitext(line)[0]): line.strip() for line in doc_files}
 
 
+def parse_texdoctk_data(documentation_files):
+    """Parse documentation data from ``texdoctk``.
+
+    This function returns three dictionaries:
+
+        paths
+
+            Contains the path to documentation files describing certain topics.
+
+        descriptions
+
+            Contains text describing certain help topics.
+
+        headings
+
+            A dictionary containing headings. Each heading contains a list of
+            help topics.
+
+    Arguments:
+
+        documentation_files
+
+            A dictionary containing the paths of documentation files. The
+            dictionary uses the filename/subject of the documentation file as
+            key.
+
+    Returns: ``[dict]``
+
+    Examples:
+
+        >>> paths, descriptions, headings = parse_texdoctk_data(
+        ...     get_documentation_files())
+        >>> print(paths['beamer']) # doctest:+ELLIPSIS
+        /usr/local/texlive/.../doc/latex/beamer/doc/beameruserguide.pdf
+        >>> print(descriptions['beamer'])
+        User's Guide to the beamer class
+        >>> 'beamer' in headings['Slides']
+        True
+
+    """
+    texdoc_path = check_output(
+        "kpsewhich --progname=texdoctk --format='other text files' " +
+        "texdoctk.dat", shell=True, universal_newlines=True).strip()
+
+    texmf_directory = check_output(
+        "kpsewhich --expand-path '$TEXMFMAIN'", shell=True,
+        universal_newlines=True).strip()
+
+    paths = {}
+    descriptions = {}
+    headings = {}
+
+    with open(texdoc_path, 'r', encoding='utf-8') as docindex:
+        for line in docindex:
+            if line[0] == "#":
+                continue
+            elif line[0] == "@":
+                heading = line[1:].strip()
+                headings[heading] = []
+            else:
+                key, description, path, _ = [item.strip()
+                                             for item in line.split(';')]
+                headings[heading].append(key)
+
+                if path.endswith('.sty'):
+                    path = "{}/tex/{}".format(texmf_directory, path)
+                else:
+                    path = "{}/doc/{}".format(texmf_directory, path)
+                    if not exists(path):
+                        # Sometimes texdoctk.dat includes an incorrect path
+                        # We try to get the path for the topic from the given
+                        # documentation files
+                        altkey = splitext(basename(path))[0]
+                        if key in documentation_files:
+                            path = documentation_files[key]
+                        elif altkey in documentation_files:
+                            path = documentation_files[altkey]
+
+                paths[key] = path
+                descriptions[key] = description
+
+    return paths, descriptions, headings
+
+
+def create_viewdoc_link(file_path, description,
+                        tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
+    """Create a link that opens a given documentation file.
+
+    Arguments:
+
+        file_path
+
+            The path to the file for which we want to create a link.
+
+        description
+
+            The description text of the link.
+
+        tm_bundle_support
+
+            The location of the support folder for this bundle.
+
+    Returns: ``str``
+
+    Examples:
+
+        >>> print(create_viewdoc_link('file.pdf', 'description'))
+        ...     # doctest:+ELLIPSIS
+        <a href="javascript:...viewDoc.sh...file.pdf\', null);">description</a>
+
+    """
+    return ("""<a href="javascript: TextMate.system(""" +
+            r"""'\'{}/bin/viewDoc.sh\' {}', null);">{}</a>""".format(
+                tm_bundle_support, file_path, description))
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
 
-    pathDict = {}
-    descDict = {}
-    headings = {}
+    # Find all the packages included in the file or its inputs
+    master_file, master_dir = find_file_to_typeset(
+        find_tex_directives(getenv("TM_FILEPATH")))
+    chdir(master_dir)
+    packages = find_tex_packages(master_file)
 
-    # Part 1
-    # Find all the packages included in this file or its inputs
-    tsDirs = find_tex_directives(getenv("TM_FILEPATH"))
-    fileName, filePath = find_file_to_typeset(tsDirs)
-    mList = find_tex_packages(fileName)
+    docdbpath = "{}/Library/Caches/TextMate".format(expanduser('~'))
+    docdbfile = "{}/latexdocindex".format(docdbpath)
+    ninty_days_ago = time() - (90*86400)
+    cached = False
 
-    home = getenv("HOME")
-    docdbpath = home + "/Library/Caches/TextMate"
-    docdbfile = docdbpath + "/latexdocindex"
-    ninty_days_ago = time() - (90 * 86400)
-    cachedIndex = False
-
-    if (exists(docdbfile) and getmtime(docdbfile) > ninty_days_ago):
-        infile = open(docdbfile, 'rb')
-        path_desc_list = load(infile)
-        pathDict = path_desc_list[0]
-        descDict = path_desc_list[1]
-        headings = path_desc_list[2]
-        cachedIndex = True
+    if exists(docdbfile) and getmtime(docdbfile) > ninty_days_ago:
+        # Read from cache
+        with open(docdbfile, 'rb') as cache:
+            paths, descriptions, headings = load(cache)
+        cached = True
     else:
-        # Part 2
-        # Parse the texdoctk database of packages
-        texMFbase = getenv("TM_LATEX_DOCBASE")
-        docIndex = getenv("TEXDOCTKDB")
+        # Parse the texdoctk database
+        docfiles = get_documentation_files()
+        paths, descriptions, headings = parse_texdoctk_data(docfiles)
 
-        docBase = texMFbase + "/"  # + "doc/"
-        if docBase[-5:].rfind('doc') < 0:
-            docBase = docBase + "doc/"
+        # Supplement with searched for files
+        for package in docfiles:
+            if package not in paths:
+                paths[package] = docfiles[package]
+                descriptions[package] = package
 
-        catalogDir = getenv("TM_LATEX_HELP_CATALOG")
-
-        texdocs = getenv("TMTEXDOCDIRS").split(':')
-        myDict = {}
-        for p in texdocs:
-            key = p[p.rfind('/')+1:]
-            myDict[key] = p
-
-        docDict = get_documentation_files()
-
-        try:
-            docIndexFile = open(docIndex, 'r')
-        except:
-            docIndexFile = []
-        for line in docIndexFile:
-            if line[0] == "#":
-                continue
-            elif line[0] == "@":
-                currentHeading = line[1:].strip()
-                headings[currentHeading] = []
-            else:
-                try:
-                    lineFields = line.split(';')
-                    key = lineFields[0]
-                    desc = lineFields[1]
-                    path = lineFields[2]
-                except:
-                    print("Error parsing line: {}".format(line))
-
-                headings[currentHeading].append(key)
-                if path.rfind('.sty') >= 0:
-                    path = docBase + "tex/" + path
-                else:
-                    path = docBase + path
-                    if not exists(path):
-                        # sometimes texdoctk.dat is misleading...
-                        altkey = path[path.rfind("/")+1:path.rfind(".")]
-                        if key in docDict:
-                            path = docDict[key]
-                        elif altkey in docDict:
-                            path = docDict[altkey]
-                        else:
-                            if key in myDict:
-                                path = find_best_documentation(myDict[key])
-
-                pathDict[key] = path.strip()
-                descDict[key] = desc.strip()
-
-        # Part 3
-        # supplement texdoctk index with the regular texdoc catalog
-        try:
-            catList = listdir(catalogDir)
-        except:
-            catList = []
-        for fname in catList:
-            key = fname[:fname.rfind('.html')]
-            if key not in pathDict:
-                pathDict[key] = catalogDir + '/' + fname
-                descDict[key] = key
-                if key in docDict:
-                    pathDict[key] = docDict[key]
-
-        # Continue to supplement with searched for files
-        for p in docDict.keys()+myDict.keys():
-            if p not in pathDict:
-                if p in docDict:
-                    pathDict[p] = docDict[p].strip()
-                    descDict[p] = p
-                else:
-                    if p in myDict:
-                        path = find_best_documentation(myDict[p])
-                        pathDict[p] = path.strip()
-                        descDict[p] = p
-
+        # Write cache file
         try:
             if not exists(docdbpath):
                 mkdir(docdbpath)
-            outfile = open(docdbfile, 'wb')
-            dump([pathDict, descDict, headings], outfile)
+            with open(docdbfile, 'wb') as cache:
+                dump([paths, descriptions, headings], cache)
         except:
             print("<p>Error: Could not cache documentation index</p>")
 
-    # Part 4
-    # if a word was selected then view the documentation for that word
+    # If a word was selected then view the documentation for that word
     # using the best available version of the doc as determined above
-    cwPackage = getenv("TM_CURRENT_WORD")
-    if cwPackage in pathDict:
-        call("viewDoc.sh " + pathDict[cwPackage], shell=True)
-        exit()
+    package = getenv('TM_CURRENT_WORD')
+    if package in paths:
+        # Just display the documentation and close the html output window
+        call("viewDoc.sh " + paths[package], shell=True)
+        exit(200)
 
-    # Part 5
-    # Print out the results in html/javascript
-    # The java script gives us the nifty expand collapse outline look
+    # Print out the results in HTML/JavaScript
+    # The JavaScript gives us the nifty expand collapse outline look
     tm_bundle_support = getenv('TM_BUNDLE_SUPPORT')
     css_location = quote('{}/css/texdoc.css'.format(tm_bundle_support))
     js_location = quote('{}/lib/texdoc.js'.format(tm_bundle_support))
     print("""<link rel="stylesheet" href="file://{}">
              <script type="text/javascript" src="file://{}"
-                 charset="utf-8">
-             </script>""".format(css_location, js_location))
-    print("<h1>Your Packages</h1>")
-    print("<ul>")
-    for p in mList:
-        print('<div id="mypkg">')
-        if p in pathDict:
-            print("""<li><a href= "javascript:
-                     TextMate.system('\\'%s/bin/viewDoc.sh\\' %s', null);">
-                     %s</a></li>
-                  """ % (getenv("TM_BUNDLE_SUPPORT"), pathDict[p],
-                         descDict[p]))
-        else:
-            print("""<li>%s</li>""" % (p))
-        print('</div>')
+                 charset="utf-8"></script>
+             <h1>Included Packages</h1>
+             <ul>""".format(css_location, js_location))
+    for package in packages:
+        print("""<div id="mypkg"><li>{}</li></div>""".format(
+              create_viewdoc_link(paths[package], descriptions[package],
+                                  tm_bundle_support) if package in paths
+              else package))
+    print("""</ul><hr /><h1>Packages Browser</h1><ul>""")
+    for heading in headings:
+        print("""<li><a href="javascript:dsp(this)" class="dsphead"
+                        onclick="dsp(this)">{}</a></li>
+                 <div class="dspcont"><ul>
+              """.format(heading))
+        for package in headings[heading]:
+            print("""<li>{}</li>""".format(
+                  create_viewdoc_link(paths[package], descriptions[package],
+                                      tm_bundle_support)
+                  if exists(paths[package])
+                  else package))
+        print("""</ul></div>""")
     print("</ul>")
-
-    print("<hr />")
-    print("<h1>Packages Browser</h1>")
-    print("<ul>")
-    for h in headings:
-        print('<li><a href="javascript:dsp(this)" class="dsphead" ' +
-              'onclick="dsp(this)">{}</a></li>'.format(h))
-        print('<div class="dspcont">')
-        print("<ul>")
-        for p in headings[h]:
-            if exists(pathDict[p]):
-                print("""<li><a href="javascript:TextMate.system(""" +
-                      """'\\'{}/bin/viewDoc.sh\\' """.format(
-                          getenv("TM_BUNDLE_SUPPORT")) +
-                      """{}', null);"> {}</a></li>""".format(
-                          pathDict[p], descDict[p]))
-            else:
-                print("""<li>%s</li>""" % (p))
-        print("</ul>")
-        print('</div>')
-    print("</ul>")
-    if cachedIndex:
+    if cached:
         print("""<p>You are using a saved version of the LaTeX documentation
                  index. This index is automatically updated every 90 days. If
-                 you want to force an update simply remove the file %s </p>
-              """ % docdbfile)
+                 you want to force an update simply remove the file {} </p>
+              """.format(docdbfile))
