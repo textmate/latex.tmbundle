@@ -49,7 +49,6 @@ from os.path import basename, exists, expanduser, getmtime, splitext
 from pickle import load, dump
 from pipes import quote as shellquote
 from subprocess import check_output, call
-from time import time
 try:
     from urllib.parse import quote  # Python 3
 except ImportError:
@@ -211,16 +210,15 @@ if __name__ == '__main__':
     chdir(master_dir)
     packages = find_tex_packages(master_file)
 
+    texmf_directory = check_output("kpsewhich --expand-path '$TEXMFMAIN'",
+                                   shell=True, universal_newlines=True).strip()
     docdbpath = "{}/Library/Caches/TextMate".format(expanduser('~'))
     docdbfile = "{}/latexdocindex".format(docdbpath)
-    ninty_days_ago = time() - (90*86400)
-    cached = False
 
-    if exists(docdbfile) and getmtime(docdbfile) > ninty_days_ago:
+    if exists(docdbfile) and getmtime(docdbfile) > getmtime(texmf_directory):
         # Read from cache
         with open(docdbfile, 'rb') as cache:
             paths, descriptions, headings = load(cache)
-        cached = True
     else:
         # Parse the texdoctk database
         docfiles = get_documentation_files()
@@ -278,8 +276,3 @@ if __name__ == '__main__':
                   else package))
         print("""</ul></div>""")
     print("</ul>")
-    if cached:
-        print("""<p>You are using a saved version of the LaTeX documentation
-                 index. This index is automatically updated every 90 days. If
-                 you want to force an update simply remove the file {} </p>
-              """.format(docdbfile))
