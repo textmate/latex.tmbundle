@@ -60,7 +60,7 @@ from lib.tex import (find_tex_packages, find_tex_directives,
 
 # -- Functions ----------------------------------------------------------------
 
-def get_documentation_files():
+def get_documentation_files(texmf_directory):
     """Get a dictionary containing tex documentation files.
 
     This function searches all directories under the ``texmf`` root for dvi or
@@ -68,24 +68,31 @@ def get_documentation_files():
     file-paths. The dictionary uses the filenames without their extensions as
     keys.
 
+    Arguments:
+
+        texmf_directory
+
+            The location of the main tex and metafont directory.
+
     Returns: ``{str: str}``
 
     Examples:
 
-        >>> documentation_files = get_documentation_files()
+        >>> texmf_directory = check_output(
+        ...     "kpsewhich --expand-path '$TEXMFMAIN'", shell=True,
+        ...     universal_newlines=True).strip()
+        >>> documentation_files = get_documentation_files(texmf_directory)
         >>> print(documentation_files['lastpage']) # doctest:+ELLIPSIS
         /.../lastpage.pdf
 
     """
-    texmf_directory = check_output("kpsewhich --expand-path '$TEXMFMAIN'",
-                                   shell=True, universal_newlines=True).strip()
     doc_files = check_output("find -E {} -regex '.*\.(pdf|dvi)' -type f".
                              format(shellquote(texmf_directory)),
                              shell=True, universal_newlines=True).splitlines()
     return {basename(splitext(line)[0]): line.strip() for line in doc_files}
 
 
-def parse_texdoctk_data(documentation_files):
+def parse_texdoctk_data(documentation_files, texmf_directory):
     """Parse documentation data from ``texdoctk``.
 
     This function returns three dictionaries:
@@ -111,12 +118,19 @@ def parse_texdoctk_data(documentation_files):
             dictionary uses the filename/subject of the documentation file as
             key.
 
+        texmf_directory
+
+            The location of the main tex and metafont directory.
+
     Returns: ``[dict]``
 
     Examples:
 
+        >>> texmf_directory = check_output(
+        ...     "kpsewhich --expand-path '$TEXMFMAIN'", shell=True,
+        ...     universal_newlines=True).strip()
         >>> paths, descriptions, headings = parse_texdoctk_data(
-        ...     get_documentation_files())
+        ...     get_documentation_files(texmf_directory), texmf_directory)
         >>> print(paths['beamer']) # doctest:+ELLIPSIS
         /usr/local/texlive/.../doc/latex/beamer/doc/beameruserguide.pdf
         >>> print(descriptions['beamer'])
@@ -128,10 +142,6 @@ def parse_texdoctk_data(documentation_files):
     texdoc_path = check_output(
         "kpsewhich --progname=texdoctk --format='other text files' " +
         "texdoctk.dat", shell=True, universal_newlines=True).strip()
-
-    texmf_directory = check_output(
-        "kpsewhich --expand-path '$TEXMFMAIN'", shell=True,
-        universal_newlines=True).strip()
 
     paths = {}
     descriptions = {}
@@ -221,8 +231,9 @@ if __name__ == '__main__':
             paths, descriptions, headings = load(cache)
     else:
         # Parse the texdoctk database
-        docfiles = get_documentation_files()
-        paths, descriptions, headings = parse_texdoctk_data(docfiles)
+        docfiles = get_documentation_files(texmf_directory)
+        paths, descriptions, headings = parse_texdoctk_data(docfiles,
+                                                            texmf_directory)
 
         # Supplement with searched for files
         for package in docfiles:
