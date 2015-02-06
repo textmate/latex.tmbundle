@@ -48,7 +48,7 @@ from os import chdir, getenv, mkdir
 from os.path import basename, exists, expanduser, getmtime, splitext
 from pickle import load, dump
 from pipes import quote as shellquote
-from subprocess import check_output, call
+from subprocess import check_output
 try:
     from urllib.parse import quote  # Python 3
 except ImportError:
@@ -214,6 +214,16 @@ def create_viewdoc_link(file_path, description,
 
 if __name__ == '__main__':
 
+    # If the caret is right next to or between a word, then we show the
+    # documentation for that word using the the shell command `texdoc`
+    tm_current_word = getenv('TM_CURRENT_WORD')
+    if tm_current_word:
+        output = check_output("texdoc {}".format(shellquote(tm_current_word)),
+                              shell=True).strip()
+        # Close the html output window on success
+        if not output:
+            exit(200)
+
     # Find all the packages included in the file or its inputs
     master_file, master_dir = find_file_to_typeset(
         find_tex_directives(getenv("TM_FILEPATH")))
@@ -249,14 +259,6 @@ if __name__ == '__main__':
                 dump([paths, descriptions, headings], cache)
         except:
             print("<p>Error: Could not cache documentation index</p>")
-
-    # If a word was selected then view the documentation for that word
-    # using the best available version of the doc as determined above
-    package = getenv('TM_CURRENT_WORD')
-    if package in paths:
-        # Just display the documentation and close the html output window
-        call("viewDoc.sh " + paths[package], shell=True)
-        exit(200)
 
     # Print out the results in HTML/JavaScript
     # The JavaScript gives us the nifty expand collapse outline look
