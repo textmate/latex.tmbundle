@@ -83,7 +83,7 @@ def reformat(table_content)
       previous_line_contained_cells = false
     else
       line.fill('', (line.length + 1)..max_number_columns)
-      output += sprintf(pattern, *line)
+      output += format(pattern, *line)
       previous_line_contained_cells = true
     end
   end
