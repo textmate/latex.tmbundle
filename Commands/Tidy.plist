@@ -9,6 +9,9 @@
 [[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; \
     . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
 
+# Include `YAML::Tiny` required by `latexindent`
+export PERL5LIB=$PERL5LIB:"${TM_BUNDLE_SUPPORT}"/lib
+
 DIRECTORY=$(dirname "${TM_FILEPATH}")
 cd "${DIRECTORY}"
 
