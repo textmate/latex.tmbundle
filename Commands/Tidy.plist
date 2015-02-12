@@ -9,13 +9,21 @@
 [[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; \
     . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
 
-# Include `YAML::Tiny` required by `latexindent`
-export PERL5LIB=$PERL5LIB:"${TM_BUNDLE_SUPPORT}"/lib
+# We use “LaTeX Tidy” as default tex formatting tool. If you want to use
+# `latexindent` instead just set `TM_LATEX_FORMATTER` to the value `latexindent`
+if [[ "${TM_LATEX_FORMATTER}" != "latexindent" ]]; then
+    latextidy.pl
+else
+    # Include `YAML::Tiny` required by `latexindent`
+    export PERL5LIB=$PERL5LIB:"${TM_BUNDLE_SUPPORT}"/lib
 
-DIRECTORY=$(dirname "${TM_FILEPATH}")
-cd "${DIRECTORY}"
+    DIRECTORY=$(dirname "${TM_FILEPATH}")
+    cd "${DIRECTORY}"
 
-latexindent -c=/tmp "${TM_FILENAME}"</string>
+    latexindent -c=/tmp "${TM_FILENAME}"
+fi
+
+</string>
 	<key>input</key>
 	<string>document</string>
 	<key>inputFormat</key>
