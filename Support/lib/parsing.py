@@ -27,6 +27,7 @@ except ImportError:
 
 PYTHON2 = version_info <= (3, 0)
 
+
 # -- Functions ----------------------------------------------------------------
 
 def make_link(file, line=1):

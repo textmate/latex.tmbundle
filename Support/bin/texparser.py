@@ -30,6 +30,7 @@ if PYTHON2:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
+
 # -- Functions ----------------------------------------------------------------
 
 def notify(title='LaTeX Watch', summary='', messages=[], token=None):
