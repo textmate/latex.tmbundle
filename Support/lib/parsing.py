@@ -27,12 +27,6 @@ except ImportError:
 
 PYTHON2 = version_info <= (3, 0)
 
-if PYTHON2:
-    import sys
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
-
-
 # -- Functions ----------------------------------------------------------------
 
 def make_link(file, line=1):
@@ -127,9 +121,12 @@ class TexParser(object):
             ...
 
         """
+        def to_utf8(string):
+            return string.decode('latin_1') if PYTHON2 else string
+
         statement = ""
         while True:
-            line = self.input_stream.readline()
+            line = to_utf8(self.input_stream.readline())
             if not line:
                 return statement
             statement += line.rstrip('\n')

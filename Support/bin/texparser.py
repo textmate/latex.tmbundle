@@ -16,10 +16,19 @@ from os.path import basename, dirname, join
 from pickle import load, dump
 from pipes import quote as shellquote
 from subprocess import check_output, STDOUT
+from sys import version_info
 
 from lib.util import update_marks
 from lib.parsing import LaTexMkParser
 
+# -- Module Import ------------------------------------------------------------
+
+PYTHON2 = version_info <= (3, 0)
+
+if PYTHON2:
+    import sys
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
 
 # -- Functions ----------------------------------------------------------------
 
@@ -134,7 +143,7 @@ if __name__ == '__main__':
             # Fail silently
             exit(0)
     else:
-        texparser = LaTexMkParser(open(logfile, encoding='utf-8'),
+        texparser = LaTexMkParser(open(logfile, encoding='latin_1'),
                                   verbose=False, filename=texfile)
         texparser.parse_stream()
         # Sort marks by line number
