@@ -3,7 +3,7 @@
 # -- Imports ------------------------------------------------------------------
 
 from os import sys, path
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))  # noqa
+sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))))  # noqa
 
 from subprocess import Popen, PIPE, STDOUT
 
