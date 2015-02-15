@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# Date:    2015-01-18
 # Authors: Brad Miller
 #          René Schwaiger (sanssecours@f-m.fm)
-# Version: 1
 # -----------------------------------------------------------------------------
 
 """This module contains code to parse tex (log) files."""
@@ -509,7 +507,7 @@ class LaTexParser(TexParser):
             (compile('LaTeX Font Warning:.*'), self.warning),
             (compile('Overfull.*wide'), self.warning_format),
             (compile('Underfull.*badness'), self.warning_format),
-            (compile('^([\.\/\w\x7f-\xff\-\u0308]+' +
+            (compile('^([\.\/\w\x7f-\xff\-\u0308\ ]+' +
                      '(?:\.sty|\.tex|\.{}))'.format(self.suffix) +
                      ':(\d+):\s+(.*)', UNICODE),
              self.handle_error),
