@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# Date:    2015-01-18
 # Authors: Brad Miller
 #          René Schwaiger (sanssecours@f-m.fm)
-# Version: 1
 # -----------------------------------------------------------------------------
 
 """This module contains various functions for handling tex data."""
@@ -16,11 +14,17 @@ from __future__ import unicode_literals
 
 from io import open
 from os import chdir, getenv, EX_OSFILE  # noqa
-from os.path import basename, dirname, join, normpath, realpath
+from os.path import basename, dirname, isfile, join, normpath, realpath
 from pipes import quote as shellquote
-from re import compile, match
+from re import compile
 from subprocess import Popen, PIPE
 from sys import exit, stdout
+
+
+# -- Global Variables ---------------------------------------------------------
+
+# The list of encodings we try to open files with.
+encodings = ['utf_8', 'mac_roman', 'latin_1', 'gb2312', 'cp1251', 'cp1252']
 
 
 # -- Exit Codes ---------------------------------------------------------------
@@ -124,19 +128,19 @@ def determine_typesetting_directory(ts_directives,
     return master_path
 
 
-def find_tex_packages(file_name):
+def find_tex_packages(filepath):
     """Find packages included by the given file.
 
     This function searches for packages in:
 
-        1. The preamble of ``file_name``, and
-        2. files included in the preamble of ``file_name``.
+        1. The preamble of ``filepath``, and
+        2. files included in the preamble of ``filepath``.
 
     Arguments:
 
-        file_name
+        filepath
 
-            The path of the file which should be searched for packages.
+            The path to the file which should be searched for packages.
 
     Returns: ``{str}``
 
@@ -154,17 +158,19 @@ def find_tex_packages(file_name):
         polyglossia
         unicode-math
         xcolor
+        >>> 'inputenc' in list(find_tex_packages('applemac.tex'))
+        True
         >>> chdir('../..')
 
     """
-    try:
-        file = open(expand_name(file_name), encoding='utf-8')
-    except:
-        print('<p class="error">Error: Could not open ' +
-              '{} to check for packages</p>'.format(file_name))
-        print('<p class="error">This is most likely a problem with ' +
-              'TM_LATEX_MASTER</p>')
+    filepath = expand_name(filepath)
+    if not isfile(filepath):
+        print("""<p class="error">Cannot open {} to check for packages.</p>
+                 <p class="error">This is most likely a problem with
+                                  TM_LATEX_MASTER</p>
+              """.format(filepath))
         exit(EXIT_FILE_ERROR)
+
     option_regex = r'\[[^\{]+\]'
     argument_regex = r'\{([^\}]+)\}'
     input_regex = compile(r'[^%]*?\\input{}'.format(argument_regex))
@@ -173,16 +179,26 @@ def find_tex_packages(file_name):
     begin_regex = compile(r'[^%]*?\\begin\{document\}')
 
     # Search for packages and included files in the tex document
-    included_files = []
-    packages = []
-    for line in file:
-        match_input = match(input_regex, line)
-        match_package = match(package_regex, line)
-        if match_input:
-            included_files.append(match_input.group(1))
-        if match_package:
-            packages.append(match_package.group(1))
-        if match(begin_regex, line):
+    done_reading = False
+    included_files = set()
+    packages = set()
+    for encoding in encodings:
+        try:
+            with open(filepath, encoding=encoding) as file:
+                for line in file:
+                    match_input = input_regex.match(line)
+                    match_package = package_regex.match(line)
+                    if match_input:
+                        included_files.add(match_input.group(1))
+                    if match_package:
+                        packages.add(match_package.group(1))
+                    if begin_regex.match(line):
+                        break
+                done_reading = True
+        except UnicodeDecodeError:
+            # The current encoding is not correct. Try the next one.
+            continue
+        if done_reading:
             break
 
     # Search for packages in all files till we find the beginning of the
@@ -192,28 +208,37 @@ def find_tex_packages(file_name):
                       for included_file in included_files]
     match_begin = False
     while included_files and not match_begin:
-        try:
-            file = open(expand_name(included_files.pop()), encoding='utf-8')
-        except:
-            print('<p class="warning">Warning: Could not open ' +
-                  '{} to check for packages</p>'.format(included_file))
+        filepath = expand_name(included_files.pop())
+        if not isfile(filepath):
+            print('<p class="warning">Warning: Cannot open ' +
+                  '{} to check for packages</p>.'.format(filepath))
+            continue
 
-        for line in file:
-            match_package = match(package_regex, line)
-            match_begin = match(begin_regex, line)
-            if match_package:
-                packages.append(match_package.group(1))
-            if match_begin:
+        done_reading = False
+        for encoding in encodings:
+            try:
+                with open(filepath, encoding=encoding) as file:
+                    for line in file:
+                        match_package = package_regex.match(line)
+                        match_begin = begin_regex.match(line)
+                        if match_package:
+                            packages.add(match_package.group(1))
+                        if match_begin:
+                            break
+                    done_reading = True
+            except UnicodeDecodeError:
+                # The current encoding is not correct. Try the next one.
+                continue
+            if done_reading:
                 break
 
     # Split package definitions of the form 'package1, package2' into
     # 'package1', 'package2'
-    package_list = []
+    package_set = set()
     for package in packages:
-        package_list.extend([package.strip()
-                             for package in package.split(',')])
-
-    return set(package_list)
+        package_set.update(package.strip()
+                           for package in package.split(','))
+    return package_set
 
 
 def find_tex_directives(texfile):
@@ -264,9 +289,15 @@ def find_tex_directives(texfile):
     directive_regex = compile(r'%!TEX\s+([\w-]+)\s?=\s?(.*)')
     directives = {}
     while True:
-        lines = [line for (line_number, line)
-                 in enumerate(open(texfile, encoding='utf-8'))
-                 if line_number < 20]
+        for encoding in encodings:
+            try:
+                lines = [line for (line_number, line)
+                         in enumerate(open(texfile, encoding=encoding))
+                         if line_number < 20]
+                break
+            except UnicodeDecodeError:
+                continue
+
         new_directives = {directive.group(1): directive.group(2).rstrip()
                           for directive
                           in [directive_regex.match(line) for line in lines]
