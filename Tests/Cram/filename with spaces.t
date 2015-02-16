@@ -32,6 +32,6 @@ Restore the file changes made by previous commands.
 
   $ restore_aux_files_git
 
-Remove the generated PDF and the log file
+Remove the generated PDF
 
-  $ rm -f *.pdf *.log
+  $ rm -f *.pdf
