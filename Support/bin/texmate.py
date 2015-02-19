@@ -157,6 +157,10 @@ def run_biber(filename, verbose=False):
     Examples:
 
         >>> chdir('Tests/TeX')
+        >>> # Generate files for biber
+        >>> call('pdflatex external_bibliography_biber.tex > /dev/null',
+        ... shell=True)
+        0
         >>> run_biber('external_bibliography_biber') # doctest:+ELLIPSIS
         <...
         ...
