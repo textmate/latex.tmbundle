@@ -641,7 +641,7 @@ def construct_engine_command(ts_directives, tm_engine, packages):
         latex
 
     """
-    latex_indicators = {'pstricks', 'xyling', 'pst-asr', 'OTtablx', 'epsfig'}
+    latex_indicators = {'pstricks', 'xyling', 'pst-asr', 'OTtablx'}
     xelatex_indicators = {'xunicode'}
     lualatex_indicators = {'luacode'}
 
