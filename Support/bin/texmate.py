@@ -1024,8 +1024,8 @@ if __name__ == '__main__':
         if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
                 viewer, filepath, pdffile_path,
-                number_errors > 1 or number_warnings > 0
-                and tm_preferences['latexKeepLogWin'],
+                number_errors > 1 or number_warnings > 0 and
+                tm_preferences['latexKeepLogWin'],
                 'pdfsync' in packages or synctex, line_number)
         number_runs = command_parser.number_runs
 
