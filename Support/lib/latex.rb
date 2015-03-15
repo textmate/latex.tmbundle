@@ -632,14 +632,13 @@ module LaTeX
       # LaTeX.set_paths
       label_list = []
       scanner = FileScanner.new(root)
-      scanner.extractors[/.*?\[.*label=(.*?)\,.*\]/] = proc do |filename, line,
-                                                                groups, text|
+      scanner.extractors[/.*?\[.*label=(.*?)\,.*\]/] =
+      proc do |filename, line, groups, text|
         label_list << Label.new(:file => filename, :line => line,
                                 :label => groups[0], :contents => text)
       end
-      scanner.extractors[/^[^%]*\\label\{([^\}]*)\}/] = proc do |filename,
-                                                                 line, groups,
-                                                                 text|
+      scanner.extractors[/^[^%]*\\label\{([^\}]*)\}/] =
+      proc do |filename, line, groups, text|
         label_list << Label.new(:file => filename, :line => line,
                                 :label => groups[0], :contents => text)
       end
