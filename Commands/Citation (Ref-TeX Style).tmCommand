@@ -41,7 +41,7 @@ cphrase.gsub! %r{.*\\}, ""
 end
 
 begin
-  items = LaTeX.get_citations.map{|i| i.citekey + "   % "+i.description}
+  items = LaTeX.citations.map{|i| i.citekey + "   % "+i.description}
   items = items.grep(/#{phrase}/i) if phrase != ""
   TextMate.exit_discard if items.empty?
   if items.length &gt; 1

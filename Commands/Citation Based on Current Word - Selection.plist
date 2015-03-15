@@ -12,7 +12,7 @@ require ENV["TM_BUNDLE_SUPPORT"] + "/lib/latex.rb"
 phrase = STDIN.read.chomp
 include LaTeX
 begin
-	items = LaTeX.get_citations.map{|i| i.citekey + "   % "+i.description}
+	items = LaTeX.citations.map{|i| i.citekey + "   % "+i.description}
   if ((phrase != "") &amp;&amp; (phrase != "{}"))
   	items = items.grep(/#{phrase}/)
   end
