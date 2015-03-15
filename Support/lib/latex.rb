@@ -148,7 +148,23 @@ module LaTeX
       FileScanner.cite_scan(master_file).sort_by(&:citekey)
     end
 
-    # Returns an array of the citekeys in the document.
+    # Returns an array of the citekeys for the current master file.
+    #
+    # The path to the master file has to be set via the environment variable
+    # +TM_LATEX_MASTER+ or +TM_FILEPATH+.
+    #
+    # = Output
+    #
+    # The function returns a list of all citekeys.
+    #
+    #  doctest: Get the citation keys of the file 'references.tex'.
+    #
+    #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
+    #  >> keys = LaTeX.citekeys
+    #  >> keys.length
+    #  => 5
+    #  >> keys.member? 'embedded_bibitem'
+    #  => true
     def citekeys
       citations.map { |i| i['citekey'] }.uniq
     end
