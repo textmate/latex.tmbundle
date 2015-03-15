@@ -842,34 +842,31 @@ module LaTeX
     #
     # = Arguments
     #
-    # [chars] A number that specifies how much of the surrounding text should
-    #         be returned.
-    # [countlines] A boolean value that specifies if +chars+ is the number of
-    #              characters or the number of lines around the label that
-    #              should be matched.
+    # [lines] A number that specifies how many lines of text surrounding the
+    #         label should be returned.
     #
     # = Output
     #
-    # The function returns a string containing the text around the label.
+    # The function returns a match containing the text around the label.
     #
     # = Examples
     #
     #  doctest: Get the text around a label
     #
     #  >> label = Label.new(:contents => '
+    #   ---
     #   \section{Second Section} % (fold)
     #     \label{sec:second_section}
-    #   % section second_section (end)', :label => 'sec:second_section')
-    #  >> label.context.to_s
-    #  => 'econdSection}%(fold)\label{sec:second_section}%sectionsecond_secti'
-    def context(chars = 40, countlines = false)
-      if countlines
-        return contents.match(
-          /(.*\n){#{chars / 2}}.*\\label\{#{label}\}.*\n(.*\n){#{chars / 2}}/)
-      else
-        return contents.gsub(/\s/, '').match(
-          /.{#{chars / 2}}\\label\{#{label}\}.{#{chars / 2}}/)
-      end
+    #   % section second_section (end)
+    #   ---', :label => 'sec:second_section')
+    #  >> context = label.context(2).to_s
+    #  >> context.start_with?('\section{Second Section}')
+    #  => true
+    #  >> context.end_with?("% section second_section (end)\n")
+    #  => true
+    def context(lines = 10)
+      half = lines / 2
+      contents.match(/(.*\n){#{half}}.*\\label\{#{label}\}.*\n(.*\n){#{half}}/)
     end
   end
 

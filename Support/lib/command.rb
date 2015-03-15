@@ -312,8 +312,8 @@ end
 # This function returns a string containing the text around the given label.
 def label_context(label)
   # Try to get as much context as possible
-  label_surrounding = [10, 5, 2, 1, 0].each do |characters|
-    context = label.context(characters, true)
+  label_surrounding = [10, 5, 2, 1, 0].each do |lines|
+    context = label.context(lines)
     return context unless context.nil?
   end
 end
