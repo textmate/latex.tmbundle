@@ -20,15 +20,15 @@ module LaTeX
   #
   # = Examples
   #
-  # doctest: Parse the tex directives in 'xelatex.tex'
+  #  doctest: Parse the tex directives in 'xelatex.tex'
   #
-  # >> LaTeX.options('Tests/TeX/xelatex.tex')
-  # => {"TS-program"=>"xelatex"}
+  #  >> LaTeX.options('Tests/TeX/xelatex.tex')
+  #  => {"TS-program"=>"xelatex"}
   #
-  # doctest: Parse the tex directives in 'packages_input1.tex'
+  #  doctest: Parse the tex directives in 'packages_input1.tex'
   #
-  # >> LaTeX.options('Tests/TeX/input/packages_input1.tex')
-  # => {"root"=>"./packages_input2.tex"}
+  #  >> LaTeX.options('Tests/TeX/input/packages_input1.tex')
+  #  => {"root"=>"./packages_input2.tex"}
   def self.options(filepath)
     opts = {}
     File.foreach(filepath).first(20).each do |line|
@@ -53,15 +53,15 @@ module LaTeX
   #
   # = Examples
   #
-  # doctest: Determine the master document of the file +/packages_input1.tex+
+  #  doctest: Determine the master document of the file 'packages_input1.tex'
   #
-  # >> LaTeX.master('Tests/TeX/input/packages_input1.tex')
-  # => 'Tests/TeX/packages.tex'
+  #  >> LaTeX.master('Tests/TeX/input/packages_input1.tex')
+  #  => 'Tests/TeX/packages.tex'
   #
-  # doctest: Determine the master document of the file +/xelatex.tex+
+  #  doctest: Determine the master document of the file 'xelatex.tex'
   #
-  # >> LaTeX.master('Tests/TeX/xelatex.tex')
-  # => 'Tests/TeX/xelatex.tex'
+  #  >> LaTeX.master('Tests/TeX/xelatex.tex')
+  #  => 'Tests/TeX/xelatex.tex'
   def self.master(filepath)
     return nil if filepath.nil?
     master = Pathname.new(filepath).cleanpath
@@ -80,10 +80,8 @@ module LaTeX
     # Get an array containing the label names of the current master file.
     #
     # If you want actual Label objects, then use +FileScanner.label_scan+.
-    # The path to the master file has to be set via
-    #
-    #   - +ENV['TM_LATEX_MASTER']+ or,
-    #   - +ENV['TM_FILEPATH']+.
+    # The path to the master file has to be set via the environment variable
+    # +TM_LATEX_MASTER+ or +TM_FILEPATH+.
     #
     # = Output
     #
@@ -91,17 +89,17 @@ module LaTeX
     #
     # = Examples
     #
-    # doctest: Get the labels of the file +references.tex+.
+    #  doctest: Get the labels of the file 'references.tex'.
     #
-    # >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
-    # >> LaTeX.labels
-    # => ['sec:first_section', 'sec:second_section', 'table:a_table_label']
+    #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
+    #  >> LaTeX.labels
+    #  => ['sec:first_section', 'sec:second_section', 'table:a_table_label']
     #
-    # doctest: Get the labels of the file +xelatex.tex+.
+    #  doctest: Get the labels of the file 'xelatex.tex'.
     #
-    # >> ENV['TM_LATEX_MASTER'] = 'Tests/TeX/xelatex.tex'
-    # >> LaTeX.labels
-    # => []
+    #  >> ENV['TM_LATEX_MASTER'] = 'Tests/TeX/xelatex.tex'
+    #  >> LaTeX.labels
+    #  => []
     def labels
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
       FileScanner.label_scan(master_file).map(&:label).sort
@@ -111,35 +109,33 @@ module LaTeX
     #
     # If you only want the citekeys, then use +LaTeX.citekeys+.
     #
-    # The path to the master file has to be set via
-    #
-    #   - +ENV['TM_LATEX_MASTER']+ or,
-    #   - +ENV['TM_FILEPATH']+.
+    # The path to the master file has to be set via the environment variable
+    # +TM_LATEX_MASTER+ or +TM_FILEPATH+.
     #
     # = Output
     #
     # The function returns a list of citations hashes.
     #
-    # doctest: Get the citations of the file +external_bibliography.tex+.
+    #  doctest: Get the citations of the file 'external_bibliography.tex'.
     #
-    # >> ENV.delete 'TM_LATEX_MASTER'
-    # >> ENV['TM_FILEPATH'] = 'Tests/TeX/external_bibliography.tex'
-    # >> citations = LaTeX.citations
-    # >> citations.length
-    # => 1
-    # >> first_cite = citations[0]
-    # >> first_cite['citekey']
-    # => 'Deltron3030'
+    #  >> ENV.delete 'TM_LATEX_MASTER'
+    #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/external_bibliography.tex'
+    #  >> citations = LaTeX.citations
+    #  >> citations.length
+    #  => 1
+    #  >> first_cite = citations[0]
+    #  >> first_cite['citekey']
+    #  => 'Deltron3030'
     #
-    # doctest: Get the citations of the file +external_bibliography_biber.tex+.
+    #  doctest: Get the citations of the file 'external_bibliography_biber.tex'.
     #
-    # >> ENV['TM_FILEPATH'] = 'Tests/TeX/external_bibliography_biber.tex'
-    # >> citations = LaTeX.citations
-    # >> citations.length
-    # => 1
-    # >> first_cite = citations[0]
-    # >> first_cite['title']
-    # => '"Battlesong"'
+    #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/external_bibliography_biber.tex'
+    #  >> citations = LaTeX.citations
+    #  >> citations.length
+    #  => 1
+    #  >> first_cite = citations[0]
+    #  >> first_cite['title']
+    #  => '"Battlesong"'
     def citations
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
       FileScanner.cite_scan(master_file).sort_by(&:citekey)
