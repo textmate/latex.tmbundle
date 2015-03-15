@@ -142,8 +142,7 @@ module LaTeX
     # => '"Battlesong"'
     def citations
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-      FileScanner.cite_scan(
-        master_file).map { |i| i }.sort { |a, b| a.citekey <=> b.citekey }
+      FileScanner.cite_scan(master_file).sort_by(&:citekey)
     end
 
     # Returns an array of the citekeys in the document.
