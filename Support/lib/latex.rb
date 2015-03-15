@@ -4,7 +4,6 @@ require 'pathname'
 # files.
 #
 # Authors:: Charilaos Skiadas, René Schwaiger
-# Date::    2014-09-28
 module LaTeX
   # Parse any %!TEX options in the first 20 lines of the file.
   #
@@ -108,8 +107,39 @@ module LaTeX
       FileScanner.label_scan(master_file).map(&:label).sort
     end
 
-    # Returns an array of the citation objects. If you only want the citekeys,
-    # use LaTeX.citekeys
+    # Return an array of citation objects for the current tex file.
+    #
+    # If you only want the citekeys, then use +LaTeX.citekeys+.
+    #
+    # The path to the master file has to be set via
+    #
+    #   - +ENV['TM_LATEX_MASTER']+ or,
+    #   - +ENV['TM_FILEPATH']+.
+    #
+    # = Output
+    #
+    # The function returns a list of citations hashes.
+    #
+    # doctest: Get the citations of the file +external_bibliography.tex+.
+    #
+    # >> ENV.delete 'TM_LATEX_MASTER'
+    # >> ENV['TM_FILEPATH'] = 'Tests/TeX/external_bibliography.tex'
+    # >> citations = LaTeX.citations
+    # >> citations.length
+    # => 1
+    # >> first_cite = citations[0]
+    # >> first_cite['citekey']
+    # => 'Deltron3030'
+    #
+    # doctest: Get the citations of the file +external_bibliography_biber.tex+.
+    #
+    # >> ENV['TM_FILEPATH'] = 'Tests/TeX/external_bibliography_biber.tex'
+    # >> citations = LaTeX.citations
+    # >> citations.length
+    # => 1
+    # >> first_cite = citations[0]
+    # >> first_cite['title']
+    # => '"Battlesong"'
     def citations
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
       FileScanner.cite_scan(
