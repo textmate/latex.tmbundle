@@ -239,27 +239,15 @@ module LaTeX
     def find_file(filename, extension, relative)
       filename.gsub!(/"/, '')
       filename.gsub!(/\.#{extension}$/, '')
-      # First try the filename as is, without the extension
-      return filename if File.exist?(filename) && !File.directory?(filename)
-      # Then try with the added extension
-      return "#{filename}.#{extension}" if
-        File.exist?("#{filename}.#{extension}")
+      # First try the filename as is, without the extension. Then try with the
+      # added extension
+      [filename, "#{filename}.#{extension}"].each do |filepath|
+        return filepath if file?(filepath)
+      end
       # If it is an absolute path, and the above two tests didn't find it,
       # return nil
       return nil if filename.match(/^\//)
-      texpath = LaTeX.tex_path
-      @@paths ||= {}
-      @@paths[extension] ||= (
-        [`#{texpath}kpsewhich -show-path=#{extension}`.chomp.split(
-          /:!!|:/)].flatten.map { |i| i.sub(/\/*$/, '/') }
-          ).unshift(relative).unshift('')
-      @@paths[extension].each do |path|
-        testpath = File.expand_path(File.join(path, filename + '.' + extension))
-        return testpath if File.exist?(testpath) && !File.directory?(testpath)
-        testpath = File.expand_path(File.join(path, filename))
-        return testpath if File.exist?(testpath) && !File.directory?(testpath)
-      end
-      nil
+      find_file_kpsewhich(filename, extension, relative)
     end
 
     # Processes the .bib file with title +file+, and returns an array of the
@@ -309,6 +297,25 @@ module LaTeX
         c
       end
       citations.compact
+    end
+
+    private
+
+    def file?(filepath)
+      File.exist?(filepath) && !File.directory?(filepath)
+    end
+
+    # rubocop:disable Style/ClassVars
+    def find_file_kpsewhich(filename, extension, relative)
+      @@paths ||= {}
+      @@paths[extension] ||= (
+        `#{LaTeX.tex_path}kpsewhich -show-path=#{extension}`.chomp.split(
+          /:!!|:/).map { |dir| dir.sub(/\/*$/, '/') }
+          ).unshift(relative).unshift('')
+      @@paths[extension].each do |path|
+        fp = File.expand_path(File.join(path, filename))
+        [fp, "#{fp}.#{extension}"].each { |file| return file if file?(file) }
+      end
     end
   end
 
