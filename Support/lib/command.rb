@@ -288,7 +288,10 @@ end
 # Open the current master file in TextMate
 def open_master_file
   master = masterfile
-  if master then `open -a TextMate #{e_sh master}`
-  else print('No master file was defined.')
+  if master
+    master == ENV['TM_FILEPATH'] ? print('Already in master file') :
+                                   `open -a TextMate #{e_sh master}`
+  else
+    print('No master file was defined.')
   end
 end
