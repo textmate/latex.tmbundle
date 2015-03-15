@@ -80,7 +80,7 @@ module LaTeX
   class <<self
     # Returns an array of the label names. If you want actual Label objects,
     # then use FileScanner.label_scan
-    def get_labels
+    def labels
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
       FileScanner.label_scan(master_file).map(&:label).sort
     end

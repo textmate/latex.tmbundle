@@ -21,7 +21,7 @@ phrase = $1 if embrace
 
 include LaTeX
 begin
-  items = LaTeX.get_labels
+  items = LaTeX.labels
   items = items.grep(/^#{Regexp.escape(phrase)}/) if phrase != ""
   TextMate.exit_discard if items.empty?
   if items.length &gt; 1 then
