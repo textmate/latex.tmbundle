@@ -136,7 +136,7 @@ module LaTeX
     #  => 1
     #  >> first_cite = citations[0]
     #  >> first_cite['title']
-    #  => '"Battlesong"'
+    #  => 'Battlesong'
     #
     #  doctest: Get the citations of the file 'references.tex'.
     #
@@ -254,7 +254,7 @@ module LaTeX
     #
     # = Arguments
     #
-    # [file] The path to the bib file that should be parsed
+    # [filepath] The path to the bib file that should be parsed
     #
     # = Output
     #
@@ -269,9 +269,9 @@ module LaTeX
     #  => 1
     #  >> citation = references[0]
     #  >> citation.author
-    #  => '"Deltron 3030"'
+    #  => 'Deltron 3030'
     #  >> citation.title
-    #  => '"Battlesong"'
+    #  => 'Battlesong'
     #
     #  doctest: Parse the file 'more_references.bib'
     #
@@ -289,57 +289,257 @@ module LaTeX
     #  => 'Hada, Erika'
     #  >> citation.title
     #  => 'My Little Pony'
-    def parse_bibfile(file)
-      fail "Could not locate file: #{file}" if file.nil? || !File.exist?(file)
-      entries = File.read(file).scan(/^\s*@[^\{]*\{.*?(?=\n[ \t]*@|\z)/m)
-      citations = entries.map do |text|
-        c = Citation.new
-        s = StringScanner.new(text)
-        s.scan(/\s+@/)
-        c['bibtype'] = s.scan(/[^\s\{]+/)
-        s.scan(/\s*\{\s*/)
-        c['citekey'] = s.scan(/[^\s,]+(?=\s*,)/)
-        if c['citekey'].nil?
-          c = nil
-          next
-        end
-        # puts "Found citekey: #{c["citekey"]}"
-        s.scan(/\s*,/)
-        until s.eos? || s.scan(/\s*\,?\s*\}/)
-          s.scan(/\s+/)
-          key = s.scan(/[\w\-\.]+/)
-          unless s.scan(/\s*=\s*/)
-            s.scan(/[^@]*/m)
-            c = nil
-            next
-          end
-          # puts "Found key: #{key}"
-          contents = ''
-          nest_level = 0
-          until nest_level <= 0 && s.check(/[\},]/)
-            contents << (s.scan(/[^\{\}#{nest_level == 0 ? "," : ""}]+/) || '')
-            if s.scan(/\{/)
-              contents << "\{" unless nest_level == 0
-              nest_level += 1
-            elsif s.check(/\}/)
-              nest_level -= 1
-              contents << "\}" unless nest_level <= 0
-              s.scan(/\}/) unless nest_level == -1
-            end
-          end
-          c[key] = contents
-          # puts "Found contents: #{contents}"
-          fail 'Unexpected end of bib entry' unless s.scan(/\s*(\,|\})\s*/)
-        end
-        c
+    def parse_bibfile(filepath)
+      entries = bib_entries(filepath)
+      bib_citations(entries, bib_variables(entries))
+    end
+
+    # Parse a bib file and return a list of its entries.
+    #
+    # = Arguments
+    #
+    # [filepath] The path to the bib file that should be parsed
+    #
+    # = Output
+    #
+    # The function returns a list of entry strings.
+    #
+    # = Examples
+    #
+    #  doctest: Get the bib entries of the file 'references.bib'
+    #
+    #  >> references = LaTeX.bib_entries('Tests/TeX/more_references.bib')
+    #  >> references.all? { |entry| !(entry =~ /^@[^{]+\{.*\}\Z/m).nil? }
+    #  => true
+    #
+    #  doctest: Get the bib entries of the 'unformatted.bib'
+    #
+    #  >> references = LaTeX.bib_entries('Tests/TeX/unformatted.bib')
+    #  >> references[1]
+    #  => "@article{A, author = {A}}"
+    def bib_entries(filepath)
+      fail "Could not locate file: #{filepath}" unless file?(filepath)
+      entries = File.read(filepath).scan(/^\s*@[^\{]*\{.*?(?=\n[ \t]*@|\z)/m)
+      entries.map { |entry| entry.strip.gsub(/(?:^\s*%.*|\n)+$/m, '') }
+    end
+
+    # Extract variables from a list of bib entries.
+    #
+    # A bib entry that contains a variable has the syntax
+    #
+    #  @string { name = value }
+    #
+    # For example, the following code defines a variable named +favorite_pony+
+    # containing the value +Fluttershy+.
+    #
+    #  @string { favorite_pony = "Fluttershy" }
+    #
+    # This function returns all variables saved in the given bib entries as
+    # hash. The hash uses variable names as keys and the content of a variable
+    # as values.
+    #
+    # = Arguments
+    #
+    # [bib_entries] A list of bib entries saved as string.
+    #
+    # = Output
+    #
+    # The function returns a hash containing variables and their values.
+    #
+    # = Examples
+    #
+    #  doctest: Parse some simple variable definitions
+    #
+    #  >> entries = ['@string { show = "Gravity Falls" }',
+    #                '@string { characters =
+    #                          "Dipper, Mabel, Stan, Soos, Wendy, Waddles" }',
+    #                '@misc { key, author = {Author}}']
+    #  >> variables = LaTeX.bib_variables(entries)
+    #  >> variables['show']
+    #  => 'Gravity Falls'
+    #  >> variables['characters']
+    #  => 'Dipper, Mabel, Stan, Soos, Wendy, Waddles'
+    #
+    #  doctest: Parse the variable definitions in the file 'unformatted.bib'
+    #
+    #  >> vars = LaTeX.bib_variables(
+    #       LaTeX.bib_entries('Tests/TeX/unformatted.bib'))
+    #  >> vars['pink_pony']
+    #  => 'Pinkie Pie'
+    #  >> vars['white_pony']
+    #  => 'Deftones'
+    def bib_variables(bib_entries)
+      variables = bib_entries.select { |entry| entry.start_with? '@string' }
+      variables.map! do |entry|
+        entry.gsub(/@string\s*{\s*/m, '').gsub(/\s*\}$/m, '')
       end
-      citations.compact
+      vars = {}
+      variables.each do |var_value|
+        key, value = var_value.split(/\s*=\s*(?:\{|")/)
+        vars[key] = value[0..-2] unless value.nil?
+      end
+      vars
+    end
+
+    # Extract citations from a list of bib entries.
+    #
+    # = Arguments
+    #
+    # [bib_entries] A list containing bib entries
+    # [bib_variables] A hash containing bib variables and their values
+    #
+    # = Output
+    #
+    # This function returns a list of citation objects.
+    #
+    # = Examples
+    #
+    #  doctest: Parse some simple bib entries
+    #
+    #  >> entries = ['@misc{key, author = "Author, Mrs.", title = "Title"}',
+    #                '@article{Key, TiTLe = "Masters Of War",
+    #                               Author = "Dylan, Bob"}']
+    #  >> cites = LaTeX.bib_citations(entries, {})
+    #  >> cites[0]['author']
+    #  => 'Author, Mrs.'
+    #  >> cites[1]['author']
+    #  => 'Dylan, Bob'
+    #  >> cites[1]['title']
+    #  => 'Masters Of War'
+    #
+    #  doctest: Parse bib entries containing comments and variables
+    #
+    #  >> variables = { 'start' => "Tesla, you don't understand",
+    #                   'end' => ' humor.' }
+    #  >> entries = ['@COMMENT{ This is a comment}',
+    #                '@electronic{tesla, author = "Tesla, Nikola",
+    #                             year="1856",
+    #                             title= start # " our " # {American} # end }']
+    #  >> cites = LaTeX.bib_citations(entries, variables)
+    #  >> cites[0]['title']
+    #  >> "Tesla, you don't understand our American humor."
+    def bib_citations(bib_entries, bib_variables)
+      citations = bib_entries.select do |entry|
+        (entry =~ /@(?:string|preamble|comment)/i).nil?
+      end
+      cites = citations.map do |citation|
+        bib_citation(citation, bib_variables)
+      end
+      cites.compact
+    end
+
+    # Convert one citation bib entry to a +Citation+.
+    #
+    # = Arguments
+    #
+    # [bib_entry] The bib entry, which should be converted to a +Citation+
+    # [bib_variables] A dictionary containing all bib variables and their values
+    #
+    # = Output
+    #
+    # The function returns a Citation object on success or +nil+ if it failed.
+    #
+    # = Examples
+    #
+    #  doctest: Parse a simple bib entry
+    #
+    #  >> entry = '@article{key,
+    #                       author = "Mabel",
+    #                       title = "On why pet pigs are " # synonym_nice}'
+    #  >> variables = { 'synonym_nice' => 'awesome' }
+    #  >> cites = LaTeX.bib_citation(entry, variables)
+    #  >> cites['title']
+    #  => "On why pet pigs are awesome"
+    def bib_citation(bib_entry, bib_variables)
+      bibtype, citekey, rest = bibentry_type_key_rest(bib_entry)
+      return nil if bibtype.nil?
+      cite = Citation.new('bibtype' => bibtype, 'citekey' => citekey)
+      keys_and_values = rest[0..-2].split(/(?<="|\})\s*,/)
+      keys_and_values.map! { |key_val| key_val.gsub(/^\s*|\s*$/, '') }
+      keys_and_values.each do |key_value|
+        key, value = bibitem_key_value(key_value, bib_variables)
+        cite[key] = value unless key.nil?
+      end
+      cite
+    end
+
+    # Extract the bib type and citekey from a bib entry.
+    #
+    # = Arguments
+    #
+    # [bib_entries] A list containing bib entries.
+    # [bib_variables] A hash containing bib variables and their values
+    #
+    # = Output
+    #
+    # The function returns a list containing the type, citekey and the remaining
+    # part of a bib entry.
+    #
+    # = Examples
+    #
+    #  doctest: Get the type and key of a simple bib entry
+    #
+    #  >> entry = '@misc{key, author = "Author, Mrs.", title = "Title"}'
+    #  >> LaTeX.bibentry_type_key_rest(entry)
+    #  => ['misc', 'key', 'author = "Author, Mrs.", title = "Title"}']
+    def bibentry_type_key_rest(bib_entry)
+      scanner = StringScanner.new(bib_entry)
+      scanner.scan(/\s*@/)
+      bibtype = scanner.scan(/[^\s\{]+/)
+      scanner.scan(/\s*\{\s*/)
+      citekey = scanner.scan(/[^\s,]+(?=\s*,)/)
+      scanner.scan(/\s*,\s*/)
+      [bibtype, citekey, scanner.rest]
+    end
+
+    # Extract the key and value of a single item of a bib entry.
+    #
+    # = Arguments
+    #
+    # [bib_item] A string containing a single bib item and its value
+    # [bib_variables] A hash containing bib variables and their values
+    #
+    # = Output
+    #
+    # The function returns the key and value of the bib item or +nil+ if the
+    # key or value could not be extracted.
+    #
+    # = Examples
+    #
+    #  doctest: Get the key and value of a simple bib item
+    #
+    #  >> bib_item = 'editor = "TextMate"'
+    #  >> key, value = LaTeX.bibitem_key_value(bib_item, {})
+    #  >> key
+    #  => 'editor'
+    #  >> value
+    #  => 'TextMate'
+    #
+    #  doctest: Get the key and value of a bib item containing a variable
+    #
+    #  >> bib_item = 'hulk = "Smash" # exclamation'
+    #  >> key, value = LaTeX.bibitem_key_value(bib_item,
+    #                                          { 'exclamation' => '!' })
+    #  >> key
+    #  => 'hulk'
+    #  >> value
+    #  => 'Smash!'
+    def bibitem_key_value(bib_item, bib_variables)
+      key, value = bib_item.split(/\s*=\s*(?=\{|"|\w)/)
+      return nil if value.nil?
+      value_parts = value.split(/(?<="|\}|\w)\s*#\s*(?="|\}|\w)/)
+      # Substitute variables and remove enclosing braces/quotation marks from
+      # constants
+      value_parts.map! do |part|
+        (part.match(/^(?:"|\{)/)).nil? ? "#{bib_variables[part]}" : part[1..-2]
+      end
+      [key.downcase, value_parts.join('')]
     end
 
     private
 
     def file?(filepath)
-      File.exist?(filepath) && !File.directory?(filepath)
+      !filepath.nil? && File.exist?(filepath) && !File.directory?(filepath)
     end
 
     # rubocop:disable Style/ClassVars
