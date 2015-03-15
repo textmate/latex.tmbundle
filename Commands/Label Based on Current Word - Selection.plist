@@ -8,43 +8,14 @@
 	<string>$3</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby18
-require ENV["TM_SUPPORT_PATH"] + "/lib/escape.rb"
-require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
-require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
-require ENV["TM_BUNDLE_SUPPORT"] + "/lib/latex.rb"
 
-phrase = STDIN.read.chomp
-embrace = phrase =~ /^\{(.*)\}$/
-phrase = $1 if embrace
+# -- Imports -------------------------------------------------------------------
 
-include LaTeX
-begin
-  items = LaTeX.labels
-  items = items.grep(/^#{Regexp.escape(phrase)}/) if phrase != ""
-  TextMate.exit_discard if items.empty?
-  if items.length &gt; 1 then
-    choice = TextMate::UI.menu(items)
-    TextMate.exit_discard if choice.nil?
-    choice = items[choice]
-  else
-    choice = items[0]
-  end
-  selection = choice.slice(/^[^%]+/).strip
-  if ENV['TM_SCOPE'].match(/label/) then
-    if embrace
-      print("\{#{e_sn selection}$0\}")
-    else
-      print(e_sn selection)
-    end
-  elsif selection.match(/^eq(n)?:/)
-    print("\\\\${1:eqref}\{#{e_sn selection}\}")
-  else
-    print("\\\\${1:ref}\{#{e_sn selection}\}")
-  end
-rescue RuntimeError =&gt; e
-  TextMate.exit_show_tool_tip(e.message)
-end
-</string>
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
+
+# -- Main ----------------------------------------------------------------------
+
+insert_label(STDIN.read)</string>
 	<key>fallbackInput</key>
 	<string>word</string>
 	<key>input</key>
@@ -58,7 +29,7 @@ end
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>
-	<string>snippet</string>
+	<string>text</string>
 	<key>outputLocation</key>
 	<string>replaceInput</string>
 	<key>scope</key>
