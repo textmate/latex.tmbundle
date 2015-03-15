@@ -524,19 +524,57 @@ module LaTeX
     #  => 'hulk'
     #  >> value
     #  => 'Smash!'
+    #
+    #  doctest: Get the key and value of a bib item containing a number sign
+    #
+    #  >> variables = { 'number_sign' => '#' }
+    #  >> bib_item = 'item = "# number"# number_sign # {oh a {#} {sign}#}'
+    #  >> _, item = LaTeX.bibitem_key_value(bib_item, variables)
+    #  >> item
+    #  => '# number#oh a {#} {sign}#'
     def bibitem_key_value(bib_item, bib_variables)
       key, value = bib_item.split(/\s*=\s*(?=\{|"|\w)/)
       return nil if value.nil?
-      value_parts = value.split(/(?<="|\}|\w)\s*#\s*(?="|\}|\w)/)
-      # Substitute variables and remove enclosing braces/quotation marks from
-      # constants
-      value_parts.map! do |part|
-        (part.match(/^(?:"|\{)/)).nil? ? "#{bib_variables[part]}" : part[1..-2]
-      end
-      [key.downcase, value_parts.join('')]
+      [key.downcase, bib_item_value(value, bib_variables)]
     end
 
     private
+
+    def bib_item_value(string, bib_variables)
+      scanner, value = [StringScanner.new(string), '']
+      while first = scanner.getch # rubocop:disable Lint/AssignmentInCondition
+        part = if first == '"' then consume_value_quotes(scanner)
+               elsif first == '{' then consume_value_brackets(scanner)
+               else consume_value_variable(scanner, first, bib_variables)
+               end
+        scanner.scan(/\s*#\s*/m)
+        value += part unless part.nil?
+      end
+      value
+    end
+
+    def consume_value_quotes(scanner)
+      scanned = scanner.scan(/(?:[^"]|(?<=\\)")+"/)
+      scanned.nil? ? nil : scanned[0..-2]
+    end
+
+    def consume_value_brackets(scanner)
+      missing_right_brackets, value = [1, '']
+      while missing_right_brackets > 0
+        scanned = scanner.scan(/(?:[^{}]|(?<=\\)[{}])+/)
+        return nil if scanned.nil?
+        value += scanned
+        bracket = scanner.getch
+        missing_right_brackets += (bracket == '{') ? 1 : -1
+        value += bracket unless missing_right_brackets <= 0
+      end
+      value
+    end
+
+    def consume_value_variable(scanner, first_char, variables)
+      scanned = scanner.scan(/[\w]*/)
+      scanned.nil? ? nil : "#{variables[first_char + scanned]}"
+    end
 
     def file?(filepath)
       !filepath.nil? && File.exist?(filepath) && !File.directory?(filepath)
