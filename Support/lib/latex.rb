@@ -669,7 +669,7 @@ module LaTeX
     # Creates a FileScanner object and uses it to read all the citations from
     # the document. Returns a list of Citation objects.
     def self.cite_scan(root)
-      citation_list = []
+      citations = []
       scanner = FileScanner.new(root)
       bibitem_regexp = /^[^%]*\\bibitem(?:\[[^\]]*\])?\{([^\}]*)\}(.*)/
       # We ignore bibliography files located on Windows drives by not matching
@@ -677,29 +677,22 @@ module LaTeX
       biblio_regexp = /^[^%]*\\bibliography\s*\{(?![a-zA-Z]:)([^\}]*)\}/
       addbib_regexp = /^[^%]*\\addbibresource\s*\{(?![a-zA-Z]:)([^\}]*)\}/
       scanner.extractors[bibitem_regexp] = proc do |_, _, groups, _|
-        citation_list << Citation.new('citekey' => groups[0],
-                                      'cite_data' => groups[1])
+        citations << Citation.new('citekey' => groups[0],
+                                  'cite_data' => groups[1])
       end
-      scanner.extractors[biblio_regexp] = proc do |_, _, groups, _|
-        groups[0].split(',').each do |it|
-          file = LaTeX.find_file(it.strip, 'bib', File.dirname(root))
-          fail "Could not locate any file named '#{it}'" if file.nil?
-          citation_list += LaTeX.parse_bibfile(file)
-          citation_list += LaTeX.parse_bibfile(ENV['TM_LATEX_BIB']) unless
+      bib_extractor = proc do |_, _, groups, _|
+        groups[0].split(',').each do |bibfile|
+          file = LaTeX.find_file(bibfile.strip, 'bib', File.dirname(root))
+          fail "Could not locate any file named '#{bibfile}'" if file.nil?
+          citations += LaTeX.parse_bibfile(file)
+          citations += LaTeX.parse_bibfile(ENV['TM_LATEX_BIB']) unless
             ENV['TM_LATEX_BIB'].nil?
         end
       end
-      scanner.extractors[addbib_regexp] = proc do |_, _, groups, _|
-        groups[0].split(',').each do |it|
-          file = LaTeX.find_file(it.strip, 'bib', File.dirname(root))
-          fail "Could not locate any file named '#{it}'" if file.nil?
-          citation_list += LaTeX.parse_bibfile(file)
-          citation_list += LaTeX.parse_bibfile(
-            ENV['TM_LATEX_BIB']) unless ENV['TM_LATEX_BIB'].nil?
-        end
-      end
+      scanner.extractors[biblio_regexp] = bib_extractor
+      scanner.extractors[addbib_regexp] = bib_extractor
       scanner.recursive_scan
-      citation_list
+      citations
     end
 
     private
