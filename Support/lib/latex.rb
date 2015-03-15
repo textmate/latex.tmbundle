@@ -66,16 +66,13 @@ module LaTeX
   def self.master(filepath)
     return nil if filepath.nil?
     master = Pathname.new(filepath).cleanpath
-    opts = options(master)
-    iter = 0
-    while opts.key?('root') && iter < 10
-      new_master = (master.parent + Pathname.new(opts['root'])).cleanpath
-      break if new_master == master
-      master = new_master
+    10.times do
       opts = options(master)
-      iter += 1
+      return master.to_s unless opts.key?('root')
+      new_master = (master.parent + Pathname.new(opts['root'])).cleanpath
+      return master.to_s if new_master == master
+      master = new_master
     end
-    master.to_s
   end
 
   # Implements general methods that give information about the LaTeX document.
