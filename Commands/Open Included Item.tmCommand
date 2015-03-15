@@ -5,42 +5,36 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby18
+	<string>#!/usr/bin/ruby
 
-require "#{ENV['TM_SUPPORT_PATH']}/lib/escape.rb"
-require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/latex.rb"
+# -- Imports -------------------------------------------------------------------
 
-master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
 
-Dir.chdir(File.dirname(master)) unless master.nil?
+# -- Main ----------------------------------------------------------------------
 
-input = ENV['TM_SELECTED_TEXT'] || ENV['TM_CURRENT_LINE']
-options = input.scan(/\\(?:include|input|includegraphics|lstinputlisting)(?:%.*\n[ \t]*)?(?&gt;\[.*?\])?(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/m)
-if options.empty?
-	print "Did not find any appropriate item to open in #{ENV['TM_SELECTED_TEXT'] ? "selection" : "current line" }"
-else
-  options[0].each{|el| el.gsub!(/(^\")?(\"$)?/, '')}
-  filepath = `kpsewhich #{e_sh options[0]}`.chomp
-  if filepath.empty?
-    print "Could not locate file for path `#{options[0]}'"
-  else
-    `open #{e_sh filepath}`
-  end
-end
-</string>
+open_included_item</string>
 	<key>fallbackInput</key>
 	<string>line</string>
 	<key>input</key>
 	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string></string>
 	<key>name</key>
 	<string>Open Included Item</string>
-	<key>output</key>
-	<string>showAsTooltip</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>discard</string>
 	<key>scope</key>
 	<string>text.tex.latex meta.include</string>
 	<key>uuid</key>
 	<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>

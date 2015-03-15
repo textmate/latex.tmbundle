@@ -207,3 +207,63 @@ def insert_label(input)
 rescue RuntimeError => e
   TextMate.exit_show_tool_tip(e.message)
 end
+
+# ======================
+# = Open Included Item =
+# ======================
+
+# Get the location of an included item.
+#
+# = Arguments
+#
+# [input] The text that should be searched for an included item
+#
+# = Output
+#
+# The function returns a string that contains the location of an included item.
+# If no location was found, then it returns an empty string
+def locate_included_item(input)
+  environment = '\\\\(?:include|input|includegraphics|lstinputlisting)'
+  comment = '(?:%.*\n[ \t]*)?'
+  option = '(?>\[.*?\])?'
+  file = '(?>\{(.*?)\})'
+  match = input.scan(/#{environment}#{comment}#{option}#{comment}#{file}/m)
+  match.empty? ? '' : match.pop.pop.gsub(/(^\")?(\"$)?/, '')
+end
+
+# Get the path of the current master file.
+#
+# = Output
+#
+# A string containing the location of the master file.
+def masterfile
+  LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
+end
+
+# Get the currently selected text in TextMate
+#
+# If no text is selected, then content of the current line will be returned.
+#
+# = Output
+#
+# The function a string containing the current selection. If the selection is
+# empty, then it returns the content current line.
+def selection_or_line
+  ENV['TM_SELECTED_TEXT'] || ENV['TM_CURRENT_LINE']
+end
+
+# Open an included item in a tex file.
+#
+# For example: If the current line contains `\input{included_item}`, then this
+# command will open the file with the filename +included_item+.
+def open_included_item
+  master, input = masterfile, selection_or_line
+  Dir.chdir(File.dirname(master)) unless master.nil?
+  location = locate_included_item(input)
+  TextMate.exit_show_tool_tip('Did not find any appropriate item to open in ' \
+                              "#{input}") if location.empty?
+  filepath = `kpsewhich #{e_sh location}`.chomp
+  TextMate.exit_show_tool_tip('Could not locate file for path ' \
+                              "`#{location}'") if filepath.empty?
+  `open #{e_sh filepath}`
+end
