@@ -6,9 +6,30 @@ require 'pathname'
 # Authors:: Charilaos Skiadas, René Schwaiger
 # Date::    2014-09-28
 module LaTeX
-  # parse any %!TEX options in the first 20 lines of the file
-  # Only use the first 20 lines for compatibility with TeXShop
-  # returns a hash of the results
+  # Parse any %!TEX options in the first 20 lines of the file.
+  #
+  # We use the first 20 lines for compatibility with TeXShop.
+  #
+  # = Arguments
+  #
+  # [filepath] The path of the file that should be parsed.
+  #
+  # = Output
+  #
+  # This function returns a hash containing the tex directives contained in the
+  # given file.
+  #
+  # = Examples
+  #
+  # doctest: Parse the tex directives in 'xelatex.tex'
+  #
+  # >> LaTeX.options('Tests/TeX/xelatex.tex')
+  # => {"TS-program"=>"xelatex"}
+  #
+  # doctest: Parse the tex directives in 'packages_input1.tex'
+  #
+  # >> LaTeX.options('Tests/TeX/input/packages_input1.tex')
+  # => {"root"=>"./packages_input2.tex"}
   def self.options(filepath)
     opts = {}
     File.foreach(filepath).first(20).each do |line|
