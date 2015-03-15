@@ -78,8 +78,31 @@ module LaTeX
   # Implements general methods that give information about the LaTeX document.
   # Most of these commands recurse into \included files.
   class <<self
-    # Returns an array of the label names. If you want actual Label objects,
-    # then use FileScanner.label_scan
+    # Get an array containing the label names of the current master file.
+    #
+    # If you want actual Label objects, then use +FileScanner.label_scan+.
+    # The path to the master file has to be set via
+    #
+    #   - +ENV['TM_LATEX_MASTER']+ or,
+    #   - +ENV['TM_FILEPATH']+.
+    #
+    # = Output
+    #
+    # The function returns a sorted list of label names.
+    #
+    # = Examples
+    #
+    # doctest: Get the labels of the file +references.tex+.
+    #
+    # >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
+    # >> LaTeX.labels
+    # => ['sec:first_section', 'sec:second_section', 'table:a_table_label']
+    #
+    # doctest: Get the labels of the file +xelatex.tex+.
+    #
+    # >> ENV['TM_LATEX_MASTER'] = 'Tests/TeX/xelatex.tex'
+    # >> LaTeX.labels
+    # => []
     def labels
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
       FileScanner.label_scan(master_file).map(&:label).sort
@@ -250,7 +273,7 @@ module LaTeX
       fail 'No root specified!' if @root.nil?
       fail "Could not find file #{@root}" unless File.exist?(@root)
       text = File.read(@root)
-      text.each_with_index do |line, index|
+      text.split.each_with_index do |line, index|
         includes.each_pair do |regexp, block|
           line.scan(regexp).each do |m|
             newfiles = block.call(m)
