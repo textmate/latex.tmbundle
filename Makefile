@@ -53,7 +53,7 @@ checkstyle_python:
 	flake8 $(BINARY_DIRECTORY)/*.py $(LIBRARY_DIRECTORY)/*.py
 
 checkstyle_ruby:
-	rubocop Support/lib/format_table.rb
+	rubocop Support/lib/format_table.rb Support/lib/latex.rb
 
 # ================
 # = Manual Tests =
