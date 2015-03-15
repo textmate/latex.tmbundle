@@ -1,8 +1,9 @@
-#!/usr/bin/env ruby18
-require ENV["TM_BUNDLE_SUPPORT"] + "/lib/latex.rb"
-phrase = STDIN.read.chomp
-include LaTeX
-items = LaTeX.citekeys
-items = items.grep(/#{phrase}/) if phrase != ""
-exit if items.empty?
-puts items.join("\n")
+#!/usr/bin/ruby
+
+# -- Imports -------------------------------------------------------------------
+
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/latex.rb'
+
+# -- Main ----------------------------------------------------------------------
+
+puts(LaTeX.citekeys.join("\n"))
