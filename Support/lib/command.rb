@@ -129,9 +129,7 @@ end
 #  >> replace_input
 #  => false
 def citations(input)
-  items = LaTeX.citations.map do |cite|
-    cite.citekey + (cite.description.empty? ? '' : " — #{cite.description}")
-  end
+  items = LaTeX.citations.map(&:to_s)
   filter_items_replace_input(items, input)
 end
 

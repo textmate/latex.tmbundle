@@ -962,5 +962,22 @@ module LaTeX
     def citekey
       @hash['citekey']
     end
+
+    # Return the string representation of a citation.
+    #
+    # = Output
+    #
+    # A string representing the current citation
+    #
+    # = Examples
+    #
+    # doctest: Get the string representation of a simple citation
+    #
+    #  >> Citation.new('citekey' => 'key', 'author' => 'Author',
+    #                  'title' => 'The Title').to_s
+    #  => 'key — Author, The Title'
+    def to_s
+      citekey + (description.empty? ? '' : " — #{description}")
+    end
   end
 end
