@@ -301,13 +301,35 @@ end
 # = Show Label As Tool Tip =
 # ==========================
 
+# Get the text surrounding a certain label.
+#
+# = Arguments
+#
+# [label] The label for which we want to get the surrounding text
+#
+# = Output
+#
+# This function returns a string containing the text around the given label.
+def label_context(label)
+  # Try to get as much context as possible
+  label_surrounding = [10, 5, 2, 1, 0].each do |characters|
+    context = label.context(characters, true)
+    return context unless context.nil?
+  end
+end
+
+# Print the text surrounding a label referenced in the string +input+.
+#
+# = Arguments
+#
+# [input] A string that is checked for references
 def show_label_as_tooltip(input)
   TextMate.exit_show_tool_tip('Empty input! Please select a (partial) label' \
                               ' reference.') if input.empty?
   labels = LaTeX.labels.find_all { |label| label.label.match(/#{input}/) }
   TextMate.exit_show_tool_tip('No label found matching ' \
                               "“#{input}”") if labels.empty?
-  print(labels[0].context(10, true))
+  print(label_context(labels[0]))
 rescue RuntimeError => e
   TextMate.exit_insert_text(e.message)
 end
