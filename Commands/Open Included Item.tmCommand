@@ -31,7 +31,7 @@ open_included_item</string>
 	<key>outputLocation</key>
 	<string>discard</string>
 	<key>scope</key>
-	<string>text.tex.latex meta.include</string>
+	<string>text.tex.latex meta.include, text.tex.latex meta.function.environment.general.latex meta.group.braces.tex</string>
 	<key>uuid</key>
 	<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
 	<key>version</key>
