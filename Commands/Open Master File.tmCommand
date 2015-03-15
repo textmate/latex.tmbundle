@@ -5,19 +5,15 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby18
+	<string>#!/usr/bin/ruby
 
-require "#{ENV['TM_SUPPORT_PATH']}/lib/escape.rb"
-require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/latex.rb"
+# -- Imports -------------------------------------------------------------------
 
-master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
 
-if master
-  `open -a TextMate #{e_sh master}`
-else
-  echo 'No master file was defined.'
-end
-</string>
+# -- Main ----------------------------------------------------------------------
+
+open_master_file</string>
 	<key>fallbackInput</key>
 	<string>line</string>
 	<key>input</key>

@@ -280,3 +280,15 @@ def open_included_item
                               "#{input}") if location.empty?
   open_file(location)
 end
+
+# ====================
+# = Open Master File =
+# ====================
+
+# Open the current master file in TextMate
+def open_master_file
+  master = masterfile
+  if master then `open -a TextMate #{e_sh master}`
+  else print('No master file was defined.')
+  end
+end
