@@ -784,18 +784,66 @@ module LaTeX
     end
   end
 
+  # A class that represents a label.
+  #
+  # = Accessors
+  #
+  # [file] The file where the label is located
+  # [line] The line where the label is located
+  # [label] The text of the label
+  # [contents] The whole content of the file around the label
   class Label
     attr_accessor :file, :line, :label, :contents
 
+    # Initialize a new label
+    #
+    # = Arguments
+    #
+    # [hash] A hash containing initialization values for the accessors of the
+    #        label.
+    #
+    # = Examples
+    #
+    #  doctest: Create a simple label
+    #
+    #  >> label = Label.new(:file => 'test.tex', :line => 1, :label => 'label',
+    #                       :contents => 'Text around \label{label}.')
     def initialize(hash)
       hash.each { |key, value| send("#{key}=", value) }
     end
 
+    # Return the string representation of a label.
+    #
+    # = Output
+    #
+    # A string representing the current label
+    #
+    # = Examples
+    #
+    # doctest: Get the string representation of a simple label
+    #
+    #  >> Label.new(:label => 'label_text').to_s
+    #  => 'label_text'
     def to_s
       label
     end
 
-    # Returns the text around the label.
+    # Return the text around the label.
+    #
+    # = Output
+    #
+    # A string showing the text around the label.
+    #
+    # = Examples
+    #
+    #  doctest: Get the text around a label
+    #
+    #  >> label = Label.new(:contents => '
+    #   \section{Second Section} % (fold)
+    #     \label{sec:second_section}
+    #   % section second_section (end)', :label => 'sec:second_section')
+    #  >> label.context.to_s
+    #  => 'econdSection}%(fold)\label{sec:second_section}%sectionsecond_secti'
     def context(chars = 40, countlines = false)
       if countlines
         return contents.match(
