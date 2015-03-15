@@ -250,8 +250,45 @@ module LaTeX
       find_file_kpsewhich(filename, extension, relative)
     end
 
-    # Processes the .bib file with title +file+, and returns an array of the
-    # Citation objects.
+    # Processes a bib file and return an array of citation objects.
+    #
+    # = Arguments
+    #
+    # [file] The path to the bib file that should be parsed
+    #
+    # = Output
+    #
+    # The function returns a list of citation objects.
+    #
+    # = Examples
+    #
+    #  doctest: Parse the file 'references.bib'
+    #
+    #  >> references = LaTeX.parse_bibfile('Tests/TeX/references.bib')
+    #  >> references.length
+    #  => 1
+    #  >> citation = references[0]
+    #  >> citation.author
+    #  => '"Deltron 3030"'
+    #  >> citation.title
+    #  => '"Battlesong"'
+    #
+    #  doctest: Parse the file 'more_references.bib'
+    #
+    #  >> references = LaTeX.parse_bibfile('Tests/TeX/more_references.bib')
+    #  >> references.length
+    #  => 3
+    #  >> citation = references[0]
+    #  >> citation.author
+    #  => 'Robertson, Venetia Laura Delano'
+    #  >> citation.citekey
+    #  => 'robertson2013ponies'
+    #
+    #  >> citation = references[2]
+    #  >> citation.author
+    #  => 'Hada, Erika'
+    #  >> citation.title
+    #  => 'My Little Pony'
     def parse_bibfile(file)
       fail "Could not locate file: #{file}" if file.nil? || !File.exist?(file)
       entries = File.read(file).scan(/^\s*@[^\{]*\{.*?(?=\n[ \t]*@|\z)/m)
