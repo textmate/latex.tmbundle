@@ -6,11 +6,6 @@ require 'pathname'
 # Authors:: Charilaos Skiadas, René Schwaiger
 # Date::    2014-09-28
 module LaTeX
-  # Simple conversion of bib field names to a simpler form
-  def e_var(name)
-    name.gsub(/[^a-zA-Z0-9\-_]/, '').gsub(/\-/, '_')
-  end
-
   # parse any %!TEX options in the first 20 lines of the file
   # Only use the first 20 lines for compatibility with TeXShop
   # returns a hash of the results
