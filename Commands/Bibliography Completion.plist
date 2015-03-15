@@ -8,13 +8,13 @@
 	<string>#!/usr/bin/env ruby18
 require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
 require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
-require ENV["TM_BUNDLE_SUPPORT"] + "/lib/LaTeXUtils.rb"
+require ENV["TM_BUNDLE_SUPPORT"] + "/lib/latex.rb"
 phrase = STDIN.read.chomp
 include LaTeX
 begin
 	items = LaTeX.get_citations.map{|i| i.citekey + "   % "+i.description}
   if ((phrase != "") &amp;&amp; (phrase != "{}"))
-  	items = items.grep(/#{phrase}/) 
+  	items = items.grep(/#{phrase}/)
   end
   TextMate.exit_discard if items.empty?
   if items.length &gt; 1

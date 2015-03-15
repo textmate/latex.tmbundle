@@ -9,19 +9,19 @@
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/escape.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
-require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/LaTeXUtils.rb"
+require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/latex.rb"
 html_header "LaTeX Document Outline", "LaTeX"
 REGEX = /\\(part|chapter|section|subsection|subsubsection|paragraph|subparagraph)\*?(?:%.*\n[ \t]*)?(?:(?&gt;\[(.*?)\])|\{([^{}]*(?:\{[^}]*\}[^}]*?)*)\})/
 INCLUDE_REGEX = /\\(?:input|include)(?:%.*\n[ \t]*)?(?&gt;\{(.*?)\})/
 NON_COMMENT_REGEX = /^([^%]+$|(?:[^%]|\\%)*)(?=%|$)/
 class String
   def adjust_end(new_piece)
-    master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']) 
+    master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
     new_form = self
     unless master == self
       masterdir = File.dirname(master)
       new_form = File.expand_path(new_piece, masterdir)
-    else 
+    else
       new_form = self.sub(/[^\/]*$/,new_piece)
     end
     new_form += ".tex" unless new_form.match(/\.tex$/) or File.exists?(new_form)

@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby18
-require ENV["TM_BUNDLE_SUPPORT"] + "/lib/LaTeXUtils.rb"
+require ENV["TM_BUNDLE_SUPPORT"] + "/lib/latex.rb"
 phrase = ENV['TM_CURRENT_WORD']
 include LaTeX
 items = LaTeX.get_labels
