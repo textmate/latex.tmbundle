@@ -26,7 +26,7 @@ begin
   end
   selection = choice.slice(/^[^%]+/).strip
   if ENV['TM_SCOPE'].match(/citation/) then
-    print selection
+    if phrase == "{}" then print "{#{selection}}" else print selection end
   else
     TextMate.exit_insert_snippet("\\\\${1:cite}\{#{selection}\}")
   end
