@@ -80,6 +80,18 @@ def output_selection(selection, input, replace_input, scope = 'citation')
   end
 end
 
+# ======================
+# = Command Completion =
+# ======================
+
+# Insert a command based on the current word into the document.
+def command_completion
+  completions = `"#{ENV['TM_BUNDLE_SUPPORT']}"/bin/LatexCommandCompletions.rb`
+  print(menu_choice_exit_if_empty(completions.split("\n")))
+rescue RuntimeError => e
+  TextMate.exit_show_tool_tip(e.message)
+end
+
 # =========================================
 # = Insert Citation Based On Current Word =
 # =========================================

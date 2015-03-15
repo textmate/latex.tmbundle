@@ -10,25 +10,14 @@
 	<string>^([^:]*):([^:]*):(.*)$</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby18
-require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
-require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
-phrase = STDIN.read.chomp
-# include LaTeX
-begin
-  items = `"#{ENV['TM_BUNDLE_SUPPORT']}"/bin/LatexCommandCompletions.rb`.split("\n")
-  TextMate.exit_discard if items.empty?
-  if items.length &gt; 1 then
-    choice = TextMate::UI.menu(items)
-    TextMate.exit_discard if choice.nil?
-    choice = items[choice]
-  else
-    choice = items[0]
-  end
-  print choice
-rescue RuntimeError =&gt; e
-  TextMate.exit_show_tool_tip(e.message)
-end
-</string>
+
+# -- Imports -------------------------------------------------------------------
+
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
+
+# -- Main ----------------------------------------------------------------------
+
+command_completion()</string>
 	<key>fallbackInput</key>
 	<string>word</string>
 	<key>fileCaptureRegister</key>
