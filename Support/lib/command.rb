@@ -149,6 +149,49 @@ rescue RuntimeError => e
   TextMate.exit_show_tool_tip(e.message)
 end
 
+# ===================================
+# = Insert Citation (Ref-TeX Style) =
+# ===================================
+
+# Display a menu that lets the user choose a certain cite environment.
+#
+# This function exits if none of the cite environments was chosen.
+#
+# = Output
+#
+# The function returns the chosen environment.
+def choose_cite_environment
+  items = ['c:  \\cite',
+           't:  \\citet', '    \\citet*',
+           'p:  \\citep', '    \\citep*',
+           'e:  \\citep[e.g.]',
+           's:  \\citep[see]',
+           'a:  \\citeauthor', '    \\citeauthor*',
+           'y:  \\citeyear',
+           'r:  \\citeyearpar',
+           'f:  \\footcite']
+  menu_choice_exit_if_empty(items).gsub(/.*\\/, '')
+end
+
+# Insert an “extended” citation into a document based on the given input.
+#
+# = Arguments
+#
+# [input] A string used to filter the possible citations for the current
+#         document
+def insert_reftex_citation(input)
+  if ENV['TM_SCOPE'].match(/citation/) then insert_citation(input)
+  else
+    cite_environment = choose_cite_environment
+    citations, replace_input = citations(input)
+    citation = menu_choice_exit_if_empty(citations).slice(/^[^\s]+/)
+    TextMate.exit_insert_snippet("#{replace_input ? '' : input}" \
+      "\\#{cite_environment}${1:[$2]}\{#{citation}$3\}$0")
+  end
+rescue RuntimeError => e
+  TextMate.exit_insert_text(e.message)
+end
+
 # ======================================
 # = Insert Label Based On Current Word =
 # ======================================
