@@ -39,9 +39,30 @@ module LaTeX
     opts
   end
 
-  # Returns the root file for the given filepath
-  # If no master exists, return the given filepath
-  # Stop searching after 10 iterations, in case of loop
+  # Returns the root/master file for the given filepath.
+  #
+  # If no master exists, then this function returns the given filepath. We stop
+  # searching after 10 iterations, in case of a loop.
+  #
+  # = Arguments
+  #
+  # [filepath] The path of the file for which we want to determine the master
+  #
+  # = Output
+  #
+  # The function returns the path of the master file
+  #
+  # = Examples
+  #
+  # doctest: Determine the master document of the file +/packages_input1.tex+
+  #
+  # >> LaTeX.master('Tests/TeX/input/packages_input1.tex')
+  # => 'Tests/TeX/packages.tex'
+  #
+  # doctest: Determine the master document of the file +/xelatex.tex+
+  #
+  # >> LaTeX.master('Tests/TeX/xelatex.tex')
+  # => 'Tests/TeX/xelatex.tex'
   def self.master(filepath)
     return nil if filepath.nil?
     master = Pathname.new(filepath).cleanpath
