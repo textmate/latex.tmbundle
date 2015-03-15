@@ -137,6 +137,12 @@ module LaTeX
     #  >> first_cite = citations[0]
     #  >> first_cite['title']
     #  => '"Battlesong"'
+    #
+    #  doctest: Get the citations of the file 'references.tex'.
+    #
+    #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
+    #  >> LaTeX.citations.length
+    #  => 5
     def citations
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
       FileScanner.cite_scan(master_file).sort_by(&:citekey)
