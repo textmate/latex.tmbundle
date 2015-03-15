@@ -93,7 +93,8 @@ module LaTeX
     #
     #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
     #  >> LaTeX.labels
-    #  => ['sec:first_section', 'sec:second_section', 'table:a_table_label']
+    #  => ["sec:first_section", "sec:included_section",
+    #      "sec:second_section", "table:a_table_label"]
     #
     #  doctest: Get the labels of the file 'xelatex.tex'.
     #

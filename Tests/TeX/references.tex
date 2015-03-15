@@ -1,5 +1,8 @@
 \documentclass{article}
 \usepackage{luacode}
+\usepackage[style=alphabetic, backend=biber]{biblatex}
+    \addbibresource{references.bib}
+    \addbibresource{more_references.bib}
 
 \begin{document}
 
@@ -25,4 +28,12 @@ Super awesome text.
     \label{table:a_table_label}
 \end{table}
 
+\input{input/references_input}
+
+\begin{thebibliography}{9}
+    \bibitem{embedded_bibitem}
+      Author of embedded bib-item,
+      Description of embedded bib-item.
+      2015.
+\end{thebibliography}
 \end{document}
