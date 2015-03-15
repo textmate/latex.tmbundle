@@ -840,9 +840,17 @@ module LaTeX
 
     # Return the text around the label.
     #
+    # = Arguments
+    #
+    # [chars] A number that specifies how much of the surrounding text should
+    #         be returned.
+    # [countlines] A boolean value that specifies if +chars+ is the number of
+    #              characters or the number of lines around the label that
+    #              should be matched.
+    #
     # = Output
     #
-    # A string showing the text around the label.
+    # The function returns a string containing the text around the label.
     #
     # = Examples
     #
