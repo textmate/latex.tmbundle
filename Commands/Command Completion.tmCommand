@@ -35,17 +35,25 @@ end
 	<string>1</string>
 	<key>input</key>
 	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string>~</string>
 	<key>lineCaptureRegister</key>
 	<string>2</string>
 	<key>name</key>
 	<string>Command Completion</string>
-	<key>output</key>
-	<string>replaceSelectedText</string>
+	<key>outputCaret</key>
+	<string>heuristic</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
 	<key>scope</key>
 	<string>text.tex.latex meta.space-after-command.latex, text.tex.latex support.function.general.tex</string>
 	<key>uuid</key>
 	<string>97FDB90C-2CEE-439E-8B01-F892B4ED5E5D</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
