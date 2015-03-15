@@ -200,7 +200,8 @@ end
 #
 # [input] A string used to filter the possible labels for the current document
 def insert_label(input)
-  menu_items, replace_input = filter_items_replace_input(LaTeX.labels, input)
+  menu_items, replace_input = filter_items_replace_input(LaTeX.label_names,
+                                                         input)
   selection = menu_choice_exit_if_empty(menu_items)
   # rubocop:disable Lint/UselessAssignment
   output_selection(selection, input, replace_input, scope = 'label')

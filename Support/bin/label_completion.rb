@@ -6,4 +6,4 @@ require ENV['TM_BUNDLE_SUPPORT'] + '/lib/latex.rb'
 
 # -- Main ----------------------------------------------------------------------
 
-puts(LaTeX.labels.join("\n"))
+puts(LaTeX.label_names.join("\n"))

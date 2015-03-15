@@ -77,11 +77,23 @@ module LaTeX
   # Implements general methods that give information about the LaTeX document.
   # Most of these commands recurse into \included files.
   class <<self
-    # Get an array containing the label names of the current master file.
+    # Get an array containing the labels of the current master file.
     #
-    # If you want actual Label objects, then use +FileScanner.label_scan+.
-    # The path to the master file has to be set via the environment variable
-    # +TM_LATEX_MASTER+ or +TM_FILEPATH+.
+    # = Output
+    #
+    # The function returns a list of label objects.
+    #
+    # = Examples
+    #
+    #  >> ENV['TM_LATEX_MASTER'] = 'Tests/TeX/references.tex'
+    #  >> LaTeX.labels.length
+    #  => 4
+    def labels
+      master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
+      FileScanner.label_scan(master_file)
+    end
+
+    # Get an array containing the label names of the current master file.
     #
     # = Output
     #
@@ -92,18 +104,17 @@ module LaTeX
     #  doctest: Get the labels of the file 'references.tex'.
     #
     #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
-    #  >> LaTeX.labels
+    #  >> LaTeX.label_names
     #  => ["sec:first_section", "sec:included_section",
     #      "sec:second_section", "table:a_table_label"]
     #
     #  doctest: Get the labels of the file 'xelatex.tex'.
     #
     #  >> ENV['TM_LATEX_MASTER'] = 'Tests/TeX/xelatex.tex'
-    #  >> LaTeX.labels
+    #  >> LaTeX.label_names
     #  => []
-    def labels
-      master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-      FileScanner.label_scan(master_file).map(&:label).sort
+    def label_names
+      labels.map(&:label).sort
     end
 
     # Return an array of citation objects for the current tex file.
