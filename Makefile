@@ -32,6 +32,7 @@ export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib
+RUBY_FILES = Support/lib/format_table.rb Support/lib/latex.rb
 
 # -- Rules ---------------------------------------------------------------------
 
@@ -53,7 +54,7 @@ checkstyle_python:
 	flake8 $(BINARY_DIRECTORY)/*.py $(LIBRARY_DIRECTORY)/*.py
 
 checkstyle_ruby:
-	rubocop Support/lib/format_table.rb Support/lib/latex.rb
+	rubocop $(RUBY_FILES)
 
 # ================
 # = Manual Tests =
@@ -78,7 +79,7 @@ nosetests: checkstyle_python
 	nosetests --with-doctest $(LIBRARY_DIRECTORY)/*.py $(BINARY_DIRECTORY)/*.py
 
 rubydoctests: checkstyle_ruby
-	rubydoctest Support/lib/format_table.rb
+	rubydoctest $(RUBY_FILES)
 
 toxtests: checkstyle_python
 	tox
