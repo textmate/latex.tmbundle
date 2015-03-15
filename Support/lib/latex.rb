@@ -611,17 +611,15 @@ module LaTeX
     # then it is set as the +root+ file. Otherwise, it is used to read the
     # values of the three variables.
     def initialize(old_scanner = nil)
-      if old_scanner
-        if old_scanner.is_a?(String)
-          @root = old_scanner
-          set_defaults
-        else
-          @root = old_scanner.root
-          @includes = old_scanner.includes
-          @extractors = old_scanner.extractors
-        end
-      else
+      if old_scanner.nil?
         set_defaults
+      elsif old_scanner.is_a?(String)
+        @root = old_scanner
+        set_defaults
+      else
+        @root = old_scanner.root
+        @includes = old_scanner.includes
+        @extractors = old_scanner.extractors
       end
     end
 
