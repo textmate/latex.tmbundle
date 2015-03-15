@@ -855,7 +855,23 @@ module LaTeX
     end
   end
 
+  # A class that represents a citation.
+  #
+  # The class provides a hash like interface to access the different attributes
+  # of a citation.
   class Citation
+    # Create a new citation.
+    #
+    # = Arguments
+    #
+    # [hash] A hash containing the attributes that should be used to initialize
+    #        the citation.
+    #
+    # = Examples
+    #
+    #  doctest: Create a simple citation
+    #
+    #  >> Citation.new('author' => 'Some author', 'title' => 'A title' )
     def initialize(hash = {})
       @hash = {}
       hash.each_pair do |key, value|
@@ -863,37 +879,89 @@ module LaTeX
       end
     end
 
+    # Set an attribute of the citation.
+    #
+    # = Arguments
+    #
+    # [key] The name of the attribute
+    # [value] The value of the attribute
+    #
+    # = Examples
+    #
+    #  doctest: Add an attribute to a citation
+    #
+    #  >> citation = Citation.new
+    #  >> citation['author'] = 'Mabel'
     def []=(key, value)
       @hash[key.downcase] = value
     end
 
+    # Get an attribute of the citation
+    #
+    # = Arguments
+    #
+    # [key] The name of the attribute for which the value should be returned.
+    #
+    # = Examples
+    #
+    #  doctest: Get the attribute of a citation
+    #
+    #  >> citation = Citation.new('title' => 'Title Fight')
+    #  >> citation['title']
+    #  => 'Title Fight'
     def [](key)
       @hash[key.downcase]
     end
 
+    # Return the author of the citation
+    #
+    # = Examples
+    #
+    #  doctest: Get the author of a citation
+    #
+    #  >> Citation.new('author' => 'Defeater').author
+    #  => 'Defeater'
     def author
       @hash['author'] || @hash['editor']
     end
 
+    # Return the title of the citation
+    #
+    # = Examples
+    #
+    #  doctest: Get the title of a citation
+    #
+    #  >> Citation.new('title' => 'Empty Days & Sleepless Nights').title
+    #  => 'Empty Days & Sleepless Nights'
     def title
       @hash['title']
     end
 
+    # Return the description of the citation
+    #
+    # = Examples
+    #
+    #  doctest: Get the description of a citation
+    #
+    #  >> Citation.new('author' => 'Defeater',
+    #                  'title' => 'Empty Days & Sleepless Nights').description
+    #  => 'Defeater, Empty Days & Sleepless Nights'
+    #  >> Citation.new('cite_data' => 'Description').description
+    #  => 'Description'
     def description
       @hash['cite_data'] || "#{author}, #{title}"
     end
 
+    # Return the key of the citation
+    #
+    # = Examples
+    #
+    #  doctest: Get the key of a citation
+    #
+    #  >> Citation.new('citekey' => 'key_citation').citekey
+    #  => 'key_citation'
     def citekey
       @hash['citekey']
     end
   end
 end
-# Example of use:
-#
-# include LaTeX
-# # ar = FileScanner.cite_scan("/Users/haris/svnlocalrepos/repos/master.tex")
-# ar = FileScanner.cite_scan("/Users/haris/Desktop/testing/Morten/test2.tex")
-# puts ar.length
-# ar.each do |citation|
-#   puts citation.description
-# end
