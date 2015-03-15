@@ -665,19 +665,14 @@ module LaTeX
     # Creates a FileScanner object and uses it to read all the labels from the
     # document. Returns a list of Label objects.
     def self.label_scan(root)
-      # LaTeX.set_paths
       label_list = []
       scanner = FileScanner.new(root)
-      scanner.extractors[/.*?\[.*label=(.*?)\,.*\]/] =
-      proc do |filename, line, groups, text|
+      label_extractor = proc do |filename, line, groups, text|
         label_list << Label.new(:file => filename, :line => line,
                                 :label => groups[0], :contents => text)
       end
-      scanner.extractors[/^[^%]*\\label\{([^\}]*)\}/] =
-      proc do |filename, line, groups, text|
-        label_list << Label.new(:file => filename, :line => line,
-                                :label => groups[0], :contents => text)
-      end
+      scanner.extractors[/.*?\[.*label=(.*?)\,.*\]/] = label_extractor
+      scanner.extractors[/^[^%]*\\label\{([^\}]*)\}/] = label_extractor
       scanner.recursive_scan
       label_list
     end
