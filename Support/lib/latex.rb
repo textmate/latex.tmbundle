@@ -166,7 +166,7 @@ module LaTeX
     #  >> keys.member? 'embedded_bibitem'
     #  => true
     def citekeys
-      citations.map { |i| i['citekey'] }.uniq
+      citations.map(&:citekey).uniq
     end
 
     # Returns the path to the TeX binaries, or raises an exception if it can't
