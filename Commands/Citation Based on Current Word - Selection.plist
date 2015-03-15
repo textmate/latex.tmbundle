@@ -6,34 +6,14 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby18
-require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes.rb"
-require ENV["TM_SUPPORT_PATH"] + "/lib/ui.rb"
-require ENV["TM_BUNDLE_SUPPORT"] + "/lib/latex.rb"
-phrase = STDIN.read.chomp
-include LaTeX
-begin
-	items = LaTeX.citations.map{|i| i.citekey + "   % "+i.description}
-  if ((phrase != "") &amp;&amp; (phrase != "{}"))
-  	items = items.grep(/#{phrase}/)
-  end
-  TextMate.exit_discard if items.empty?
-  if items.length &gt; 1
-  	choice = TextMate::UI.menu(items)
-  	TextMate.exit_discard if choice.nil?
-  	choice = items[choice]
-  else
-    choice = items[0]
-  end
-  selection = choice.slice(/^[^%]+/).strip
-  if ENV['TM_SCOPE'].match(/citation/) then
-    if phrase == "{}" then print "{#{selection}}" else print selection end
-  else
-    TextMate.exit_insert_snippet("\\\\${1:cite}\{#{selection}\}")
-  end
-rescue RuntimeError =&gt; e
-  TextMate.exit_show_tool_tip(e.message)
-end
-</string>
+
+# -- Imports -------------------------------------------------------------------
+
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
+
+# -- Main ----------------------------------------------------------------------
+
+insert_citation(STDIN.read)</string>
 	<key>fallbackInput</key>
 	<string>word</string>
 	<key>input</key>
