@@ -669,33 +669,42 @@ module LaTeX
     # Creates a FileScanner object and uses it to read all the citations from
     # the document. Returns a list of Citation objects.
     def self.cite_scan(root)
-      citations = []
       scanner = FileScanner.new(root)
-      bibitem_regexp = /^[^%]*\\bibitem(?:\[[^\]]*\])?\{([^\}]*)\}(.*)/
-      # We ignore bibliography files located on Windows drives by not matching
-      # any path which starts with a single letter followed by a “:” e.g.: “c:”
-      biblio_regexp = /^[^%]*\\bibliography\s*\{(?![a-zA-Z]:)([^\}]*)\}/
-      addbib_regexp = /^[^%]*\\addbibresource\s*\{(?![a-zA-Z]:)([^\}]*)\}/
-      scanner.extractors[bibitem_regexp] = proc do |_, _, groups, _|
-        citations << Citation.new('citekey' => groups[0],
-                                  'cite_data' => groups[1])
+      class << scanner
+          attr_accessor :cites
       end
-      bib_extractor = proc do |_, _, groups, _|
-        groups[0].split(',').each do |bibfile|
-          file = LaTeX.find_file(bibfile.strip, 'bib', File.dirname(root))
-          fail "Could not locate any file named '#{bibfile}'" if file.nil?
-          citations += LaTeX.parse_bibfile(file)
-          citations += LaTeX.parse_bibfile(ENV['TM_LATEX_BIB']) unless
-            ENV['TM_LATEX_BIB'].nil?
-        end
-      end
-      scanner.extractors[biblio_regexp] = bib_extractor
-      scanner.extractors[addbib_regexp] = bib_extractor
+      scanner.cites = []
+      add_bibitem_scan(scanner)
+      add_bibliography_scan(scanner)
       scanner.recursive_scan
-      citations
+      scanner.cites
     end
 
     private
+
+    def self.add_bibitem_scan(scanner)
+      bibitem_regexp = /^[^%]*\\bibitem(?:\[[^\]]*\])?\{([^\}]*)\}(.*)/
+      scanner.extractors[bibitem_regexp] = proc do |_, _, groups, _|
+        scanner.cites << Citation.new('citekey' => groups[0],
+                                      'cite_data' => groups[1])
+      end
+    end
+
+    # rubocop:disable Metrics/AbcSize
+    def self.add_bibliography_scan(scanner)
+      # We ignore bibliography files located on Windows drives by not +matching+
+      # any path which starts with a single letter followed by a “:” e.g.: “c:”
+      regexes = [/^[^%]*\\bibliography\s*\{(?![a-zA-Z]:)([^\}]*)\}/,
+                 /^[^%]*\\addbibresource\s*\{(?![a-zA-Z]:)([^\}]*)\}/]
+      extractor = proc do |_, _, groups, _|
+        (groups[0].split(',') << ENV['TM_LATEX_BIB']).compact.each do |bib|
+          file = LaTeX.find_file(bib.strip, 'bib', File.dirname(scanner.root))
+          fail "Could not locate any file named '#{bib}'" if file.nil?
+          scanner.cites += LaTeX.parse_bibfile(file)
+        end
+      end
+      scanner.extractors.update(Hash[regexes.map { |reg| [reg, extractor] }])
+    end
 
     def inlcude_process_line(line, regex, block)
       line.scan(regex).each do |match|
