@@ -805,10 +805,6 @@ module LaTeX
           /.{#{chars / 2}}\\label\{#{label}\}.{#{chars / 2}}/)
       end
     end
-
-    def file_line_label
-      "#{file}:#{line}:#{label}"
-    end
   end
 
   class Citation
