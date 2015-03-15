@@ -595,35 +595,49 @@ module LaTeX
   end
 
   # A class implementing a recursive scanner.
-  # +root+ is the file to start the scanning from.
-  # +includes+ is a hash with keys regular expressions and values blocks of
-  #   code called when that expression matches. The block is passed the
-  #   matched groups in the kind of array returned by String#scan as argument,
-  #   and must return the full path to the file to be recursively scanned.
-  # +extractors+ is a similar hash, dealing with the bits of text to be
-  #   matched. The block is passed as arguments the current filename, the
-  #   current line number counting from 0, the matched groups in the kind
-  #   of array returned by String#scan and finally the entire file contents.
+  #
+  # = Accessors
+  #
+  # [root] The file where the scanning process starts
+  #
+  # [includes] A hash with regular expressions as keys and blocks of code as
+  #            values. The blocks are executed when the regex matches. The
+  #            block is passed the match as argument. It must must return the
+  #            full path to the file to be recursively scanned.
+  #
+  # [extractors] A hash similar to +includes+. It deals with the bits of text to
+  #              be matched. The block has the following arguments:
+  #              - the current filename,
+  #              - the current line number,
+  #              - the regex match and
+  #              - the content of the file.
   class FileScanner
     attr_accessor :root, :includes, :extractors
 
-    # Creates a new scanner object. If the argument +old_scanner+ is a String,
-    # then it is set as the +root+ file. Otherwise, it is used to read the
-    # values of the three variables.
-    def initialize(old_scanner = nil)
-      if old_scanner.nil?
+    # Create a new scanner object.
+    #
+    # If the argument +old_scanner+ is a string, then it is set as the +root+
+    # file. Otherwise the new scanner just copies the accessor values from the
+    # given scanner.
+    #
+    # = Arguments
+    #
+    # [scanner] The scanner which should be used as template for the new scanner
+    #           or a string, which specifies the +root+ for the new scanner.
+    def initialize(scanner = nil)
+      if scanner.nil?
         set_defaults
-      elsif old_scanner.is_a?(String)
-        @root = old_scanner
+      elsif scanner.is_a?(String)
+        @root = scanner
         set_defaults
       else
-        @root = old_scanner.root
-        @includes = old_scanner.includes
-        @extractors = old_scanner.extractors
+        @root = scanner.root
+        @includes = scanner.includes
+        @extractors = scanner.extractors
       end
     end
 
-    # Default values for the +includes+ hash.
+    # Set default values for the +includes+ and +extractors+ hash.
     def set_defaults
       @includes = {}
       # We ignore inputs and includes containing a hash since these are
@@ -638,7 +652,7 @@ module LaTeX
       @extractors = {}
     end
 
-    # Performs the recursive scanning.
+    # Perform the recursive scanning.
     def recursive_scan
       fail 'No root specified!' if @root.nil?
       fail "Could not find file #{@root}" unless File.exist?(@root)
@@ -651,8 +665,30 @@ module LaTeX
       end
     end
 
-    # Creates a FileScanner object and uses it to read all the labels from the
-    # document. Returns a list of Label objects.
+    # Get the labels of the file +root+ and all its included files.
+    #
+    # = Arguments
+    #
+    # [root] The file which should be searched for labels
+    #
+    # = Output
+    #
+    # The function returns a list of label objects.
+    #
+    # = Examples
+    #
+    #  doctest: Scan the file +xelatex.tex+ for labels
+    #
+    #  >> include LaTeX
+    #  >> FileScanner.label_scan('Tests/TeX/xelatex.tex')
+    #  => []
+    #
+    #  doctest: Scan the file +references.tex+ for labels
+    #
+    #  >> include LaTeX
+    #  >> labels = FileScanner.label_scan('Tests/TeX/references.tex')
+    #  >> labels.map(&:file).uniq.length
+    #  => 2
     def self.label_scan(root)
       label_list = []
       scanner = FileScanner.new(root)
@@ -666,8 +702,30 @@ module LaTeX
       label_list
     end
 
-    # Creates a FileScanner object and uses it to read all the citations from
-    # the document. Returns a list of Citation objects.
+    # Get the citations of the file +root+ and all its included files.
+    #
+    # = Arguments
+    #
+    # [root] The file which should be searched for citations
+    #
+    # = Output
+    #
+    # The function returns a list of citations objects.
+    #
+    # = Examples
+    #
+    #  doctest: Scan the file +packages.tex+ for citations
+    #
+    #  >> include LaTeX
+    #  >> FileScanner.label_scan('Tests/TeX/packages.tex')
+    #  => []
+    #
+    #  doctest: Scan the file +references.tex+ for citations
+    #
+    #  >> include LaTeX
+    #  >> cites = FileScanner.cite_scan('Tests/TeX/references.tex')
+    #  >> cites.map(&:author).uniq.length
+    #  => 5
     def self.cite_scan(root)
       scanner = FileScanner.new(root)
       class << scanner
