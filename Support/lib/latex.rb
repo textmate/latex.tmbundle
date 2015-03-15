@@ -86,7 +86,7 @@ module LaTeX
     end
 
     # Returns an array of the citation objects. If you only want the citekeys,
-    # use LaTeX.get_citekeys
+    # use LaTeX.citekeys
     def citations
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
       FileScanner.cite_scan(
@@ -94,7 +94,7 @@ module LaTeX
     end
 
     # Returns an array of the citekeys in the document.
-    def get_citekeys
+    def citekeys
       citations.map { |i| i['citekey'] }.uniq
     end
 
