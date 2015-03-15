@@ -643,21 +643,10 @@ module LaTeX
       fail 'No root specified!' if @root.nil?
       fail "Could not find file #{@root}" unless File.exist?(@root)
       text = File.read(@root)
-      text.split.each_with_index do |line, index|
-        includes.each_pair do |regexp, block|
-          line.scan(regexp).each do |m|
-            newfiles = block.call(m)
-            newfiles.each do |newfile|
-              scanner = FileScanner.new(self)
-              scanner.root = newfile.to_s
-              scanner.recursive_scan
-            end
-          end
-          extractors.each_pair do |extractor_regexp, extractor_block|
-            line.scan(extractor_regexp).each do |m|
-              extractor_block.call(root, index, m, text)
-            end
-          end
+      text.split.each_with_index do |line, line_number|
+        includes.each_pair do |regex, block|
+          inlcude_process_line(line, regex, block)
+          extractors_process_line(line, line_number, extractors, text)
         end
       end
     end
@@ -711,6 +700,27 @@ module LaTeX
       end
       scanner.recursive_scan
       citation_list
+    end
+
+    private
+
+    def inlcude_process_line(line, regex, block)
+      line.scan(regex).each do |match|
+        newfiles = block.call(match)
+        newfiles.each do |newfile|
+          scanner = FileScanner.new(self)
+          scanner.root = newfile.to_s
+          scanner.recursive_scan
+        end
+      end
+    end
+
+    def extractors_process_line(line, line_number, extractors, text)
+      extractors.each_pair do |extractor_regex, extractor_block|
+        line.scan(extractor_regex).each do |match|
+          extractor_block.call(root, line_number, match, text)
+        end
+      end
     end
   end
 
