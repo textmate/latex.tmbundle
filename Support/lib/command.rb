@@ -252,6 +252,22 @@ def selection_or_line
   ENV['TM_SELECTED_TEXT'] || ENV['TM_CURRENT_LINE']
 end
 
+# Open the file located at +location+.
+#
+# = Arguments
+#
+# [location] The path to the file that should be opened.
+def open_file(location)
+  filepath = `kpsewhich #{e_sh location}`.chomp
+  if filepath.empty?
+    possible_files = Dir["#{location}*"]
+    filepath = possible_files.pop unless possible_files.empty?
+  end
+  TextMate.exit_show_tool_tip('Could not locate file for path ' \
+                              "`#{location}'") if filepath.empty?
+  `open #{e_sh filepath}`
+end
+
 # Open an included item in a tex file.
 #
 # For example: If the current line contains `\input{included_item}`, then this
@@ -262,8 +278,5 @@ def open_included_item
   location = locate_included_item(input)
   TextMate.exit_show_tool_tip('Did not find any appropriate item to open in ' \
                               "#{input}") if location.empty?
-  filepath = `kpsewhich #{e_sh location}`.chomp
-  TextMate.exit_show_tool_tip('Could not locate file for path ' \
-                              "`#{location}'") if filepath.empty?
-  `open #{e_sh filepath}`
+  open_file(location)
 end
