@@ -199,12 +199,43 @@ module LaTeX
       fail 'The tex binaries cannot be located!'
     end
 
-    # Uses kpsewhich to locate the file with name +filename+ and +extension+.
-    # +relative+ determines an explicit path that should be included in the
-    # paths to look at when searching for the file. This will typically be the
-    # path to the root document.
-    # TODO: The following method should probably be simplified dramatically
-    # rubocop:disable Style/ClassVars
+    # Get the path for a certain file.
+    #
+    # = Arguments
+    #
+    # [filename] The name of the file we want to find
+    #
+    # [extension] The extension of the file we want to find.
+    #
+    # [relative] An explicit path that should be included in the
+    #            paths to look at when searching for the file. This will
+    #            typically be the path to the root document.
+    #
+    # = Output
+    #
+    # The function returns the filepath of the specified file or +nil+ if the
+    # file could not be found.
+    #
+    # = Examples
+    #
+    #  doctest: Get the location of the file 'packages_input1.tex'
+    #
+    #  >> filepath = LaTeX.find_file('input/packages_input1', 'tex',
+    #                                'Tests/TeX/')
+    #  >> filepath.end_with?('Tests/TeX/input/packages_input1.tex')
+    #  => true
+    #
+    #  doctest: Get the location of the file 'xelatex.tex'
+    #
+    #  >> filepath = LaTeX.find_file('xelatex.tex', 'tex', 'Tests/TeX/')
+    #  >> filepath.end_with?('Tests/TeX/xelatex.tex')
+    #  => true
+    #
+    #  doctest: Get the location of a file located in 'TEXINPUTS'
+    #
+    #  >> filepath = LaTeX.find_file('config/pdftexconfig', 'tex', '')
+    #  >> filepath.end_with?('config/pdftexconfig.tex')
+    #  => true
     def find_file(filename, extension, relative)
       filename.gsub!(/"/, '')
       filename.gsub!(/\.#{extension}$/, '')
