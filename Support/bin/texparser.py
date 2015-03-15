@@ -18,8 +18,9 @@ from pipes import quote as shellquote
 from subprocess import check_output, STDOUT
 from sys import version_info
 
-from lib.util import update_marks
 from lib.parsing import LaTexMkParser
+from lib.tex import encodings
+from lib.util import update_marks
 
 # -- Module Import ------------------------------------------------------------
 
@@ -144,9 +145,16 @@ if __name__ == '__main__':
             # Fail silently
             exit(0)
     else:
-        texparser = LaTexMkParser(open(logfile, encoding='latin_1'),
-                                  verbose=False, filename=texfile)
-        texparser.parse_stream()
+        # Depending on the error the tex engine might return a log file in a
+        # different encoding.
+        for encoding in encodings:
+            try:
+                texparser = LaTexMkParser(open(logfile, encoding=encoding),
+                                          verbose=False, filename=texfile)
+                texparser.parse_stream()
+                break
+            except UnicodeDecodeError:
+                continue
         # Sort marks by line number
         marks = sorted(texparser.marks, key=lambda marks: marks[1])
         update_marks(cachefile, marks)

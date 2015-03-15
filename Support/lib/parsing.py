@@ -21,6 +21,8 @@ try:
 except ImportError:
     from urllib import quote  # Python 2
 
+from tex import encodings
+
 # -- Module Import ------------------------------------------------------------
 
 PYTHON2 = version_info <= (3, 0)
@@ -121,7 +123,14 @@ class TexParser(object):
 
         """
         def to_utf8(string):
-            return string.decode('latin_1') if PYTHON2 else string
+            if PYTHON2:
+                for encoding in encodings:
+                    try:
+                        return string.decode(encoding)
+                    except UnicodeDecodeError:
+                        continue
+            else:
+                return string
 
         statement = ""
         while True:
