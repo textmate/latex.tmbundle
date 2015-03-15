@@ -371,7 +371,7 @@ module LaTeX
     def bib_variables(bib_entries)
       variables = bib_entries.select { |entry| entry.start_with? '@string' }
       variables.map! do |entry|
-        entry.gsub(/@string\s*{\s*/m, '').gsub(/\s*\}$/m, '')
+        entry.gsub(/@string\s*\{\s*/m, '').gsub(/\s*\}$/m, '')
       end
       vars = {}
       variables.each do |var_value|
@@ -454,9 +454,8 @@ module LaTeX
       bibtype, citekey, rest = bibentry_type_key_rest(bib_entry)
       return nil if bibtype.nil?
       cite = Citation.new('bibtype' => bibtype, 'citekey' => citekey)
-      keys_and_values = rest[0..-2].split(/(?<="|\})\s*,/)
-      keys_and_values.map! { |key_val| key_val.gsub(/^\s*|\s*$/, '') }
-      keys_and_values.each do |key_value|
+      rest[0..-2].split(/("|\})\s*,/).each_slice(2).map(&:join).map(
+        &:strip).each do |key_value|
         key, value = bibitem_key_value(key_value, bib_variables)
         cite[key] = value unless key.nil?
       end
@@ -554,14 +553,14 @@ module LaTeX
     end
 
     def consume_value_quotes(scanner)
-      scanned = scanner.scan(/(?:[^"]|(?<=\\)")+"/)
+      scanned = scanner.scan(/(?:[^"]|\\")+"/)
       scanned.nil? ? nil : scanned[0..-2]
     end
 
     def consume_value_brackets(scanner)
       missing_right_brackets, value = [1, '']
       while missing_right_brackets > 0
-        scanned = scanner.scan(/(?:[^{}]|(?<=\\)[{}])+/)
+        scanned = scanner.scan(/(?:[^{}]|\\[{}])+/)
         return nil if scanned.nil?
         value += scanned
         bracket = scanner.getch
