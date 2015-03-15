@@ -169,8 +169,20 @@ module LaTeX
       citations.map(&:citekey).uniq
     end
 
-    # Returns the path to the TeX binaries, or raises an exception if it can't
-    # find them.
+    # Return the path to the TeX binaries.
+    #
+    # If the location is part of the environment variable +PATH+, then this
+    # function returns the empty string. If +tex_path+ can not find the
+    # location of the tex binaries, then it raises an error.
+    #
+    # = Output
+    #
+    # The function returns the prefix needed to execute tex programs.
+    #
+    # doctest: Get the path of the tex binaries.
+    #
+    #  >> LaTeX.tex_path
+    #  => ""
     def tex_path
       # First try directly
       return '' if ENV['PATH'].split(':').find do |dir|
