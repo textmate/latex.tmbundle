@@ -189,9 +189,8 @@ module LaTeX
         File.exist? File.join(dir, 'kpsewhich')
       end
       # Then try some specific paths
-      locs = ['/usr/texbin/', '/opt/local/bin/']
-      locs.each do |loc|
-        return loc if File.exist?(loc + 'kpsewhich')
+      ['/usr/texbin/', '/opt/local/bin/'].each do |location|
+        return location if File.exist?("#{location}kpsewhich")
       end
       # If all else fails, rely on /etc/profile. For most people, we should
       # never make it here.
