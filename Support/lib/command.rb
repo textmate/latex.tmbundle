@@ -296,3 +296,18 @@ def open_master_file
     print('No master file was defined.')
   end
 end
+
+# ==========================
+# = Show Label As Tool Tip =
+# ==========================
+
+def show_label_as_tooltip(input)
+  TextMate.exit_show_tool_tip('Empty input! Please select a (partial) label' \
+                              ' reference.') if input.empty?
+  labels = LaTeX.labels.find_all { |label| label.label.match(/#{input}/) }
+  TextMate.exit_show_tool_tip('No label found matching ' \
+                              "“#{input}”") if labels.empty?
+  print(labels[0].context(10, true))
+rescue RuntimeError => e
+  TextMate.exit_insert_text(e.message)
+end

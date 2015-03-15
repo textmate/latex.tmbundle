@@ -5,20 +5,15 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby18
-require ENV[&quot;TM_SUPPORT_PATH&quot;] + &quot;/lib/exit_codes.rb&quot;
-require ENV[&quot;TM_SUPPORT_PATH&quot;] + &quot;/lib/ui.rb&quot;
-require ENV[&quot;TM_BUNDLE_SUPPORT&quot;] + &quot;/lib/latex.rb&quot;
-phrase = STDIN.read.chomp
-TextMate.exit_show_tool_tip(&quot;No current ref found&quot;) if phrase == &quot;&quot;
-include LaTeX
-begin
-  items = FileScanner.label_scan(ENV[&quot;TM_LATEX_MASTER&quot;] || ENV[&quot;TM_FILEPATH&quot;]).find_all{|i| i.label.match(/#{phrase}/)}
-  print items[0].context(10, true)
-rescue Exception =&gt; e
-  TextMate.exit_insert_text(e.message)
-end
-</string>
+	<string>#!/usr/bin/ruby
+
+# -- Imports -------------------------------------------------------------------
+
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
+
+# -- Main ----------------------------------------------------------------------
+
+show_label_as_tooltip(STDIN.read)</string>
 	<key>fallbackInput</key>
 	<string>word</string>
 	<key>input</key>
