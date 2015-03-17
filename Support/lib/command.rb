@@ -7,6 +7,7 @@
 
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/ui.rb'
+require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
 require ENV['TM_BUNDLE_SUPPORT'] + '/lib/latex.rb'
 
 # -- Functions -----------------------------------------------------------------
@@ -332,4 +333,101 @@ def show_label_as_tooltip(input)
   print(label_context(labels[0]))
 rescue RuntimeError => e
   TextMate.exit_insert_text(e.message)
+end
+
+# ================
+# = Show Outline =
+# ================
+
+class String
+  def adjust_end(new_piece)
+    master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
+    new_form = self
+    if master == self
+      new_form = sub(/[^\/]*$/, new_piece)
+    else
+      masterdir = File.dirname(master)
+      new_form = File.expand_path(new_piece, masterdir)
+    end
+    new_form += '.tex' unless new_form.match(/\.tex$/) || File.exist?(new_form)
+    new_form
+  end
+end
+
+class Section < String
+  def <=>(other)
+    parts = %w(root part chapter section subsection subsubsection paragraph
+               subparagraph)
+    parts.index(self) <=> parts.index(other)
+  end
+
+  def <(other)
+    (self <=> other) == -1
+  end
+end
+
+def outline_points(filename)
+  part = '(part|chapter|section|subsection|subsubsection|paragraph|' \
+         'subparagraph)\*?'
+  comment = '(?:%.*\n[ \t]*)?'
+  options = '(?>\[(.*?)\])'
+  argument = '\{([^{}]*(?:\{[^}]*\}[^}]*?)*)\}'
+  regex = /\\#{part}#{comment}(?:#{options}|#{argument})/
+  include_regex = /\\(?:input|include)(?:%.*\n[ \t]*)?(?>\{(.*?)\})/
+  non_comment_regex = /^([^%]+$|(?:[^%]|\\%)*)(?=%|$)/
+  points = []
+  if filename.is_a?(String)
+    data = File.read(filename)
+    name = 'url=file://' + e_url(filename) + '&'
+  else
+    data = filename.read
+    name = ''
+  end
+  data.split("\n").each_with_index do |line, linenumber|
+    line.match(non_comment_regex)
+    line = Regexp.last_match[1]
+    next unless line
+    points << [
+      name, linenumber + 1, Regexp.last_match[1],
+      Regexp.last_match[2] || Regexp.last_match[3]] if line.match(regex)
+    points += outline_points(
+      filename.adjust_end(Regexp.last_match[1])) if line.match(include_regex)
+  end
+  points
+end
+
+def show_outline
+  html_header 'LaTeX Document Outline', 'LaTeX'
+  file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
+  if file.nil?
+    file = STDIN
+  else
+    file = File.expand_path(file, File.dirname(ENV['TM_FILEPATH']))
+  end
+  require 'pp'
+  points = outline_points(file)
+  current = [Section.new('root')]
+  string = []
+  points.each do |filepath, line, part, title|
+    case current.last <=> part
+    when 1
+      loop do
+        current.pop
+        string << "\t" * current.length + '</ol>'
+        break if current.last > part
+      end
+    when -1
+      string << "\t" * current.length + '<ol>'
+      current << Section.new(part)
+    end
+    string << "\t" * current.length + (
+      "<li><a href=\"txmt://open?#{filepath}line=#{line}\">#{title}</a></li>")
+  end
+  loop do
+    current.pop
+    string << "\t" * current.length + '</ol>'
+    break if current.last != 'root'
+  end
+  puts string.join("\n")
+  html_footer
 end
