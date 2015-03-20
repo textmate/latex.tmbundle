@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby18
-require 'pathname'
-require 'pp'
-require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/latex.rb"
-filename = ENV["TM_DROPPED_FILEPATH"]
-relative_to = ENV["TM_DIRECTORY"]
-startfile = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']
-master = Pathname.new(LaTeX.master(startfile))
-unless master.absolute?
-  master = master.expand_path(ENV['TM_PROJECT_DIRECTORY'])
-end
-path = Pathname.new(filename).relative_path_from(master.dirname)
-if ENV["TM_MODIFIER_FLAGS"].match(/OPTION/)
-  print "\\\\input{" + path + "}"
-else
-  print "\\\\include{" + path + "}"
-end</string>
+	<string>#!/usr/bin/ruby
+
+# -- Imports -------------------------------------------------------------------
+
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
+
+# -- Main ----------------------------------------------------------------------
+
+include_file</string>
 	<key>draggedFileExtensions</key>
 	<array>
 		<string>tex</string>

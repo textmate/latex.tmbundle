@@ -5,6 +5,8 @@
 
 # -- Imports -------------------------------------------------------------------
 
+require 'pathname'
+
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/ui.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
@@ -81,6 +83,15 @@ def output_selection(selection, input, replace_input, scope = 'citation')
   end
 end
 
+# Get the path of the current master file.
+#
+# = Output
+#
+# A string containing the location of the master file.
+def masterfile
+  LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
+end
+
 # ======================
 # = Command Completion =
 # ======================
@@ -91,6 +102,21 @@ def command_completion
   print(menu_choice_exit_if_empty(completions.split("\n")))
 rescue RuntimeError => e
   TextMate.exit_show_tool_tip(e.message)
+end
+
+# ================
+# = Include File =
+# ================
+
+# Insert an include or input item containing a reference to the dropped file.
+def include_file
+  filename = ENV['TM_DROPPED_FILEPATH']
+  master = Pathname.new(masterfile)
+  master = master.expand_path(ENV['TM_PROJECT_DIRECTORY']) unless
+    master.absolute?
+  path = Pathname.new(filename).relative_path_from(master.dirname)
+  environment = ENV['TM_MODIFIER_FLAGS'].match(/OPTION/) ? 'input' : 'include'
+  print("\\\\#{environment}{#{path}}")
 end
 
 # =========================================
@@ -231,15 +257,6 @@ def locate_included_item(input)
   file = '(?>\{(.*?)\})'
   match = input.scan(/#{environment}#{comment}#{option}#{comment}#{file}/m)
   match.empty? ? '' : match.pop.pop.gsub(/(^\")?(\"$)?/, '')
-end
-
-# Get the path of the current master file.
-#
-# = Output
-#
-# A string containing the location of the master file.
-def masterfile
-  LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
 end
 
 # Get the currently selected text in TextMate
