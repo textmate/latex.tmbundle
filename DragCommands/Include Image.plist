@@ -3,32 +3,15 @@
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby18
-require 'pathname'
-require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/latex.rb"
-filename = ENV["TM_DROPPED_FILEPATH"]
-relative_to = ENV["TM_DIRECTORY"]
-startfile = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']
-master = Pathname.new(LaTeX.master(startfile))
-unless master.absolute?
-  master = master.expand_path(ENV['TM_PROJECT_DIRECTORY'])
-end
-path = Pathname.new(filename).relative_path_from(master.dirname)
-case ENV['TM_MODIFIER_FLAGS']
-when /OPTION/
-	puts ["\\\\begin{center}",
-    " \\\\includegraphics[width=\${1:.9\\textwidth}]{#{path}}",
-"\\\\end{center}"].join("\n")
-when /SHIFT/
-  puts "\\\\includegraphics[width=\${1:.9\\textwidth}]{#{path}}"
-else
-  puts ["\\\\begin{figure}[\${1|h,t,b,p|}]",
-"	\\\\centering",
-"		\\\\includegraphics[width=\${2:.9\\textwidth}]{#{path}}",
-"	\\\\caption{\${3:caption}}",
-"	\\\\label{fig:\${4:#{path.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}}",
-"\\\\end{figure}"].join("\n")
-end</string>
+	<string>#!/usr/bin/ruby
+
+# -- Imports -------------------------------------------------------------------
+
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
+
+# -- Main ----------------------------------------------------------------------
+
+include_image</string>
 	<key>draggedFileExtensions</key>
 	<array>
 		<string>jpg</string>

@@ -92,6 +92,15 @@ def masterfile
   LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
 end
 
+# Return the path to a dropped file relative to the current master file.
+def dropped_file_relative_path
+  filename = ENV['TM_DROPPED_FILEPATH']
+  master = Pathname.new(masterfile)
+  master = master.expand_path(ENV['TM_PROJECT_DIRECTORY']) unless
+    master.absolute?
+  Pathname.new(filename).relative_path_from(master.dirname)
+end
+
 # ======================
 # = Command Completion =
 # ======================
@@ -110,13 +119,41 @@ end
 
 # Insert an include or input item containing a reference to the dropped file.
 def include_file
-  filename = ENV['TM_DROPPED_FILEPATH']
-  master = Pathname.new(masterfile)
-  master = master.expand_path(ENV['TM_PROJECT_DIRECTORY']) unless
-    master.absolute?
-  path = Pathname.new(filename).relative_path_from(master.dirname)
   environment = ENV['TM_MODIFIER_FLAGS'].match(/OPTION/) ? 'input' : 'include'
-  print("\\\\#{environment}{#{path}}")
+  print("\\\\#{environment}{#{dropped_file_relative_path}}")
+end
+
+# =================
+# = Include Image =
+# =================
+
+# Return LaTeX code to reference a figure located at +filepath+.
+#
+# = Arguments
+#
+# [filepath] The path to an image that should be included.
+def include_figure(filepath)
+  label = filepath.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/, '').gsub(/[\/ ]/, '_')
+  "\\\\begin{figure}[\${1|h,t,b,p|}]\n" \
+  "  \\\\centering\n" \
+  "    \\\\includegraphics[width=\${2:.9\\textwidth}]{#{filepath}}\n" \
+  "  \\\\caption{\${3:caption}}\n" \
+  "  \\\\label{fig:\${4:#{label}}}\n" \
+  '\\\\end{figure}'
+end
+
+# Include a dropped image in the current document.
+def include_image
+  path = dropped_file_relative_path
+  includegraphics = "\\\\includegraphics[width=\${1:.9\\textwidth}]{#{path}}"
+  case ENV['TM_MODIFIER_FLAGS']
+  when /OPTION/
+    puts("\\\\begin{center}\n  #{includegraphics}\n\\\\end{center}")
+  when /SHIFT/
+    puts(includegraphics)
+  else
+    puts(include_figure(path))
+  end
 end
 
 # =========================================
