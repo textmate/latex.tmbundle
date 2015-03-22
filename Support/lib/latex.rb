@@ -458,8 +458,8 @@ module LaTeX
     #                       author = "Mabel",
     #                       title = "On why pet pigs are " # synonym_nice}'
     #  >> variables = { 'synonym_nice' => 'awesome' }
-    #  >> cites = LaTeX.bib_citation(entry, variables)
-    #  >> cites['title']
+    #  >> cite = LaTeX.bib_citation(entry, variables)
+    #  >> cite['title']
     #  => "On why pet pigs are awesome"
     #
     #  doctest: Parse a complex bib entry
