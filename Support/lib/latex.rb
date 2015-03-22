@@ -461,11 +461,28 @@ module LaTeX
     #  >> cites = LaTeX.bib_citation(entry, variables)
     #  >> cites['title']
     #  => "On why pet pigs are awesome"
+    #
+    #  doctest: Parse a complex bib entry
+    #
+    #  >> entry = '@article{IEEE_1003_5,
+    #     Date-Modified = {2010-09-01 14:52:36 +0200},
+    #     Journal = {IEEE Std 1003.5, 1999 Edition},
+    #     Keywords = {UnixAda language bindings, IEEE standard, ISO 8652,
+    #     ISO IEC, 9945-1, POSIX, application portability},
+    #     Pages = {1-890},
+    #     Title = {I{EEE Standard for Information Technology - POSIX(R) Ada
+    #     Language Interfaces - Part 1: Binding for System Application Program
+    #     Interface (API) - Amendment 2: Protocol-Independent Interfaces}},
+    #     Year = 1999,
+    #     Bdsk-Url-1 = {http://dx.doi.org/10.1109/IEEESTD.1999.90614}}'
+    #  >> cite = LaTeX.bib_citation(entry, {})
+    #  >> cite['bdsk-url-1']
+    #  => 'http://dx.doi.org/10.1109/IEEESTD.1999.90614'
     def bib_citation(bib_entry, bib_variables)
       bibtype, citekey, rest = bibentry_type_key_rest(bib_entry)
       return nil if bibtype.nil?
       cite = Citation.new('bibtype' => bibtype, 'citekey' => citekey)
-      rest[0..-2].split(/("|\})\s*,/).each_slice(2).map(&:join).map(
+      rest[0..-2].split(/("|\}|\d)\s*,/).each_slice(2).map(&:join).map(
         &:strip).each do |key_value|
         key, value = bibitem_key_value(key_value, bib_variables)
         cite[key] = value unless key.nil?
@@ -542,6 +559,13 @@ module LaTeX
     #  >> _, item = LaTeX.bibitem_key_value(bib_item, variables)
     #  >> item
     #  => '# number#oh a {#} {sign}#'
+    #
+    #  doctest: Get the key and value of a bib item containing a number
+    #
+    #  >> bib_item = 'iTeM = 1984'
+    #  >> _, item = LaTeX.bibitem_key_value(bib_item, variables)
+    #  >> item
+    #  => '1984'
     def bibitem_key_value(bib_item, bib_variables)
       key, value = bib_item.split(/\s*=\s*(?=\{|"|\w)/)
       return nil if value.nil?
@@ -552,15 +576,21 @@ module LaTeX
 
     def bib_item_value(string, bib_variables)
       scanner, value = [StringScanner.new(string), '']
-      while first = scanner.getch # rubocop:disable Lint/AssignmentInCondition
-        part = if first == '"' then consume_value_quotes(scanner)
-               elsif first == '{' then consume_value_brackets(scanner)
-               else consume_value_variable(scanner, first, bib_variables)
-               end
+      until scanner.empty?
+        part = get_part(scanner, bib_variables)
         scanner.scan(/\s*#\s*/m)
         value += part unless part.nil?
       end
       value
+    end
+
+    def get_part(scanner, bib_variables)
+      first = scanner.getch
+      if first == '"' then consume_value_quotes(scanner)
+      elsif first == '{' then consume_value_brackets(scanner)
+      elsif first.match(/\d/) then first + scanner.scan(/\d*/)
+      else consume_value_variable(scanner, first, bib_variables)
+      end
     end
 
     def consume_value_quotes(scanner)
