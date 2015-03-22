@@ -478,6 +478,8 @@ module LaTeX
     #  >> cite = LaTeX.bib_citation(entry, {})
     #  >> cite['bdsk-url-1']
     #  => 'http://dx.doi.org/10.1109/IEEESTD.1999.90614'
+    #  >> cite['title'].end_with?('Protocol-Independent Interfaces}')
+    #  => true
     def bib_citation(bib_entry, bib_variables)
       bibtype, citekey, rest = bibentry_type_key_rest(bib_entry)
       return nil if bibtype.nil?
@@ -566,6 +568,12 @@ module LaTeX
     #  >> _, item = LaTeX.bibitem_key_value(bib_item, variables)
     #  >> item
     #  => '1984'
+    #
+    #  doctest: Get the key and value of a bib item that contains '}}'
+    #
+    #  >> _, value = LaTeX.bibitem_key_value('Title = {{"Hi"}}', {})
+    #  >> value
+    #  => '{"Hi"}'
     def bibitem_key_value(bib_item, bib_variables)
       key, value = bib_item.split(/\s*=\s*(?=\{|"|\w)/)
       return nil if value.nil?
@@ -602,11 +610,10 @@ module LaTeX
       missing_right_brackets, value = [1, '']
       while missing_right_brackets > 0
         scanned = scanner.scan(/(?:[^{}]|\\[{}])+/)
-        return nil if scanned.nil?
-        value += scanned
+        value += scanned.to_s
         bracket = scanner.getch
         missing_right_brackets += (bracket == '{') ? 1 : -1
-        value += bracket unless missing_right_brackets <= 0
+        value += bracket.to_s unless missing_right_brackets <= 0
       end
       value
     end
