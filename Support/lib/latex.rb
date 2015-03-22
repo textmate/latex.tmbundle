@@ -997,11 +997,12 @@ module LaTeX
     #
     #  >> Citation.new('author' => 'Defeater',
     #                  'title' => 'Empty Days & Sleepless Nights').description
-    #  => 'Defeater, Empty Days & Sleepless Nights'
+    #  => '✒️ Defeater 📕 Empty Days & Sleepless Nights'
     #  >> Citation.new('cite_data' => 'Description').description
     #  => 'Description'
     def description
-      @hash['cite_data'] || "#{author}, #{title}"
+      @hash['cite_data'] ||
+        "#{author ? "✒️ #{author} " : ''}#{title ? "📕 #{title}" : ''}"
     end
 
     # Return the key of the citation
@@ -1028,9 +1029,9 @@ module LaTeX
     #
     #  >> Citation.new('citekey' => 'key', 'author' => 'Author',
     #                  'title' => 'The Title').to_s
-    #  => 'key — Author, The Title'
+    #  => 'key ✒️ Author 📕 The Title'
     def to_s
-      citekey + (description.empty? ? '' : " — #{description}")
+      citekey + (description.empty? ? '' : " #{description}")
     end
   end
 end
