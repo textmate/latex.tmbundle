@@ -77,9 +77,39 @@ def output_selection(selection, input, replace_input, scope = 'citation')
   if ENV['TM_SCOPE'].match(/#{scope}/)
     print(input.match(/^\{/) ? "{#{selection}}" : selection)
   else
-    environment = (scope == 'citation') ? 'cite' : 'ref'
-    TextMate.exit_insert_snippet(
-      "#{replace_input ? '' : input}\\\\${1:#{environment}}\{#{selection}\}")
+    snippet = reference_snippet(selection, scope)
+    TextMate.exit_insert_snippet("#{replace_input ? '' : input}#{snippet}")
+  end
+end
+
+# Return a snippet containing a reference to a citation or label.
+#
+# = Arguments
+#
+# [reference] A string that contains the reference key for the label/citation.
+# [scope] The scope which specifies if the resulting snippet should contain a
+#         reference to a citation (scope = 'citation') or an label.
+#
+# = Output
+#
+# This function returns a string containing snippet syntax.
+#
+# = Examples
+#
+#  doctest: Create a reference to a citation
+#
+#  >> ENV['TM_LATEX_CITE_SNIPPET'] = '\\\\cite[$1]{CITEKEY}'
+#  >> reference_snippet('key', 'citation')
+#  => '\\\\cite[$1]{key}'
+#
+#  doctest: Create a reference to a label
+#  >> reference_snippet('key', 'label')
+#  => '\\\\${1:ref}{key}'
+def reference_snippet(reference, scope)
+  if ENV['TM_LATEX_CITE_SNIPPET'] && scope == 'citation'
+    ENV['TM_LATEX_CITE_SNIPPET'].gsub('CITEKEY', reference)
+  else
+    "\\\\${1:#{(scope == 'citation') ? 'cite' : 'ref'}}\{#{reference}\}"
   end
 end
 
