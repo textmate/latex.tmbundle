@@ -230,6 +230,8 @@ def choose_cite_environment
            'a:  \\citeauthor',  '    \\citeauthor*',
            'y:  \\citeyear',    'r:  \\citeyearpar',
            'f:  \\footcite',    'x:  \\textcite']
+  items = items.grep(/.*\\(?:#{ENV['TM_LATEX_REFTEX_FILTER']})$/) if
+    ENV['TM_LATEX_REFTEX_FILTER']
   menu_choice_exit_if_empty(items).gsub(/.*\\/, '')
 end
 
