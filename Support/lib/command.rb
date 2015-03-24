@@ -75,7 +75,7 @@ end
 #         this value a new label or citation is inserted into the document
 def output_selection(selection, input, replace_input, scope = 'citation')
   if ENV['TM_SCOPE'].match(/#{scope}/)
-    print(input.match(/^\{/).nil? ? selection : "{#{selection}}")
+    print(input.match(/^\{/) ? "{#{selection}}" : selection)
   else
     environment = (scope == 'citation') ? 'cite' : 'ref'
     TextMate.exit_insert_snippet(
@@ -267,8 +267,7 @@ def insert_label(input)
   menu_items, replace_input = filter_items_replace_input(LaTeX.label_names,
                                                          input)
   selection = menu_choice_exit_if_empty(menu_items)
-  # rubocop:disable Lint/UselessAssignment
-  output_selection(selection, input, replace_input, scope = 'label')
+  output_selection(selection, input, replace_input, 'label')
 rescue RuntimeError => e
   TextMate.exit_show_tool_tip(e.message)
 end
