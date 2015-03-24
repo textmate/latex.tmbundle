@@ -223,15 +223,13 @@ end
 #
 # The function returns the chosen environment.
 def choose_cite_environment
-  items = ['c:  \\cite',
-           't:  \\citet', '    \\citet*',
-           'p:  \\citep', '    \\citep*',
-           'e:  \\citep[e.g.]',
-           's:  \\citep[see]',
-           'a:  \\citeauthor', '    \\citeauthor*',
-           'y:  \\citeyear',
-           'r:  \\citeyearpar',
-           'f:  \\footcite']
+  items = ['u:  \\autocite',    'c:  \\cite',
+           't:  \\citet',       '    \\citet*',
+           'p:  \\citep',       '    \\citep*',
+           'e:  \\citep[e.g.]', 's:  \\citep[see]',
+           'a:  \\citeauthor',  '    \\citeauthor*',
+           'y:  \\citeyear',    'r:  \\citeyearpar',
+           'f:  \\footcite',    'x:  \\textcite']
   menu_choice_exit_if_empty(items).gsub(/.*\\/, '')
 end
 
