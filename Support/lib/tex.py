@@ -54,11 +54,13 @@ def expand_name(filename, program='pdflatex'):
     Examples:
 
         >>> print(expand_name('Tests/TeX/text.tex'))
-        ./Tests/TeX/text.tex
+        Tests/TeX/text.tex
         >>> expand_name('non_existent_file.tex') == ''
         True
 
     """
+    if isfile(filename):
+        return filename
     stdout.flush()
     run_object = Popen("kpsewhich -progname='{}' {}".format(
         program, shellquote(filename)), shell=True, stdout=PIPE,
