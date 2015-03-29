@@ -65,7 +65,7 @@ end
 #  => [['iTem2'], true]
 def filter_items_replace_input(items, input)
   # Check if we should use the input as part of the choice
-  match_input = input.match(/^(?:$|[{}~])/).nil?
+  match_input = input.match(/^(?:$|[{}~,])/).nil?
   if match_input
     items = ENV['TM_LATEX_SEARCH_CASE_SENSITIVE'] ? items.grep(/#{input}/) :
                                                     items.grep(/#{input}/i)
@@ -84,7 +84,11 @@ end
 #         this value a new label or citation is inserted into the document
 def output_selection(selection, input, replace_input, scope = 'citation')
   if ENV['TM_SCOPE'].match(/#{scope}/)
-    print(input.match(/^\{/) ? "{#{selection}}" : selection)
+    if input.match(/^\{\}?/) then print("{#{selection}}")
+    elsif input.match(/(,\s*)?(\})?/)
+      print("#{Regexp.last_match[1]}#{selection}#{Regexp.last_match[2]}")
+    else print(selection)
+    end
   else
     snippet = reference_snippet(selection, scope)
     TextMate.exit_insert_snippet("#{replace_input ? '' : input}#{snippet}")

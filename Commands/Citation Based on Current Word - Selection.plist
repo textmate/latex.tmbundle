@@ -25,7 +25,7 @@ insert_citation(STDIN.read)</string>
 	<key>name</key>
 	<string>Citation Based on Current Word / Selection…</string>
 	<key>outputCaret</key>
-	<string>heuristic</string>
+	<string>afterOutput</string>
 	<key>outputFormat</key>
 	<string>text</string>
 	<key>outputLocation</key>
