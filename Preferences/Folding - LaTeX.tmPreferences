@@ -31,7 +31,7 @@
 
             \section*{A Section Not Included in the Index}
     )
-    \\(?:part|chapter|(?:sub){0,2}section|(?:sub){0,1}paragraph)\*?\{[^\{]*\}</string>
+    \\(?:part|chapter|(?:sub){0,2}section|(?:sub){0,1}paragraph)\*?\{.*\}</string>
 		<key>foldingStartMarker</key>
 		<string>\\begin\{.*\}|%.*\(fold\)\s*$</string>
 		<key>foldingStopMarker</key>
