@@ -29,12 +29,9 @@
 		<key>items</key>
 		<array>
 			<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
-			<string>AED3E04B-6881-44F8-9229-AE534D36CD6B</string>
-			<string>0A27EDBA-2C7C-44CF-B2B0-1B3B7BF8D7D6</string>
-			<string>4C05FB6C-AA32-4217-8788-D840D49E82CD</string>
-			<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
-			<string>B345876F-1B84-4FF5-A19C-A62ADF121EC8</string>
 			<string>4BB11B68-A0F5-4670-A0B9-B3982D10A54B</string>
+			<string>04F1B652-1975-4274-8037-5D4C497337E5</string>
+			<string>AED3E04B-6881-44F8-9229-AE534D36CD6B</string>
 			<string>361BC324-8D67-4E03-8939-824D4D65916B</string>
 			<string>------------------------------------</string>
 			<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
@@ -72,6 +69,18 @@
 				</array>
 				<key>name</key>
 				<string>Lists</string>
+			</dict>
+			<key>04F1B652-1975-4274-8037-5D4C497337E5</key>
+			<dict>
+				<key>items</key>
+				<array>
+					<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
+					<string>4C05FB6C-AA32-4217-8788-D840D49E82CD</string>
+					<string>0A27EDBA-2C7C-44CF-B2B0-1B3B7BF8D7D6</string>
+					<string>B345876F-1B84-4FF5-A19C-A62ADF121EC8</string>
+				</array>
+				<key>name</key>
+				<string>Tools</string>
 			</dict>
 			<key>213887D6-E05C-4AC9-AB90-69618BA0243A</key>
 			<dict>
