@@ -26,7 +26,7 @@ html_footer
 	<key>keyEquivalent</key>
 	<string>^V</string>
 	<key>name</key>
-	<string>Check LaTeX (chktex)</string>
+	<string>Check LaTeX</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>
