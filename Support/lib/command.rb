@@ -57,6 +57,8 @@ end
 #  => [['item1', 'item2'], false]
 #  >> filter_items_replace_input(['item1', 'item2'], '2')
 #  => [['item2'], true]
+#  >> filter_items_replace_input(['item1', 'item2'], '”~')
+#  => [['item1', 'item2'], false]
 #
 #  doctest: Filter a list of items using case sensitive regex
 #
@@ -65,7 +67,7 @@ end
 #  => [['iTem2'], true]
 def filter_items_replace_input(items, input)
   # Check if we should use the input as part of the choice
-  match_input = input.match(/^(?:$|[{}~,])/).nil?
+  match_input = input.match(/^(?:$|.*[{}~,])/).nil?
   if match_input
     items = ENV['TM_LATEX_SEARCH_CASE_SENSITIVE'] ? items.grep(/#{input}/) :
                                                     items.grep(/#{input}/i)
