@@ -14,7 +14,7 @@ from __future__ import unicode_literals
 
 from re import compile, match, search, UNICODE
 from os import getcwd
-from os.path import basename, join
+from os.path import basename, join, splitext
 from sys import stdout, version_info
 try:
     from urllib.parse import quote  # Python 3
@@ -499,7 +499,7 @@ class LaTexParser(TexParser):
     def __init__(self, input_stream, verbose, filename):
         """Initialize the regex patterns for the LaTexParser."""
         super(LaTexParser, self).__init__(input_stream, verbose)
-        self.suffix = filename[:filename.rfind('.')]
+        self.suffix = splitext(filename)[0]
         self.filename = self.current_file = filename
         # Save gutter marks for errors and warnings
         self.marks = set()
