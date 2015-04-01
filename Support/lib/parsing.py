@@ -516,7 +516,7 @@ class LaTexParser(TexParser):
             (compile('LaTeX Font Warning:.*'), self.warning),
             (compile('Overfull.*wide'), self.warning_format),
             (compile('Underfull.*badness'), self.warning_format),
-            (compile('^([\.\/\w\x7f-\xff\-\u0308\ ]+' +
+            (compile('^([\.\/\w\-\ \u0300-\u036F]+' +
                      '(?:\.sty|\.tex|\.{}))'.format(self.suffix) +
                      ':(\d+):\s+(.*)', UNICODE),
              self.handle_error),
