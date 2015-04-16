@@ -35,4 +35,4 @@ Restore the file changes made by previous commands.
 
 Remove the generated PDF
 
-  $ rm -f *.pdf
+  $ rm -f *.dvi *.pdf *.ps

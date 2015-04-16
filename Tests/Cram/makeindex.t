@@ -23,5 +23,5 @@ Translate the LaTeX file
 
 Remove the generated files
 
-  $ rm -f *.ilg *.ind *.log *.pdf
+  $ rm -f *.dvi *.ilg *.ind *.log *.pdf *.ps
 
