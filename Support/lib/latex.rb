@@ -247,6 +247,11 @@ module LaTeX
     #  >> filepath = LaTeX.find_file('config/pdftexconfig', 'tex', '')
     #  >> filepath.end_with?('config/pdftexconfig.tex')
     #  => true
+    #
+    #  doctest: Try to get the location of a non-existent file
+    #
+    #  >> LaTeX.find_file('la', 'tex', '')
+    #  => nil
     def find_file(filename, extension, relative)
       filename.gsub!(/"/, '')
       filename.gsub!(/\.#{extension}$/, '')
@@ -638,6 +643,7 @@ module LaTeX
         fp = File.expand_path(File.join(path, filename))
         [fp, "#{fp}.#{extension}"].each { |file| return file if file?(file) }
       end
+      nil
     end
   end
 
