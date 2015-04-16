@@ -178,7 +178,7 @@ end
 #
 # [filepath] The path to an image that should be included.
 def include_figure(filepath)
-  label = filepath.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/, '').gsub(/[\/ ]/, '_')
+  label = filepath.to_s.gsub(%r{(\.[^.]*$)|(\.\./)}, '').gsub(%r{[/ ]}, '_')
   "\\\\begin{figure}[\${1|h,t,b,p|}]\n" \
   "  \\\\centering\n" \
   "    \\\\includegraphics[width=\${2:.9\\textwidth}]{#{filepath}}\n" \
@@ -593,7 +593,7 @@ end
 #  => true
 def join_with_master_path(filepath)
   master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-  path = (master == self) ? sub(/[^\/]*$/, filepath) :
+  path = (master == self) ? sub(%r{[^/]*$}, filepath) :
     File.expand_path(filepath, File.dirname(master))
   "#{path}#{'.tex' unless path.match(/\.tex$/) || File.exist?(path)}"
 end

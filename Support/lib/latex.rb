@@ -257,7 +257,7 @@ module LaTeX
       end
       # If it is an absolute path, and the above two tests didn't find it,
       # return nil
-      return nil if filename.match(/^\//)
+      return nil if filename.match(%r{^/})
       find_file_kpsewhich(filename, extension, relative)
     end
 
@@ -632,8 +632,8 @@ module LaTeX
       @@paths ||= {}
       @@paths[extension] ||= (
         `#{LaTeX.tex_path}kpsewhich -show-path=#{extension}`.chomp.split(
-          /:!!|:/).map { |dir| dir.sub(/\/*$/, '/') }
-          ).unshift(relative).unshift('')
+          /:!!|:/).map { |dir| dir.sub(%r{/*$}, '/') }).unshift(
+            relative).unshift('')
       @@paths[extension].each do |path|
         fp = File.expand_path(File.join(path, filename))
         [fp, "#{fp}.#{extension}"].each { |file| return file if file?(file) }
