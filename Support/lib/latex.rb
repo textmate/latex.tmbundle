@@ -712,8 +712,8 @@ module LaTeX
       text = File.read(@root)
       text.split.each_with_index do |line, line_number|
         includes.each_pair do |regex, block|
-          extractors_process_line(line, line_number, extractors, text)
           include_process_line(line, regex, block)
+          extractors_process_line(root, line, line_number, extractors, text)
         end
       end
     end
@@ -828,7 +828,7 @@ module LaTeX
       end
     end
 
-    def extractors_process_line(line, line_number, extractors, text)
+    def extractors_process_line(root, line, line_number, extractors, text)
       extractors.each_pair do |extractor_regex, extractor_block|
         line.scan(extractor_regex).each do |match|
           extractor_block.call(root, line_number, match, text)
