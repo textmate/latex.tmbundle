@@ -710,7 +710,7 @@ module LaTeX
       fail 'No root specified!' if @root.nil?
       fail "Could not find file #{@root}" unless File.exist?(@root)
       text = File.read(@root)
-      text.split.each_with_index do |line, line_number|
+      text.lines.each_with_index do |line, line_number|
         includes.each_pair do |regex, block|
           include_process_line(line, regex, block)
           extractors_process_line(root, line, line_number, extractors, text)
