@@ -770,7 +770,7 @@ module LaTeX
     #  doctest: Scan the file +packages.tex+ for citations
     #
     #  >> include LaTeX
-    #  >> FileScanner.label_scan('Tests/TeX/packages.tex')
+    #  >> FileScanner.cite_scan('Tests/TeX/packages.tex')
     #  => []
     #
     #  doctest: Scan the file +references.tex+ for citations
