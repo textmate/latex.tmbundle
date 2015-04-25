@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.8";
+our $VERSION = "3.9";
 
 #  - by Robin Houston, 2007, 2008.
 #  - by René Schwaiger, 2014, 2015.
@@ -320,8 +320,8 @@ sub clean_up {
     unlink(
         map( "$wd/$name.$_",
             qw(acn acr alg aux bbl bcf blg fdb_latexmk fls fmt glo glg gls idx
-              ilg ind ini ist latexmk.log log maf mtc mtc1 nav out pdfsync
-              run.xml snm synctex.gz toc) )
+              ilg ind ini ist latexmk.log log maf mtc mtc1 nav nlo nls out
+              pdfsync run.xml snm synctex.gz toc) )
     ) if defined($wd);
     # Remove LaTeX bundle cache file
     unlink("$wd/.$name.lb") if defined($wd);
@@ -1111,3 +1111,7 @@ Changes
     - We now display a notification window in the case of an error. The window
     displays all errors containing line information that `texparser` finds in
     the log output of `latexmk`.
+
+3.9:
+    - Update the list of auxiliary files removed on cleanup.
+
