@@ -12,12 +12,12 @@
 add_cus_dep('glo', 'gls', 0, 'makeglo2gls');
 add_cus_dep('acn', 'acr', 0, 'makeglo2gls');
 sub makeglo2gls {
-    system("makeglossaries '$_[0]'");
+    return system("makeglossaries '$_[0]'");
 }
 
 # Add dependencies for `nomencl`
 # Source: http://tex.stackexchange.com/posts/105978/revisions
 add_cus_dep('nlo', 'nls', 0, 'makenlo2nls');
 sub makenlo2nls {
-    system("makeindex -s nomencl.ist -o '$_[0]'.nls '$_[0]'.nlo");
+    return system("makeindex -s nomencl.ist -o '$_[0]'.nls '$_[0]'.nlo");
 }
