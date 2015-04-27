@@ -1056,7 +1056,7 @@ if __name__ == '__main__':
             for removed_file in removed_files.split('\n'):
                 print('<p class"info">Removed {}</p>'.format(removed_file))
         else:
-            print('<p class"info">Clean: No Auxiliary files found'.format())
+            print('<p class"info">Clean: No Auxiliary files found')
 
     elif command == 'latex':
         engine_options = construct_engine_options(typesetting_directives,
