@@ -40,7 +40,7 @@ class Preferences(object):
             'latexEngine': "pdflatex",
             'latexEngineOptions': "",
             'latexVerbose': 0,
-            'latexUselatexmk': 0,
+            'latexUselatexmk': 1,
             'latexViewer': "TextMate",
             'latexKeepLogWin': 1,
             'latexDebug': 0,
@@ -88,7 +88,7 @@ class Preferences(object):
               latexEngine = pdflatex;
               latexEngineOptions = "";
               latexKeepLogWin = 1;
-              latexUselatexmk = 0;
+              latexUselatexmk = 1;
               latexVerbose = 0;
               latexViewer = TextMate; }
 
