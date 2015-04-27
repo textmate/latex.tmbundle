@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.9";
+our $VERSION = "3.10";
 
 #  - by Robin Houston, 2007, 2008.
 #  - by René Schwaiger, 2014, 2015.
@@ -28,6 +28,7 @@ use warnings;
 use POSIX ();
 use File::Basename;
 use File::Copy 'copy';
+use File::Path 'remove_tree';
 use File::Spec;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
 
@@ -317,15 +318,18 @@ sub main_loop {
 # Clean up if we're interrupted or die
 sub clean_up {
     debug_msg("Cleaning up");
-    unlink(
-        map( "$wd/$name.$_",
-            qw(acn acr alg aux bbl bcf blg fdb_latexmk fls fmt glo glg gls idx
-              ilg ind ini ist latexmk.log log maf mtc mtc1 nav nlo nls out
-              pdfsync run.xml snm synctex.gz toc) )
-    ) if defined($wd);
-    # Remove LaTeX bundle cache file
-    unlink("$wd/.$name.lb") if defined($wd);
+    if ( defined($wd) ) {
+        unlink(
+            map( "$wd/$name.$_",
+                qw(acn acr alg aux bbl bcf blg fdb_latexmk fls fmt glo glg gls
+                  idx ilg ind ini ist latexmk.log log maf mtc mtc1 nav nlo nls
+                  pytxcode out pdfsync run.xml snm synctex.gz toc) )
+        );
 
+        # Remove LaTeX bundle cache file
+        unlink("$wd/.$name.lb");
+        remove_tree("$wd/pythontex-files-" . $name =~ s/ /-/gr)
+    }
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
         debug_msg("Closing progress bar window as part of cleanup");
@@ -1115,3 +1119,5 @@ Changes
 3.9:
     - Update the list of auxiliary files removed on cleanup.
 
+3.10:
+    - Remove temporary dir created by `pythontex` on cleanup.

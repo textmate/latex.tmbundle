@@ -21,3 +21,10 @@ add_cus_dep('nlo', 'nls', 0, 'makenlo2nls');
 sub makenlo2nls {
     return system("makeindex -s nomencl.ist -o '$_[0]'.nls '$_[0]'.nlo");
 }
+
+# Add dependencies for `pythontex`
+# Source: http://mirrors.ctan.org/macros/latex/contrib/pythontex/pythontex.pdf
+add_cus_dep('pytxcode', 'tex', 0, 'pythontex');
+sub pythontex {
+    return system("pythontex '$_[0]'");
+}
