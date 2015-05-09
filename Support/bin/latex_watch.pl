@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.10";
+our $VERSION = "3.11";
 
 #  - by Robin Houston, 2007, 2008.
 #  - by René Schwaiger, 2014, 2015.
@@ -328,7 +328,8 @@ sub clean_up {
 
         # Remove LaTeX bundle cache file
         unlink("$wd/.$name.lb");
-        remove_tree("$wd/pythontex-files-" . $name =~ s/ /-/gr)
+        remove_tree("$wd/pythontex-files-" . $name =~ s/ /-/gr);
+        remove_tree("$wd/_minted-" . $name =~ s/ /-/gr);
     }
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
@@ -1121,3 +1122,6 @@ Changes
 
 3.10:
     - Remove temporary dir created by `pythontex` on cleanup.
+
+3.11:
+    - Remove temporary dir created by package `minted` on cleanup.
