@@ -1057,7 +1057,8 @@ if __name__ == '__main__':
                                       universal_newlines=True)
         # Remove leading './' to get nicer looking output
         removed_files = removed_files.rstrip().replace('./', '').splitlines()
-        if removed_files:
+        # Ignore cache file created by this script
+        if len(removed_files) > 1:
             for removed_file in removed_files:
                 print('<p class"info">Removed {}</p>'.format(removed_file))
         else:
