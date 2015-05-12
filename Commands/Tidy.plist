@@ -14,9 +14,6 @@
 if [[ "${TM_LATEX_FORMATTER}" != "latexindent" ]]; then
     latextidy.pl
 else
-    # Include `YAML::Tiny` required by `latexindent`
-    export PERL5LIB=$PERL5LIB:"${TM_BUNDLE_SUPPORT}"/lib
-
     DIRECTORY=$(dirname "${TM_FILEPATH}")
     cd "${DIRECTORY}"
 
