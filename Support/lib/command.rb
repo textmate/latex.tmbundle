@@ -600,11 +600,7 @@ end
 #  => true
 def join_with_master_path(filepath)
   master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-  if master == self
-    path = sub(%r{[^/]*$}, filepath)
-  else
-    path = File.expand_path(filepath, File.dirname(master))
-  end
+  path = File.expand_path(filepath, File.dirname(master))
   "#{path}#{'.tex' unless path.match(/\.tex$/) || File.exist?(path)}"
 end
 
