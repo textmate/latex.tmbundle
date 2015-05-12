@@ -4,6 +4,8 @@ require 'pathname'
 # files.
 #
 # Authors:: Charilaos Skiadas, René Schwaiger
+#
+# rubocop:disable Metrics/ModuleLength
 module LaTeX
   # Parse any %!TEX options in the first 20 lines of the file.
   #
@@ -588,7 +590,8 @@ module LaTeX
     private
 
     def bib_item_value(string, bib_variables)
-      scanner, value = [StringScanner.new(string), '']
+      scanner = StringScanner.new(string)
+      value = ''
       until scanner.empty?
         part = get_part(scanner, bib_variables)
         scanner.scan(/\s*#\s*/m)
@@ -612,7 +615,8 @@ module LaTeX
     end
 
     def consume_value_brackets(scanner)
-      missing_right_brackets, value = [1, '']
+      missing_right_brackets = 1
+      value = ''
       while missing_right_brackets > 0
         scanned = scanner.scan(/(?:[^{}]|\\[{}])+/)
         value += scanned.to_s

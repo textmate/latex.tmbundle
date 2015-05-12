@@ -69,8 +69,11 @@ def filter_items_replace_input(items, input)
   # Check if we should use the input as part of the choice
   match_input = input.match(/^(?:$|.*[{}~,])/).nil?
   if match_input
-    items = ENV['TM_LATEX_SEARCH_CASE_SENSITIVE'] ? items.grep(/#{input}/) :
-                                                    items.grep(/#{input}/i)
+    if ENV['TM_LATEX_SEARCH_CASE_SENSITIVE']
+      items = items.grep(/#{input}/)
+    else
+      items = items.grep(/#{input}/i)
+    end
   end
   [items, match_input]
 end
@@ -373,7 +376,8 @@ end
 # For example: If the current line contains `\input{included_item}`, then this
 # command will open the file with the filename +included_item+.
 def open_included_item
-  master, input = masterfile, selection_or_line
+  master = masterfile
+  input = selection_or_line
   Dir.chdir(File.dirname(master)) unless master.nil?
   location = locate_included_item(input)
   TextMate.exit_show_tool_tip('Did not find any appropriate item to open in ' \
@@ -389,8 +393,11 @@ end
 def open_master_file
   master = masterfile
   if master
-    master == ENV['TM_FILEPATH'] ? print('Already in master file') :
-                                   `open -a TextMate #{e_sh master}`
+    if master == ENV['TM_FILEPATH']
+      print('Already in master file')
+    else
+      `open -a TextMate #{e_sh master}`
+    end
   else
     print('No master file was defined.')
   end
@@ -593,8 +600,11 @@ end
 #  => true
 def join_with_master_path(filepath)
   master = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-  path = (master == self) ? sub(%r{[^/]*$}, filepath) :
-    File.expand_path(filepath, File.dirname(master))
+  if master == self
+    path = sub(%r{[^/]*$}, filepath)
+  else
+    path = File.expand_path(filepath, File.dirname(master))
+  end
   "#{path}#{'.tex' unless path.match(/\.tex$/) || File.exist?(path)}"
 end
 
@@ -604,8 +614,11 @@ end
 def show_outline
   html_header 'LaTeX Document Outline', 'LaTeX'
   file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-  file = file.nil? ? STDIN :
-                     File.expand_path(file, File.dirname(ENV['TM_FILEPATH']))
+  if file.nil?
+    file = STDIN
+  else
+    file = File.expand_path(file, File.dirname(ENV['TM_FILEPATH']))
+  end
   puts(Outline.outline_from_file(file))
   html_footer
 end
