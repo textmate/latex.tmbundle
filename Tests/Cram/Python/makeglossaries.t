@@ -2,20 +2,22 @@
 
   $ cd "$TESTDIR";
   $ source setup_cram.sh
-  $ cd ../TeX/
-
-  $ TM_FILEPATH="external_bibliography.tex"
-
-Generate the PDF
-
-  $ makeindex "$TM_FILEPATH" >/dev/null 2>&1
-  $ pdflatex "$TM_FILEPATH" >/dev/null 2>&1
+  $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-Check if opening the PDF works with the current viewer
+  $ TM_FILEPATH="makeglossaries.tex"
 
-  $ texmate.py view > /dev/null; exit_success_or_discard
+Translate the file to create the files needed by `makeglossaries`
+
+  $ texmate.py -suppressview latex -latexmk yes -engine latex 2>&- \
+  > | grep "All targets .* are up-to-date" | countlines
+  1
+
+Generate the index for the file
+
+  $ texmate.py index | grep "Output written in .*.gls" | countlines
+  1
 
 Check if clean removes all auxiliary files.
 
@@ -31,6 +33,5 @@ Restore the file changes made by previous commands.
 
 Remove the generated files
 
-  $ rm -f *.ilg *.ind *.pdf
-
+  $ rm -f *.dvi *.pdf *.ps
 

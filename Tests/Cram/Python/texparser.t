@@ -2,12 +2,9 @@
 
   $ cd "$TESTDIR";
   $ source setup_cram.sh
-  $ cd ../TeX/
+  $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="external_bibliography.tex"
-
-Check if building the bibliography works without procducing any error
-
-  $ texmate.py bibtex > /dev/null; exit_success_or_discard
+  $ texparser.py ../Log/ünicöde.log ünicöde.tex | \
+  >  grep '15.*Undefined control sequence.' > /dev/null

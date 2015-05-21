@@ -2,19 +2,22 @@
 
   $ cd "$TESTDIR";
   $ source setup_cram.sh
-  $ cd ../TeX/
+  $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-Just try to translate the program using `latex`
+Try to translate a file with the encoding “Mac OS Roman”
 
-  $ texmate.py -suppressview latex -latexmk no -engine lualatex lualatex.tex \
-  > | grep 'Output written' |  countlines
-  1
+  $ TM_FILEPATH="applemac.tex"
+
+Just try to translate the program using `pdflatex`
+
+  $ texmate.py -suppressview latex -latexmk no -engine pdflatex | \
+  > grep 'Output written' > /dev/null
 
 Check if clean removes all auxiliary files.
 
-  $ texmate.py clean lualatex.tex > /dev/null; exit_success_or_discard
+  $ texmate.py clean > /dev/null; exit_success_or_discard
   $ ls | grep -E $auxiliary_files_regex
   [1]
 
@@ -24,6 +27,6 @@ Restore the file changes made by previous commands.
 
   $ restore_aux_files_git
 
-Remove the generated PDF files
+Remove the generated PDF
 
   $ rm -f *.pdf

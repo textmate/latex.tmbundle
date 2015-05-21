@@ -2,20 +2,16 @@
 
   $ cd "$TESTDIR";
   $ source setup_cram.sh
-  $ cd ../TeX
+  $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-We test if the root directive (%!TEX root) works. This means that although we
-call typesetting on a certain file, we translate the file specified as
-`root`.
+  $ TM_FILEPATH="external_bibliography.tex"
 
-  $ TM_FILEPATH="input/packages_input1.tex"
+Just try to translate the program using `latex`
 
-Just try to translate the program using `latex`. The root file is
-`packages.tex`
-
-  $ texmate.py -s latex -latexmk no | grep 'packages.tex' | countlines
+  $ texmate.py -suppressview latex -latexmk no -engine pdflatex \
+  > | grep 'Output written' |  countlines
   1
 
 Check if clean removes all auxiliary files.

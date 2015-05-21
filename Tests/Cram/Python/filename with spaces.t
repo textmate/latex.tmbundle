@@ -2,18 +2,23 @@
 
   $ cd "$TESTDIR";
   $ source setup_cram.sh
-  $ cd ../TeX/
+  $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-Try to translate a file with the encoding “Mac OS Roman”
+Try to translate a file with spaces in the filename. The file contains one error
 
-  $ TM_FILEPATH="applemac.tex"
+  $ TM_FILEPATH="filename with spaces.tex"
 
 Just try to translate the program using `pdflatex`
 
   $ texmate.py -suppressview latex -latexmk no -engine pdflatex | \
-  > grep 'Output written' > /dev/null
+  > grep '.*filename with spaces.tex:7.*Undefined control sequence.' > /dev/null
+
+Check if texparser is able to parse the resulting log file
+
+  $ texparser.py 'filename with spaces.log' 'filename with spaces.tex' | \
+  >  grep '.*:7.*Undefined control sequence.' > /dev/null
 
 Check if clean removes all auxiliary files.
 

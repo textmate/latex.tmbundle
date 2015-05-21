@@ -2,24 +2,16 @@
 
   $ cd "$TESTDIR";
   $ source setup_cram.sh
-  $ cd ../TeX/
+  $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-Try to translate a file that contains non ASCII characters, uses the utf-8
-inputencoding and contains an error.
+  $ TM_FILEPATH="xelatex.tex"
 
-  $ TM_FILEPATH="unicode_error.tex"
+Just try to translate the program using `latex`
 
-Just try to translate the program using `latexmk`
-
-  $ texmate.py -s latex -latexmk yes | grep 'Output written' | countlines
+  $ texmate.py -s latex -latexmk no | grep 'Output written' | countlines
   1
-
-Check if texparser is able to parse the resulting log file
-
-  $ texparser.py unicode_error.log unicode_error.tex | \
-  >  grep '4.*Undefined control sequence.' > /dev/null
 
 Check if clean removes all auxiliary files.
 
@@ -33,6 +25,6 @@ Restore the file changes made by previous commands.
 
   $ restore_aux_files_git
 
-Remove the generated PDF
+Remove the generated PDF files
 
-  $ rm -f *.dvi *.pdf *.ps
+  $ rm -f *.pdf

@@ -39,7 +39,7 @@ RUBY_FILES = Support/lib/command.rb Support/lib/format_table.rb \
 
 run: all
 
-all: toxtests cramtests_non_python rubydoctests
+all: toxtests cramtests_general rubydoctests
 
 clean:
 	cd Tests/TeX && rm -vf *.acr *.alg *.bbl *.blg *.dvi *.fdb_latexmk *.fls \
@@ -70,11 +70,11 @@ latex_watch:
 # = Automated Tests =
 # ===================
 
-cramtests: clean
-	cd Tests/Cram && cram *.t
+cramtests_python: clean
+	cd Tests/Cram/Python && cram *.t
 
-cramtests_non_python:
-	cd Tests/Cram && cram check_filenames.t
+cramtests_general:
+	cd Tests/Cram/General && cram *.t
 
 nosetests: checkstyle_python
 	nosetests --with-doctest $(LIBRARY_DIRECTORY)/*.py $(BINARY_DIRECTORY)/*.py

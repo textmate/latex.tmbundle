@@ -2,16 +2,20 @@
 
   $ cd "$TESTDIR";
   $ source setup_cram.sh
-  $ cd ../TeX/
+  $ cd ../../TeX/
+
+  $ TM_FILEPATH="external_bibliography.tex"
+
+Generate the PDF
+
+  $ makeindex "$TM_FILEPATH" >/dev/null 2>&1
+  $ pdflatex "$TM_FILEPATH" >/dev/null 2>&1
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="xelatex.tex"
+Check if opening the PDF works with the current viewer
 
-Just try to translate the program using `latex`
-
-  $ texmate.py -s latex -latexmk no | grep 'Output written' | countlines
-  1
+  $ texmate.py view > /dev/null; exit_success_or_discard
 
 Check if clean removes all auxiliary files.
 
@@ -25,6 +29,8 @@ Restore the file changes made by previous commands.
 
   $ restore_aux_files_git
 
-Remove the generated PDF files
+Remove the generated files
 
-  $ rm -f *.pdf
+  $ rm -f *.ilg *.ind *.pdf
+
+

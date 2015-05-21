@@ -9,7 +9,7 @@
 
 # -- Variables ----------------------------------------------------------------
 
-BUNDLE_DIR="$TESTDIR/../.."
+BUNDLE_DIR="$TESTDIR/../../.."
 TM_BUNDLE_DIR="$HOME/Library/Application Support/TextMate/Managed/Bundles"
 
 export TM_SUPPORT_PATH="$TM_BUNDLE_DIR/Bundle Support.tmbundle/Support/shared"

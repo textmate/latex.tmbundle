@@ -2,21 +2,20 @@
 
   $ cd "$TESTDIR";
   $ source setup_cram.sh
-  $ cd ../TeX/
+  $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="makeglossaries.tex"
+We test if the root directive (%!TEX root) works. This means that although we
+call typesetting on a certain file, we translate the file specified as
+`root`.
 
-Translate the file to create the files needed by `makeglossaries`
+  $ TM_FILEPATH="input/packages_input1.tex"
 
-  $ texmate.py -suppressview latex -latexmk yes -engine latex 2>&- \
-  > | grep "All targets .* are up-to-date" | countlines
-  1
+Just try to translate the program using `latex`. The root file is
+`packages.tex`
 
-Generate the index for the file
-
-  $ texmate.py index | grep "Output written in .*.gls" | countlines
+  $ texmate.py -s latex -latexmk no | grep 'packages.tex' | countlines
   1
 
 Check if clean removes all auxiliary files.
@@ -31,7 +30,6 @@ Restore the file changes made by previous commands.
 
   $ restore_aux_files_git
 
-Remove the generated files
+Remove the generated PDF files
 
-  $ rm -f *.dvi *.pdf *.ps
-
+  $ rm -f *.pdf
