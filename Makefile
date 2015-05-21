@@ -14,8 +14,10 @@
 # - [nose](http://nose.readthedocs.org)
 # - [rubydoctest](https://github.com/tablatom/rubydoctest)
 #
-# For all tests to work correctly you also need to install “Skim” inside
-# the folder `/Applications`.
+# For all tests to work correctly you also need to install:
+# 1. “Skim” inside the folder `/Applications` and
+# 2. [gtm](http://lists.macromates.com/textmate/2010-May/030881.html) in a
+# 	 location accessible via `PATH`.
 # ------------------------------------------------------------------------------
 
 .PHONY: all clean checkstyle latex_watch cramtests nosetests rubydoctests \
