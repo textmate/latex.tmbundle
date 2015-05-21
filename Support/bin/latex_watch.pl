@@ -1,8 +1,6 @@
 #! /usr/bin/perl
 
 # LaTeX Watch,
-our $VERSION = "3.11";
-
 #  - by Robin Houston, 2007, 2008.
 #  - by René Schwaiger, 2014, 2015.
 
@@ -21,8 +19,6 @@ our $VERSION = "3.11";
 #       -d --textmate-pid=$tm_pid path/to/texfile.tex
 #
 
-# Changelog now at end of file.
-
 use strict;
 use warnings;
 use POSIX ();
@@ -31,6 +27,9 @@ use File::Copy 'copy';
 use File::Path 'remove_tree';
 use File::Spec;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
+use Time::HiRes 'sleep';
+
+our $VERSION = "3.11";
 
 #############
 # Configure #
@@ -307,7 +306,7 @@ sub main_loop {
               };
         }
 
-        select( undef, undef, undef, 0.5 );    # Sleep for 0.5 seconds
+        sleep(0.5);
     }
 }
 
