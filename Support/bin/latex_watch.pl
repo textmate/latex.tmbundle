@@ -22,12 +22,16 @@
 use strict;
 use warnings;
 use POSIX ();
+use Cwd qw(abs_path);
 use File::Basename;
 use File::Copy 'copy';
 use File::Path 'remove_tree';
 use File::Spec;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
 use Time::HiRes 'sleep';
+
+use lib dirname(dirname abs_path $0) . '/lib';
+use Latex 'guess_tex_engine';
 
 our $VERSION = "3.11";
 
@@ -126,41 +130,6 @@ main_loop();
         my $pref = $prefs->objectForKey_($prefName);
         return $$pref ? $pref->UTF8String() : $default;
     }
-}
-
-# Guess the TeX engine which should be used to translate a certain TeX-file.
-#
-# Arguments:
-#
-#      filepath - The file path to the TeX file either as absolute path or
-#                 relative to the location of this file
-#
-# Returns:
-#
-#      A string containing the TeX engine for the given file or an empty
-#      string if the engine could not be determined
-#
-# Example:
-#
-#   We assume `test.tex` contains the line `%!TEX TS-program = pdflatex`
-#   $ guess_tex_engine(test.tex)
-#   "pdflatex"
-#
-sub guess_tex_engine {
-    open( my $fh, "<", @_ )
-      or die "cannot open @_: $!";
-
-    my $engine = "";
-    # TS-program is case insensitive e.g. `LaTeX` should be the same as `latex`
-    my $engines = "(?i)latex|lualatex|pdflatex|xelatex(?-i)";
-    while ( my $line = <$fh> ) {
-        if ( $line =~ /%!TEX(?:\s+)(?:TS-)program(?:\s*)=(?:\s*)($engines)/ ) {
-            $engine = lc($1);
-            last;
-        }
-    }
-    close($fh);
-    return $engine;
 }
 
 sub get_prefs {
