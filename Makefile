@@ -41,7 +41,7 @@ RUBY_FILES = Support/lib/command.rb Support/lib/format_table.rb \
 
 run: all
 
-all: toxtests cramtests_general rubydoctests
+all: toxtests cramtests_general perltests rubydoctests
 
 clean:
 	cd Tests/TeX && rm -vf *.acr *.alg *.bbl *.blg *.dvi *.fdb_latexmk *.fls \
@@ -80,6 +80,9 @@ cramtests_general:
 
 nosetests: checkstyle_python
 	nosetests --with-doctest $(LIBRARY_DIRECTORY)/*.py $(BINARY_DIRECTORY)/*.py
+
+perltests:
+	perl Tests/Perl/*.t
 
 rubydoctests: checkstyle_ruby
 	rubydoctest $(RUBY_FILES)

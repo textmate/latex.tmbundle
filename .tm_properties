@@ -10,3 +10,6 @@ projectDirectory = "$CWD"
 
 include = "{$include,.rubocop.yml}"
 exclude = "{$exclude,*.scpt}"
+
+[ Tests/Perl/*.t ]
+fileType = source.perl
