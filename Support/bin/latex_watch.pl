@@ -21,13 +21,13 @@
 
 use strict;
 use warnings;
-use POSIX ();
+
 use Cwd qw(abs_path);
 use File::Basename;
 use File::Copy 'copy';
 use File::Path 'remove_tree';
-use File::Spec;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
+use POSIX ();
 use Time::HiRes 'sleep';
 
 use lib dirname(dirname abs_path $0) . '/lib';
@@ -159,9 +159,7 @@ sub init_environment {
       . "TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared"
       if !defined $ENV{TM_SUPPORT_PATH};
     if ( !defined $ENV{TM_BUNDLE_SUPPORT} ) {
-        $ENV{TM_BUNDLE_SUPPORT} =
-          dirname( File::Spec->rel2abs(__FILE__) );
-        $ENV{TM_BUNDLE_SUPPORT} =~ s/\/bin$//;
+        $ENV{TM_BUNDLE_SUPPORT} = dirname(dirname abs_path $0);
     }
 
     # Add TextMate support paths
