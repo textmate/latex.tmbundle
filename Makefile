@@ -25,8 +25,7 @@
 # 	 location accessible via `PATH`.
 # ------------------------------------------------------------------------------
 
-.PHONY: all clean checkstyle latex_watch cramtests nosetests perltests \
-	 	rubydoctests toxtests
+.PHONY: checkstyle cramtests perltests rubydoctests toxtests
 
 # -- Variables -----------------------------------------------------------------
 
@@ -46,7 +45,7 @@ RUBY_FILES = Support/lib/command.rb Support/lib/format_table.rb \
 
 run: all
 
-all: toxtests cramtests_general perltests rubydoctests
+all: toxtests cramtests perltests rubydoctests
 
 clean:
 	cd Tests/TeX && rm -vf *.acr *.alg *.bbl *.blg *.dvi *.fdb_latexmk *.fls \
@@ -71,14 +70,8 @@ checkstyle_ruby:
 # = Automated Tests =
 # ===================
 
-cramtests_python: clean
-	cd Tests/Cram/Python && cram *.t
-
-cramtests_general:
+cramtests:
 	cd Tests/Cram/General && cram *.t
-
-nosetests: checkstyle_python
-	nosetests --with-doctest $(LIBRARY_DIRECTORY)/*.py $(BINARY_DIRECTORY)/*.py
 
 perltests: checkstyle_perl
 	perl Tests/Perl/*.t
