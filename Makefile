@@ -14,6 +14,11 @@
 # - [nose](http://nose.readthedocs.org)
 # - [rubydoctest](https://github.com/tablatom/rubydoctest)
 #
+# and the following code checkers:
+# - [flake8](https://pypi.python.org/pypi/flake8)
+# - [perlcritic](http://search.cpan.org/dist/Perl-Critic/bin/perlcritic)
+# - [rubocop](https://github.com/bbatsov/rubocop)
+#
 # For all tests to work correctly you also need to install:
 # 1. “Skim” inside the folder `/Applications` and
 # 2. [gtm](http://lists.macromates.com/textmate/2010-May/030881.html) in a
@@ -51,7 +56,10 @@ clean:
 # = Style Checks =
 # ================
 
-checkstyle: checkstyle_python checkstyle_ruby
+checkstyle: checkstyle_perl checkstyle_python checkstyle_ruby
+
+checkstyle_perl:
+	perlcritic $(LIBRARY_DIRECTORY)/*.pm Tests/Perl/*.t
 
 checkstyle_python:
 	flake8 $(BINARY_DIRECTORY)/*.py $(LIBRARY_DIRECTORY)/*.py
@@ -81,7 +89,7 @@ cramtests_general:
 nosetests: checkstyle_python
 	nosetests --with-doctest $(LIBRARY_DIRECTORY)/*.py $(BINARY_DIRECTORY)/*.py
 
-perltests:
+perltests: checkstyle_perl
 	perl Tests/Perl/*.t
 
 rubydoctests: checkstyle_ruby
