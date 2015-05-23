@@ -3,11 +3,12 @@
 # -- Imports ------------------------------------------------------------------
 
 from os import sys, path
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))))  # noqa
+sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
+                "/lib/Python")  # noqa
 
 from subprocess import Popen, PIPE, STDOUT
 
-from lib.tmprefs import Preferences
+from tmprefs import Preferences
 
 # -- Main ---------------------------------------------------------------------
 

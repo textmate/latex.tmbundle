@@ -37,7 +37,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import sys, path
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))))  # noqa
+sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
+                "/lib/Python")  # noqa
 
 from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
@@ -56,13 +57,11 @@ try:
 except ImportError:
     from urllib import quote  # Python 2
 
-from lib.tex import (find_file_to_typeset, find_tex_directives,
-                     find_tex_packages)
-from lib.tmprefs import Preferences
-from lib.util import update_marks
-from lib.parsing import (BibTexParser, BiberParser, ChkTexParser,
-                         LaTexParser, MakeGlossariesParser, MakeIndexParser,
-                         LaTexMkParser)
+from tex import (find_file_to_typeset, find_tex_directives, find_tex_packages)
+from tmprefs import Preferences
+from util import update_marks
+from parsing import (BibTexParser, BiberParser, ChkTexParser, LaTexParser,
+                     MakeGlossariesParser, MakeIndexParser, LaTexMkParser)
 
 
 # -- Module Import ------------------------------------------------------------

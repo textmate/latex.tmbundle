@@ -9,8 +9,12 @@
 
 # -- Imports ------------------------------------------------------------------
 
+from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
+
+from os import sys, path
+sys.path.insert(1, path.dirname(path.abspath(__file__)))  # noqa
 
 from re import compile, match, search, UNICODE
 from os import getcwd

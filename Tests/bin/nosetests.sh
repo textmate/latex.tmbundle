@@ -6,4 +6,4 @@
 #           Run nose tests for all Python commands
 # ------------------------------------------------------------------------------
 
-nosetests --with-doctest Support/lib/*.py Support/bin/*.py
+nosetests --with-doctest Support/lib/Python/*.py Support/bin/*.py

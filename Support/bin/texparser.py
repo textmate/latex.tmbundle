@@ -7,7 +7,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import sys, path
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))))  # noqa
+sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
+                "/lib/Python")  # noqa
 
 from argparse import ArgumentParser
 from io import open
@@ -18,9 +19,9 @@ from pipes import quote as shellquote
 from subprocess import check_output, STDOUT
 from sys import version_info
 
-from lib.parsing import LaTexMkParser
-from lib.tex import encodings
-from lib.util import update_marks
+from parsing import LaTexMkParser
+from tex import encodings
+from util import update_marks
 
 # -- Module Import ------------------------------------------------------------
 

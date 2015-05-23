@@ -61,14 +61,14 @@ checkstyle_perl:
 	perlcritic --harsh $(LIBRARY_DIRECTORY)/Perl/*.pm Tests/Perl/*.t
 
 checkstyle_python:
-	flake8 $(BINARY_DIRECTORY)/*.py $(LIBRARY_DIRECTORY)/*.py
+	flake8 $(BINARY_DIRECTORY)/*.py $(LIBRARY_DIRECTORY)/Python/*.py
 
 checkstyle_ruby:
 	rubocop $(RUBY_FILES)
 
-# ===================
-# = Automated Tests =
-# ===================
+# =========
+# = Tests =
+# =========
 
 cramtests:
 	cd Tests/Cram/General && cram *.t

@@ -41,7 +41,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import sys, path
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))))  # noqa
+sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
+                "/lib/Python")  # noqa
 
 from io import open
 from os import chdir, getenv, mkdir
@@ -54,8 +55,7 @@ try:
 except ImportError:
     from urllib import quote  # Python 2
 
-from lib.tex import (find_tex_packages, find_tex_directives,
-                     find_file_to_typeset)
+from tex import (find_tex_packages, find_tex_directives, find_file_to_typeset)
 
 
 # -- Functions ----------------------------------------------------------------
