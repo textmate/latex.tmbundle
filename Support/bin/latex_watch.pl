@@ -30,7 +30,7 @@ use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
 use POSIX ();
 use Time::HiRes 'sleep';
 
-use lib dirname(dirname abs_path $0) . '/lib';
+use lib dirname(dirname abs_path $0) . '/lib/Perl';
 use Latex 'guess_tex_engine';
 
 our $VERSION = "3.11";

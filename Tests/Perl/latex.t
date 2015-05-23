@@ -7,7 +7,7 @@ use Cwd qw(abs_path);
 use File::Basename;
 use Test::Simple tests => 3;
 
-use lib dirname( dirname( dirname abs_path $0) ) . '/Support/lib';
+use lib dirname( dirname( dirname abs_path $0) ) . '/Support/lib/Perl';
 use Latex 'guess_tex_engine';
 
 my $tex_dir = dirname( dirname abs_path $0) . '/TeX';
