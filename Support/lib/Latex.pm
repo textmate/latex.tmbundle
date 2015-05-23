@@ -43,6 +43,7 @@ sub _get_engine_from_file {
     my $engines = "(?i)latex|lualatex|pdflatex|xelatex(?-i)";
 
     while ( my $line = <$fh> ) {
+        last unless ( 1 .. 20 );
         if ( $line =~
             m{%!TEX (?:\s+) (?:TS-)program (?:\s*)=(?:\s*) ($engines)}x )
         {
