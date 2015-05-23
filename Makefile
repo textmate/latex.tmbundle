@@ -67,15 +67,6 @@ checkstyle_python:
 checkstyle_ruby:
 	rubocop $(RUBY_FILES)
 
-# ================
-# = Manual Tests =
-# ================
-
-latex_watch:
-	TM_PID=$(shell pgrep TextMate)
-	$(BINARY_DIRECTORY)/latex_watch.pl -d --textmate-pid=$(TM_PID) \
-		"$(CURDIR)/Tests/TeX/makeindex.tex"
-
 # ===================
 # = Automated Tests =
 # ===================
