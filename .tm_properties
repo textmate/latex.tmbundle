@@ -13,3 +13,4 @@ exclude = "{$exclude,*.scpt}"
 
 [ Tests/Perl/*.t ]
 fileType = source.perl
+tabSize  = 4
