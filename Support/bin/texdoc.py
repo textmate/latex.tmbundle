@@ -264,7 +264,8 @@ if __name__ == '__main__':
     # The JavaScript gives us the nifty expand collapse outline look
     tm_bundle_support = getenv('TM_BUNDLE_SUPPORT')
     css_location = quote('{}/css/texdoc.css'.format(tm_bundle_support))
-    js_location = quote('{}/lib/texdoc.js'.format(tm_bundle_support))
+    js_location = quote('{}/lib/JavaScript/texdoc.js'.format(
+                        tm_bundle_support))
     print("""<link rel="stylesheet" href="file://{}">
              <script type="text/javascript" src="file://{}"
                  charset="utf-8"></script>

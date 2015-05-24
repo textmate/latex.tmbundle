@@ -1138,7 +1138,8 @@ if __name__ == '__main__':
         print('</div></div>')  # Close divs `preText` and `commandOutput`
         pdf_file = '{}.pdf'.format(file_without_suffix)
         # only need to include the javascript library once
-        texlib_location = quote('{}/lib/texlib.js'.format(tm_bundle_support))
+        texlib_location = quote('{}/lib/JavaScript/texlib.js'.format(
+                                tm_bundle_support))
 
         print('''<script src="file://{}" type="text/javascript"
                   charset="utf-8"></script>
