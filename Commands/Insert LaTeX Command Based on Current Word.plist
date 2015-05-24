@@ -9,7 +9,7 @@
 SUPPORT = ENV['TM_BUNDLE_SUPPORT']
 require ENV['TM_SUPPORT_PATH'] + '/lib/ui'
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes'
-require SUPPORT + '/lib/config_helper.rb'
+require SUPPORT + '/lib/Ruby/config_helper.rb'
 @plist = Config.load
 shortcuts = @plist['environments']
 lshortcuts = @plist['labeled_environments']

@@ -38,8 +38,8 @@ export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib
-RUBY_FILES = Support/lib/command.rb Support/lib/format_table.rb \
-			 Support/lib/latex.rb
+RUBY_FILES = Support/lib/Ruby/command.rb Support/lib/Ruby/format_table.rb \
+			 Support/lib/Ruby/latex.rb
 
 # -- Rules ---------------------------------------------------------------------
 

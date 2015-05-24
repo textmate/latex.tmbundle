@@ -4,9 +4,9 @@ module Config
     def load
       return merge_plists(load_default_file,load_user_file)
     end
-    
+
     private
-    
+
     def load_file(filename)
       return nil if !FileTest.exist?(filename)
       File.open(filename) do |f|

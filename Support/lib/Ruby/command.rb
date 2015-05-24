@@ -10,7 +10,7 @@ require 'pathname'
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/ui.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
-require ENV['TM_BUNDLE_SUPPORT'] + '/lib/latex.rb'
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/latex.rb'
 
 # -- Functions -----------------------------------------------------------------
 

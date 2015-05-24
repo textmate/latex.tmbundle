@@ -2,7 +2,7 @@
 
 # -- Imports -------------------------------------------------------------------
 
-require ENV['TM_BUNDLE_SUPPORT'] + '/lib/latex.rb'
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/latex.rb'
 
 # -- Main ----------------------------------------------------------------------
 

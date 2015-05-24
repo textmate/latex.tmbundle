@@ -7,7 +7,7 @@
 
 # -- Imports -------------------------------------------------------------------
 
-require ENV['TM_BUNDLE_SUPPORT'] + '/lib/command.rb'
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/command.rb'
 
 # -- Main ----------------------------------------------------------------------
 

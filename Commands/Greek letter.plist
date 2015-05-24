@@ -10,7 +10,7 @@
 require "#{ENV['TM_SUPPORT_PATH']}/lib/exit_codes"
 require "#{ENV['TM_SUPPORT_PATH']}/lib/current_word"
 require "#{ENV['TM_SUPPORT_PATH']}/lib/escape"
-require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/config_helper.rb"
+require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/Ruby/config_helper.rb"
 
 @plist = Config.load
 shortcutHash = @plist['symbols']
@@ -22,7 +22,7 @@ word = match[:left].to_s + match[:right].to_s
 if (shortcutHash.has_key?(word)) then
   # Need to support previously saved latex.config files with leading \
   result = shortcutHash[word].gsub(/^\\/, '')
-  
+
   print e_sn(match[:before_match].sub(/\\?$/, '\\')) + e_sn(result) + '${0}' + e_sn(match[:after_match])
 else
   TextMate.exit_discard
