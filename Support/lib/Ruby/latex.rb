@@ -25,7 +25,8 @@ module LaTeX
   #  doctest: Parse the tex directives in 'xelatex.tex'
   #
   #  >> LaTeX.options('Tests/TeX/xelatex.tex')
-  #  => {"TS-program"=>"xelatex"}
+  #  => {"TS-program"=>"xelatex", "spellcheck"=>"en-US",
+  #      "encoding"=>"UTF-8 Unicode"}
   #
   #  doctest: Parse the tex directives in 'packages_input1.tex'
   #
@@ -35,7 +36,7 @@ module LaTeX
     opts = {}
     File.foreach(filepath).first(20).each do |line|
       opts[Regexp.last_match[1]] = Regexp.last_match[2] if
-        line =~ /^%!TEX (\S*) =\s*(\S.*\S)\s*$/
+        line =~ /^\s*%\s*!TEX\s*(\S+)\s*=\s*(.+)\s*$/
     end
     opts
   end
