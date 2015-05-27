@@ -6,11 +6,14 @@ use strict;
 use warnings;
 
 use Carp qw( croak );
-use Exporter qw(import);
+use Cwd qw( realpath );
+use Exporter qw( import );
+use File::Basename;
+use File::Spec;
 
 # -- Exports -------------------------------------------------------------------
 
-our @EXPORT_OK = qw(guess_tex_engine tex_directives);
+our @EXPORT_OK = qw(guess_tex_engine master tex_directives);
 
 # -- Functions -----------------------------------------------------------------
 
@@ -51,6 +54,50 @@ sub tex_directives {
     my %directives = _tex_directives_filehandle($fh);
     close($fh);
     return %directives;
+}
+
+# Get the master file for the specified TeX file.
+#
+# Arguments:
+#
+#      filepath - The file path of the TeX file.
+#
+# Returns:
+#
+#       This function returns an array of the form:
+#
+#           ( $error, $filepath_or_error_message )
+#
+#       `$error` specifies if there was an error determining the master file. If
+#       `$error` is false, then `$filepath_or_error_message` contains the
+#       correct path to the master file. Otherwise the second value of the
+#       array contains an error message describing the problem encountered
+#       while determining the master file.
+#
+sub master {
+    my ($current_file) = @_;
+    my $master;
+    my %directives;
+    my %filepaths = ();
+
+    while ( !exists $filepaths{$current_file} ) {
+        $filepaths{$current_file} = undef;
+        %directives = tex_directives($current_file);
+        return ( 0, $current_file ) unless exists $directives{"root"};
+        $master = $directives{"root"};
+        $master = File::Spec->catfile( scalar( dirname $current_file), $master )
+          unless File::Spec->file_name_is_absolute($master);
+        $master = realpath($master);
+        return ( 1,
+                "The root $master specified in the file $current_file can not "
+              . "be opened." )
+          unless -r $master;
+        $current_file = $master;
+    }
+
+    return ( 1,
+            "The file $current_file was specified twice as root file."
+          . " Please check your root directives for loops." );
 }
 
 # ===========

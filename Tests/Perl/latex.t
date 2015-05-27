@@ -7,15 +7,15 @@ use warnings;
 
 use Cwd qw(abs_path);
 use File::Basename;
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 use lib dirname( dirname( dirname abs_path $0) ) . '/Support/lib/Perl';
-use Latex qw(guess_tex_engine tex_directives);
+use Latex qw(guess_tex_engine master tex_directives);
 
 # -- Tests ---------------------------------------------------------------------
 
 my $tex_dir = dirname( dirname abs_path $0) . '/TeX';
-my ( %reference, %output );
+my ( %reference, %output, $error, $output );
 
 ok( guess_tex_engine( $tex_dir . '/xelatex.tex' ) eq 'xelatex',
     'Guess tex engine for xelatex.tex' );
@@ -38,3 +38,10 @@ is_deeply( \%reference, \%output, 'Check tex directives for file xelatex.tex' );
 
 is_deeply( \%reference, \%output,
     'Check tex directives for file packages_input1.tex' );
+
+( $error, $output ) = master( $tex_dir . '/input/packages_input1.tex' );
+
+ok(
+    !$error && $output =~ m/TeX\/packages\.tex$/x,
+    'Get master file for packages_input1.tex'
+);
