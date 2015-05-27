@@ -7,7 +7,7 @@ use warnings;
 
 use Cwd qw(abs_path);
 use File::Basename;
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 use lib dirname( dirname( dirname abs_path $0) ) . '/Support/lib/Perl';
 use Latex qw(guess_tex_engine master tex_directives);
@@ -15,7 +15,7 @@ use Latex qw(guess_tex_engine master tex_directives);
 # -- Tests ---------------------------------------------------------------------
 
 my $tex_dir = dirname( dirname abs_path $0) . '/TeX';
-my ( %reference, %output, $error, $output );
+my ( %reference, %output, $error, $output, $regex );
 
 ok( guess_tex_engine( $tex_dir . '/xelatex.tex' ) eq 'xelatex',
     'Guess tex engine for xelatex.tex' );
@@ -50,3 +50,11 @@ ok(
 
 ok( $error && $output =~ m/root\ loop\.tex\ was\ specified\ twice/x,
     'Detect the %!TEX root loop in root loop.tex' );
+
+( $error, $output ) = master( $tex_dir . '/non existent root.tex' );
+
+$regex = 'I\ do\ not\ exist.tex .* in .*'
+  . 'non\ existent\ root\.tex\ can\ not\ be\ opened\.';
+
+ok( $error && $output =~ qr/$regex/x,
+    'Detect the non existent %!TEX root in non existent root.tex' );
