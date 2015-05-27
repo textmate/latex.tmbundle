@@ -1158,7 +1158,7 @@ if __name__ == '__main__':
         if viewer == 'TextMate':
             print('''<input type="button" value="View in TextMate"
                       onclick="window.location='file://{}'"/>'''.format(
-                  quote('{}/{}'.format(file_path, pdf_file))))
+                  quote('{}/{}'.format(file_path, pdf_file).encode('utf8'))))
         else:
             print('''<input type="button" value="View in {}"
                      onclick="runView(); return false">'''.format(viewer))
