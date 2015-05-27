@@ -69,12 +69,13 @@ module LaTeX
     return nil if filepath.nil?
     master = Pathname.new(filepath).cleanpath
     10.times do
-      opts = options(master)
-      return master.to_s unless opts.key?('root')
-      new_master = (master.parent + Pathname.new(opts['root'])).cleanpath
+      root = options(master)['root']
+      return master.to_s unless root
+      new_master = (master.parent + Pathname.new(root)).cleanpath
       return master.to_s if new_master == master
       master = new_master
     end
+    fail('There is a loop in your %!TEX root directives.')
   end
 
   # Implements general methods that give information about the LaTeX document.
