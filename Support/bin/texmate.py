@@ -726,7 +726,8 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
 
 
 def get_typesetting_data(filepath, tm_engine,
-                         tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
+                         tm_bundle_support=getenv('TM_BUNDLE_SUPPORT'),
+                         ignore_root_loops=False):
     """Return a dictionary containing up-to-date typesetting data.
 
     This function changes the current directory to the location of
@@ -745,6 +746,11 @@ def get_typesetting_data(filepath, tm_engine,
         tm_bundle_support
 
             The location of the “LaTeX Bundle” support folder.
+
+        ignore_root_loops
+
+            Specifies if this function exits with an error status if the tex
+            root directives contain a loop.
 
     Returns: ``{str: str}``
 
@@ -801,7 +807,7 @@ def get_typesetting_data(filepath, tm_engine,
         return typesetting_data
 
     filepath = normpath(realpath(filepath))
-    typesetting_directives = find_tex_directives(filepath)
+    typesetting_directives = find_tex_directives(filepath, ignore_root_loops)
     filename, file_path = find_file_to_typeset(typesetting_directives,
                                                tex_file=filepath)
     file_without_suffix = get_filename_without_extension(filename)
@@ -960,8 +966,9 @@ if __name__ == '__main__':
         if arguments.engine_options:
             tm_engine_options = arguments.engine_options
 
-    typesetting_data = get_typesetting_data(filepath, tm_engine,
-                                            tm_bundle_support)
+    typesetting_data = get_typesetting_data(
+        filepath, tm_engine, tm_bundle_support,
+        True if command == 'version' else False)
 
     typesetting_directives = typesetting_data['typesetting_directives']
     cache_filename = typesetting_data['cache_filename']

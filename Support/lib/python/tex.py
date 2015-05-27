@@ -243,7 +243,7 @@ def find_tex_packages(filepath):
     return package_set
 
 
-def find_tex_directives(texfile):
+def find_tex_directives(texfile, ignore_root_loops=False):
     """Build a dictionary of %!TEX directives.
 
     The main ones we are concerned with are:
@@ -271,6 +271,11 @@ def find_tex_directives(texfile):
             The initial tex file which should be searched for tex directives.
             If this file contains a “root” directive, then the file specified
             in this directive will be searched next.
+
+        ignore_root_loops
+
+            Specifies if this function exits with an error status if the tex
+            root directives contain a loop.
 
     Returns: ``{str: str}``
 
@@ -314,10 +319,12 @@ def find_tex_directives(texfile):
             break
 
         if new_tex_file in root_chain:
-            print('''<p class="error"> There is a loop in your "%!TEX root ="
-                                       directives.</p>
-                     <p class="error"> Chain: {}</p>
-                     <p class="error"> Exiting.</p>'''.format(root_chain))
+            if ignore_root_loops:
+                break
+            print('''<div id="commandOutput"><div id="preText">
+                     <p class="error">There is a loop in your %!TEX root
+                                      directives.</p>
+                     </div></div>''')
             exit(EXIT_LOOP_IN_TEX_ROOT)
         else:
             texfile = new_tex_file
