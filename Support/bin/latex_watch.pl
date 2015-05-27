@@ -667,7 +667,7 @@ my $pdf_viewer_app;
 
 sub select_pdf_viewer {
     my ($viewer) = @_;
-    $viewer ||= "TeXShop";    # TeXShop is the default
+    $viewer ||= "Skim";    # We use Skim as default viewer
 
     debug_msg("PDF Viewer selected ($viewer)");
 
