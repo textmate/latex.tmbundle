@@ -31,7 +31,7 @@ use POSIX ();
 use Time::HiRes 'sleep';
 
 use lib dirname( dirname abs_path $0) . '/lib/Perl';
-use Latex 'guess_tex_engine';
+use Latex qw(guess_tex_engine master);
 
 our $VERSION = "3.11";
 
@@ -196,9 +196,15 @@ sub parse_command_line_options {
 
 sub parse_file_path {
     my $filepath = shift(@ARGV);
+    my $error;
     fail( "File not saved", "You must save the file before it can be watched" )
       if !defined($filepath)
       or $filepath eq "";
+
+    ( $error, $filepath ) = master($filepath) if -r $filepath;
+
+    # filepath contains error message in case of error
+    fail( "Incorrect master file", $filepath ) if $error;
 
     # Parse and verify file path
     my ( $wd, $name, $absolute_wd );

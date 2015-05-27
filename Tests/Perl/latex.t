@@ -54,7 +54,7 @@ ok( $error && $output =~ m/root\ loop\.tex\ was\ specified\ twice/x,
 ( $error, $output ) = master( $tex_dir . '/non existent root.tex' );
 
 $regex = 'I\ do\ not\ exist.tex .* in .*'
-  . 'non\ existent\ root\.tex\ can\ not\ be\ opened\.';
+  . 'non\ existent\ root\.tex\ can\ not\ be\ opened';
 
 ok( $error && $output =~ qr/$regex/x,
     'Detect the non existent %!TEX root in non existent root.tex' );

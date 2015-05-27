@@ -90,14 +90,14 @@ sub master {
         $master = realpath($master);
         return ( 1,
                 "The root $master specified in the file $current_file can not "
-              . "be opened." )
+              . "be opened" )
           unless -r $master;
         $current_file = $master;
     }
 
     return ( 1,
             "The file $current_file was specified twice as root file."
-          . " Please check your root directives for loops." );
+          . " Please check your root directives for loops" );
 }
 
 # ===========
