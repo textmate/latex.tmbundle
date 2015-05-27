@@ -620,8 +620,9 @@ def construct_engine_command(ts_directives, tm_engine, packages):
         tm_engine
 
             A sting containing the default tex engine used in TextMate. The
-            default engine will be used if ``TS-program`` is not set and none
-            of the specified packages contain engine-specific code.
+            default engine will be used if ``TS-program`` or ``program`` is
+            not set and none of the specified packages contain engine-specific
+            code.
 
         packages
 
@@ -646,6 +647,8 @@ def construct_engine_command(ts_directives, tm_engine, packages):
 
     if 'TS-program' in ts_directives:
         engine = ts_directives['TS-program']
+    elif 'program' in ts_directives:
+        engine = ts_directives['program']
     elif packages.intersection(latex_indicators):
         engine = 'latex'
     elif packages.intersection(xelatex_indicators):

@@ -293,7 +293,7 @@ def find_tex_directives(texfile, ignore_root_loops=False):
 
     """
     root_chain = [texfile]
-    directive_regex = compile(r'%!TEX\s+([\w-]+)\s?=\s?(.*)')
+    directive_regex = compile(r'%\s*!T[E|e]X\s+([\w-]+)\s*=\s*(.+)')
     directives = {}
     while True:
         for encoding in encodings:

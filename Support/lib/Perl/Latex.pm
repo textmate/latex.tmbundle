@@ -114,14 +114,14 @@ sub _tex_directives_filehandle {
 
     while ( my $line = <$fh> ) {
         last unless ( 1 .. 20 );
-        next unless ( $line =~ m{^ \s*%\s* !TEX}x );
+        next unless ( $line =~ m{^ \s*%\s* !T[e|E]X}x );
 
-        $line =~ s/^ \s*%\s* !TEX \s* | \s+$//x;
+        $line =~ s/^ \s*%\s* !T[e|E]X \s* | \s+$//x;
 
-        if ( $line =~ m{(?:TS-)program (?:\s*)=(?:\s*) ($engines)}x ) {
+        if ( $line =~ m{(?:TS-)?program \s* = \s* ($engines)}x ) {
             $directives{"program"} = lc($1);
         }
-        elsif ( $line =~ m{($keys) (?:\s*)=(?:\s*) (.+)}x ) {
+        elsif ( $line =~ m{($keys) \s* = \s* (.+)}x ) {
             $directives{$1} = $2;
         }
     }
