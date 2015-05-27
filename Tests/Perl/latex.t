@@ -7,7 +7,7 @@ use warnings;
 
 use Cwd qw(abs_path);
 use File::Basename;
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 use lib dirname( dirname( dirname abs_path $0) ) . '/Support/lib/Perl';
 use Latex qw(guess_tex_engine master tex_directives);
@@ -45,3 +45,8 @@ ok(
     !$error && $output =~ m/TeX\/packages\.tex$/x,
     'Get master file for packages_input1.tex'
 );
+
+( $error, $output ) = master( $tex_dir . '/root loop.tex' );
+
+ok( $error && $output =~ m/root\ loop\.tex\ was\ specified\ twice/x,
+    'Detect the %!TEX root loop in root loop.tex' );
