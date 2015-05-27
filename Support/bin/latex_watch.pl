@@ -30,7 +30,7 @@ use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
 use POSIX ();
 use Time::HiRes 'sleep';
 
-use lib dirname(dirname abs_path $0) . '/lib/Perl';
+use lib dirname( dirname abs_path $0) . '/lib/Perl';
 use Latex 'guess_tex_engine';
 
 our $VERSION = "3.11";
@@ -139,7 +139,7 @@ sub get_prefs {
     return (
         engine  => $engine,
         options => getPreference( latexEngineOptions => "" ),
-        viewer  => getPreference( latexViewer        => "TextMate" ),
+        viewer  => getPreference( latexViewer => "TextMate" ),
     );
 }
 
@@ -159,7 +159,7 @@ sub init_environment {
       . "TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared"
       if !defined $ENV{TM_SUPPORT_PATH};
     if ( !defined $ENV{TM_BUNDLE_SUPPORT} ) {
-        $ENV{TM_BUNDLE_SUPPORT} = dirname(dirname abs_path $0);
+        $ENV{TM_BUNDLE_SUPPORT} = dirname( dirname abs_path $0);
     }
 
     # Add TextMate support paths
@@ -206,7 +206,7 @@ sub parse_file_path {
         $wd = $1;
         my $fullname = $';
         if ( $fullname =~ /\.tex\z/ ) {
-            $name    = $`;
+            $name = $`;
         }
         else {
             fail(
@@ -246,7 +246,7 @@ sub main_loop {
     while (1) {
         if ( document_has_changed() ) {
             debug_msg("Reloading file");
-            my ($output_exists, $error) = compile();
+            my ( $output_exists, $error ) = compile();
             view() if $output_exists;
             parse_log($error);
             if ( defined($progressbar_pid) ) {
@@ -294,8 +294,8 @@ sub clean_up {
 
         # Remove LaTeX bundle cache file
         unlink("$wd/.$name.lb");
-        remove_tree("$wd/pythontex-files-" . $name =~ s/ /-/gr);
-        remove_tree("$wd/_minted-" . $name =~ s/ /-/gr);
+        remove_tree( "$wd/pythontex-files-" . $name =~ s/ /-/gr );
+        remove_tree( "$wd/_minted-" . $name =~ s/ /-/gr );
     }
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
@@ -424,6 +424,7 @@ sub compile {
         "@tex '$wd/$name.tex' &> '$name.latexmk.log'",
         sub {
             if ( $? == 1 || $? == 2 || $? == 12 ) {
+
                 # An error in the document
                 debug_msg("Typesetting command failed with error code $?\n");
                 $error = 1;
@@ -441,20 +442,20 @@ sub compile {
         if ( -e "$wd/$name.ps" ) {
             $compiled_document      = "$wd/$name.ps";
             $compiled_document_name = "$name.ps";
-            return (1, $error);    # Success!
+            return ( 1, $error );    # Success!
         }
         else {
-            return (0, $error);    # Failure
+            return ( 0, $error );    # Failure
         }
     }
-    else {               # PDF mode
+    else {                           # PDF mode
         if ( -e "$wd/$name.pdf" ) {
             $compiled_document      = "$wd/$name.pdf";
             $compiled_document_name = "$name.pdf";
-            return (1, $error);    # Success!
+            return ( 1, $error );    # Success!
         }
         else {
-            return (0, $error);    # Failure
+            return ( 0, $error );    # Failure
         }
     }
 }
@@ -560,11 +561,13 @@ sub select_postscript_viewer {
             fail("Failed to execute gv ($?): $!");
         }
         elsif ($?) {
+
             # Assume that gv did not understand the --version option,
             # and that it is therefore a pre-3.6.0 version
             @ps_viewer = qw(gv -spartan -scale 1 -nocenter -antialias -nowatch);
         }
         elsif ( $gv_version =~ /^gv 3.6.0$/ ) {
+
             # This version is hopelessly broken. Give up.
             fail(
                 "Broken GV detected",
@@ -575,6 +578,7 @@ sub select_postscript_viewer {
             );
         }
         elsif ( $gv_version =~ /^gv 3.6.1$/ ) {
+
             # Version 3.6.1 of GV has a bug that means it
             # dies if it receives a HUP signal. Therefore we execute it
             # in watch mode, and don't send a HUP.
@@ -585,6 +589,7 @@ sub select_postscript_viewer {
             $hup_viewer = 0;
         }
         elsif ( $gv_version =~ /^gv 3.6.2$/ ) {
+
             # The --scale bug has still not been fixed in 3.6.2,
             # but the HUP one has.
             @ps_viewer = qw(gv --spartan --nocenter --antialias --nowatch);
@@ -607,6 +612,7 @@ sub select_postscript_viewer {
 sub start_postscript_viewer {
     my $pid = fork();
     if ($pid) {
+
         # In parent
         return $pid;
     }
@@ -826,11 +832,13 @@ sub fail_unless_system {
 sub cocoa_dialog {
     pipe( my $rh, my $wh );
     if ( my $pid = fork() ) {
+
         # Parent
         local $/ = "\n";
         my $button = <$rh>;
         waitpid( $pid, 0 );
         if ($?) {
+
             # If we failed to show the dialog, there's not much sense
             # in trying to put up another dialog to explain what happened!
             # Print a message to the console.
@@ -857,6 +865,7 @@ sub cocoa_dialog {
 }
 
 sub applescript {
+
     # We could do this much more efficiently using Mac::OSA
     # but that's only preinstalled on 10.4 and later.
     fail_unless_system( "osascript", "-e", @_ );
