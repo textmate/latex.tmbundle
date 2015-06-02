@@ -300,8 +300,9 @@ sub clean_up {
 
         # Remove LaTeX bundle cache file
         unlink("$wd/.$name.lb");
-        remove_tree( "$wd/pythontex-files-" . $name =~ s/ /-/gr );
-        remove_tree( "$wd/_minted-" . $name =~ s/ /-/gr );
+        ( my $cache_name = $name ) =~ s/ /-/g;
+        remove_tree( "$wd/pythontex-files-" . $cache_name );
+        remove_tree( "$wd/_minted-" . $cache_name );
     }
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
