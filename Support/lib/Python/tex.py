@@ -173,7 +173,7 @@ def find_tex_packages(filepath):
               """.format(filepath))
         exit(EXIT_FILE_ERROR)
 
-    option_regex = r'\[[^\{]+\]'
+    option_regex = r'\[[^\]]+\]'
     argument_regex = r'\{([^\}]+)\}'
     input_regex = compile(r'[^%]*?\\input{}'.format(argument_regex))
     package_regex = compile(r'[^%]*?\\usepackage(?:{})?{}'.format(
