@@ -401,6 +401,8 @@ def open_master_file
   else
     print('No master file was defined.')
   end
+rescue RuntimeError => e
+  TextMate.exit_show_tool_tip(e.message)
 end
 
 # ==========================

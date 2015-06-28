@@ -68,14 +68,49 @@ module LaTeX
   def self.master(filepath)
     return nil if filepath.nil?
     master = Pathname.new(filepath).cleanpath
+    master = master_from_tex_directives(master)
+    fail('There is a loop in your %!TEX root directives.') unless master
+    master
+  end
+
+  # Get the master file following +%!TEX root+ directives.
+  #
+  # = Arguments
+  #
+  # [master] The filepath of the master file.
+  #
+  # = Output
+  #
+  # The function returns the path to the new master file. If one of the files
+  # specified via +%!TEX root+ could not be found, then an error will be raised.
+  #
+  # = Examples
+  #
+  #  doctest: Determine the master document of the file 'packages_input2.tex'
+  #
+  #  >> master = Pathname.new('Tests/TeX/input/packages_input2.tex')
+  #  >> LaTeX.master_from_tex_directives(master)
+  #  => 'Tests/TeX/packages.tex'
+  #
+  #  doctest: Try to get a nonexistent master file
+  #
+  #  >> begin
+  #       master = Pathname.new('Tests/TeX/wrong master path.tex')
+  #       LaTeX.master_from_tex_directives(master)
+  #       rescue Exception => e
+  #       e.message =~ /Master file .+does not exist\.tex does not exist!/
+  #       end
+  #  => 0
+  def self.master_from_tex_directives(master)
     10.times do
+      fail("Master file #{master} does not exist!") unless
+        master.exist?
       root = options(master)['root']
       return master.to_s unless root
       new_master = (master.parent + Pathname.new(root)).cleanpath
       return master.to_s if new_master == master
       master = new_master
     end
-    fail('There is a loop in your %!TEX root directives.')
   end
 
   # Implements general methods that give information about the LaTeX document.
