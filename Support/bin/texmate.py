@@ -730,7 +730,7 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
 
 def get_typesetting_data(filepath, tm_engine,
                          tm_bundle_support=getenv('TM_BUNDLE_SUPPORT'),
-                         ignore_root_loops=False):
+                         ignore_warnings=False):
     """Return a dictionary containing up-to-date typesetting data.
 
     This function changes the current directory to the location of
@@ -750,17 +750,18 @@ def get_typesetting_data(filepath, tm_engine,
 
             The location of the “LaTeX Bundle” support folder.
 
-        ignore_root_loops
+        ignore_warnings
 
-            Specifies if this function exits with an error status if the tex
-            root directives contain a loop.
+            Specifies if this function exits with an error status if there are
+            any problems.
 
     Returns: ``{str: str}``
 
     Examples:
 
         >>> current_directory = getcwd()
-        >>> data = get_typesetting_data('Tests/TeX/lualatex.tex', 'pdflatex')
+        >>> data = get_typesetting_data('Tests/TeX/lualatex.tex', 'pdflatex',
+        ...                             ignore_warnings=True)
         >>> print(data['engine'])
         lualatex
         >>> data['synctex']
@@ -790,7 +791,7 @@ def get_typesetting_data(filepath, tm_engine,
 
         except:
             # Get data and save it in the cache
-            packages = find_tex_packages(filename)
+            packages = find_tex_packages(filename, ignore_warnings)
             engine = construct_engine_command(typesetting_directives,
                                               tm_engine, packages)
             synctex = not(bool(call("{} --help | grep -q synctex".format(
@@ -810,7 +811,7 @@ def get_typesetting_data(filepath, tm_engine,
         return typesetting_data
 
     filepath = normpath(realpath(filepath))
-    typesetting_directives = find_tex_directives(filepath, ignore_root_loops)
+    typesetting_directives = find_tex_directives(filepath, ignore_warnings)
     filename, file_path = find_file_to_typeset(typesetting_directives,
                                                tex_file=filepath)
     file_without_suffix = get_filename_without_extension(filename)
@@ -971,7 +972,7 @@ if __name__ == '__main__':
 
     typesetting_data = get_typesetting_data(
         filepath, tm_engine, tm_bundle_support,
-        True if command == 'version' else False)
+        True if command in {'clean', 'version'} else False)
 
     typesetting_directives = typesetting_data['typesetting_directives']
     cache_filename = typesetting_data['cache_filename']

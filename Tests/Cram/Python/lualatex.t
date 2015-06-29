@@ -8,6 +8,9 @@
 
 Just try to translate the program using `latex`
 
+  $ texmate.py version lualatex.tex
+  This is LuaTeX, Version * (glob)
+
   $ texmate.py -suppressview latex -latexmk no -engine lualatex lualatex.tex \
   > | grep 'Output written' |  countlines
   1

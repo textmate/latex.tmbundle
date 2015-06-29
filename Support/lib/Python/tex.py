@@ -55,8 +55,8 @@ def expand_name(filename, program='pdflatex'):
 
         >>> print(expand_name('Tests/TeX/text.tex'))
         Tests/TeX/text.tex
-        >>> expand_name('non_existent_file.tex') == ''
-        True
+        >>> print(expand_name('non_existent_file.tex'))
+        non_existent_file.tex
 
     """
     if isfile(filename):
@@ -65,7 +65,8 @@ def expand_name(filename, program='pdflatex'):
     run_object = Popen("kpsewhich -progname='{}' {}".format(
         program, shellquote(filename)), shell=True, stdout=PIPE,
         universal_newlines=True)
-    return run_object.stdout.read().strip()
+    expanded_filepath = run_object.stdout.read().strip()
+    return expanded_filepath if expanded_filepath else filename
 
 
 def determine_typesetting_directory(ts_directives,
@@ -130,7 +131,7 @@ def determine_typesetting_directory(ts_directives,
     return master_path
 
 
-def find_tex_packages(filepath):
+def find_tex_packages(filepath, ignore_nonexistent_files=False):
     """Find packages included by the given file.
 
     This function searches for packages in:
@@ -143,6 +144,11 @@ def find_tex_packages(filepath):
         filepath
 
             The path to the file which should be searched for packages.
+
+        ignore_nonexistent_files
+
+            This option specifies if this function exits with an error code if
+            it encounters a file it can not open.
 
     Returns: ``{str}``
 
@@ -167,6 +173,8 @@ def find_tex_packages(filepath):
     """
     filepath = expand_name(filepath)
     if not isfile(filepath):
+        if ignore_nonexistent_files:
+            return set()
         print("""<p class="error">Cannot open {} to check for packages.</p>
                  <p class="error">This is most likely a problem with
                                   TM_LATEX_MASTER</p>
@@ -212,8 +220,9 @@ def find_tex_packages(filepath):
     while included_files and not match_begin:
         filepath = expand_name(included_files.pop())
         if not isfile(filepath):
-            print('<p class="warning">Warning: Cannot open ' +
-                  '{} to check for packages</p>.'.format(filepath))
+            if not ignore_nonexistent_files:
+                print('<p class="warning">Warning: Cannot open ' +
+                      '{} to check for packages.</p>'.format(filepath))
             continue
 
         done_reading = False

@@ -2,6 +2,13 @@
 \usepackage{fontspec}
 \usepackage{luacode}
 
+\newcommand{\codeinput}[1]
+{
+    \begin{leftbar}
+        \input{Code/#1}
+    \end{leftbar}
+}
+
 \begin{document}
 \begin{luacode}
     tex.print('Hello TextMate!')
