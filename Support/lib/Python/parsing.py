@@ -795,8 +795,11 @@ class LaTexMkParser(TexParser):
 
     def new_run(self, matching, line):
         if self.number_runs > 0:
-            print('<hr><p> {} Errors {} Warnings in this run.</p>'.format(
-                self.number_errors, self.number_warnings))
+            print('''<hr><p>Found {} error{}, and {} warning{} in this run</p>
+                  '''.format(self.number_errors,
+                             '' if self.number_errors == 1 else 's',
+                             self.number_warnings,
+                             '' if self.number_warnings == 1 else 's'))
         self.number_warnings = 0
         self.number_errors = 0
         self.number_runs += 1

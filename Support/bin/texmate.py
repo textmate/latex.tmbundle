@@ -1135,9 +1135,11 @@ if __name__ == '__main__':
               'with error code {}</p>'.format(tex_status))
 
     if number_warnings > 0 or number_errors > 0:
-        print('<p class="info">Found {} errors, and '.format(number_errors) +
-              '{} warnings in {} run{}</p>'.format(
-              number_warnings, number_runs, '' if number_runs == 1 else 's'))
+        print('''<p class="info">Found {} error{}, and
+                 {} warning{} in {} run{}</p>
+              '''.format(number_errors, '' if number_errors == 1 else 's',
+                         number_warnings, '' if number_warnings == 1 else 's',
+                         number_runs, '' if number_runs == 1 else 's'))
 
     # Decide what to do with the Latex & View log window
     exit_code = (EXIT_DISCARD if not tm_preferences['latexKeepLogWin'] and
