@@ -760,8 +760,7 @@ def get_typesetting_data(filepath, tm_engine,
     Examples:
 
         >>> current_directory = getcwd()
-        >>> data = get_typesetting_data('Tests/TeX/lualatex.tex', 'pdflatex',
-        ...                             ignore_warnings=True)
+        >>> data = get_typesetting_data('Tests/TeX/lualatex.tex', 'pdflatex')
         >>> print(data['engine'])
         lualatex
         >>> data['synctex']
