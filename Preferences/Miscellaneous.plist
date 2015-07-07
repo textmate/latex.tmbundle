@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>name</key>
@@ -8,19 +8,6 @@
 	<string>text.tex.latex</string>
 	<key>settings</key>
 	<dict>
-		<key>completions</key>
-		<array>
-			<string>corollary</string>
-			<string>definition</string>
-			<string>description</string>
-			<string>enumerate</string>
-			<string>equation</string>
-			<string>itemize</string>
-			<string>lemma</string>
-			<string>proof</string>
-			<string>proposition</string>
-			<string>verbatim</string>
-		</array>
 		<key>decreaseIndentPattern</key>
 		<string>^\s*\\end(\{.*\})?$</string>
 		<key>highlightPairs</key>

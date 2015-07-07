@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Completion: General</string>
+	<key>scope</key>
+	<string>text.tex.latex</string>
+	<key>settings</key>
+	<dict>
+		<key>completions</key>
+		<array>
+			<string>corollary</string>
+			<string>definition</string>
+			<string>description</string>
+			<string>enumerate</string>
+			<string>equation</string>
+			<string>itemize</string>
+			<string>lemma</string>
+			<string>proof</string>
+			<string>proposition</string>
+			<string>verbatim</string>
+		</array>
+	</dict>
+	<key>uuid</key>
+	<string>5345F5C9-8066-449E-9EB8-46F749865E57</string>
+</dict>
+</plist>
