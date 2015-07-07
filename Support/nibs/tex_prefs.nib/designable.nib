@@ -78,7 +78,7 @@
 											<object class="NSButtonCell" key="NSCell" id="389395945">
 												<int key="NSCellFlags">-2080374784</int>
 												<int key="NSCellFlags2">0</int>
-												<string key="NSContents">Show pdf automatically</string>
+												<string key="NSContents">Show PDF automatically</string>
 												<object class="NSFont" key="NSSupport" id="785281613">
 													<bool key="IBIsSystemFont">YES</bool>
 													<double key="NSSize">13</double>
