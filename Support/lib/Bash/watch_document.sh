@@ -6,6 +6,7 @@ latex_watch () {
     file="${TM_LATEX_MASTER:-$TM_FILEPATH}"
     dirname="$(dirname "$file")"
     basename="$(basename "$file" .tex)"
+    properties_file="${dirname}/.tm_properties"
 
     # Check whether file is already being watched
     pid_file="$dirname/.$basename.watcher_pid"
@@ -62,6 +63,16 @@ Make sure it's in your PATH ($PATH)."
     watch_script_opts="--textmate-pid $PPID --progressbar-pid $progressbar_pid"
     if [ -n "$TM_LATEX_WATCH_DEBUG" ]; then
         watch_script_opts="$watch_script_opts --debug"
+    fi
+
+    # Create a `.tm_properties` file marking this file as master file. This
+    # is only done if you set the environment variable
+    # `TM_LATEX_WATCH_SET_MASTER` and there exist no `.tm_properties` file in
+    # the folder of the file already.
+    if [ ! -e "${properties_file}" ] && \
+       [ ! -z ${TM_LATEX_WATCH_SET_MASTER+DEFINED} ]; then
+        echo "TM_LATEX_MASTER = \"\$CWD/$(basename "${file}")\"" \
+             > "${properties_file}"
     fi
 
     "$perl" "$watch_script" $watch_script_opts "$file" &>/dev/console &

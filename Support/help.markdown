@@ -295,6 +295,14 @@ You can set these “local options” via the `%!TEX` directives `root`, `TS-pro
 
   * `TS-options`: You can add file specific (engine) options via this directive. **Note:**  Whatever options you choose they will be used in the addition to  the default options `-interaction=nonstopmode` and `-file-line-error-style`.
 
+## Environment Variables
+
+The LaTeX bundle supports environment variables that let you modify the behaviour of certain commands. You can set this variables either via a [.tm_properties][] file or in the Preferences of TextMater under the tab “Variables”.
+
+  * `TM_LATEX_WATCH_SET_MASTER`: If you set this variable — you can use any value you like — then “Watch Document” sets `TM_LATEX_MASTER` to the path of the watched file. For this purpose the command creates a `.tm_properties` file in the folder of the watched file. This works only if there is no such file in the folder already. If your project folder already contains a `.tm_properties` file, then you can of course still set the master file yourself. Just define the `TM_LATEX_MASTER` variable. For a description of how to do that, please just consult the section “Using the `TM_LATEX_MASTER` Environment Variable”.
+
+[.tm_properties]: http://blog.macromates.com/2011/git-style-configuration
+
 # Credits
 
 There were at least two or possibly three versions of a LaTeX bundle floating around in the early days of TextMate by: Normand Mousseau, Gaetan Le Guelvouit and Andrew Ellis. At some point — January 2005 — Eric Hsu pulled together the threads into one package. From then on there have been contributions by Sune Foldager, Brad Miller, Allan Odgaard, Jeroen van der Ham, Robin Houston, Haris Skiadas and many other [contributors][].
