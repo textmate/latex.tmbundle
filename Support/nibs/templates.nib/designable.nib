@@ -42,7 +42,7 @@
 			<object class="NSWindowTemplate" id="808283270">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{328, 328}, {392, 394}}</string>
+				<string key="NSWindowRect">{{328, 328}, {403, 395}}</string>
 				<int key="NSWTFlags">1886912512</int>
 				<string key="NSWindowTitle">Insert LaTeX Template</string>
 				<string key="NSWindowClass">NSWindow</string>
@@ -58,7 +58,7 @@
 						<object class="NSButton" id="948196391">
 							<reference key="NSNextResponder" ref="296016972"/>
 							<int key="NSvFlags">257</int>
-							<string key="NSFrame">{{297, 12}, {81, 32}}</string>
+							<string key="NSFrame">{{308, 13}, {81, 32}}</string>
 							<reference key="NSSuperview" ref="296016972"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView"/>
@@ -88,7 +88,7 @@
 						<object class="NSButton" id="464541478">
 							<reference key="NSNextResponder" ref="296016972"/>
 							<int key="NSvFlags">257</int>
-							<string key="NSFrame">{{215, 12}, {82, 32}}</string>
+							<string key="NSFrame">{{226, 13}, {82, 32}}</string>
 							<reference key="NSSuperview" ref="296016972"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="948196391"/>
@@ -252,7 +252,7 @@
 									<double key="NSPercent">0.93464052677154541</double>
 								</object>
 							</array>
-							<string key="NSFrame">{{20, 60}, {167, 325}}</string>
+							<string key="NSFrame">{{20, 50}, {167, 325}}</string>
 							<reference key="NSSuperview" ref="296016972"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="157240919"/>
@@ -276,7 +276,7 @@
 										<object class="NSTextView" id="977874419">
 											<reference key="NSNextResponder" ref="575552426"/>
 											<int key="NSvFlags">2322</int>
-											<string key="NSFrameSize">{175, 323}</string>
+											<string key="NSFrameSize">{186, 323}</string>
 											<reference key="NSSuperview" ref="575552426"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="579563405"/>
@@ -295,7 +295,7 @@
 													<nil key="NSDelegate"/>
 												</object>
 												<reference key="NSTextView" ref="977874419"/>
-												<double key="NSWidth">175</double>
+												<double key="NSWidth">186</double>
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
@@ -333,11 +333,11 @@
 												<int key="NSPreferredTextFinderStyle">0</int>
 											</object>
 											<int key="NSTVFlags">70</int>
-											<string key="NSMaxSize">{175, 10000000}</string>
+											<string key="NSMaxSize">{213, 10000000}</string>
 											<nil key="NSDelegate"/>
 										</object>
 									</array>
-									<string key="NSFrame">{{1, 1}, {175, 323}}</string>
+									<string key="NSFrame">{{1, 1}, {186, 323}}</string>
 									<reference key="NSSuperview" ref="238537906"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="977874419"/>
@@ -353,7 +353,7 @@
 								<object class="NSScroller" id="579563405">
 									<reference key="NSNextResponder" ref="238537906"/>
 									<int key="NSvFlags">256</int>
-									<string key="NSFrame">{{160, 1}, {16, 323}}</string>
+									<string key="NSFrame">{{171, 1}, {16, 323}}</string>
 									<reference key="NSSuperview" ref="238537906"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="464541478"/>
@@ -381,7 +381,7 @@
 									<double key="NSPercent">0.94565218687057495</double>
 								</object>
 							</array>
-							<string key="NSFrame">{{195, 60}, {177, 325}}</string>
+							<string key="NSFrame">{{195, 50}, {188, 325}}</string>
 							<reference key="NSSuperview" ref="296016972"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="277343131"/>
@@ -394,12 +394,12 @@
 							<double key="NSMagnification">1</double>
 						</object>
 					</array>
-					<string key="NSFrameSize">{392, 394}</string>
+					<string key="NSFrameSize">{403, 395}</string>
 					<reference key="NSSuperview"/>
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="470138915"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1024, 746}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 877}}</string>
 				<string key="NSMinSize">{213, 129}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<string key="NSFrameAutosaveName">LaTeXTemplate</string>
@@ -714,11 +714,13 @@
 				<string key="47.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="48.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="49.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="5.IBPersistedLastKnownCanvasPosition">{406.5, 408.5}</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="50.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="51.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="52.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="53.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<reference key="6.IBNSViewMetadataGestureRecognizers" ref="0"/>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="7.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
