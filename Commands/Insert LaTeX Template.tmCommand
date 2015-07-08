@@ -27,7 +27,7 @@ else
   end
 params = { "entries" =&gt; entries }
   dialog = ENV['DIALOG']
-  return_plist = `"#{dialog}" -cmp #{e_sh params.to_plist} #{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/LaTeXTemplate.nib')}`
+  return_plist = `"#{dialog}" -cmp #{e_sh params.to_plist} #{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/templates.nib')}`
   return_hash = OSX::PropertyList::load(return_plist)['result']
 	TextMate.exit_discard if return_hash.nil?
 	text = return_hash['returnArgument'][0].scan(/\n|.+\n?/)
