@@ -392,14 +392,10 @@ end
 # Open the current master file in TextMate
 def open_master_file
   master = masterfile
-  if master
-    if master == ENV['TM_FILEPATH']
-      print('Already in master file')
-    else
-      `open -a TextMate #{e_sh master}`
-    end
+  if master == ENV['TM_FILEPATH']
+    print('Already in master file')
   else
-    print('No master file was defined.')
+    `open -a TextMate #{e_sh master}`
   end
 rescue RuntimeError => e
   TextMate.exit_show_tool_tip(e.message)
