@@ -6,11 +6,15 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/bin/bash
-[[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
+
+[[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; \
+    . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
 
 . "$TM_SUPPORT_PATH/lib/webpreview.sh"
+
 html_header "LaTeX Bundle Help" "LaTeX"
-"$TM_SUPPORT_PATH/lib/markdown_to_help.rb" "$TM_BUNDLE_SUPPORT/help.markdown"
+echo "&lt;meta http-equiv='refresh' content='0; 
+      tm-file:///${TM_BUNDLE_SUPPORT}/Help/Help.pdf'&gt;"
 html_footer
 </string>
 	<key>input</key>
