@@ -156,6 +156,7 @@
 										<object class="NSTextField" id="136350538">
 											<reference key="NSNextResponder" ref="48858686"/>
 											<int key="NSvFlags">256</int>
+											<array class="NSMutableArray" key="NSSubviews"/>
 											<string key="NSFrame">{{121, 76}, {200, 22}}</string>
 											<reference key="NSSuperview" ref="48858686"/>
 											<reference key="NSWindow"/>
@@ -606,6 +607,14 @@
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<array key="connectionRecords">
 				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="373545310"/>
+						<reference key="destination" ref="416858430"/>
+					</object>
+					<int key="connectionID">245</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">contentObject: parameters</string>
 						<reference key="source" ref="414950290"/>
@@ -652,6 +661,14 @@
 						</object>
 					</object>
 					<int key="connectionID">142</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="921504100"/>
+						<reference key="destination" ref="1008609901"/>
+					</object>
+					<int key="connectionID">250</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -716,6 +733,14 @@
 					<int key="connectionID">178</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="414848245"/>
+						<reference key="destination" ref="416858430"/>
+					</object>
+					<int key="connectionID">254</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">selectedValue: values.latexEngine</string>
 						<reference key="source" ref="416858430"/>
@@ -730,6 +755,14 @@
 						</object>
 					</object>
 					<int key="connectionID">153</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="416858430"/>
+						<reference key="destination" ref="136350538"/>
+					</object>
+					<int key="connectionID">246</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -748,6 +781,14 @@
 					<int key="connectionID">158</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="650807153"/>
+						<reference key="destination" ref="1006077185"/>
+					</object>
+					<int key="connectionID">248</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: values.latexEngineOptions</string>
 						<reference key="source" ref="136350538"/>
@@ -762,6 +803,14 @@
 						</object>
 					</object>
 					<int key="connectionID">184</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="136350538"/>
+						<reference key="destination" ref="650807153"/>
+					</object>
+					<int key="connectionID">247</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -780,6 +829,14 @@
 					<int key="connectionID">187</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="1006077185"/>
+						<reference key="destination" ref="921504100"/>
+					</object>
+					<int key="connectionID">249</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: values.latexAutoView</string>
 						<reference key="source" ref="1008609901"/>
@@ -796,6 +853,14 @@
 					<int key="connectionID">200</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="1008609901"/>
+						<reference key="destination" ref="836285387"/>
+					</object>
+					<int key="connectionID">251</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: values.latexKeepLogWin</string>
 						<reference key="source" ref="836285387"/>
@@ -810,6 +875,14 @@
 						</object>
 					</object>
 					<int key="connectionID">202</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="836285387"/>
+						<reference key="destination" ref="414848245"/>
+					</object>
+					<int key="connectionID">253</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1194,7 +1267,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">243</int>
+			<int key="maxID">254</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
