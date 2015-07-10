@@ -5,22 +5,31 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
+	<string>#!/bin/bash
+[[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
+
+. "$TM_SUPPORT_PATH/lib/webpreview.sh"
 html_header "LaTeX Bundle Help" "LaTeX"
 "$TM_SUPPORT_PATH/lib/markdown_to_help.rb" "$TM_BUNDLE_SUPPORT/help.markdown"
 html_footer
 </string>
-	<key>dontFollowNewOutput</key>
-	<true/>
 	<key>input</key>
 	<string>none</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>name</key>
 	<string>Help</string>
-	<key>output</key>
-	<string>showAsHTML</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>html</string>
+	<key>outputLocation</key>
+	<string>newWindow</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
 	<string>37B43A9E-AD5E-11D9-97B0-000D93B6E43C</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
