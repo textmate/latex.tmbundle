@@ -436,7 +436,11 @@ There are two key drag and drop commands in LaTeX:
 
 \subsubsection{Templates}
 
-The LaTeX bundle provides a simple template system. It requires that you create the directory \texttt{\textasciitilde{}/Library/Application\ Support/LaTeX/Templates}. In there you can put any files LaTeX files you like.
+The LaTeX bundle offers a simple template system. We provides a few sample files. If you want to use your own templates, then create the directory \directory{\textasciitilde{}/Library/Application\ Support/LaTeX/Templates}. In there you can put any \texttt{.tex} files you like. We also support snippet syntax in template files. To tell TextMate that it should insert the code using snippet syntax add the following line at the top of the template:
+
+\begin{minted}{latex}
+    %!TEX style = snippet
+\end{minted}
 
 \begin{figure}[h]
   \centering
@@ -445,7 +449,7 @@ The LaTeX bundle provides a simple template system. It requires that you create 
   \label{fig:Figures_Template_Chooser}
 \end{figure}
 
-To insert a template use the command \menu{Insert > LaTeX Template}. The command will show you a window containing a list of all files in the \texttt{Templates} directory. Select one of these files via the button \menu{Insert}. TextMate will paste the contents of that file at the cursor's location.\\
+To insert a template use the command \menu{Insert > LaTeX Template}. The command will show you a window containing a list of all available templates. Select one of these files via the button \menu{Insert}. TextMate will paste the contents of that file at the cursor's location.\\
 
 A typical workflow for the template system looks like this:
 
@@ -529,7 +533,7 @@ The LaTeX bundle supports environment variables that let you modify the behaviou
 
 \begin{figure}[h]
   \centering
-    \includegraphics[width=.7\textwidth]{Figures/TextMate Preferences - Variables.png}
+    \includegraphics[width=.8\textwidth]{Figures/TextMate Preferences - Variables.png}
   \caption{Set environment variables under \menu{TextMate > Preferences… > Variables}}
   \label{fig:Figures_TextMate_Preferences_-_Variables}
 \end{figure}

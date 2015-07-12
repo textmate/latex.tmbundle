@@ -324,33 +324,28 @@ end
 # = Insert LaTeX Template =
 # =========================
 
-# Return the path to the template directory if it exists.
+# Return the paths of the template directories.
 #
 # = Output
 #
-# This function returns a string containing the path to the template directory.
-def template_directory
-  path = ENV['HOME'] + '/Library/Application Support/LaTeX/Templates/'
-  TextMate.exit_show_tool_tip(
-    "You need to create the directory #{path} first and\n" \
-    'populate it with your favorite LaTeX template files before using '\
-    'this command.') unless FileTest.directory?(path)
-  path
+# This function returns a list containing the path to the template directory.
+def template_directories
+  [ENV['TM_BUNDLE_SUPPORT'] + '/templates',
+   ENV['HOME'] + '/Library/Application Support/LaTeX/Templates/']
 end
 
-# Return the name and content of the files in the template directory.
+# Return the name and content of the files in the template directories.
 #
 # = Output
 #
 # A list of files, each represented by a dictionary containing the filename and
 # the content of the file.
 def template_entries
-  entries = Dir.glob("#{template_directory}/*.tex").map do |file|
-    { 'filename' => File.basename(file), 'content' => File.read(file) }
-  end
-  TextMate.exit_show_tool_tip('You need to populate the template directory ' \
-                              'with some template files!') if entries.empty?
-  entries
+  template_directories.map do |directory|
+    Dir.glob("#{directory}/*.tex").map do |file|
+      { 'filename' => File.basename(file), 'content' => File.read(file) }
+    end
+  end.flatten
 end
 
 # Return the template text of the selected template.
