@@ -8,7 +8,6 @@
 require 'pathname'
 
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
-require ENV['TM_SUPPORT_PATH'] + '/lib/osx/plist'
 require ENV['TM_SUPPORT_PATH'] + '/lib/ui.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
 require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/latex.rb'
@@ -321,43 +320,61 @@ rescue RuntimeError => e
   TextMate.exit_show_tool_tip(e.message)
 end
 
-# ==================
-# = LaTeX Template =
-# ==================
+# =========================
+# = Insert LaTeX Template =
+# =========================
 
-# This command is meant to be used for quick insertion of your LaTeX template
-# files. They should be placed in the directory ~/Library/Application
-# Support/LaTeX/Templates. A pop-up is provided, letting you pick the template
-# file you want inserted, and then it gets inserted as a snippet. See
-# http://macromates.com/textmate/manual/snippets#snippets for what this implies.
-
-def insert_template()
+# Return the path to the template directory if it exists.
+#
+# = Output
+#
+# This function returns a string containing the path to the template directory.
+def template_directory
   path = ENV['HOME'] + '/Library/Application Support/LaTeX/Templates/'
-  [{"a" => "2", "b" => "5"}, {"a" => "1", "b" => "4"}].to_plist
-  unless FileTest.directory?(path) then
-    TextMate.exit_show_tool_tip "You need to create the directory #{path} first and\n populate it with your favorite LaTeX template files before using this command."
-  else
-    files = `ls "#{path}"`.split("\n")
-    TextMate.exit_show_tool_tip "You need to populate the template directory with some template files!" if files.empty?
-    entries = files.map do |file|
-      content = File.read(path + file)
-      { "filename" => file, "content" => content}
-    end
-  params = { "entries" => entries }
-    dialog = ENV['DIALOG']
-    return_plist = `"#{dialog}" -cmp #{e_sh params.to_plist} #{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/templates.nib')}`
-    return_hash = OSX::PropertyList::load(return_plist)['result']
-  	TextMate.exit_discard if return_hash.nil?
-  	text = return_hash['returnArgument'][0].scan(/\n|.+\n?/)
-    first_line = text[0]
-  # The user can force the template to be interpreted as a snippet, by
-  # adding this line: #!TEX style=snippet
-    if first_line.match(/^%\s*!TEX\s+style\s*=\s*snippet\s*/) then
-      TextMate.exit_insert_snippet(text[1..-1])
-    else
-      print(text.join(""))
-    end
+  TextMate.exit_show_tool_tip(
+    "You need to create the directory #{path} first and\n" \
+    'populate it with your favorite LaTeX template files before using '\
+    'this command.') unless FileTest.directory?(path)
+  path
+end
+
+# Return the name and content of the files in the template directory.
+#
+# = Output
+#
+# A list of files, each represented by a dictionary containing the filename and
+# the content of the file.
+def template_entries
+  entries = Dir.glob("#{template_directory}/*.tex").map do |file|
+    { 'filename' => File.basename(file), 'content' => File.read(file) }
   end
+  TextMate.exit_show_tool_tip('You need to populate the template directory ' \
+                              'with some template files!') if entries.empty?
+  entries
+end
+
+# Return the template text of the selected template.
+#
+# = Output
+#
+# A string containing the content of the chosen template.
+def template_text
+  command = ("\"#{ENV['DIALOG']}\" -cmp " \
+             "#{e_sh({ 'entries' => template_entries }.to_plist)} " \
+             "#{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/templates.nib')}")
+  result = OSX::PropertyList.load(`#{command}`)['result']
+  TextMate.exit_discard if result.nil?
+  result['returnArgument'][0].scan(/\n|.+\n?/)
+end
+
+# Insert a template at the current position of the caret.
+def insert_template
+  text = template_text
+  # The user can force the template to be interpreted as a snippet, by
+  # adding the line: %!TEX style=snippet at the beginning of the template
+  TextMate.exit_insert_snippet(text[1..-1]) if
+    text[0].match(/^%\s*!TEX\s+style\s*=\s*snippet\s*/)
+  print(text.join(''))
 end
 
 # ======================
