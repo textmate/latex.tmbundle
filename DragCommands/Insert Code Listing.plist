@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+require 'pathname'
+require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/LaTeXUtils.rb"
+filename = ENV["TM_DROPPED_FILEPATH"]
+relative_to = ENV["TM_DIRECTORY"]
+startfile = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']
+master = Pathname.new(LaTeX.master(startfile))
+unless master.absolute?
+  master = master.expand_path(ENV['TM_PROJECT_DIRECTORY'])
+end
+path = Pathname.new(filename).relative_path_from(master.dirname)
+if ENV["TM_MODIFIER_FLAGS"].match(/SHIFT/)
+  print "\\\\input{" + path + "}"
+else
+  ext = File.extname(path)
+  file_type = case ext
+    when ".ada" then "Ada"
+    when ".ant" then "Ant"
+    when ".asm" then "Assembler"
+    when ".as" then "Assembler"
+    when ".c" then "C"
+    when ".cpp" then "C++"
+    when ".htm" then "HTML"
+    when ".html" then "HTML"
+    when ".java" then "Java"
+    when ".js" then "Java"
+    when ".json" then "Java"
+    when ".pl" then "Perl"
+    when ".php" then "PHP"
+    when ".py" then "Python"
+    when ".rb" then "Ruby"
+    when ".sh" then "sh"
+    when ".sql" then "SQL"
+    when ".xml" then "XML"
+    when ".vhdl" then "VHDL"
+    else "language"
+  end
+  puts ["\\\\lstinputlisting[language=\${1:#{file_type}}, tabsize = \${2:4}, caption={\${3:caption}}, label = {code:\${4:#{path.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}]{#{path}}"].join("\n")
+end</string>
+	<key>draggedFileExtensions</key>
+	<array>
+		<string>ada</string>
+		<string>ant</string>
+		<string>asm</string>
+		<string>as</string>
+		<string>c</string>
+		<string>cpp</string>
+		<string>htm</string>
+		<string>html</string>
+		<string>java</string>
+		<string>js</string>
+		<string>json</string>
+		<string>pl</string>
+		<string>php</string>
+		<string>py</string>
+		<string>rb</string>
+		<string>sh</string>
+		<string>sql</string>
+		<string>xml</string>
+		<string>vhdl</string>
+	</array>
+	<key>input</key>
+	<string>selection</string>
+	<key>name</key>
+	<string>Insert Code Listing</string>
+	<key>output</key>
+	<string>insertAsSnippet</string>
+	<key>scope</key>
+	<string>text.tex.latex</string>
+	<key>uuid</key>
+	<string>404AC956-0D69-4E51-A0F0-771321A0914F</string>
+</dict>
+</plist>
