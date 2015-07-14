@@ -206,7 +206,7 @@ def include_code_listing
     file_type = extension_to_language(File.extname(path).slice(1..-1))
     label = filepath_to_label(path)
     print("\\\\lstinputlisting[language=\${1:#{file_type}}, tabsize=\${2:4}, " \
-         "caption=\${3:caption}, label=code:\${4:#{label}}]{#{path}}")
+         "caption=\${3:caption}, label=lst:\${4:#{label}}]{#{path}}")
   end
 end
 
