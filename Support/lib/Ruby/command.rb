@@ -149,6 +149,19 @@ def dropped_file_relative_path
   Pathname.new(filename).relative_path_from(master.dirname)
 end
 
+# Convert an filepath to a string useable as LaTeX label.
+#
+# = Arguments
+#
+# [filepath] The path of the file for which we want to create a label.
+#
+# = Output
+#
+# This function returns a string useable as label.
+def filepath_to_label(filepath)
+  filepath.to_s.gsub(%r{(\.[^.]*$)|(\.\./)}, '').gsub(%r{[/ ]}, '_')
+end
+
 # ======================
 # = Command Completion =
 # ======================
@@ -165,42 +178,35 @@ end
 # = Include Code Listing =
 # ========================
 
+# Convert an extension to a language identification for the listings package.
+#
+# = Arguments
+#
+# [extension] The extension of a source file without the leading dot.
+#
+# = Output
+#
+# The function returns a string containing a language identification.
+def extension_to_language(extension)
+  mapping = { 'ada'  => 'Ada',  'ant'  => 'Ant',  'c'    => 'C',
+              'cpp'  => 'C++',  'htm'  => 'HTML', 'html' => 'HTML',
+              'java' => 'Java', 'js'   => 'Java', 'json' => 'Java',
+              'pl'   => 'Perl', 'php'  => 'PHP',  'py'   => 'Python',
+              'rb'   => 'Ruby', 'sh'   => 'sh',   'sql'  => 'SQL',
+              'xml'  => 'XML',  'vhdl' => 'VHDL' }
+  mapping.key?(extension) ? mapping[extension] : 'Assembler'
+end
+
+# Insert an +lstinputlisting+ command referencing the dropped source file.
 def include_code_listing
-  filename = ENV["TM_DROPPED_FILEPATH"]
-  relative_to = ENV["TM_DIRECTORY"]
-  startfile = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']
-  master = Pathname.new(LaTeX.master(startfile))
-  unless master.absolute?
-    master = master.expand_path(ENV['TM_PROJECT_DIRECTORY'])
-  end
-  path = Pathname.new(filename).relative_path_from(master.dirname)
-  if ENV["TM_MODIFIER_FLAGS"].match(/SHIFT/)
-    print "\\\\input{" + path + "}"
+  path = dropped_file_relative_path
+  if ENV['TM_MODIFIER_FLAGS'].match(/SHIFT/)
+    print("\\\\input{#{path}}")
   else
-    ext = File.extname(path)
-    file_type = case ext
-      when ".ada" then "Ada"
-      when ".ant" then "Ant"
-      when ".asm" then "Assembler"
-      when ".as" then "Assembler"
-      when ".c" then "C"
-      when ".cpp" then "C++"
-      when ".htm" then "HTML"
-      when ".html" then "HTML"
-      when ".java" then "Java"
-      when ".js" then "Java"
-      when ".json" then "Java"
-      when ".pl" then "Perl"
-      when ".php" then "PHP"
-      when ".py" then "Python"
-      when ".rb" then "Ruby"
-      when ".sh" then "sh"
-      when ".sql" then "SQL"
-      when ".xml" then "XML"
-      when ".vhdl" then "VHDL"
-      else "language"
-    end
-    puts ["\\\\lstinputlisting[language=\${1:#{file_type}}, tabsize = \${2:4}, caption={\${3:caption}}, label = code:\${4:#{path.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}]{#{path}}"].join("\n")
+    file_type = extension_to_language(File.extname(path).slice(1..-1))
+    label = filepath_to_label(path)
+    print("\\\\lstinputlisting[language=\${1:#{file_type}}, tabsize=\${2:4}, " \
+         "caption=\${3:caption}, label=code:\${4:#{label}}]{#{path}}")
   end
 end
 
@@ -224,12 +230,11 @@ end
 #
 # [filepath] The path to an image that should be included.
 def include_figure(filepath)
-  label = filepath.to_s.gsub(%r{(\.[^.]*$)|(\.\./)}, '').gsub(%r{[/ ]}, '_')
   "\\\\begin{figure}[\${1|h,t,b,p|}]\n" \
   "  \\\\centering\n" \
   "    \\\\includegraphics[width=\${2:.9\\textwidth}]{#{filepath}}\n" \
   "  \\\\caption{\${3:caption}}\n" \
-  "  \\\\label{fig:\${4:#{label}}}\n" \
+  "  \\\\label{fig:\${4:#{filepath_to_label(filepath)}}}\n" \
   '\\\\end{figure}'
 end
 
