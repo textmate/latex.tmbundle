@@ -161,6 +161,49 @@ rescue RuntimeError => e
   TextMate.exit_show_tool_tip(e.message)
 end
 
+# ========================
+# = Include Code Listing =
+# ========================
+
+def include_code_listing
+  filename = ENV["TM_DROPPED_FILEPATH"]
+  relative_to = ENV["TM_DIRECTORY"]
+  startfile = ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH']
+  master = Pathname.new(LaTeX.master(startfile))
+  unless master.absolute?
+    master = master.expand_path(ENV['TM_PROJECT_DIRECTORY'])
+  end
+  path = Pathname.new(filename).relative_path_from(master.dirname)
+  if ENV["TM_MODIFIER_FLAGS"].match(/SHIFT/)
+    print "\\\\input{" + path + "}"
+  else
+    ext = File.extname(path)
+    file_type = case ext
+      when ".ada" then "Ada"
+      when ".ant" then "Ant"
+      when ".asm" then "Assembler"
+      when ".as" then "Assembler"
+      when ".c" then "C"
+      when ".cpp" then "C++"
+      when ".htm" then "HTML"
+      when ".html" then "HTML"
+      when ".java" then "Java"
+      when ".js" then "Java"
+      when ".json" then "Java"
+      when ".pl" then "Perl"
+      when ".php" then "PHP"
+      when ".py" then "Python"
+      when ".rb" then "Ruby"
+      when ".sh" then "sh"
+      when ".sql" then "SQL"
+      when ".xml" then "XML"
+      when ".vhdl" then "VHDL"
+      else "language"
+    end
+    puts ["\\\\lstinputlisting[language=\${1:#{file_type}}, tabsize = \${2:4}, caption={\${3:caption}}, label = code:\${4:#{path.to_s.gsub(/(\.[^.]*$)|(\.\.\/)/,"").gsub(/\//,"_")}}]{#{path}}"].join("\n")
+  end
+end
+
 # ================
 # = Include File =
 # ================
