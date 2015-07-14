@@ -69,7 +69,7 @@ end</string>
 	<key>input</key>
 	<string>selection</string>
 	<key>name</key>
-	<string>Insert Code Listing</string>
+	<string>Include Code Listing</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
