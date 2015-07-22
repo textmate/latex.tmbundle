@@ -33,7 +33,7 @@ use Time::HiRes 'sleep';
 use lib dirname( dirname abs_path $0) . '/lib/Perl';
 use Latex qw(guess_tex_engine master);
 
-our $VERSION = "3.11";
+our $VERSION = "3.12";
 
 #############
 # Configure #
@@ -170,12 +170,6 @@ sub init_environment {
     init_CocoaDialog( "$ENV{TM_SUPPORT_PATH}/bin/CocoaDialog.app"
           . "/Contents/MacOS/CocoaDialog" );
 
-    # Include the bundle's tex tree in the search path: we have a local copy
-    # of pdfsync.sty.
-    $ENV{TEXINPUTS} = `kpsewhich -progname latex --expand-var '\$TEXINPUTS'`;
-    chomp $ENV{TEXINPUTS};
-
-    $ENV{TEXINPUTS} .= ":$ENV{TM_BUNDLE_SUPPORT}/tex/";
 }
 
 sub parse_command_line_options {
@@ -1107,3 +1101,9 @@ Changes
 
 3.11:
     - Remove temporary dir created by package `minted` on cleanup.
+
+3.12:
+    - Do not extend the environment variable TEXINPUTS any more. We used to do
+      this to support “pdfsync”. New TeX distributions include support for the
+      “pdfsync” replacement “SyncTeX”. This means we do not need to support
+      “pdfsync” any more.
