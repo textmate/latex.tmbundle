@@ -32,11 +32,12 @@ latex_watch</string>
 	<array>
 		<dict>
 			<key>command</key>
-			<string>kpsewhich</string>
+			<string>latexmk</string>
 			<key>locations</key>
 			<array>
-				<string>/usr/texbin/kpsewhich</string>
-				<string>/opt/local/bin/kpsewhich</string>
+				<string>/usr/texbin/latexmk</string>
+				<string>/Library/TeX/texbin/latexmk</string>
+				<string>/opt/local/bin/latexmk</string>
 			</array>
 		</dict>
 	</array>
