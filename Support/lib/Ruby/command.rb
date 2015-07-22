@@ -162,6 +162,24 @@ def filepath_to_label(filepath)
   filepath.to_s.gsub(%r{(\.[^.]*$)|(\.\./)}, '').gsub(%r{[/ ]}, '_')
 end
 
+# Return a string representing a certain level of indentation.
+#
+# This function respects the current tab settings of the user.
+#
+# = Arguments
+#
+# [times] The number of times the text following the string returned by this
+#         function should be indented.
+#
+# = Output
+#
+# A string that represents a certain level of indentation
+def indent(times = 1)
+  if ENV['TM_SOFT_TABS'] == 'NO' then "\t" * times
+  else ' ' * ENV['TM_TAB_SIZE'].to_i * times
+  end
+end
+
 # ======================
 # = Command Completion =
 # ======================
@@ -197,16 +215,37 @@ def extension_to_language(extension)
   mapping.key?(extension) ? mapping[extension] : 'Assembler'
 end
 
+# This function returns a minted listing environment referencing a given file.
+#
+# = Arguments
+#
+# [path] The path to the source file
+# [label] The label text for the listing
+# [extension] A string that specifies the language of the file content
+#
+# = Output
+#
+# A string containing a listings environment.
+def minted_environment(path, label, language)
+  "\\begin{listing}[H]\n" \
+  "#{indent(1)}\\caption{\${1:caption}}\n" \
+  "#{indent(1)}\\label{lst:\${2:#{label}}}\n" \
+  "#{indent(1)}\\\\inputminted{#{language}}{#{path}}\n" \
+  '\\end{listing}'
+end
+
 # Insert an +lstinputlisting+ command referencing the dropped source file.
 def include_code_listing
   path = dropped_file_relative_path
+  label = filepath_to_label(path)
+  extension = File.extname(path).slice(1..-1)
+
   if ENV['TM_MODIFIER_FLAGS'].match(/SHIFT/)
-    print("\\\\input{#{path}}")
-  else
-    file_type = extension_to_language(File.extname(path).slice(1..-1))
-    label = filepath_to_label(path)
+    file_type = extension_to_language(extension)
     print("\\\\lstinputlisting[language=\${1:#{file_type}}, tabsize=\${2:4}, " \
          "caption=\${3:caption}, label=lst:\${4:#{label}}]{#{path}}")
+  else
+    print(minted_environment(path, label, extension))
   end
 end
 

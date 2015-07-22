@@ -432,7 +432,9 @@ There are three key drag and drop commands in LaTeX:
 
     \item You can drag in another \texttt{.tex} file into your document. TextMate will then insert a \texttt{\textbackslash{}include} command that references the dropped file. To use a \texttt{\textbackslash{}input} command instead use the modifier key \keys{\Alt}.
 
-    \item If you drop a source code file into your document, then TextMate creates a new \texttt{lstinputlisting} command referencing the dropped file. \texttt{lstinputlisting} is part of the package \texttt{listings}, so make sure that you include said package via \verb|\usepackage{listings}|.
+    \item If you drop a source code file into your document, then TextMate creates a new \mintinline{tex}|listing| command referencing the dropped file. Said command is part of the \href{http://ctan.org/pkg/minted}{minted} package. To successfully translate the resulting document include \mintinline{tex}|minted| and install the various package dependencies. Do not forget to specify the option \texttt{-shell-escape} (see section “\nameref{sec:preferences}”), otherwise the translation will fail.\\
+
+    If you want to include dropped code via the command \mintinline{tex}|lstinputlisting|, use the modifier key \keys{\shift}. To translate the resulting document you need the \texttt{listings} package. Make sure that you include it via \mintinline{tex}|\usepackage{listings}|.
 
 \end{itemize}
 
@@ -464,6 +466,7 @@ A typical workflow for the template system looks like this:
 \end{itemize}
 
 \section{Preferences}
+\label{sec:preferences}
 
 \subsection{Global Preferences}
 
