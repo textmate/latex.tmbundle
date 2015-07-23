@@ -295,8 +295,11 @@ sub clean_up {
         # Remove LaTeX bundle cache file
         unlink("$wd/.$name.lb");
         ( my $cache_name = $name ) =~ s/ /-/g;
-        remove_tree( "$wd/pythontex-files-" . $cache_name );
-        remove_tree( "$wd/_minted-" . $cache_name );
+        foreach my $directory ( "$wd/pythontex-files-" . $cache_name,
+            "$wd/_minted-" . $cache_name )
+        {
+            remove_tree($directory) if -d $directory && -w $directory;
+        }
     }
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
