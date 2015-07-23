@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# -----------------------------------------------------------------------------
-# Date:    2015-01-18
-# Author:  René Schwaiger (sanssecours@f-m.fm)
-# Version: 1
-# -----------------------------------------------------------------------------
-
-"""This module contains various utility functions."""
+"""This module contains function to modify the gutter area of the editor."""
 
 # -- Imports ------------------------------------------------------------------
 
