@@ -21,7 +21,7 @@ from sys import version_info
 
 from parsing import LaTexMkParser
 from tex import encodings
-from util import update_marks
+from gutter import update_marks
 
 # -- Module Import ------------------------------------------------------------
 

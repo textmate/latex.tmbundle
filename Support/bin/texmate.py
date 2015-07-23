@@ -59,7 +59,7 @@ except ImportError:
 
 from tex import (find_file_to_typeset, find_tex_directives, find_tex_packages)
 from tmprefs import Preferences
-from util import update_marks
+from gutter import update_marks
 from parsing import (BibTexParser, BiberParser, ChkTexParser, LaTexParser,
                      MakeGlossariesParser, MakeIndexParser, LaTexMkParser)
 
