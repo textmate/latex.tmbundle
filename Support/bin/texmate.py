@@ -262,7 +262,7 @@ def run_makeindex(filename, verbose=False):
 
     """
     run_object = Popen("makeindex {}".format(shellquote("{}.idx".format(
-        get_filename_without_extension(filename)))), shell=True,
+        splitext(filename)[0]))), shell=True,
         stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True,
         universal_newlines=True)
     ip = MakeIndexParser(run_object.stdout, verbose)
@@ -301,7 +301,7 @@ def run_makeglossaries(filename, verbose=False):
 
     """
     run_object = Popen("makeglossaries {}".format(
-                       shellquote(get_filename_without_extension(filename))),
+                       shellquote(splitext(filename)[0])),
                        shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
                        close_fds=True, universal_newlines=True)
     bp = MakeGlossariesParser(run_object.stdout, verbose)
@@ -667,32 +667,6 @@ def construct_engine_command(ts_directives, tm_engine, packages):
     return engine
 
 
-def get_filename_without_extension(filename):
-    """Get the given file name without its extension.
-
-    If ``filename`` has no extensions then the unchanged file name will be
-    returned.
-
-    Arguments:
-
-        file_name
-
-            The path of some file, either with or without extension.
-
-    Returns: ``str``
-
-
-    Examples:
-
-        >>> print(get_filename_without_extension('../hello_world.tex'))
-        ../hello_world
-        >>> print(get_filename_without_extension('Makefile'))
-        Makefile
-
-    """
-    return splitext(filename)[0]
-
-
 def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
     """Create a “latexmkrc” file that uses the proper engine and arguments.
 
@@ -813,7 +787,7 @@ def get_typesetting_data(filepath, tm_engine,
     typesetting_directives = find_tex_directives(filepath, ignore_warnings)
     filename, file_path = find_file_to_typeset(typesetting_directives,
                                                tex_file=filepath)
-    file_without_suffix = get_filename_without_extension(filename)
+    file_without_suffix = splitext(filename)[0]
     chdir(file_path)
     cache_filename = '.{}.lb'.format(file_without_suffix)
     typesetting_data = get_cached_data()
