@@ -23,6 +23,8 @@ use strict;
 use warnings;
 
 use Cwd qw(abs_path);
+use Env
+  qw(DIALOG DISPLAY HOME PATH TM_APP_IDENTIFIER TM_BUNDLE_SUPPORT TM_SUPPORT_PATH);
 use File::Basename;
 use File::Copy 'copy';
 use File::Path 'remove_tree';
@@ -46,21 +48,21 @@ my ( $DEBUG, $textmate_pid, $progressbar_pid ) = parse_command_line_options();
 my ( $filepath, $wd, $name, $absolute_wd ) = parse_file_path();
 
 my %prefs = get_prefs();
-my ( $mode, $viewer_option, $viewer, @tex );
+my ( $mode, $viewer, @tex );
 
 @tex = qw(latexmk -interaction=nonstopmode);
-push( @tex, "-r '$ENV{TM_BUNDLE_SUPPORT}/config/latexmkrc'" );
+push( @tex, "-r '$TM_BUNDLE_SUPPORT/config/latexmkrc'" );
 if ( $prefs{engine} eq 'latex' ) {
     $mode = "PS";
 
     # Set $DISPLAY to a sensible default, if it's unset
-    $ENV{DISPLAY} = ":0"
-      if !defined $ENV{DISPLAY};
+    $DISPLAY = ":0"
+      unless defined $DISPLAY;
 
     applescript('tell application "XQuartz" to launch');
 
     # Add Fink path
-    $ENV{PATH} .= ":/sw/bin";
+    $PATH .= ":/sw/bin";
 
     push( @tex, qw(-ps) );
 
@@ -107,16 +109,15 @@ main_loop();
             );
         }
 
-        if ( $ENV{TM_APP_IDENTIFIER} ) {
-            $prefs_file =
-              "$ENV{HOME}/Library/Preferences/$ENV{TM_APP_IDENTIFIER}.plist";
+        if ($TM_APP_IDENTIFIER) {
+            $prefs_file = "$HOME/Library/Preferences/$TM_APP_IDENTIFIER.plist";
         }
         else {
             # Guess the location of the current preference file outside of
             # TextMate. The following path is the usual location for the
             # preview version of TextMate (2.0-alpha).
             $prefs_file =
-                "$ENV{HOME}/Library/Preferences/"
+                "$HOME/Library/Preferences/"
               . "com.macromates.textmate.preview.plist";
         }
 
@@ -150,24 +151,24 @@ sub get_prefs {
 sub init_environment {
 
     # Add MacTeX
-    $ENV{PATH} .= ":/usr/texbin";
+    $PATH .= ":/usr/texbin";
 
     # If TM_SUPPORT_PATH or TM_BUNDLE_SUPPORT are undefined, make a plausible
     # guess. (Useful for running this script from outside TextMate.)
-    $ENV{TM_SUPPORT_PATH} =
-        "$ENV{HOME}/Library/Application Support/"
+    $TM_SUPPORT_PATH =
+        "$HOME/Library/Application Support/"
       . "TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared"
-      if !defined $ENV{TM_SUPPORT_PATH};
-    if ( !defined $ENV{TM_BUNDLE_SUPPORT} ) {
-        $ENV{TM_BUNDLE_SUPPORT} = dirname( dirname abs_path $0);
+      if !defined $TM_SUPPORT_PATH;
+    if ( !defined $TM_BUNDLE_SUPPORT ) {
+        $TM_BUNDLE_SUPPORT = dirname( dirname abs_path $0);
     }
 
     # Add TextMate support paths
-    $ENV{PATH} .= ":$ENV{TM_SUPPORT_PATH}/bin";
-    $ENV{PATH} .= ":$ENV{TM_BUNDLE_SUPPORT}/bin";
+    $PATH .= ":$TM_SUPPORT_PATH/bin";
+    $PATH .= ":$TM_BUNDLE_SUPPORT/bin";
 
     # Location of CocoaDialog binary
-    init_CocoaDialog( "$ENV{TM_SUPPORT_PATH}/bin/CocoaDialog.app"
+    init_CocoaDialog( "$TM_SUPPORT_PATH/bin/CocoaDialog.app"
           . "/Contents/MacOS/CocoaDialog" );
 
 }
@@ -288,8 +289,8 @@ sub clean_up {
         unlink(
             map( "$wd/$name.$_",
                 qw(acn acr alg aux bbl bcf blg fdb_latexmk fls fmt glo glg gls
-                  idx ilg ind ini ist latexmk.log log maf mtc mtc1 nav nlo nls
-                  pytxcode out pdfsync run.xml snm synctex.gz toc) )
+                  idx ilg ind ini ist latexmk.log log lol maf mtc mtc1 nav nlo
+                  nls pytxcode out pdfsync run.xml snm synctex.gz toc) )
         );
 
         # Remove LaTeX bundle cache file
@@ -497,7 +498,7 @@ sub parse_log {
         # We might have closed the notification window although there still
         # were errors. Lets reopen it if it was closed
 
-        my $open_windows  = `"$ENV{DIALOG}" nib --list`;
+        my $open_windows  = `"$DIALOG" nib --list`;
         my $window_closed = 1;
 
         for ( split /^/, $open_windows ) {
@@ -522,7 +523,7 @@ sub parse_log {
 
 sub close_notification_window {
     if ( $notification_token ne '' ) {
-        fail_unless_system( "$ENV{DIALOG}", "nib", "--dispose",
+        fail_unless_system( "$DIALOG", "nib", "--dispose",
             "$notification_token" );
         $notification_token = '';
     }

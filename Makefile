@@ -59,6 +59,7 @@ checkstyle: checkstyle_perl checkstyle_python checkstyle_ruby
 
 checkstyle_perl:
 	perlcritic --harsh $(LIBRARY_DIRECTORY)/Perl/*.pm Tests/Perl/*.t
+	perlcritic $(BINARY_DIRECTORY)/latex_watch.pl
 
 checkstyle_python:
 	flake8 $(BINARY_DIRECTORY)/*.py $(LIBRARY_DIRECTORY)/Python/*.py
