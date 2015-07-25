@@ -27,15 +27,15 @@ use Env
   qw(DIALOG DISPLAY HOME PATH TM_APP_IDENTIFIER TM_BUNDLE_SUPPORT TM_SUPPORT_PATH);
 use File::Basename;
 use File::Copy 'copy';
-use File::Path 'remove_tree';
 use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
 use POSIX ();
 use Time::HiRes 'sleep';
 
 use lib dirname( dirname abs_path $0) . '/lib/Perl';
+use Auxiliary qw(remove_auxiliary_files);
 use Latex qw(guess_tex_engine master);
 
-our $VERSION = "3.12";
+our $VERSION = "3.13";
 
 #############
 # Configure #
@@ -285,23 +285,7 @@ sub main_loop {
 # Clean up if we're interrupted or die
 sub clean_up {
     debug_msg("Cleaning up");
-    if ( defined($wd) ) {
-        unlink(
-            map( "$wd/$name.$_",
-                qw(acn acr alg aux bbl bcf blg fdb_latexmk fls fmt glo glg gls
-                  idx ilg ind ini ist latexmk.log log lol maf mtc mtc1 nav nlo
-                  nls pytxcode out pdfsync run.xml snm synctex.gz toc) )
-        );
-
-        # Remove LaTeX bundle cache file
-        unlink("$wd/.$name.lb");
-        ( my $cache_name = $name ) =~ s/ /-/g;
-        foreach my $directory ( "$wd/pythontex-files-" . $cache_name,
-            "$wd/_minted-" . $cache_name )
-        {
-            remove_tree($directory) if -d $directory && -w $directory;
-        }
-    }
+    remove_auxiliary_files( $name, $wd );
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
         debug_msg("Closing progress bar window as part of cleanup");
@@ -1111,3 +1095,7 @@ Changes
       this to support “pdfsync”. New TeX distributions include support for the
       “pdfsync” replacement “SyncTeX”. This means we do not need to support
       “pdfsync” any more.
+
+3.13:
+    - The script now reads the config file `auxiliary.yaml` to determine which
+      files it removes on cleanup.

@@ -5,9 +5,10 @@
 
   $ TM_PID=$(pgrep -a TextMate)
   $ CURRENT_DIR=$(pwd)
-  $ LOGFILE="/tmp/latex_watch_test.log"
-  $ TEX_DIR="Tests/TeX/"
-  $ TEXFILE="${CURRENT_DIR}/${TEX_DIR}/makeindex.tex"
+  $ FILENAME='makeindex'
+  $ LOGFILE='/tmp/latex_watch_test.log'
+  $ TEX_DIR="${CURRENT_DIR}/Tests/TeX"
+  $ TEXFILE="${TEX_DIR}/${FILENAME}.tex"
   $ PATH=$PATH:Support/bin/
 
 -- Tests ----------------------------------------------------------------------
@@ -15,13 +16,14 @@
 Run `latex_watch` and check if the log output of the command looks correct.
 
   $ latex_watch.pl -d --textmate-pid=${TM_PID} "${TEXFILE}" > "${LOGFILE}" &
-  $ sleep 10
+  $ sleep 9
   $ pkill -n perl
-  $ grep "Output written" "${LOGFILE}" > /dev/null
-  $ grep -E "Executing\s+check_open" "${LOGFILE}" > /dev/null
+  $ sleep 1 # Wait for `latex_watch` to close
+  $ grep 'Output written' "${LOGFILE}" > /dev/null
+  $ grep -E 'Executing\s+check_open' "${LOGFILE}" > /dev/null
 
 -- Cleanup --------------------------------------------------------------------
 
   $ rm "${LOGFILE}"
-  $ rm "${TEX_DIR}"/*.pdf
-  $ git checkout "${TEX_DIR}"/*.idx
+  $ rm "${TEX_DIR}/${FILENAME}.pdf"
+  $ git checkout "${TEX_DIR}/${FILENAME}.idx"

@@ -1,0 +1,47 @@
+# List Of Auxiliary Files
+# =======================
+
+# The files specified here will be deleted by the commands “Clean”, and by
+# “Watch Document” if you close the previewer.
+
+# Files: Specified by extension
+files:
+  - acn
+  - acr
+  - alg
+  - aux
+  - bbl
+  - bcf
+  - blg
+  - fdb_latexmk
+  - fls
+  - fmt
+  - glo
+  - glg
+  - gls
+  - idx
+  - ilg
+  - ind
+  - ini
+  - ist
+  - latexmk.log
+  - log
+  - lol
+  - maf
+  - mtc
+  - mtc1
+  - nav
+  - nlo
+  - nls
+  - pytxcode
+  - out
+  - pdfsync
+  - run.xml
+  - snm
+  - synctex.gz
+  - toc
+
+# Directories: Specified by prefix
+directories:
+  - pythontex-files-
+  - _minted-
