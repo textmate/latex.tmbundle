@@ -10,6 +10,7 @@ require 'pathname'
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/ui.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/indent.rb'
 require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/latex.rb'
 
 # -- Functions -----------------------------------------------------------------
@@ -160,24 +161,6 @@ end
 # This function returns a string useable as label.
 def filepath_to_label(filepath)
   filepath.to_s.gsub(%r{(\.[^.]*$)|(\.\./)}, '').gsub(%r{[/ ]}, '_')
-end
-
-# Return a string representing a certain level of indentation.
-#
-# This function respects the current tab settings of the user.
-#
-# = Arguments
-#
-# [times] The number of times the text following the string returned by this
-#         function should be indented.
-#
-# = Output
-#
-# A string that represents a certain level of indentation
-def indent(times = 1)
-  if ENV['TM_SOFT_TABS'] == 'NO' then "\t" * times
-  else ' ' * ENV['TM_TAB_SIZE'].to_i * times
-  end
 end
 
 # ======================
