@@ -160,11 +160,11 @@ def find_tex_packages(filepath, ignore_nonexistent_files=False):
         True
         >>> for package in sorted(packages):
         ...     print(package)
+        booktabs
         csquotes
         framed
         mathtools
         polyglossia
-        unicode-math
         xcolor
         >>> 'inputenc' in list(find_tex_packages('applemac.tex'))
         True
