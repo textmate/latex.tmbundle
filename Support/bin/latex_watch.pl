@@ -35,7 +35,7 @@ use lib dirname( dirname abs_path $0) . '/lib/Perl';
 use Auxiliary qw(remove_auxiliary_files);
 use Latex qw(guess_tex_engine master);
 
-our $VERSION = "3.13";
+our $VERSION = "3.14";
 
 #############
 # Configure #
@@ -362,13 +362,15 @@ sub parse_file_list {
     local $/ = "\n";
 
     my %updated_files;
-    while (<$f>) {
+    # Skip font files, .aux, .ini files and files produced by the minted package
+    my $ignored_files_pattern =
+      '/dev/null|\.(?:fd|tfm|aux|ini|aex|mintedcmd|mintedmd5|pyg|w18)$';
+
+      while (<$f>) {
         if (/^(INPUT|OUTPUT) (.*)/) {
             my ( $t, $f ) = ( $1, $2 );
 
-            next
-              if $f =~
-              m!\.(?:fd|tfm|aux|ini)$!;   # Skip font files, .aux and .ini files
+            next if $f =~ m!$ignored_files_pattern!;
             $f = "$wd/$f" if $f !~ m(/);
 
             my $mtime = -M ($f);
@@ -1099,3 +1101,8 @@ Changes
 3.13:
     - The script now reads the config file `auxiliary.yaml` to determine which
       files it removes on cleanup.
+
+3.14:
+    - Improve support for the minted package. Previously the script would
+      sometimes refresh the viewer infinitely often, even if there were no
+      changes to the watched document.
