@@ -131,15 +131,17 @@ class Table
 
     def parse_parameters(result)
       one_upto_hundred = '([1-9]\d?|100)'
-      m = /^#{one_upto_hundred}\D+#{one_upto_hundred}$/.match(result.to_s)
-      TextMate.exit_show_tool_tip(usage(100, 100)) if m.nil?
-      [m[1].to_i, m[2].to_i]
+      rows_default = 2
+      m = /^(?:#{one_upto_hundred}\D+)?#{one_upto_hundred}$/.match(result.to_s)
+      TextMate.exit_show_tool_tip(usage(rows_default, 100, 100)) if m.nil?
+      [m[1] ? m[1].to_i : rows_default, m[2].to_i]
     end
 
-    def usage(rows_max, columns_max)
+    def usage(rows_default, rows_max, columns_max)
       "USAGE:\n\n" \
-      "  #rows #columns\n\n" \
-      "#rows: Number of table rows (Maximum: #{rows_max})\n" \
+      "  [#rows] #columns\n\n" \
+      "#rows: Number of table rows (Default: #{rows_default}, " \
+      "Maximum: #{rows_max})\n" \
       "#columns: Number of table columns (Maximum: #{columns_max})"
     end
   end
