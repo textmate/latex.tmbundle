@@ -38,27 +38,39 @@ class Table
   #
   # = Examples
   #
-  #  doctest: Create a small table
+  #  doctest: Check the representation of a small table
   #
   #  >> table = Table.new(2, 2)
   #  >> i1 = indent(1)
   #  >> i2 = indent(2)
-  #  >> table_representation = [
-  #       "\\begin{table}[htb!]",
-  #       "#{i1}\\caption{\\it ${1:caption}}",
-  #       "#{i1}\\label{table:${2:label}}",
-  #       "#{i1}\\centering",
+  #  >> start = ["\\begin{table}[htb!]",
+  #              "#{i1}\\caption{\\it ${1:caption}}",
+  #              "#{i1}\\label{table:${2:label}}",
+  #              "#{i1}\\centering"]
+  #  >> ending = ["#{i2}\\toprule",
+  #               "#{i1}\\end{tabular}",
+  #               "\\end{table}"]
+  #  >> middle = [
   #       "#{i1}\\begin{tabular}{cc}",
   #       "#{i2}\\toprule",
   #       "#{i2}\\textbf{${3:Header 1}} & \\textbf{${4:Header 2}}\\\\\\\\",
-  #       "#{i2}             ${5:r2c1} &              ${6:r2c2}\\\\\\\\",
+  #       "#{i2}             ${5:r2c1} &              ${6:r2c2}\\\\\\\\"]
+  #  >> table_representation = (start + middle + ending).join("\n")
+  #  >> table.to_s == table_representation
+  #  => true
+  #
+  #  doctest: Check the representation of a tiny table
+  #
+  #  >> table = Table.new(1, 1)
+  #  >> middle = [
+  #       "#{i1}\\begin{tabular}{c}",
   #       "#{i2}\\toprule",
-  #       "#{i1}\\end{tabular}",
-  #       "\\end{table}"].join("\n")
+  #       "#{i2}\\textbf{${3:Header 1}}\\\\\\\\"]
+  #  >> table_representation = (start + middle + ending).join("\n")
   #  >> table.to_s == table_representation
   #  => true
   def to_s
-    [header, array_header, array, footer].join("\n")
+    [header, array_header, @rows <= 1 ? nil : array, footer].compact.join("\n")
   end
 
   private
@@ -118,9 +130,17 @@ class Table
     end
 
     def parse_parameters(result)
-      m = /(\d+)\D+(\d+)/.match(result.to_s)
-      TextMate.exit_discard if m.nil?
+      one_upto_hundred = '([1-9]\d?|100)'
+      m = /^#{one_upto_hundred}\D+#{one_upto_hundred}$/.match(result.to_s)
+      TextMate.exit_show_tool_tip(usage(100, 100)) if m.nil?
       [m[1].to_i, m[2].to_i]
+    end
+
+    def usage(rows_max, columns_max)
+      "USAGE:\n\n" \
+      "  #rows #columns\n\n" \
+      "#rows: Number of table rows (Maximum: #{rows_max})\n" \
+      "#columns: Number of table columns (Maximum: #{columns_max})"
     end
   end
 end
