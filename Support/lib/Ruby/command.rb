@@ -426,7 +426,7 @@ end
 def template_text
   command = ("\"#{ENV['DIALOG']}\" -cmp " \
              "#{e_sh({ 'entries' => template_entries }.to_plist)} " \
-             "#{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/templates.nib')}")
+             "#{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/Templates')}")
   result = OSX::PropertyList.load(`#{command}`)['result']
   TextMate.exit_discard if result.nil?
   result['returnArgument'][0].scan(/\n|.+\n?/)
