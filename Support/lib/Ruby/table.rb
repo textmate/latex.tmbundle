@@ -1,12 +1,14 @@
 # -- Imports -------------------------------------------------------------------
 
-require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
-require ENV['TM_SUPPORT_PATH'] + '/lib/ui.rb'
-require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/indent.rb'
+require ENV['TM_SUPPORT_PATH'] + '/lib/escape'
+require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes'
+require ENV['TM_SUPPORT_PATH'] + '/lib/osx/plist'
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/indent'
 
 # -- Class ---------------------------------------------------------------------
 
 # This class represents a LaTeX table.
+# rubocop:disable Metrics/ClassLength
 class Table
   # This function initializes a new LaTeX table.
   #
@@ -145,27 +147,53 @@ class Table
 
   class <<self
     def read_parameters
-      result = if ENV.key?('TM_SELECTED_TEXT') then ENV['TM_SELECTED_TEXT']
-               else TextMate::UI.request_string(
-                 :title => 'LaTeX Table Creation',
-                 :prompt => 'Number of rows and columns:',
-                 :default => '6 4',
-                 :button1 => 'Create')
-               end
-      TextMate.exit_discard if result.nil?
-      parse_parameters(result)
+      if ENV.key?('TM_SELECTED_TEXT')
+        parse_parameters_text(ENV['TM_SELECTED_TEXT'])
+      else
+        read_parameters_ui
+      end
     end
 
-    def parse_parameters(result)
+    def read_parameters_ui
+      dialog = e_sh ENV['DIALOG']
+      defaults = e_sh({ 'latexTableRows' => 2, 'latexTableColumns' => 2,
+                        'latexTableTabular' => 1 }.to_plist)
+      nib = e_sh(ENV['TM_BUNDLE_SUPPORT']) + '/nibs/CreateTable'
+      result_plist = `#{dialog} -d #{defaults} -cm #{nib}`
+      values = OSX::PropertyList.load(result_plist)['result']
+      TextMate.exit_discard if values.nil?
+      parse_parameters_ui(values['rows'], values['columns'],
+                          values['returnArgument'])
+    end
+
+    def parse_parameters_ui(rows, columns, tabular_only)
+      [parse_parameter_table('rows' => rows),
+       parse_parameter_table('columns' => columns),
+       !tabular_only]
+    end
+
+    def parse_parameter_table(parameter)
+      value = parameter.values[0]
+      name = parameter.keys[0]
+      number = value.to_i
+      fail if number < 1 || number > 100
+      number
+    rescue
+      TextMate.exit_show_tool_tip(
+        "“#{value}” is not a valid value for the number of #{name}.\n" \
+        'Please use a number between 1 and 100.')
+    end
+
+    def parse_parameters_text(result)
       one_upto_hundred = '([1-9]\d?|100)'
       rows_default = 2
       m = /^(?:#{one_upto_hundred}\D+)?#{one_upto_hundred}\s*(t)?$/.match(
         result.to_s)
-      TextMate.exit_show_tool_tip(usage(rows_default, 100, 100)) if m.nil?
+      TextMate.exit_show_tool_tip(usage_text(rows_default, 100, 100)) if m.nil?
       [m[1] ? m[1].to_i : rows_default, m[2].to_i, m[3].nil?]
     end
 
-    def usage(rows_default, rows_max, columns_max)
+    def usage_text(rows_default, rows_max, columns_max)
       "USAGE: [#rows] #columns [t] \n\n" \
       "#rows: Number of table rows (Default: #{rows_default}, " \
       "Maximum: #{rows_max})\n" \
