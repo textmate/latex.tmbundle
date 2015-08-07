@@ -29,7 +29,7 @@ PYTHON2 = version_info <= (3, 0)
 
 if PYTHON2:
     import sys
-    reload(sys)
+    reload(sys)  # noqa
     sys.setdefaultencoding("utf-8")
 
 

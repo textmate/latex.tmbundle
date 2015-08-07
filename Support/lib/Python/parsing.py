@@ -650,7 +650,7 @@ class LaTexParser(TexParser):
 
     def pdf_latex_error(self, matching, line):
         self.number_errors += 1
-        print ('<p class="error">'.format(line))
+        print('<p class="error">'.format(line))
         line = self.input_stream.readline()
         if line and match('^ ==> Fatal error occurred', line):
             print('{}'.format(line.rstrip('\n')))
