@@ -49,7 +49,7 @@ class Table
   #  >> i1 = indent(1)
   #  >> i2 = indent(2)
   #  >> start = ["\\begin{table}[htb!]",
-  #              "#{i1}\\caption{\\it ${1:caption}}",
+  #              "#{i1}\\caption{\\it ${1:Caption}}",
   #              "#{i1}\\label{table:${2:label}}",
   #              "#{i1}\\centering"]
   #  >> ending = ["#{i2}\\toprule",
@@ -97,7 +97,7 @@ class Table
 
   def header
     "\\begin{table}[htb!]\n" \
-    "#{@i1}\\caption{\\it \${1:caption}}\n" \
+    "#{@i1}\\caption{\\it \${1:Caption}}\n" \
     "#{@i1}\\label{table:\${2:label}}\n" \
     "#{@i1}\\centering\n" \
     "#{@i1}\\begin{tabular}{#{'c' * @columns}}\n" \
