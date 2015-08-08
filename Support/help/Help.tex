@@ -4,12 +4,14 @@
 
 % -- Packages ------------------------------------------------------------------
 
+\usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{fontspec}
 \usepackage[paperheight=25cm, paperwidth=15cm, top=0.5cm, bottom=0.5cm, left=.5cm, right=.5cm]{geometry}
 \usepackage{grffile}
 \usepackage{menukeys}
 \usepackage{minted}
+\usepackage{subfig}
 \usepackage{titlesec}
 \usepackage{hyperref}
 
@@ -330,6 +332,37 @@ A list of the the most commonly used LaTeX environments would certainly include 
 The first \texttt{\textbackslash{}item} is automatically inserted for you. To add a new item press \keys{\enter} and TextMate creates a new entry by inserting the command \texttt{\textbackslash{}item} in the next line. This functionality is common among most languages in TextMate that support some sort of list.\\
 
 There is also a \menu{Lists > Itemize Lines in Selection} command, bound to \keys{\cmd + \shift + L}. It wraps the selected group of lines inside a list environment (\texttt{enumerate}, \texttt{itemize}, or \texttt{description}). Each non-blank line becomes an \texttt{\textbackslash{}item} in the environment. If the first 20 characters of every selected non-empty line contain a \texttt{:}, then the command creates a description environment. All the characters up to the \texttt{:} are placed inside brackets.
+
+\subsubsection{Table Environments}
+
+The command \menu{Table > Create Table} allows you to quickly inserts a table into your document. The command works both with or without a selection.\\
+
+If you do not select any text before you invoke the command, then TextMate displays the pop-up window shown in Figure~\ref{fig:Figures_Table_-_Create_Table}. From there you can choose how many rows and columns the inserted table should have. If you check \menu{Tabular Only}, then the command creates only a \mintinline{tex}|\tabular| environment. Otherwise the command surrounds the \mintinline{tex}|\tabular| environment with a \mintinline{tex}|\table| environment. After you hit \menu{Insert} the command places the table at the current caret position. You can then fill in the various attributes. To switch between them use the keys \keys{\tab} and \keys{\shift + \tab}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.5\textwidth]{Figures/Table - Create Table.png}
+  \caption{Graphical User Interface for the command “Create Table”}
+  \label{fig:Figures_Table_-_Create_Table}
+\end{figure}
+
+If you select text before you invoke the command, then use the following format:
+
+\begin{verbatim}
+    [rows] columns [t]
+\end{verbatim}
+
+The format specification above states that you typically write down the number of rows, then the number of columns and then optionally add the character \texttt{t}, if you only want to create a tabular environment. The number of rows is optional. If you do not specify it, then TextMate will create a table with two rows. We provide two examples, which should help you understand the interface. The text above the example shows the selection. After that we show the inserted LaTeX code, followed by the rendering of the translated code.
+
+\paragraph{Selected Text: \menu{2 3}}
+
+\inputminted[frame=lines]{tex}{TeX/Table_2_3.tex}
+\input{TeX/Table_2_3}
+
+\paragraph{Selected Text: \menu{3 4 t}}
+
+\inputminted[frame=lines]{tex}{TeX/Table_3_4_t.tex}
+\input{TeX/Table_3_4_t}
 
 \subsubsection{Wrapping Text}
 
