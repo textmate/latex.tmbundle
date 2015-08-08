@@ -292,7 +292,7 @@ module LaTeX
     #  >> LaTeX.find_file('la', 'tex', '')
     #  => nil
     def find_file(filename, extension, relative)
-      filename.gsub!(/"/, '')
+      filename.delete!('"')
       filename.gsub!(/\.#{extension}$/, '')
       # First try the filename as is, without the extension. Then try with the
       # added extension
