@@ -156,8 +156,8 @@ class Table
 
     def read_parameters_ui
       dialog = e_sh ENV['DIALOG']
-      defaults = e_sh({ 'latexTableRows' => 2, 'latexTableColumns' => 2,
-                        'latexTableTabular' => 1 }.to_plist)
+      defaults = e_sh("{ latexTableRows = '2'; latexTableColumns = '2';" \
+                      '  latexTableTabular = 1; }')
       nib = e_sh(ENV['TM_BUNDLE_SUPPORT']) + '/nibs/CreateTable'
       result_plist = `#{dialog} -d #{defaults} -cm #{nib}`
       values = OSX::PropertyList.load(result_plist)['result']
