@@ -1,3 +1,4 @@
+# rubocop:disable all
 require ENV['TM_SUPPORT_PATH'] + "/lib/osx/plist"
 module Config
   class <<self

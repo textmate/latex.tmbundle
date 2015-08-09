@@ -116,6 +116,24 @@ module LaTeX
   # Implements general methods that give information about the LaTeX document.
   # Most of these commands recurse into \included files.
   class <<self
+    # Get the list of commands contained in the current master file.
+    #
+    # = Output
+    #
+    # The function returns a list of strings. Each string represents a command.
+    #
+    # = Examples
+    #
+    #  doctest: Check the commands of the file 'packages_input1.tex'.
+    #
+    #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/input/packages_input1.tex'
+    #  >> LaTeX.commands.include? 'setmainlanguage'
+    #  => true
+    def commands
+      FileScanner.command_scan(LaTeX.master(ENV['TM_LATEX_MASTER'] ||
+                                            ENV['TM_FILEPATH']))
+    end
+
     # Get an array containing the labels of the current master file.
     #
     # = Output
@@ -123,6 +141,8 @@ module LaTeX
     # The function returns a list of label objects.
     #
     # = Examples
+    #
+    #  doctest: Get the number of labels contained in 'references.tex'.
     #
     #  >> ENV['TM_LATEX_MASTER'] = 'Tests/TeX/references.tex'
     #  >> LaTeX.labels.length
@@ -705,6 +725,8 @@ module LaTeX
   #              - the current line number,
   #              - the regex match and
   #              - the content of the file.
+  #
+  # rubocop:disable Metrics/ClassLength
   class FileScanner
     attr_accessor :root, :includes, :extractors
 
@@ -757,6 +779,36 @@ module LaTeX
           extractors_process_line(root, line, line_number, extractors, text)
         end
       end
+    end
+
+    # Get the commands of the file +root+ and all its included files.
+    #
+    # = Arguments
+    #
+    # [root] The file which should be searched for commands
+    #
+    # = Output
+    #
+    # The function returns a list of strings. Each string represents a LaTeX
+    # command.
+    #
+    # = Examples
+    #
+    #  doctest: Scan the file +makeindex.tex+ for commands
+    #
+    #  >> include LaTeX
+    #  >> commands = FileScanner.command_scan('Tests/TeX/makeindex.tex')
+    #  >> commands.include? 'makeindex'
+    #  >> commands.length
+    #  => 9
+    def self.command_scan(root)
+      commands = []
+      scanner = FileScanner.new(root)
+      scanner.extractors[/\\([\w@]+)/] = proc do |_, _, groups, _|
+        commands << groups[0]
+      end
+      scanner.recursive_scan
+      commands.uniq
     end
 
     # Get the labels of the file +root+ and all its included files.
