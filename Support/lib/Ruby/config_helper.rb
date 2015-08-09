@@ -1,4 +1,17 @@
+# -- Imports -------------------------------------------------------------------
+
 require ENV['TM_SUPPORT_PATH'] + '/lib/osx/plist'
+
+# -- Class ---------------------------------------------------------------------
+
+# Extend the array class so we can easily check all types contained in a list.
+class Array
+  def all_of_type?(type)
+    entries.all? { |entry| entry.is_a?(type) }
+  end
+end
+
+# -- Module --------------------------------------------------------------------
 
 # This class provides access to the LaTeX configuration files.
 module Config
@@ -29,31 +42,31 @@ module Config
     end
 
     # Merges the two data structures read from plists. The structures should
-    # consist of hashes, arrays and strings only. User_list takes precedence in
-    # case of ties.
-    #
-    # rubocop:disable all
+    # consist of hashes, arrays and strings only. The users list takes
+    # precedence in case of ties.
     def merge_plists(default_list, user_list)
-      case
-      when default_list.nil?
-        user_list
-      when user_list.nil?
-        default_list
-      when default_list.is_a?(Hash) && user_list.is_a?(Hash)
-        new_hash = {}
-        (user_list.keys + default_list.keys).uniq.each do |key|
-          new_hash[key] = merge_plists(default_list[key], user_list[key])
-        end
-        new_hash
-      when default_list.is_a?(Array) && user_list.is_a?(Array)
-        (user_list + default_list).uniq
-      when default_list.is_a?(String) && user_list.is_a?(String)
-        user_list
-      else
-        fail MismatchedTypesException,
-             "Found mismatched types: #{default_list} is a " \
-             "#{default_list.class} while #{user_list} is a #{user_list.class}."
+      return user_list unless default_list
+      return default_list unless user_list
+      merge_defined_plists(default_list, user_list)
+    end
+
+    def merge_defined_plists(default_list, user_list)
+      lists = [default_list, user_list]
+      return merge_hashes(default_list, user_list) if lists.all_of_type?(Hash)
+      return (user_list + default_list).uniq if lists.all_of_type?(Array)
+      return user_list if lists.all_of_type?(String)
+
+      fail MismatchedTypesException,
+           "Found mismatched types: #{default_list} is a " \
+           "#{default_list.class} while #{user_list} is a #{user_list.class}."
+    end
+
+    def merge_hashes(default_list, user_list)
+      new_hash = {}
+      (user_list.keys + default_list.keys).uniq.each do |key|
+        new_hash[key] = merge_plists(default_list[key], user_list[key])
       end
+      new_hash
     end
   end
 end
