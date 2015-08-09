@@ -13,11 +13,11 @@
 
 # -- Imports -------------------------------------------------------------------
 
-require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/command.rb'
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/completion/command'
 
 # -- Main ----------------------------------------------------------------------
 
-command_completion()</string>
+command_completion</string>
 	<key>fallbackInput</key>
 	<string>word</string>
 	<key>fileCaptureRegister</key>

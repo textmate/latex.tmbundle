@@ -163,18 +163,6 @@ def filepath_to_label(filepath)
   filepath.to_s.gsub(%r{(\.[^.]*$)|(\.\./)}, '').gsub(%r{[/ ]}, '_')
 end
 
-# ======================
-# = Command Completion =
-# ======================
-
-# Insert a command based on the current word into the document.
-def command_completion
-  completions = `"#{ENV['TM_BUNDLE_SUPPORT']}"/bin/LatexCommandCompletions.rb`
-  print(menu_choice_exit_if_empty(completions.split("\n")))
-rescue RuntimeError => e
-  TextMate.exit_show_tool_tip(e.message)
-end
-
 # ========================
 # = Include Code Listing =
 # ========================
