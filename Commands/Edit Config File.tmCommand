@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>AccountFile="$HOME/Library/Preferences/com.macromates.textmate.latex_config.plist"
 if [[ ! -e "$AccountFile" ]]; then
-    cat "$TM_BUNDLE_SUPPORT/latex.config" &gt; "$AccountFile"
+    cat "$TM_BUNDLE_SUPPORT/config/latex.config" &gt; "$AccountFile"
 fi
 open txmt://open?url=file://$AccountFile</string>
 	<key>input</key>

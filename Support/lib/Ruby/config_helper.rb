@@ -24,7 +24,7 @@ module Config
     end
 
     def load_default_file
-      default_file = ENV['TM_BUNDLE_SUPPORT'] + '/latex.config'
+      default_file = ENV['TM_BUNDLE_SUPPORT'] + '/config/latex.config'
       load_file(default_file)
     end
 
