@@ -247,7 +247,7 @@ This section describes the various LaTeX tasks, and how they can be accomplished
 
 Writing LaTeX often requires typing some amount of standard commands and environments. TextMate makes that a lot easier with a set of commands in the LaTeX bundle, that we'll discuss in this section.
 
-\subsubsection{Completing Commands and
+\subsubsection{Inserting Commands and
 Environments}
 
 The LaTeX bundle contains two commands that, if you type a lot of LaTeX, will become your best friends. They are \menu{Insert > Environment Based on Current Word}, bound by default to \keys{\cmd + \textless{}}, and \menu{Insert > Command Based on Current Word}, bound by default to \keys{\cmd + \textgreater{}}. They create an environment/command based on the current word, or a default editable text in the absence of a current word. They are smart enough to understand a number of “standard” shortcuts, also called triggers. For instance, typing \texttt{thm} and then calling the \menu{Insert > Environment Based on Current Word} command creates:
@@ -399,13 +399,19 @@ Often one wants to enclose the currently selected text in an environment, or a c
 
 \subsection{Completion}
 
-The LaTeX bundle adds the following words to the list of completions (accessed through \keys{\esc}): corollary, definition, description, enumerate, equation, itemize, lemma, proof, proposition and verbatim.\\
+The LaTeX bundle adds the following words to the list of completions (accessed through \keys{\esc}): corollary, definition, description, enumerate, equation, itemize, lemma, proof, proposition and verbatim.
+
+\subsubsection{Commands}
+
+We already talked about how you can quickly create a command with \menu{Insert > Command Based on Current Word}. You can also complete a partial typed command with \menu{Insert > Command Completion}. Just write down the first characters of your word, e.g. \mintinline{tex}|\table|, and press \keys{\Alt + \esc}. TextMate will then display a menu with possible completions consisting of predefined commands and commands from your current master file.
+
+\subsubsection{Citations and References}
 
 The LaTeX bundle overrides the standard completion behavior when the caret is inside a \texttt{\textbackslash{}cite\{\}} or \texttt{\textbackslash{}ref\{\}} block. It also overrides the completion behaviour for other equivalent commands like \texttt{eqref}, \texttt{vref}, \texttt{prettyref}, \texttt{citeauthor} etc.\\
 
 If the LaTeX command expects a bibliography key, then pressing \keys{\esc} inside the braces offers completion with respect to all cite keys. This is accomplished by scanning all bib files included in the current master file. For instance, if the caret is right before the closing brace in \texttt{\textbackslash{}cite\{Ka\}}, then pressing \keys{\esc} will cycle trough all bibliography keys starting with \texttt{Ka}.\\
 
-If the LaTeX command expects a label key, pressing \keys{\esc} inside the braces of the command will cycle trough all labels of the current master document. You can narrow the search down by writing part of the label key before you hit \keys{\esc}. This is especially useful if you use a prefix that specifies the type of the reference in your labels. For example, if you prefix each label of a theorem with \texttt{thm:} — i.e.~all theorem labels have the form \texttt{thm:labelname}, then pressing \keys{\esc} when the caret is right before the closing brace in \texttt{\textbackslash{}ref\{thm:\}} will offer as completion options all labels referencing theorems.\\\\
+If the LaTeX command expects a label key, pressing \keys{\esc} inside the braces of the command will cycle trough all labels of the current master document. You can narrow the search down by writing part of the label key before you hit \keys{\esc}. This is especially useful if you use a prefix that specifies the type of the reference in your labels. For example, if you prefix each label of a theorem with \texttt{thm:} — i.e.~all theorem labels have the form \texttt{thm:labelname}, then pressing \keys{\esc} when the caret is right before the closing brace in \texttt{\textbackslash{}ref\{thm:\}} will offer as completion options all labels referencing theorems.\\
 
 If there are many matching completions, it is often more convenient to use the pull-down-list versions of the commands:
 
