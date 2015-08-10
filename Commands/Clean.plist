@@ -35,6 +35,7 @@ texmate.py clean</string>
 			<string>kpsewhich</string>
 			<key>locations</key>
 			<array>
+				<string>/Library/TeX/texbin/kpsewhich</string>
 				<string>/usr/texbin/kpsewhich</string>
 				<string>/opt/local/bin/kpsewhich</string>
 			</array>
