@@ -15,8 +15,10 @@
 	<key>patterns</key>
 	<array>
 		<dict>
+			<key>comment</key>
+			<string>This scope identifies partially typed commands such as `\tab`. We use this to trigger “Command Completion” only when it makes sense.</string>
 			<key>match</key>
-			<string>(?=\s)(?&lt;=\\[\w@]|\\[\w@]{2}|\\[\w@]{3}|\\[\w@]{4}|\\[\w@]{5}|\\[\w@]{6})\s</string>
+			<string>(?&lt;=\\[\w@]|\\[\w@]{2}|\\[\w@]{3}|\\[\w@]{4}|\\[\w@]{5}|\\[\w@]{6})\s</string>
 			<key>name</key>
 			<string>meta.space-after-command.latex</string>
 		</dict>
