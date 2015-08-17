@@ -33,14 +33,15 @@ end
 #
 # The function shows a clickable HTML view for the current tex document.
 def show_outline
-  html_header 'LaTeX Document Outline', 'LaTeX'
   file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
   if file.nil?
     file = STDIN
   else
     file = File.expand_path(file, File.dirname(ENV['TM_FILEPATH']))
   end
-  puts(Outline.outline_from_file(file))
+  outline = Outline.outline_from_file(file)
+  html_header 'LaTeX Document Outline', 'LaTeX'
+  puts(outline)
   html_footer
 end
 
@@ -136,12 +137,16 @@ module Outline
 
   class <<self
     # Get the text stored in and a URL referencing +filename+.
-    def content_url(filename)
+    def content_url(filename, ref_filename = nil, ref_line = nil,
+                    ref_linenumber = nil)
       if filename.is_a?(String)
         [File.read(filename), "url=file://#{e_url(filename)}&"]
       else
         [filename.read, '']
       end
+    rescue => e
+      TextMate.exit_show_tool_tip(
+        "#{ref_filename}:#{ref_linenumber} “#{ref_line}”\n\t#{e.message}")
     end
 
     # Try to get a outline point — containing url, line number, section and
@@ -152,23 +157,25 @@ module Outline
     end
 
     # Try to get outline points from a file referenced in a line of text.
-    def outline_points_from_line(line)
+    def outline_points_from_line(line, linenumber, filename)
       if line.match(INCLUDE_REGEX)
-        outline_points(join_with_master_path(Regexp.last_match[1]))
+        outline_points(join_with_master_path(Regexp.last_match[1]), filename,
+                       line, linenumber)
       else
         []
       end
     end
 
     # Get all the outline points contained in +filename+.
-    def outline_points(filename)
-      data, url = content_url(filename)
+    def outline_points(filename, ref_filename = nil, ref_line = nil,
+                       ref_linenumber = nil)
+      data, url = content_url(filename, ref_filename, ref_line, ref_linenumber)
       points = []
       data.split("\n").each_with_index do |line, linenumber|
         next unless line.match(NON_COMMENT_REGEX)
         points << outline_point_from_line(Regexp.last_match[1], url,
                                           linenumber + 1)
-        points += outline_points_from_line(line)
+        points += outline_points_from_line(line, linenumber + 1, filename)
       end
       points.compact
     end
