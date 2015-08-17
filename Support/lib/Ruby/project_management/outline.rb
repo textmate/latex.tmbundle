@@ -1,5 +1,7 @@
 # -- Imports -------------------------------------------------------------------
 
+require 'erb'
+
 require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
 require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/latex.rb'
@@ -140,7 +142,7 @@ module Outline
     def content_url(filename, ref_filename = nil, ref_line = nil,
                     ref_linenumber = nil)
       if filename.is_a?(String)
-        [File.read(filename), "url=file://#{e_url(filename)}&"]
+        [File.read(filename), "url=file://#{ERB::Util.url_encode(filename)}&"]
       else
         [filename.read, '']
       end
