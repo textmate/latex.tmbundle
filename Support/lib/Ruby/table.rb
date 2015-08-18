@@ -52,13 +52,14 @@ class Table
   #              "#{i1}\\caption{${1:Caption}}",
   #              "#{i1}\\label{table:${2:label}}",
   #              "#{i1}\\centering"]
-  #  >> ending = ["#{i2}\\toprule",
+  #  >> ending = ["#{i2}\\bottomrule",
   #               "#{i1}\\end{tabular}",
   #               "\\end{table}"]
   #  >> middle = [
   #       "#{i1}\\begin{tabular}{cc}",
   #       "#{i2}\\toprule",
   #       "#{i2}\\textbf{${3:Header 1}} & \\textbf{${4:Header 2}}\\\\\\\\",
+  #       "#{i2}\\midrule",
   #       "#{i2}             ${5:r2c1} &              ${6:r2c2}\\\\\\\\"]
   #  >> table_representation = (start + middle + ending).join("\n")
   #  >> table.to_s == table_representation
@@ -105,7 +106,7 @@ class Table
   end
 
   def footer
-    "#{@i2}\\toprule\n#{@i1}\\end{tabular}\n\\end{table}"
+    "#{@i2}\\bottomrule\n#{@i1}\\end{tabular}\n\\end{table}"
   end
 
   def array_header(insertion_point = @insertion_points_header)
@@ -113,7 +114,7 @@ class Table
       @array_header_start + \
         "${#{insertion_point += 1}:#{array_header_text(c)}}" + \
         @array_header_end
-    end.join(' & ') + '\\\\\\\\'
+    end.join(' & ') + '\\\\\\\\' + (@rows >= 2 ? "\n#{@i2}\\midrule" : '')
   end
 
   def array_header_text(column)
