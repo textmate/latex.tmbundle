@@ -134,7 +134,7 @@ module Outline
   ARGUMENT = '\{([^{}]*(?:\{[^}]*\}[^}]*?)*)\}'
 
   PART_REGEX = /\\#{PART}#{COMMENT}(?:#{OPTIONS}|#{ARGUMENT})/
-  INCLUDE_REGEX = /\\(?:input|include)#{COMMENT}(?>\{(.*?)\})/
+  INCLUDE_REGEX = /\\(?:input|include)#{COMMENT}(?>\{([^}#]*)\})/
   NON_COMMENT_REGEX = /^([^%]+$|(?:[^%]|\\%)+)(?=%|$)/
 
   class <<self
