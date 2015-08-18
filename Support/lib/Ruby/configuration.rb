@@ -14,7 +14,7 @@ end
 # -- Module --------------------------------------------------------------------
 
 # This class provides access to the LaTeX configuration files.
-module Config
+module Configuration
   class <<self
     def load
       merge_plists(load_default_file, load_user_file)

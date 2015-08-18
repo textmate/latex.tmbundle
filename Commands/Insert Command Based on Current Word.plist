@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby18
 require "#{ENV['TM_BUNDLE_SUPPORT']}/lib/Ruby/configuration.rb"
-@plist = Config.load
+@plist = Configuration.load
 shortcuts = @plist['commands']
 if ENV['TM_SCOPE'].match('beamer') then
   shortcuts.update(@plist['commands_beamer'])
