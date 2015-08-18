@@ -21,7 +21,7 @@
 \newcommand{\Authors}{Allan Odgaard, Brad Miller, Ciarán Walsh, Stanley Rost, Haris Skiadas, René Schwaiger}
 \newcommand{\Title}{LaTeX Bundle}
 \newcommand{\TitleDescription}{Documentation}
-\newcommand{\Subject}{Documentation for TextMate's LaTeX Bundle }
+\newcommand{\Subject}{Documentation for TextMate's LaTeX Bundle}
 \newcommand{\KeyWords}{TextMate, Bundle, LaTeX, XeLaTeX, LuaLaTeX, Help}
 
 % -- Document Properties -------------------------------------------------------
@@ -75,7 +75,7 @@
         {\Large\textit\TitleDescription}
     \end{center}
 \end{minipage}
-\vskip 1.5cm
+\vskip 1cm
 
 % Table of contents without header
 \makeatletter
@@ -400,7 +400,9 @@ Often one wants to enclose the currently selected text in an environment, or a c
 
 \subsection{Completion}
 
+\begin{sloppypar}
 The LaTeX bundle adds the following words to the list of completions (accessed through \keys{\esc}): corollary, definition, description, enumerate, equation, itemize, lemma, proof, proposition and verbatim.
+\end{sloppypar}
 
 \subsubsection{Commands}
 
@@ -480,18 +482,18 @@ There are three key drag and drop commands in LaTeX:
 
 \subsubsection{Templates}
 
-The LaTeX bundle offers a simple template system. We provides a few sample files. If you want to use your own templates, then create the directory \directory{\textasciitilde{}/Library/Application\ Support/LaTeX/Templates}. In there you can put any \texttt{.tex} files you like. We also support snippet syntax in template files. To tell TextMate that it should insert the code using snippet syntax add the following line at the top of the template:
-
-\begin{minted}{latex}
-    %!TEX style = snippet
-\end{minted}
-
 \begin{figure}[h]
   \centering
     \includegraphics[width=.8\textwidth]{Figures/Template Chooser.png}
   \caption{\menu{Insert > LaTeX Template} lets you insert LaTeX code into your document}
   \label{fig:Figures_Template_Chooser}
 \end{figure}
+
+The LaTeX bundle offers a simple template system. We provides a few sample files. If you want to use your own templates, then create the directory \directory{\textasciitilde{}/Library/Application\ Support/LaTeX/Templates}. In there you can put any \texttt{.tex} files you like. We also support snippet syntax in template files. To tell TextMate that it should insert the code using snippet syntax add the following line at the top of the template:
+
+\begin{minted}{latex}
+    %!TEX style = snippet
+\end{minted}
 
 To insert a template use the command \menu{Insert > LaTeX Template}. The command will show you a window containing a list of all available templates. Select one of these files via the button \menu{Insert}. TextMate will paste the contents of that file at the cursor's location.\\
 
@@ -514,7 +516,7 @@ To show the Preferences panel for LaTeX select the command \menu{Preferences…}
 
 \begin{figure}[h]
   \centering
-    \includegraphics[width=.8\textwidth]{Figures/Preferences}
+    \includegraphics[width=.75\textwidth]{Figures/Preferences}
   \caption{The settings window of the LaTeX bundle}
   \label{fig:Figures_Preferences}
 \end{figure}
@@ -556,7 +558,7 @@ If you use TextMate as viewer — instead of an external viewer like Skim, then 
 \subsection{Local Preferences}
 \label{sec:Local_Preferences}
 
-There are three options that you can set on a per file basis. As mentioned above these options will override the preferences that you set using the preferences interface.\\
+There are three options that you can set on a per file basis. As mentioned above these options will override the preferences that you set using the preferences interface.\\[0.2cm]
 
 You can set these “local options” via the \texttt{\%!TEX} directives \texttt{root}, \texttt{TS-program} and \texttt{TS-options}:
 
@@ -568,7 +570,9 @@ You can set these “local options” via the \texttt{\%!TEX} directives \texttt
     \emph\emph{{}}
     \item[\texttt{TS-options}] You can add file specific (engine) options via this directive.
 
-    \textbf{Note:} Whatever options you choose they will be used in the addition to the default options \texttt{-interaction=nonstopmode} and \texttt{-file-line-error-style}.
+    \begin{sloppypar}
+      \textbf{Note:} Whatever options you choose they will be used in the addition to the default options \texttt{-interaction=nonstopmode} and \texttt{-file-line-error-style}.
+    \end{sloppypar}
 
 \end{description}
 
