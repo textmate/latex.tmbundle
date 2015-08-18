@@ -58,7 +58,7 @@ DQ
 </string>
                         </buttonCell>
                         <connections>
-                            <binding destination="sNp-aZ-TPc" name="argument2" keyPath="values.latexTableRows" previousBinding="ZgY-3B-Kjj" id="sVc-GE-9Sa">
+                            <binding destination="abd-Ok-Hxe" name="target" keyPath="selection.controller" previousBinding="Z0T-nl-aki" id="YUg-Rf-4Ca">
                                 <dictionary key="options">
                                     <string key="NSSelectorName">returnArgument:rows:columns:</string>
                                 </dictionary>
@@ -68,12 +68,12 @@ DQ
                                     <string key="NSSelectorName">returnArgument:rows:columns:</string>
                                 </dictionary>
                             </binding>
-                            <binding destination="sNp-aZ-TPc" name="argument" keyPath="values.latexTableTabularOnly" id="ZgY-3B-Kjj">
+                            <binding destination="sNp-aZ-TPc" name="argument2" keyPath="values.latexTableRows" previousBinding="ZgY-3B-Kjj" id="sVc-GE-9Sa">
                                 <dictionary key="options">
                                     <string key="NSSelectorName">returnArgument:rows:columns:</string>
                                 </dictionary>
                             </binding>
-                            <binding destination="abd-Ok-Hxe" name="target" keyPath="selection.controller" previousBinding="Z0T-nl-aki" id="YUg-Rf-4Ca">
+                            <binding destination="sNp-aZ-TPc" name="argument" keyPath="values.latexTableTabularOnly" id="ZgY-3B-Kjj">
                                 <dictionary key="options">
                                     <string key="NSSelectorName">returnArgument:rows:columns:</string>
                                 </dictionary>
@@ -102,6 +102,8 @@ Gw
                         <buttonCell key="cell" type="check" title="Tabular Only" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="WS6-hU-rLc">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent">t</string>
+                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                         </buttonCell>
                         <connections>
                             <binding destination="sNp-aZ-TPc" name="value" keyPath="values.latexTableTabularOnly" id="OyL-sv-rOh"/>
