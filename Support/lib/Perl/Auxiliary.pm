@@ -12,11 +12,15 @@ use strict;
 use warnings;
 
 use Carp qw(croak);
+use Cwd qw(abs_path);
 use Data::Dumper;
 use Env qw(TM_BUNDLE_SUPPORT);
 use Exporter qw(import);
+use File::Basename;
 use File::Path qw(remove_tree);
-use YAML qw(LoadFile);
+
+use lib dirname( dirname( dirname abs_path $0) ) . '/Support/lib/Perl';
+use YAML::Tiny;
 
 # -- Exports -------------------------------------------------------------------
 
@@ -59,10 +63,9 @@ sub get_auxiliary_files {
     $tm_bundle_support ||= $TM_BUNDLE_SUPPORT;
     my $config_filepath = "$tm_bundle_support/config/auxiliary.yaml";
 
-    open my $fh, '<', $config_filepath
+    my $yaml = YAML::Tiny->read($config_filepath)
       or croak "Can not open $config_filepath: $!";
-    my $config = LoadFile($fh);
-    close($fh);
+    my $config = $yaml->[0];
 
     return $config->{'files'}, $config->{'directories'};
 }
