@@ -56,7 +56,7 @@ class Table
   #               "#{i1}\\end{tabular}",
   #               "\\end{table}"]
   #  >> middle = [
-  #       "#{i1}\\begin{tabular}{cc}",
+  #       "#{i1}\\begin{tabular}{ll}",
   #       "#{i2}\\toprule",
   #       "#{i2}\\textbf{${3:Header 1}} & \\textbf{${4:Header 2}}\\\\\\\\",
   #       "#{i2}\\midrule",
@@ -69,7 +69,7 @@ class Table
   #
   #  >> table = Table.new(1, 1)
   #  >> middle = [
-  #       "#{i1}\\begin{tabular}{c}",
+  #       "#{i1}\\begin{tabular}{l}",
   #       "#{i2}\\toprule",
   #       "#{i2}\\textbf{${3:Header 1}}\\\\\\\\"]
   #  >> table_representation = (start + middle + ending).join("\n")
@@ -80,7 +80,7 @@ class Table
   #
   #  >> table = Table.new(2, 3, false)
   #  >> table_representation = [
-  #       "\\begin{tabular}{ccc}",
+  #       "\\begin{tabular}{lll}",
   #       "#{i1}${1:r1c1} & ${2:r1c2} & ${3:r1c3}\\\\\\\\",
   #       "#{i1}${4:r2c1} & ${5:r2c2} & ${6:r2c3}\\\\\\\\",
   #       "\\end{tabular}"].join("\n")
@@ -90,7 +90,7 @@ class Table
     if @full_table
       [header, array_header, @rows <= 1 ? nil : array, footer].compact
     else
-      ["\\begin{tabular}{#{'c' * @columns}}", array, '\\end{tabular}']
+      ["\\begin{tabular}{#{'l' * @columns}}", array, '\\end{tabular}']
     end.join("\n")
   end
 
@@ -101,7 +101,7 @@ class Table
     "#{@i1}\\caption{\${1:Caption}}\n" \
     "#{@i1}\\label{table:\${2:label}}\n" \
     "#{@i1}\\centering\n" \
-    "#{@i1}\\begin{tabular}{#{'c' * @columns}}\n" \
+    "#{@i1}\\begin{tabular}{#{'l' * @columns}}\n" \
     "#{@i2}\\toprule"
   end
 
