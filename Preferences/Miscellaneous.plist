@@ -10,70 +10,8 @@
 	<dict>
 		<key>decreaseIndentPattern</key>
 		<string>^\s*\\end(\{.*\})?$</string>
-		<key>highlightPairs</key>
-		<array>
-			<array>
-				<string>"</string>
-				<string>"</string>
-			</array>
-			<array>
-				<string>(</string>
-				<string>)</string>
-			</array>
-			<array>
-				<string>{</string>
-				<string>}</string>
-			</array>
-			<array>
-				<string>[</string>
-				<string>]</string>
-			</array>
-			<array>
-				<string>“</string>
-				<string>”</string>
-			</array>
-			<array>
-				<string>$</string>
-				<string>$</string>
-			</array>
-			<array>
-				<string>`</string>
-				<string>'</string>
-			</array>
-		</array>
 		<key>increaseIndentPattern</key>
 		<string>^\s*\\begin\{.*\}</string>
-		<key>smartTypingPairs</key>
-		<array>
-			<array>
-				<string>"</string>
-				<string>"</string>
-			</array>
-			<array>
-				<string>(</string>
-				<string>)</string>
-			</array>
-			<array>
-				<string>{</string>
-				<string>}</string>
-			</array>
-			<array>
-				<string>[</string>
-				<string>]</string>
-			</array>
-			<array>
-				<string>“</string>
-				<string>”</string>
-			</array>
-			<array>
-				<string>$</string>
-				<string>$</string>
-			</array>
-			<array>
-				<string>`</string>
-				<string>'</string>
-			</array>
-		</array>
 	</dict>
 	<key>uuid</key>
 	<string>4830CA58-1F08-421C-9703-BE586DC1FE7A</string>
