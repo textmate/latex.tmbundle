@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 from glob import glob
 from io import open
 from os import getenv, listdir, remove
-from os.path import isfile, isdir, join, splitext
+from os.path import isfile, isdir, join
 from re import match
 from shutil import rmtree
 
@@ -144,6 +144,7 @@ def remove_auxiliary_files(directory='.',
         >>> # Create auxiliary files
         >>> _ = open("test.aux", 'w')
         >>> _ = open("test.toc", 'w')
+        >>> _ = open("test.synctex.gz", 'w')
         >>> mkdir("_minted-test")
 
         >>> # Remove auxiliary files
@@ -152,6 +153,7 @@ def remove_auxiliary_files(directory='.',
         ...     print(path)
         _minted-test
         test.aux
+        test.synctex.gz
         test.toc
 
         >>> rmdir(test_directory)
@@ -162,7 +164,8 @@ def remove_auxiliary_files(directory='.',
     removed_files = []
 
     for filepath in listdir(directory):
-        if isfile(filepath) and splitext(filepath)[1][1:] in file_extensions:
+        if isfile(filepath) and any(filepath.endswith(extension) for
+                                    extension in file_extensions):
             try:
                 remove(filepath)
                 removed_files.append(filepath)
