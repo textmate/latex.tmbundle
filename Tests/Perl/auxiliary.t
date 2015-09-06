@@ -22,8 +22,8 @@ use Auxiliary qw(get_auxiliary_files remove_auxiliary_files);
 my ( $extensions, $directories, @extensions_reference, @directories_reference );
 
 @extensions_reference = qw(acn acr alg aux bbl bcf blg fdb_latexmk fls fmt glo
-  glg gls idx ilg ind ini ist latexmk.log log lol maf mtc mtc1 nav nlo nls
-  pytxcode out pdfsync run.xml snm synctex.gz toc);
+glg gls idx ilg ind ini ist latexmk.log lof log lol lot maf mtc mtc1 nav nlo
+nls pytxcode out pdfsync run.xml snm synctex.gz toc);
 
 @directories_reference = qw(pythontex-files- _minted-);
 
