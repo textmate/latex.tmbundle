@@ -14,6 +14,7 @@ use warnings;
 use Carp qw(croak);
 use Cwd qw(abs_path);
 use Data::Dumper;
+use Encode qw(decode);
 use Env qw(TM_BUNDLE_SUPPORT);
 use Exporter qw(import);
 use File::Basename;
@@ -99,23 +100,28 @@ This string specifies the bundle support path of the LaTeX bundle.
 
 sub remove_auxiliary_files {
     my ( $name, $directory, $tm_bundle_support ) = @_;
+
     $tm_bundle_support ||= $TM_BUNDLE_SUPPORT;
 
     my ( $file_extensions, $directory_prefixes ) =
       get_auxiliary_files($tm_bundle_support);
 
     if ( defined($directory) ) {
-        unlink( map { "$directory/$name.$_" } @$file_extensions );
+
+        unlink( map { decode( "UTF-8", "$directory/$name.$_" ) }
+              @$file_extensions );
 
         # Remove LaTeX bundle cache file
         unlink("$directory/.$name.lb");
-        ( my $cache_name = $name ) =~ s/ /-/g;
 
-        foreach
-          my $dir ( map { "$directory/$_$cache_name" } @$directory_prefixes )
-        {
-            remove_tree($dir)
-              if -d $dir && -w $dir;
+        foreach my $dir ( map { "$directory/$_" } @$directory_prefixes ) {
+            foreach my $space_substitution ( "-", "_" ) {
+                ( my $cache_name = $name ) =~ s/ /$space_substitution/g;
+                my $aux_dir = decode( "UTF-8", "$dir$cache_name" );
+                remove_tree($aux_dir)
+                  if -d $aux_dir && -w $aux_dir;
+
+            }
         }
     }
     return;
