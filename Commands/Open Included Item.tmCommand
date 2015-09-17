@@ -30,6 +30,19 @@ open_included_item</string>
 	<string>text</string>
 	<key>outputLocation</key>
 	<string>discard</string>
+	<key>requiredCommands</key>
+	<array>
+		<dict>
+			<key>command</key>
+			<string>kpsewhich</string>
+			<key>locations</key>
+			<array>
+				<string>/usr/texbin/kpsewhich</string>
+				<string>/Library/TeX/texbin/kpsewhich</string>
+				<string>/opt/local/bin/kpsewhich</string>
+			</array>
+		</dict>
+	</array>
 	<key>scope</key>
 	<string>text.tex.latex meta.include, text.tex.latex meta.function.environment.general.latex meta.group.braces.tex</string>
 	<key>uuid</key>
