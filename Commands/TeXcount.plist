@@ -29,6 +29,19 @@ texcount -nocol -utf8 -inc "${OPTIONS[@]}" "$FILENAME"</string>
 	<string>text</string>
 	<key>outputLocation</key>
 	<string>toolTip</string>
+	<key>requiredCommands</key>
+	<array>
+		<dict>
+			<key>command</key>
+			<string>texcount</string>
+			<key>locations</key>
+			<array>
+				<string>/Library/TeX/texbin/texcount</string>
+				<string>/usr/texbin/texcount</string>
+				<string>/opt/local/bin/texcount</string>
+			</array>
+		</dict>
+	</array>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
