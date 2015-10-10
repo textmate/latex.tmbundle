@@ -18,51 +18,41 @@
 # doctest: Reformat a table containing only one line
 #
 #   >> reformat 'First Item & Second Item'
-#   => "\nFirst Item & Second Item"
+#   => "First Item & Second Item\\\\"
 #
 # doctest: Reformat a table containing an escaped `&` sign
 #
 #   >> output = reformat('First Item & Second Item\\\\He \& Ho & Hi')
 #   >> expected =
-#    '
-#    First Item & Second Item\\\\
-#      He \& Ho &          Hi'
+#    'First Item & Second Item\\\\
+#      He \& Ho &          Hi\\\\'
 #   >> output.eql? expected
 #   => true
 #
 # doctest: Reformat a table containing empty cells
 #
 #   >> output = reformat(' & 2\\\\\\hline & 4 \\\\ Turbostaat & 6')
-#   >> expected =
-#    '
-#               & 2\\\\
-#    \\hline
-#               & 4\\\\
-#    Turbostaat & 6'
-#   >> output.eql? expected
+#   >> output.eql? ['           & 2\\\\',
+#                   '\\hline',
+#                   '           & 4\\\\',
+#                   'Turbostaat & 6\\\\'].join("\n")
 #   => true
 #
 # doctest: Reformat a table containing manual spacing
 #
 #   >> output = reformat('1 & 2\\\\[1cm]\hline Three & Four')
-#   >> expected =
-#    '
-#         1 &    2\\\\[1cm]
-#    \\hline
-#     Three & Four'
-#   >> output.eql? expected
+#   >> output.eql? ['     1 &    2\\\\[1cm]',
+#                   '\\hline',
+#                   ' Three & Four\\\\'].join("\n")
 #   => true
 #
 def reformat(table_content)
   before_table = table_content.slice!(/^.*?\}\s*\n/)
-  # Place any \hline's not on a line of their own in their own line
-  table_content.gsub!(/(\\hline\s*)(?!\n)/, '\\hline\\\\\\\\')
-  lines = table_content.split(/\\\\/)
+  table_content.gsub!(/\\hline/, '\\hline\\\\\\\\')
+  lines = table_content.split('\\\\')
 
-  # Check for manual horizontal spacing in the form [space] e.g.: [1cm]
-  space_markers = lines.map do |line|
-    line.slice!(/\s*\[\.?\d+.*\]/)
-  end
+  # Check for manual horizontal spacing of the form `[space]` e.g.: `[1cm]`
+  space_markers = lines.map { |line| line.slice!(/\s*\[\.?\d+.*\]/) }
 
   cells = lines.map { |line| line.split(/[^\\]&|^&/).map(&:strip) }
   max_number_columns = cells.map(&:length).max
@@ -73,19 +63,10 @@ def reformat(table_content)
     end
   end
   pattern = widths.map { |width| "%#{width}s" }.join(' & ')
-  output = before_table ? before_table.chomp : ''
-  previous_line_contained_cells = false
-  cells.each_with_index do |line, index|
-    output +=
-      previous_line_contained_cells ? "\\\\#{space_markers[index]}\n" : "\n"
-    if line.length <= 1
-      output += line.join ''
-      previous_line_contained_cells = false
-    else
-      line.fill('', (line.length + 1)..max_number_columns)
-      output += format(pattern, *line)
-      previous_line_contained_cells = true
-    end
-  end
-  output
+  (before_table ? before_table.chomp + "\n" : '') + \
+    cells.map.each_with_index do |line, index|
+      if line.length <= 1 then (line.join '')
+      else format(pattern, *line) + "\\\\#{space_markers[index + 1]}"
+      end
+    end.join("\n")
 end
