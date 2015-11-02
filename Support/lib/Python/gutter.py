@@ -8,6 +8,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from io import open
+from os import getenv
 from os.path import normpath, realpath
 from pickle import load, dump
 from pipes import quote as shellquote
@@ -91,6 +92,7 @@ def update_marks(cache_filename, marks_to_set=[]):
               cache_filename))
 
     marks_remove = {}
+    mate = getenv('TM_MATE')
     for filepath, mark in marks_to_remove:
         path = normpath(realpath(filepath))
         marks = marks_remove.get(path)
@@ -109,8 +111,9 @@ def update_marks(cache_filename, marks_to_set=[]):
         else:
             marks_add[path] = [(line, mark, message)]
 
-    commands = {filepath: 'mate {}'.format(' '.join(['-c {}'.format(mark) for
-                                                     mark in marks]))
+    commands = {filepath: '{} {}'.format(mate,
+                                         ' '.join(['-c {}'.format(mark) for
+                                                   mark in marks]))
                 for filepath, marks in marks_remove.items()}
 
     for filepath, markers in marks_add.items():
@@ -118,7 +121,7 @@ def update_marks(cache_filename, marks_to_set=[]):
                                                    ":{}".format(content) if
                                                    content else '')
                             for line, mark, content in markers])
-        commands[filepath] = '{} {}'.format(commands.get(filepath, 'mate'),
+        commands[filepath] = '{} {}'.format(commands.get(filepath, mate),
                                             command)
 
     for filepath, command in commands.items():
