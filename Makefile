@@ -35,7 +35,6 @@
 # bundle. This will lead to errors since `latex_watch` expects that
 # `TM_BUNDLE_SUPPORT` is set “correctly”.
 export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
-export PATH := /Library/TeX/texbin:$(PATH)
 
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib

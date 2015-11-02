@@ -13,7 +13,7 @@ JS_GRAMMAR_DIR="${TM_BUNDLE_DIR}/JavaScript.tmbundle/Syntaxes"
 
 export TM_SUPPORT_PATH="$TM_BUNDLE_DIR/Bundle Support.tmbundle/Support/shared"
 export TM_BUNDLE_SUPPORT="$BUNDLE_DIR/Support"
-export PATH="$BUNDLE_DIR/Support/bin":$PATH
+export PATH=/Library/TeX/texbin:"$BUNDLE_DIR/Support/bin":$PATH
 export TM_SELECTION='1:1'
 
 auxiliary_files_regex='./(aux|acr|alg|bbl|bcf|blg|fdb_latexmk|fls|fmt|glg|gls|'

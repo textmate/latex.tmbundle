@@ -9,7 +9,7 @@
   $ LOGFILE='/tmp/latex_watch_test.log'
   $ TEX_DIR="${CURRENT_DIR}/Tests/TeX"
   $ TEXFILE="${TEX_DIR}/${FILENAME}.tex"
-  $ PATH=$PATH:Support/bin/
+  $ PATH=/Library/TeX/texbin:$PATH:Support/bin/
 
 -- Tests ----------------------------------------------------------------------
 
