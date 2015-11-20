@@ -26,7 +26,7 @@ toggle_style.rb -style=textsc</string>
 	<key>outputLocation</key>
 	<string>replaceInput</string>
 	<key>scope</key>
-	<string>text.tex.latex</string>
+	<string>text.tex.latex - source</string>
 	<key>semanticClass</key>
 	<string>style.alternate.small_caps.latex</string>
 	<key>uuid</key>
