@@ -12,14 +12,16 @@
 		<integer>1</integer>
 		<key>symbolTransformation</key>
 		<string>
-		s/^\\part\*?(?:\[[^]]*\])?\{(.+)\}/$1/; # \part
-		s/^\\chapter\*?(?:\[[^]]*\])?\{(.+)\}/ $1/; # \part
-		s/^\\section\*?(?:\[[^]]*\])?\{(.+)\}/  $1/; # \section
-		s/^\\subsection\*?(?:\[[^]]*\])?\{(.+)\}/   $1/; # \section
-		s/^\\subsubsection\*?(?:\[[^]]*\])?\{(.+)\}/    $1/; # \section
-		s/^\\paragraph\*?(?:\[[^]]*\])?\{(.+)\}/     $1/; # \paragraph
-		s/^\\subparagraph\*?(?:\[[^]]*\])?\{(.+)\}/      $1/; # \paragraph
-		s/^\\.*\{(.+)\}/$1/;     # take care of everything else
+    # Transform part-, chapter-, section- and paragraph-headings   
+		s/^\\part\*?(?:\[[^]]*\]){0,2}\{(.+)\}/$1/;               
+		s/^\\chapter\*?(?:\[[^]]*\]){0,2}\{(.+)\}/ $1/;           
+		s/^\\section\*?(?:\[[^]]*\]){0,2}\{(.+)\}/  $1/;          
+		s/^\\subsection\*?(?:\[[^]]*\]){0,2}\{(.+)\}/   $1/;      
+		s/^\\subsubsection\*?(?:\[[^]]*\]){0,2}\{(.+)\}/    $1/;  
+		s/^\\paragraph\*?(?:\[[^]]*\]){0,2}\{(.+)\}/     $1/;     
+		s/^\\subparagraph\*?(?:\[[^]]*\]){0,2}\{(.+)\}/      $1/; 
+		# Take care of everything else
+    s/^\\.*\{(.+)\}/$1/;  
 	</string>
 	</dict>
 	<key>uuid</key>
