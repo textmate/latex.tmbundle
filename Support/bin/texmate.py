@@ -918,7 +918,7 @@ if __name__ == '__main__':
     viewer_status = 0
     filepath = arguments.filepath
     first_run = not arguments.addoutput
-    line_number = getenv('TM_SELECTION').split(':')[0]
+    line_number = match('^\d+', getenv('TM_SELECTION')).group(0)
     number_errors = 0
     number_runs = 0
     number_warnings = 0
