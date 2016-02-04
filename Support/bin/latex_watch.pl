@@ -115,7 +115,7 @@ main_loop();
         else {
             # Guess the location of the current preference file outside of
             # TextMate. The following path is the usual location for the
-            # preview version of TextMate (2.0-alpha).
+            # preview version of TextMate (2.0-beta).
             $prefs_file =
                 "$HOME/Library/Preferences/"
               . "com.macromates.textmate.preview.plist";
