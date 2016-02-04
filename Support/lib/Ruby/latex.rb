@@ -69,7 +69,7 @@ module LaTeX
     return nil if filepath.nil?
     master = Pathname.new(filepath).cleanpath
     master = master_from_tex_directives(master)
-    fail('There is a loop in your %!TEX root directives.') unless master
+    raise 'There is a loop in your %!TEX root directives.' unless master
     master
   end
 
@@ -103,8 +103,7 @@ module LaTeX
   #  => 0
   def self.master_from_tex_directives(master)
     10.times do
-      fail("Master file #{master} does not exist!") unless
-        master.exist?
+      raise "Master file #{master} does not exist!" unless master.exist?
       root = options(master)['root']
       return master.to_s unless root
       new_master = (master.parent + Pathname.new(root)).cleanpath
@@ -265,8 +264,8 @@ module LaTeX
       # If all else fails, rely on /etc/profile. For most people, we should
       # never make it here.
       loc = `. /etc/profile; which kpsewhich`.rstrip
-      return loc.gsub(/kpsewhich$/, '') unless loc.match(/^no kpsewhich/)
-      fail 'The tex binaries cannot be located!'
+      return loc.gsub(/kpsewhich$/, '') unless loc =~ /^no kpsewhich/
+      raise 'The tex binaries cannot be located!'
     end
 
     # Get the path for a certain file.
@@ -321,7 +320,7 @@ module LaTeX
       end
       # If it is an absolute path, and the above two tests didn't find it,
       # return nil
-      return nil if filename.match(%r{^/})
+      return nil if filename =~ %r{^/}
       find_file_kpsewhich(filename, extension, relative)
     end
 
@@ -393,7 +392,7 @@ module LaTeX
     #  >> references[1]
     #  => "@article{A, author = {A}}"
     def bib_entries(filepath)
-      fail "Could not locate file: #{filepath}" unless file?(filepath)
+      raise "Could not locate file: #{filepath}" unless file?(filepath)
       entries = File.read(filepath).scan(/^\s*@[^\{]*\{.*?(?=\n[ \t]*@|\z)/m)
       entries.map { |entry| entry.strip.gsub(/(?:^\s*%.*|\n)+$/m, '') }
     end
@@ -661,7 +660,7 @@ module LaTeX
       first = scanner.getch
       if first == '"' then consume_value_quotes(scanner)
       elsif first == '{' then consume_value_brackets(scanner)
-      elsif first.match(/\d/) then first + scanner.scan(/\d*/)
+      elsif first =~ /\d/ then first + scanner.scan(/\d*/)
       else consume_value_variable(scanner, first, bib_variables)
       end
     end
@@ -686,7 +685,7 @@ module LaTeX
 
     def consume_value_variable(scanner, first_char, variables)
       scanned = scanner.scan(/[\w]*/)
-      scanned.nil? ? nil : "#{variables[first_char + scanned]}"
+      scanned.nil? ? nil : variables[first_char + scanned].to_s
     end
 
     def file?(filepath)
@@ -761,7 +760,7 @@ module LaTeX
       # argument of a macro
       @includes[/^[^%]*(?:\\include|\\input)\s*\{([^}\\#]*)\}/] = proc do |m|
         m[0].split(',').map do |it|
-          LaTeX.find_file(it.strip, 'tex', File.dirname(@root)) || fail(
+          LaTeX.find_file(it.strip, 'tex', File.dirname(@root)) || raise(
             "Could not locate any file named '#{it}'")
         end
       end
@@ -770,8 +769,8 @@ module LaTeX
 
     # Perform the recursive scanning.
     def recursive_scan
-      fail 'No root specified!' if @root.nil?
-      fail "Could not find file #{@root}" unless File.exist?(@root)
+      raise 'No root specified!' if @root.nil?
+      raise "Could not find file #{@root}" unless File.exist?(@root)
       text = File.read(@root)
       text.lines.each_with_index do |line, line_number|
         includes.each_pair do |regex, block|
@@ -884,31 +883,36 @@ module LaTeX
       scanner.cites
     end
 
-    private
+    class << self
+      private
 
-    def self.add_bibitem_scan(scanner)
-      bibitem_regexp = /^[^%]*\\bibitem(?:\[[^\]]*\])?\{([^\}]*)\}(.*)/
-      scanner.extractors[bibitem_regexp] = proc do |_, _, groups, _|
-        scanner.cites << Citation.new('citekey' => groups[0],
-                                      'cite_data' => groups[1])
-      end
-    end
-
-    # rubocop:disable Metrics/AbcSize
-    def self.add_bibliography_scan(scanner)
-      # We ignore bibliography files located on Windows drives by not +matching+
-      # any path which starts with a single letter followed by a “:” e.g.: “c:”
-      regexes = [/^[^%]*\\bibliography\s*\{(?![a-zA-Z]:)([^\}]*)\}/,
-                 /^[^%]*\\addbibresource\s*\{(?![a-zA-Z]:)([^\}]*)\}/]
-      extractor = proc do |_, _, groups, _|
-        (groups[0].split(',') << ENV['TM_LATEX_BIB']).compact.each do |bib|
-          file = LaTeX.find_file(bib.strip, 'bib', File.dirname(scanner.root))
-          fail "Could not locate any file named '#{bib}'" if file.nil?
-          scanner.cites += LaTeX.parse_bibfile(file)
+      def add_bibitem_scan(scanner)
+        bibitem_regexp = /^[^%]*\\bibitem(?:\[[^\]]*\])?\{([^\}]*)\}(.*)/
+        scanner.extractors[bibitem_regexp] = proc do |_, _, groups, _|
+          scanner.cites << Citation.new('citekey' => groups[0],
+                                        'cite_data' => groups[1])
         end
       end
-      scanner.extractors.update(Hash[regexes.map { |reg| [reg, extractor] }])
-    end
+
+      # rubocop:disable Metrics/AbcSize
+      def add_bibliography_scan(scanner)
+        # We ignore bibliography files located on Windows drives by not
+        # +matching+ any path which starts with a single letter followed by a
+        # “:” e.g.: “c:”
+        regexes = [/^[^%]*\\bibliography\s*\{(?![a-zA-Z]:)([^\}]*)\}/,
+                   /^[^%]*\\addbibresource\s*\{(?![a-zA-Z]:)([^\}]*)\}/]
+        extractor = proc do |_, _, groups, _|
+          (groups[0].split(',') << ENV['TM_LATEX_BIB']).compact.each do |bib|
+            file = LaTeX.find_file(bib.strip, 'bib', File.dirname(scanner.root))
+            raise "Could not locate any file named '#{bib}'" if file.nil?
+            scanner.cites += LaTeX.parse_bibfile(file)
+          end
+        end
+        scanner.extractors.update(Hash[regexes.map { |reg| [reg, extractor] }])
+      end
+  end
+
+    private
 
     def include_process_line(line, regex, block)
       line.scan(regex).each do |match|

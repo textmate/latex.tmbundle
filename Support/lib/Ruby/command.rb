@@ -70,11 +70,11 @@ def filter_items_replace_input(items, input)
   # Check if we should use the input as part of the choice
   match_input = input.match(/^(?:$|.*[{}~,])/).nil?
   if match_input
-    if ENV['TM_LATEX_SEARCH_CASE_SENSITIVE']
-      items = items.grep(/#{input}/)
-    else
-      items = items.grep(/#{input}/i)
-    end
+    items = if ENV['TM_LATEX_SEARCH_CASE_SENSITIVE']
+              items.grep(/#{input}/)
+            else
+              items.grep(/#{input}/i)
+            end
   end
   [items, match_input]
 end
@@ -89,9 +89,9 @@ end
 # [scope] A string that specifies the scope that should be checked. According to
 #         this value a new label or citation is inserted into the document
 def output_selection(selection, input, replace_input, scope = 'citation')
-  if ENV['TM_SCOPE'].match(/#{scope}/)
-    if input.match(/^\{\}?/) then print("{#{selection}}")
-    elsif input.match(/(,\s*)?(\})?/)
+  if ENV['TM_SCOPE'] =~ /#{scope}/
+    if input =~ /^\{\}?/ then print("{#{selection}}")
+    elsif input =~ /(,\s*)?(\})?/
       print("#{Regexp.last_match[1]}#{selection}#{Regexp.last_match[2]}")
     else print(selection)
     end
@@ -211,7 +211,7 @@ def include_code_listing
   label = filepath_to_label(path)
   extension = File.extname(path).slice(1..-1)
 
-  if ENV['TM_MODIFIER_FLAGS'].match(/SHIFT/)
+  if ENV['TM_MODIFIER_FLAGS'] =~ /SHIFT/
     file_type = extension_to_language(extension)
     print("\\\\lstinputlisting[language=\${1:#{file_type}}, tabsize=\${2:4}, " \
          "caption=\${3:caption}, label=lst:\${4:#{label}}]{#{path}}")
@@ -226,7 +226,7 @@ end
 
 # Insert an include or input item containing a reference to the dropped file.
 def include_file
-  environment = ENV['TM_MODIFIER_FLAGS'].match(/OPTION/) ? 'input' : 'include'
+  environment = ENV['TM_MODIFIER_FLAGS'] =~ /OPTION/ ? 'input' : 'include'
   print("\\\\#{environment}{#{dropped_file_relative_path}}")
 end
 
@@ -348,7 +348,7 @@ end
 # [input] A string used to filter the possible citations for the current
 #         document
 def insert_reftex_citation(input)
-  if ENV['TM_SCOPE'].match(/citation/) then insert_citation(input)
+  if ENV['TM_SCOPE'] =~ /citation/ then insert_citation(input)
   else
     cite_environment = choose_cite_environment
     citations, replace_input = citations(input)
@@ -412,9 +412,9 @@ end
 #
 # A string containing the content of the chosen template.
 def template_text
-  command = ("\"#{ENV['DIALOG']}\" -cmp " \
-             "#{e_sh({ 'entries' => template_entries }.to_plist)} " \
-             "#{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/Templates')}")
+  command = "\"#{ENV['DIALOG']}\" -cmp " \
+            "#{e_sh({ 'entries' => template_entries }.to_plist)} " \
+            "#{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/Templates')}"
   result = OSX::PropertyList.load(`#{command}`)['result']
   TextMate.exit_discard if result.nil?
   result['returnArgument'][0].scan(/\n|.+\n?/)
@@ -426,7 +426,7 @@ def insert_template
   # The user can force the template to be interpreted as a snippet, by
   # adding the line: %!TEX style=snippet at the beginning of the template
   TextMate.exit_insert_snippet(text[1..-1]) if
-    text[0].match(/^%\s*!TEX\s+style\s*=\s*snippet\s*/)
+    text[0] =~ /^%\s*!TEX\s+style\s*=\s*snippet\s*/
   print(text.join(''))
 end
 

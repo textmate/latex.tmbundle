@@ -36,11 +36,9 @@ end
 # The function shows a clickable HTML view for the current tex document.
 def show_outline
   file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-  if file.nil?
-    file = STDIN
-  else
-    file = File.expand_path(file, File.dirname(ENV['TM_FILEPATH']))
-  end
+  file = if file.nil? then STDIN
+         else File.expand_path(file, File.dirname(ENV['TM_FILEPATH']))
+         end
   outline = Outline.outline_from_file(file)
   html_header 'LaTeX Document Outline', 'LaTeX'
   puts(outline)
@@ -125,19 +123,19 @@ module Outline
     outline_points_to_html(outline_points(filepath))
   end
 
-  private
-
-  PART = '(part|chapter|section|subsection|subsubsection|paragraph|' \
-         'subparagraph)\*?'
-  COMMENT = '(?:%.*\n[ \t]*)?'
-  OPTIONS = '(?>\[(.*?)\])'
-  ARGUMENT = '\{([^{}]*(?:\{[^}]*\}[^}]*?)*)\}'
-
-  PART_REGEX = /\\#{PART}#{COMMENT}(?:#{OPTIONS}|#{ARGUMENT})/
-  INCLUDE_REGEX = /\\(?:input|include)#{COMMENT}(?>\{([^}#]*)\})/
-  NON_COMMENT_REGEX = /^([^%]+$|(?:[^%]|\\%)+)(?=%|$)/
-
   class <<self
+    private
+
+    PART = '(part|chapter|section|subsection|subsubsection|paragraph|' \
+           'subparagraph)\*?'.freeze
+    COMMENT = '(?:%.*\n[ \t]*)?'.freeze
+    OPTIONS = '(?>\[(.*?)\])'.freeze
+    ARGUMENT = '\{([^{}]*(?:\{[^}]*\}[^}]*?)*)\}'.freeze
+
+    PART_REGEX = /\\#{PART}#{COMMENT}(?:#{OPTIONS}|#{ARGUMENT})/
+    INCLUDE_REGEX = /\\(?:input|include)#{COMMENT}(?>\{([^}#]*)\})/
+    NON_COMMENT_REGEX = /^([^%]+$|(?:[^%]|\\%)+)(?=%|$)/
+
     # Get the text stored in and a URL referencing +filename+.
     def content_url(filename, ref_filename = nil, ref_line = nil,
                     ref_linenumber = nil)

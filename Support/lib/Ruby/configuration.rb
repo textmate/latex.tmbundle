@@ -56,9 +56,9 @@ module Configuration
       return (user_list + default_list).uniq if lists.all_of_type?(Array)
       return user_list if lists.all_of_type?(String)
 
-      fail MismatchedTypesException,
-           "Found mismatched types: #{default_list} is a " \
-           "#{default_list.class} while #{user_list} is a #{user_list.class}."
+      raise MismatchedTypesException,
+            "Found mismatched types: #{default_list} is a " \
+            "#{default_list.class} while #{user_list} is a #{user_list.class}."
     end
 
     def merge_hashes(default_list, user_list)

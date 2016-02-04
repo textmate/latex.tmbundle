@@ -110,10 +110,10 @@ class Table
   end
 
   def array_header(insertion_point = @insertion_points_header)
-    @i2 + @columns.times.collect do |c|
+    @i2 + Array.new(@columns) do |c|
       @array_header_start + \
-        "${#{insertion_point += 1}:#{array_header_text(c)}}" + \
-        @array_header_end
+      "${#{insertion_point += 1}:#{array_header_text(c)}}" + \
+      @array_header_end
     end.join(' & ') + '\\\\\\\\' + (@rows >= 2 ? "\n#{@i2}\\midrule" : '')
   end
 
@@ -135,10 +135,10 @@ class Table
 
   # rubocop:disable Metrics/AbcSize
   def create_array(rows, indentation, insertion_point)
-    rows.times.collect do |row|
+    Array.new(rows) do |row|
       row += @full_table ? 2 : 1
       padding = ' ' * (@rows.to_s.length - row.to_s.length) unless @full_table
-      indentation + @columns.times.collect do |c|
+      indentation + Array.new(@columns) do |c|
         text = "r#{row}c#{c + 1}"
         padding = ' ' * (array_header_length(c) - text.length) if @full_table
         "#{padding}${#{insertion_point += 1}:#{text}}"
@@ -177,7 +177,7 @@ class Table
       value = parameter.values[0]
       name = parameter.keys[0]
       number = value.to_i
-      fail if number < 1 || number > 100
+      raise if number < 1 || number > 100
       number
     rescue
       TextMate.exit_show_tool_tip(
