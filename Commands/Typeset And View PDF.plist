@@ -19,7 +19,7 @@ require ENV["TM_SUPPORT_PATH"] + "/lib/tm/save_current_document"
 # To enable the typesetting of unsaved documents, you must change the “Save” setting of
 # this command to “Current File” and add the variable TM_LATEX_AUTOSAVE to TextMate's
 # Shell Variables preferences. Be warned that your document must be encoded as UTF-8 if
-# you excercise this option — becauseTextMate.save_current_document cannot know the file 
+# you exercise this option — becauseTextMate.save_current_document cannot know the file 
 # encoding you prefer.
 
 TextMate.save_current_document unless ENV["TM_LATEX_AUTOSAVE"].nil?
