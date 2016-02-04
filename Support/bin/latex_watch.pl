@@ -35,7 +35,7 @@ use lib dirname( dirname abs_path $0) . '/lib/Perl';
 use Auxiliary qw(remove_auxiliary_files);
 use Latex qw(guess_tex_engine master);
 
-our $VERSION = "3.14";
+our $VERSION = "3.141";
 
 #############
 # Configure #
@@ -151,6 +151,7 @@ sub get_prefs {
 sub init_environment {
 
     # Add MacTeX
+    $PATH .= ":/Library/TeX/texbin/";
     $PATH .= ":/usr/texbin";
 
     # If TM_SUPPORT_PATH or TM_BUNDLE_SUPPORT are undefined, make a plausible
@@ -1106,3 +1107,7 @@ Changes
     - Improve support for the minted package. Previously the script would
       sometimes refresh the viewer infinitely often, even if there were no
       changes to the watched document.
+
+3.141:
+    - Add new path for TeX binaries (MacTeX 2015, OS X 10.11). The script
+      uses this value as backup, if we do not invoke it via “Watch Document”.
