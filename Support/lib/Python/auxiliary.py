@@ -145,6 +145,8 @@ def remove_auxiliary_files(directory='.',
         >>> for filename in ["test.aux", "test.toc", "test.synctex.gz"]:
         ...     _ = open(join(directory, filename), 'w')
         >>> mkdir(join(directory, "_minted-test"))
+        >>> # Create non auxiliary files
+        >>> _ = open(join(directory, '.fslckout'), 'w')
 
         >>> # Remove auxiliary files
         >>> for path in remove_auxiliary_files(directory,
