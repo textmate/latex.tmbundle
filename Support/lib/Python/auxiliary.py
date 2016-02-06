@@ -10,7 +10,7 @@ from glob import glob
 from io import open
 from os import getenv, listdir, remove
 from os.path import isfile, isdir, join
-from re import match
+from re import compile, match
 from shutil import rmtree
 
 
@@ -162,10 +162,10 @@ def remove_auxiliary_files(directory='.',
     """
     file_extensions, dir_prefixes = get_auxiliary_files(tm_bundle_support)
     removed_files = []
+    file_pattern = compile('.+\.(?:{})$'.format('|'.join(file_extensions)))
 
     for filepath in listdir(directory):
-        if isfile(filepath) and any(filepath.endswith(extension) for
-                                    extension in file_extensions):
+        if isfile(filepath) and file_pattern.match(filepath):
             try:
                 remove(filepath)
                 removed_files.append(filepath)
