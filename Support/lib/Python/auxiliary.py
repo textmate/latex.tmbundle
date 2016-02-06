@@ -8,8 +8,8 @@ from __future__ import unicode_literals
 
 from glob import glob
 from io import open
-from os import getenv, listdir, remove
-from os.path import isfile, isdir, join
+from os import getenv, remove
+from os.path import basename, isfile, isdir, join
 from re import compile, match
 from shutil import rmtree
 
@@ -134,21 +134,20 @@ def remove_auxiliary_files(directory='.',
     Examples:
 
         >>> # Initialize test
-        >>> from os import chdir, getcwd, rmdir, mkdir
-        >>> directory = getcwd()
-        >>> tm_bundle_support = join(directory, "Support")
-        >>> test_directory = "/tmp/LaTeX Bundle Test"
-        >>> mkdir(test_directory)
-        >>> chdir(test_directory)
+        >>> from glob import glob
+        >>> from os import getcwd, mkdir
+        >>> from os.path import basename, join
+        >>> from tempfile import mkdtemp
+        >>> tm_bundle_support = join(getcwd(), "Support")
+        >>> directory = mkdtemp()
 
         >>> # Create auxiliary files
-        >>> _ = open("test.aux", 'w')
-        >>> _ = open("test.toc", 'w')
-        >>> _ = open("test.synctex.gz", 'w')
-        >>> mkdir("_minted-test")
+        >>> for filename in ["test.aux", "test.toc", "test.synctex.gz"]:
+        ...     _ = open(join(directory, filename), 'w')
+        >>> mkdir(join(directory, "_minted-test"))
 
         >>> # Remove auxiliary files
-        >>> for path in remove_auxiliary_files(tm_bundle_support =
+        >>> for path in remove_auxiliary_files(directory,
         ...                                    tm_bundle_support):
         ...     print(path)
         _minted-test
@@ -156,27 +155,25 @@ def remove_auxiliary_files(directory='.',
         test.synctex.gz
         test.toc
 
-        >>> rmdir(test_directory)
-        >>> chdir(directory)
-
     """
     file_extensions, dir_prefixes = get_auxiliary_files(tm_bundle_support)
     removed_files = []
     file_pattern = compile('.+\.(?:{})$'.format('|'.join(file_extensions)))
 
-    for filepath in listdir(directory):
-        if isfile(filepath) and file_pattern.match(filepath):
+    for filepath in glob('{}/*'.format(directory)):
+        filename = basename(filepath)
+        if isfile(filepath) and file_pattern.match(filename):
             try:
                 remove(filepath)
-                removed_files.append(filepath)
+                removed_files.append(filename)
             except:
                 pass
 
         elif (isdir(filepath) and
-              match('^(?:{})'.format('|'.join(dir_prefixes)), filepath)):
+              match('^(?:{})'.format('|'.join(dir_prefixes)), filename)):
             try:
                 rmtree(filepath)
-                removed_files.append(filepath)
+                removed_files.append(filename)
             except:
                 pass
 
