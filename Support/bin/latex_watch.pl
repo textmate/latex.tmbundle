@@ -32,10 +32,9 @@ use POSIX ();
 use Time::HiRes 'sleep';
 
 use lib dirname( dirname abs_path $0) . '/lib/Perl';
-use Auxiliary qw(remove_auxiliary_files);
 use Latex qw(guess_tex_engine master);
 
-our $VERSION = "3.141";
+our $VERSION = "3.1415";
 
 #############
 # Configure #
@@ -286,7 +285,7 @@ sub main_loop {
 # Clean up if we're interrupted or die
 sub clean_up {
     debug_msg("Cleaning up");
-    remove_auxiliary_files( $name, $wd );
+    fail_unless_system( "clean.rb", "$filepath" );
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
         debug_msg("Closing progress bar window as part of cleanup");
@@ -1111,3 +1110,6 @@ Changes
 3.141:
     - Add new path for TeX binaries (MacTeX 2015, OS X 10.11). The script
       uses this value as backup, if we do not invoke it via “Watch Document”.
+
+3.1415:
+    - Use `clean.rb` to remove auxiliary files

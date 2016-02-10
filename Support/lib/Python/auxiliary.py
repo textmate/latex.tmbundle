@@ -7,109 +7,13 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from glob import glob
-from io import open
 from os import getenv, remove
-from os.path import basename, isfile, isdir, join
-from re import compile, match
-from shutil import rmtree
+from os.path import join
+from pipes import quote
+from subprocess import check_output
 
 
 # -- Functions ----------------------------------------------------------------
-
-def read_list(file_object, list_name):
-    """This function reads a list of items from an open file.
-
-    The list must be in the standard YAML format. Here is an example:
-
-        list_name:
-          - item1
-          - item2
-
-    There must be no spaces before or after the list name, or this function
-    will fail.
-
-    Arguments:
-
-        file_object
-
-            This argument specifies the file object this function reads to get
-            the items of the list.
-
-        list_name
-
-            This string specifies the name of the list this function tries to
-            read.
-
-    Returns:
-
-        The function returns a list of strings. Each string specifies one of
-        the items read by this function.
-
-
-    Examples:
-
-        >>> config_file = "Support/config/auxiliary.yaml"
-        >>> with open(config_file, 'r', encoding='utf-8') as auxiliary_file:
-        ...     for extension in read_list(auxiliary_file, 'files'):
-        ...         print(extension) # doctest:+ELLIPSIS
-        acn
-        acr
-        ...
-        toc
-
-    """
-    # Read till list name
-    while file_object.readline() != '{}:\n'.format(list_name):
-        continue
-
-    # Read list items
-    items = []
-    while True:
-        line = file_object.readline().strip()
-        if line.startswith('- '):
-            items.append(line[2:].lstrip())
-        else:
-            break
-    return items
-
-
-def get_auxiliary_files(tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
-    """This function reads two lists of auxiliary files.
-
-    Arguments:
-
-        tm_bundle_support
-
-            This string specifies the bundle support path of the LaTeX bundle.
-
-    Returns:
-
-        The function returns two lists:
-
-        - The first list contains a list of extensions. Each extension belongs
-          to a single auxiliary file produced by one of the various TeX
-          commands.
-
-        - The second list contains a list of prefixes. Each prefix specifies
-          the first part of the name of a auxiliary directory produced by some
-          TeX command.
-
-    Examples:
-
-        >>> from os import getcwd
-        >>> tm_bundle_support = join(getcwd(), "Support")
-        >>> prefix_directories = get_auxiliary_files(tm_bundle_support)[1]
-        >>> for prefix in prefix_directories:
-        ...     print(prefix)
-        pythontex-files-
-        _minted-
-
-    """
-    config_filepath = join(tm_bundle_support, "config/auxiliary.yaml")
-    with open(config_filepath, 'r', encoding='utf_8') as auxiliary_file:
-        return (read_list(auxiliary_file, 'files'),
-                read_list(auxiliary_file, 'directories'))
-
 
 def remove_auxiliary_files(directory='.',
                            tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
@@ -158,28 +62,10 @@ def remove_auxiliary_files(directory='.',
         test.toc
 
     """
-    file_extensions, dir_prefixes = get_auxiliary_files(tm_bundle_support)
-    removed_files = []
-    file_pattern = compile('.+\.(?:{})$'.format('|'.join(file_extensions)))
-
-    for filepath in glob('{}/*'.format(directory)):
-        filename = basename(filepath)
-        if isfile(filepath) and file_pattern.match(filename):
-            try:
-                remove(filepath)
-                removed_files.append(filename)
-            except:
-                pass
-
-        elif (isdir(filepath) and
-              match('^(?:{})'.format('|'.join(dir_prefixes)), filename)):
-            try:
-                rmtree(filepath)
-                removed_files.append(filename)
-            except:
-                pass
-
-    return removed_files
+    clean_command = join(tm_bundle_support, 'bin/clean.rb')
+    return check_output('{} {}'.format(quote(clean_command),
+                                       quote(directory)),
+                        universal_newlines=True, shell=True).split()
 
 
 def remove_cache_files():
@@ -209,10 +95,3 @@ def remove_cache_files():
             remove(cache_filepath)
         except:
             continue
-
-# -- Main ---------------------------------------------------------------------
-
-if __name__ == '__main__':
-    # Run tests for this module
-    from doctest import testmod
-    testmod()

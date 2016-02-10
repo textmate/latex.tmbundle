@@ -38,7 +38,9 @@ export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib
-RUBY_FILES = Support/lib/Ruby/*.rb Support/lib/Ruby/*/*.rb
+RUBY_FILES = $(BINARY_DIRECTORY)/clean.rb \
+			 $(LIBRARY_DIRECTORY)/Ruby/*.rb \
+			 $(LIBRARY_DIRECTORY)/Ruby/{completion,project_management}/*.rb
 
 # -- Rules ---------------------------------------------------------------------
 
