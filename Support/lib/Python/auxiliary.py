@@ -65,7 +65,7 @@ def remove_auxiliary_files(directory='.',
     clean_command = join(tm_bundle_support, 'bin/clean.rb')
     return check_output('{} {}'.format(quote(clean_command),
                                        quote(directory)),
-                        universal_newlines=True, shell=True).split()
+                        universal_newlines=True, shell=True).split('\n')[:-1]
 
 
 def remove_cache_files():
