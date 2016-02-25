@@ -69,7 +69,7 @@
 					<string>BAC489C4-2395-486A-92ED-BBEFB00D3B3D</string>
 					<string>2C3EE370-04D1-43B6-BB8D-808DE606FD00</string>
 				</array>
-				<key>Name</key>
+				<key>name</key>
 				<string>Track Changes</string>
 			</dict>
 			<key>02459F02-DB4A-4439-B9FE-BAF4040ED287</key>
@@ -273,6 +273,7 @@
 	<string>LaTeX</string>
 	<key>ordering</key>
 	<array>
+		<string>17B509AB-9308-4E87-BCE0-7F736372A005</string>
 		<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
 		<string>BC36A3C7-F9B2-47D4-83FB-2BEB93F14889</string>
 		<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
