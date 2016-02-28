@@ -1,32 +1,16 @@
+# -- Imports -------------------------------------------------------------------
+
+require 'yaml'
+
+# -- Class ---------------------------------------------------------------------
+
 # We extend the string class to support transformation of character sequences.
 class String
-  WORD_TO_CHARACTER = {
-    '->' => '→',
-    '-->' => '⟶',
-    '=>' => '⇒',
-    '==>' => '⟹',
-    '|->' => '↦',
-    '<-' => '←',
-    '<--' => '⟵',
-    '<=' => '⇐',
-    '<==' => '⟸',
-    '<->' => '↔',
-    '<=>' => '⇔'
-  }.freeze
+  config = YAML.load_file("#{ENV['TM_BUNDLE_SUPPORT']}/config/conversion.yaml")
 
-  CHARACTER_TO_SYMBOL = {
-    '→' => '\rightarrow',
-    '⟶' => '\longrightarrow',
-    '⇒' => '\Rightarrow',
-    '⟹' => '\Longrightarrow',
-    '↦' => '\mapsto',
-    '←' => '\leftarrow',
-    '⟵' => '\longleftarrow',
-    '⇐' => '\Leftarrow',
-    '⟸' => '\Longleftarrow',
-    '↔' => '\leftrightarrow',
-    '⇔' => '\Leftrightarrow'
-  }.freeze
+  WORD_TO_CHARACTER = config['word_to_character'].freeze
+
+  CHARACTER_TO_SYMBOL = config['character_to_symbol'].freeze
 
   # This method converts certain sequences of characters to LaTeX symbols.
   #
