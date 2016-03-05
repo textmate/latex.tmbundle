@@ -118,7 +118,7 @@ In order to tell TextMate to use \texttt{latexmk} when compiling, you have to ch
 
 \subsection{Using a Master File}
 
-If you work on a large project, you probably want to use TextMate's \href{http://manual.textmate.org/projects}{support for projects}. In a larger LaTeX project, such as a book or a thesis you usually split your project in smaller files that contain one part of your document. You then include these parts in a so-called master file via the commands \texttt{\textbackslash{}input} or \texttt{\textbackslash{}include}.\\
+If you work on a large project, you probably want to use TextMate's \href{http://manual.textmate.org/projects}{support for projects}. In a larger LaTeX project, such as a book or a thesis you usually split your project in smaller files that contain one part of your document. You then include these parts in a so-called master file via the commands \mintinline{tex}|\input| or \mintinline{tex}|\include|.\\
 
 Most of the commands of the LaTeX bundle rely on the fact that they know the location of the master file. If you do not specify the master file explicitly, then the bundle assumes that the active document is the master file. This works perfectly fine, as long as you only use one \texttt{.tex} file.\\
 
@@ -302,7 +302,7 @@ Finally, there is a command to quickly insert commands for the various symbols, 
 
     \item Single letters are converted to greek letters
 
-    \item Two letter combinations are converted to the various commands starting with those two letters (for instance pressing \texttt{in} would trigger commands like \texttt{\textbackslash{}int}, \texttt{\textbackslash{}inf}, \texttt{\textbackslash{}infty} etc) with a few exceptions, like \texttt{sk} for \texttt{\textbackslash{}smallskip}.
+    \item Two letter combinations are converted to the various commands starting with those two letters (for instance pressing \texttt{in} would trigger commands like \mintinline{tex}|\int|, \mintinline{tex}|\inf|, \mintinline{tex}|\infty| etc) with a few exceptions, like \texttt{sk} for \mintinline{tex}|\smallskip|.
 
     \item Three letter combinations are converted to arrows, where the three digits signify the kind of arrow, for instance \texttt{lar} would stand for left arrows.
 
@@ -310,7 +310,7 @@ Finally, there is a command to quickly insert commands for the various symbols, 
 
   \end{itemize}
 
-  \item After you triggered the command once, pressing it again cycles through the various options. For instance, if you started with \texttt{e}, then the command cycles between \texttt{\textbackslash{}epsilon} and \texttt{\textbackslash{}varepsilon}. This is accomplished by this set of entries in the configuration file:
+  \item After you triggered the command once, pressing it again cycles through the various options. For instance, if you started with \texttt{e}, then the command cycles between \mintinline{tex}|\epsilon| and \mintinline{tex}|\varepsilon|. This is accomplished by this set of entries in the configuration file:
 
   \begin{minted}{properties}
   "e" = "\\epsilon";
@@ -335,9 +335,9 @@ A list of the the most commonly used LaTeX environments would certainly include 
 
 \end{enumerate}
 
-The first \texttt{\textbackslash{}item} is automatically inserted for you. To add a new item press \keys{\enter} and TextMate creates a new entry by inserting the command \texttt{\textbackslash{}item} in the next line. This functionality is common among most languages in TextMate that support some sort of list.\\
+The first \mintinline{tex}|\item| is automatically inserted for you. To add a new item press \keys{\enter} and TextMate creates a new entry by inserting the command \mintinline{tex}|\item| in the next line. This functionality is common among most languages in TextMate that support some sort of list.\\
 
-There is also a \menu{Lists > Itemize Lines in Selection} command, bound to \keys{\cmd + \shift + L}. It wraps the selected group of lines inside a list environment (\texttt{enumerate}, \texttt{itemize}, or \texttt{description}). Each non-blank line becomes an \texttt{\textbackslash{}item} in the environment. If the first 20 characters of every selected non-empty line contain a \texttt{:}, then the command creates a description environment. All the characters up to the \texttt{:} are placed inside brackets.
+There is also a \menu{Lists > Itemize Lines in Selection} command, bound to \keys{\cmd + \shift + L}. It wraps the selected group of lines inside a list environment (\texttt{enumerate}, \texttt{itemize}, or \texttt{description}). Each non-blank line becomes an \mintinline{tex}|\item| in the environment. If the first 20 characters of every selected non-empty line contain a \texttt{:}, then the command creates a description environment. All the characters up to the \texttt{:} are placed inside brackets.
 
 \subsubsection{Table Environments}
 
@@ -485,7 +485,7 @@ You can trigger them by pressing \keys{\Alt + \esc}.
   \label{fig:Figures_Label_Completion}
 \end{figure}
 
-Both the label and bibliography completion commands also work outside of a \texttt{\textbackslash{}ref\{\}} or \texttt{\textbackslash{}cite\{\}} block. They will insert the \texttt{\textbackslash{}ref} or \texttt{\textbackslash{}cite} for you, if you call them outside of the aforementioned blocks. Here are a two examples of the usual use cases for the commands:
+Both the label and bibliography completion commands also work outside of a \texttt{\textbackslash{}ref\{\}} or \texttt{\textbackslash{}cite\{\}} block. They will insert the \mintinline{tex}|\ref| or \mintinline{tex}|\cite| for you, if you call them outside of the aforementioned blocks. Here are a two examples of the usual use cases for the commands:
 
 \begin{itemize}
 
@@ -522,9 +522,9 @@ There are three key drag and drop commands in LaTeX:
 
 \begin{itemize}
 
-  \item You can drag an image file in to the document and have it surrounded by a complete figure environment. Using the modifier key \keys{\Alt} while dragging inserts the image surrounded by a \texttt{center} environment. If you use the modifier \keys{\shift}, then TextMate only inserts the \texttt{\textbackslash{}includegraphics} line.
+  \item You can drag an image file in to the document and have it surrounded by a complete figure environment. Using the modifier key \keys{\Alt} while dragging inserts the image surrounded by a \texttt{center} environment. If you use the modifier \keys{\shift}, then TextMate only inserts the \mintinline{tex}|\includegraphics| line.
 
-  \item You can drag in another \texttt{.tex} file into your document. TextMate will then insert a \texttt{\textbackslash{}include} command that references the dropped file. To use a \texttt{\textbackslash{}input} command instead use the modifier key \keys{\Alt}.
+  \item You can drag in another \texttt{.tex} file into your document. TextMate will then insert a \mintinline{tex}|\include| command that references the dropped file. To use a \mintinline{tex}|\input| command instead use the modifier key \keys{\Alt}.
 
   \item If you drop a source code file into your document, then TextMate creates a new \mintinline{tex}|listing| command referencing the dropped file. Said command is part of the \href{http://ctan.org/pkg/minted}{minted} package. To successfully translate the resulting document include \mintinline{tex}|minted| and install the various package dependencies. Do not forget to specify the option \texttt{-shell-escape} (see section “\nameref{sec:preferences}”), otherwise the translation will fail.\\
 
