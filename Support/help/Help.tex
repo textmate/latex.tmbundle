@@ -10,10 +10,12 @@
 \usepackage[paperheight=25cm, paperwidth=15cm, top=0.5cm, bottom=0.5cm, left=.5cm, right=.5cm]{geometry}
 \usepackage{grffile}
 \usepackage{menukeys}
+\usepackage{metalogo}
 \usepackage{microtype}
 \usepackage{minted}
 \usepackage{subfig}
 \usepackage{titlesec}
+\usepackage{unicode-math}
 \usepackage{hyperref}
 
 % -- Macros --------------------------------------------------------------------
@@ -397,6 +399,53 @@ Often one wants to enclose the currently selected text in an environment, or a c
   This command inserts \texttt{\textbackslash{}(} before, and \texttt{\textbackslash{})} after the selection.
 
 \end{description}
+
+\subsubsection{Symbol Conversion}
+
+If we use modern engines like \XeLaTeX{} or \LuaLaTeX{}, we can use “special characters” such as \texttt{≥} or \texttt{⇒} in our TeX documents directly. If we use a more conservative setup, then we insert these characters via LaTeX commands. For example, to insert the character “\texttt{⇒}” we use the command \mintinline{tex}|\Rightarrow|. Writing these commands is a rather tedious and error-prone task.\\
+
+The LaTeX bundle offers a command to automatically convert special characters and certain sequences of characters to LaTeX commands. This command, called \menu{Convert Symbols in Word / Selection}, works on the current word or selection.\\
+
+For example, if you want to convert the formula
+\begin{minted}{latex}
+  a ≤ b => ¬(a > b)
+\end{minted}
+, just select the text above and invoke \menu{Convert Symbols in Selection} via the key combination \keys{\cmd + \&}. The command will then replace the selection with the text:
+\begin{minted}{latex}
+  a \leq b \Rightarrow \lnot(a > b)
+\end{minted}
+that produces the output
+\[
+  a \leq b \Rightarrow \lnot(a > b)
+\]
+inside an unnumbered equation environment.\\
+
+The following table shows a list of the characters and character sequence the command currently converts:
+
+\begin{center}
+  \begin{tabular}{lll}
+\toprule
+Character Sequence & Character &                    \LaTeX{} Command\\
+\midrule
+       \texttt{->} &       $→$ &     \mintinline{tex}|\rightarrow|\\
+      \texttt{-->} &       $⟶$ & \mintinline{tex}|\longrightarrow|\\
+       \texttt{=>} &       $⇒$ &     \mintinline{tex}|\Rightarrow|\\
+      \texttt{==>} &       $⟹$ &     \mintinline{tex}|\Rightarrow|\\
+      \texttt{|->} &       $↦$ &         \mintinline{tex}|\mapsto|\\
+       \texttt{<-} &       $←$ &      \mintinline{tex}|\leftarrow|\\
+      \texttt{<--} &       $⟵$ &  \mintinline{tex}|\longleftarrow|\\
+       \texttt{<=} &       $⇐$ &      \mintinline{tex}|\Leftarrow|\\
+      \texttt{<==} &       $⟸$ &  \mintinline{tex}|\Longleftarrow|\\
+      \texttt{<->} &       $↔$ & \mintinline{tex}|\leftrightarrow|\\
+      \texttt{<=>} &       $⇔$ & \mintinline{tex}|\Leftrightarrow|\\
+                   &       $≤$ &            \mintinline{tex}|\leq|\\
+                   &       $≥$ &            \mintinline{tex}|\geq|\\
+                   &       $¬$ &           \mintinline{tex}|\lnot|\\
+                   &       $∧$ &           \mintinline{tex}|\land|\\
+                   &       $∨$ &            \mintinline{tex}|\lor|\\
+\bottomrule
+  \end{tabular}
+\end{center}
 
 \subsection{Completion}
 

@@ -46,9 +46,20 @@
 #                   ' Three & Four\\\\'].join("\n")
 #   => true
 #
+# doctest: Reformat a table containing \rule commands
+#
+#   >> output = reformat(
+#     '  \\toprule Head 1 & Head 2 & Head 3\\\\ \\midrule Column 1 &
+#      Column 2 & Column 3\\\\ \bottomrule')
+#   >> output.eql? ['\\toprule',
+#                   '     Head 1 &   Head 2 &   Head 3\\\\',
+#                   '\\midrule',
+#                   '   Column 1 & Column 2 & Column 3\\\\',
+#                   '\\bottomrule'].join("\n")
+#   => true
 def reformat(table_content)
   before_table = table_content.slice!(/^.*?\}\s*\n/)
-  table_content.gsub!(/\\hline/, '\\hline\\\\\\\\')
+  table_content.gsub!(/\\(?:hline|(?:(?:top|mid|bottom)rule))/, '\0\\\\\\\\')
   lines = table_content.split('\\\\')
 
   # Check for manual horizontal spacing of the form `[space]` e.g.: `[1cm]`
