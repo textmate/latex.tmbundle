@@ -50,7 +50,10 @@
 \setcounter{totalnumber}{100}
 \usemintedstyle{friendly}
 \pagestyle{empty}
+
 \makeatletter \renewcommand{\@dotsep}{10000} \makeatother
+\let\Contentsline\contentsline
+\renewcommand\contentsline[3]{\Contentsline{#1}{#2}{}}
 
 \titleformat{\section}{\large\sffamily\bfseries}{}{0pt}{\thesection~·~} [{\color{DarkOrchid4}\hrule}]
 \titleformat*{\subsection}{\color{DarkOrchid4}\sffamily\bfseries}
