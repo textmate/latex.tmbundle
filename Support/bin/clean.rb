@@ -241,6 +241,7 @@ class TeXFile
   #   >> tex_file = TeXFile.new(File.join test_directory, 'Fjørt')
   #   >> tex_file.delete_aux.map { |path| File.basename path } ==
   #      aux_files.select { |file| file.start_with? 'Fjørt' }
+  #   => true
   def delete_aux
     (FileUtils.rm(aux_files, :force => true) +
      FileUtils.rm_rf(aux_directories)).sort
