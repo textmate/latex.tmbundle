@@ -210,7 +210,7 @@ class TeXFile
   # The function returns a list of strings. Each string specifies the location
   # of a file this function successfully deleted.
   #
-  # doctest: Remove auxiliary files for a certain TeX file
+  # doctest: Remove auxiliary files for specific TeX files
   #
   #   >> require 'tmpdir'
   #   >> test_directory = Dir.mktmpdir
