@@ -112,8 +112,8 @@ class Table
   def array_header(insertion_point = @insertion_points_header)
     @i2 + Array.new(@columns) do |c|
       @array_header_start + \
-      "${#{insertion_point += 1}:#{array_header_text(c)}}" + \
-      @array_header_end
+        "${#{insertion_point += 1}:#{array_header_text(c)}}" + \
+        @array_header_end
     end.join(' & ') + '\\\\\\\\' + (@rows >= 2 ? "\n#{@i2}\\midrule" : '')
   end
 
