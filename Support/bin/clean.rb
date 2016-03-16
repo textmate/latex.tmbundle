@@ -215,8 +215,8 @@ class TeXFile
   #   >> require 'tmpdir'
   #   >> test_directory = Dir.mktmpdir
   #
-  #   >> aux_files = ['Fjørt.aux', 'Fjørt.toc', 'Wide Open Spaces.synctex.gz',
-  #                   '😘.glo']
+  #   >> aux_files = ['[A → B] Life.toc', 'Fjørt.aux', 'Fjørt.toc',
+  #                   'Wide Open Spaces.synctex.gz', '😘.glo']
   #   >> non_aux_files = ['Fjørt.tex', 'D.E.A.D. R.A.M.O.N.E.S.']
   #   >> all_files = aux_files + non_aux_files
   #   >> all_files.each do |filename|
@@ -242,6 +242,11 @@ class TeXFile
   #   >> tex_file.delete_aux.map { |path| File.basename path } ==
   #      aux_files.select { |file| file.start_with? 'Fjørt' }
   #   => true
+  #
+  #   >> tex_file = TeXFile.new(File.join test_directory, '[A → B] Life.tex')
+  #   >> tex_file.delete_aux.map { |path| File.basename path } ==
+  #      aux_files.select { |file| file.start_with? '[A → B] Life' }
+  #   => true
   def delete_aux
     (FileUtils.rm(aux_files, :force => true) +
      FileUtils.rm_rf(aux_directories)).sort
@@ -250,7 +255,7 @@ class TeXFile
   private
 
   def aux_files
-    aux_pattern = "#{File.basename(@path).sub(/\.tex$/, '')}" \
+    aux_pattern = "#{Regexp.escape(File.basename(@path).sub(/\.tex$/, ''))}" \
                   "\.(?:#{Auxiliary.file_extensions.join '|'})$"
     @path.parent.children.map { |path| path.to_s.to_nfc }.select do |filepath|
       filepath[/#{aux_pattern}/] && File.file?(filepath)
@@ -258,8 +263,9 @@ class TeXFile
   end
 
   def aux_directories
+    name_escaped = Regexp.escape(File.basename(@path).sub(/\.tex$/, ''))
     aux_pattern = "(?:#{Auxiliary.directory_prefixes.join '|'})" \
-                  "#{File.basename(@path).sub(/\.tex$/, '').gsub(' ', '[_-]')}$"
+                  "#{name_escaped.gsub('\\ ', '[_-]')}$"
     @path.parent.children.map { |path| path.to_s.to_nfc }.select do |filepath|
       filepath[/#{aux_pattern}/] && File.directory?(filepath)
     end
