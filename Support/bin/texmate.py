@@ -505,7 +505,8 @@ def run_viewer(viewer, texfile_path, pdffile_path,
             if isfile(pdffile_path):
                 print('''<script type="text/javascript">
                          window.location="file://{}"
-                         </script>'''.format(quote(pdffile_path.encode('utf8'))))
+                         </script>'''.format(
+                      quote(pdffile_path.encode('utf8'))))
             else:
                 print("File does not exist: {}".format(pdffile_path))
     else:
