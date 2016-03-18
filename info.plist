@@ -17,7 +17,7 @@
 		<string>A7B97D14-AE83-11D9-8B45-000D93B6E43C</string>
 	</array>
 	<key>description</key>
-	<string>Support for the &lt;a href="http://www.latex-project.org/"&gt;LaTeX&lt;/a&gt; typesetting system, the de facto standard for scientific papers.</string>
+	<string>Support for the &lt;a href=&quot;http://www.latex-project.org/&quot;&gt;LaTeX&lt;/a&gt; typesetting system, the de facto standard for scientific papers.</string>
 	<key>mainMenu</key>
 	<dict>
 		<key>excludedItems</key>
@@ -54,9 +54,25 @@
 			<string>7B194B41-B253-46E5-9EB9-523F43E7ED2F</string>
 			<string>D10F1CAC-BF1D-456D-B1E5-6AA5E3DD40ED</string>
 			<string>8F41368E-4E01-41A9-8FCF-19D4A4032AE2</string>
+			<string>------------------------------------</string>
+			<string>17B509AB-9308-4E87-BCE0-7F736372A005</string>
 		</array>
 		<key>submenus</key>
 		<dict>
+			<key>17B509AB-9308-4E87-BCE0-7F736372A005</key>
+			<dict>
+				<key>items</key>
+				<array>
+					<string>FBDC1437-C0A6-4452-A1AF-A57CF4AE4209</string>
+					<string>DD175BAB-F63F-4DEB-8AB8-ACE124FA8B28</string>
+					<string>F54C7432-9F81-4274-9A43-1E3B4D3081A3</string>
+					<string>7F831D32-FAB4-4EE0-A9EE-24BDA73CFB71</string>
+					<string>BAC489C4-2395-486A-92ED-BBEFB00D3B3D</string>
+					<string>2C3EE370-04D1-43B6-BB8D-808DE606FD00</string>
+				</array>
+				<key>name</key>
+				<string>Track Changes</string>
+			</dict>
 			<key>02459F02-DB4A-4439-B9FE-BAF4040ED287</key>
 			<dict>
 				<key>items</key>
@@ -258,6 +274,7 @@
 	<string>LaTeX</string>
 	<key>ordering</key>
 	<array>
+		<string>17B509AB-9308-4E87-BCE0-7F736372A005</string>
 		<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
 		<string>BC36A3C7-F9B2-47D4-83FB-2BEB93F14889</string>
 		<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>

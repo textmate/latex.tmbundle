@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>content</key>
+	<string>\\change[${1:editor}]{$TM_SELECTED_TEXT$3}{${2:New text}} $0</string>
+	<key>keyEquivalent</key>
+	<string>~@C</string>
+	<key>name</key>
+	<string>Change</string>
+	<key>tabTrigger</key>
+	<string>tcchange</string>
+	<key>uuid</key>
+	<string>7F831D32-FAB4-4EE0-A9EE-24BDA73CFB71</string>
+</dict>
+</plist>
