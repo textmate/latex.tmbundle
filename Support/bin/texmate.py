@@ -488,12 +488,17 @@ def run_viewer(viewer, texfile_path, pdffile_path,
     Examples:
 
         >>> chdir('Tests/TeX')
-        >>> call("pdflatex makeindex.tex > /dev/null", shell=True)
+        >>> call("xelatex ünicöde.tex > /dev/null", shell=True)
         0
-        >>> run_viewer('Skim', './makeindex.tex', './makeindex.pdf',
-        ...            suppress_pdf_output_textmate=None, use_pdfsync=True,
-        ...            line_number=10,
-        ...            tm_bundle_support=realpath('../../Support'))
+        >>> for viewer in ['Skim', 'TextMate']: # doctest: +ELLIPSIS
+        ...     run_viewer(viewer, './ünicöde.tex', './ünicöde.pdf',
+        ...                suppress_pdf_output_textmate=None,
+        ...                use_pdfsync=True, line_number=10,
+        ...                tm_bundle_support=realpath('../../Support'))
+        0
+        <script type="text/javascript">
+        ...
+        ...
         0
         >>> chdir('../..')
 
