@@ -54,6 +54,7 @@
 			<string>7B194B41-B253-46E5-9EB9-523F43E7ED2F</string>
 			<string>D10F1CAC-BF1D-456D-B1E5-6AA5E3DD40ED</string>
 			<string>8F41368E-4E01-41A9-8FCF-19D4A4032AE2</string>
+			<string>3B6A7039-C276-4C96-B896-B7B487401280</string>
 		</array>
 		<key>submenus</key>
 		<dict>
@@ -61,6 +62,10 @@
 			<dict>
 				<key>items</key>
 				<array>
+					<string>03F30619-2739-447F-953D-DB225185E4D2</string>
+					<string>CC9CC561-4BD2-4E50-A211-8C6141FFDE69</string>
+					<string>2F926912-E5E6-4965-8E50-0603765DD0E6</string>
+					<string>------------------------------------</string>
 					<string>1108B460-CCDD-4D4A-BFAC-D91B2E1BC2FC</string>
 					<string>948DDCF2-0EB5-46A3-B970-09597D268BAF</string>
 					<string>------------------------------------</string>
@@ -81,17 +86,6 @@
 				<key>name</key>
 				<string>Tools</string>
 			</dict>
-			<key>213887D6-E05C-4AC9-AB90-69618BA0243A</key>
-			<dict>
-				<key>items</key>
-				<array>
-					<string>03F30619-2739-447F-953D-DB225185E4D2</string>
-					<string>CC9CC561-4BD2-4E50-A211-8C6141FFDE69</string>
-					<string>2F926912-E5E6-4965-8E50-0603765DD0E6</string>
-				</array>
-				<key>name</key>
-				<string>Lists</string>
-			</dict>
 			<key>36C623C5-4F91-48FF-A648-910681D1D35D</key>
 			<dict>
 				<key>items</key>
@@ -100,7 +94,6 @@
 					<string>06BAABEC-B819-4778-94FF-C744CF5DD7CD</string>
 					<string>------------------------------------</string>
 					<string>CCAFCD15-8009-45BC-9BF6-7CFDC9141C0C</string>
-					<string>213887D6-E05C-4AC9-AB90-69618BA0243A</string>
 				</array>
 				<key>name</key>
 				<string>Environments</string>
