@@ -6,16 +6,6 @@
 	<string>fnaffrpbhef@s-z.sz</string>
 	<key>contactName</key>
 	<string>René Schwaiger</string>
-	<key>deleted</key>
-	<array>
-		<string>5136524A-A3E3-4EF7-B7E1-F7ED68E775C6</string>
-		<string>9B80A79A-BF8D-11D9-9186-000A95C0F626</string>
-		<string>DDF6786A-A88D-48A2-A9C7-474236A7DFE2</string>
-		<string>52EFF5E0-892D-4E86-88EF-BBB0F984C3BB</string>
-		<string>B585D867-EF22-4396-AD50-8742B9B8FC84</string>
-		<string>C99FA1E9-E535-4CB2-BC31-7157318B67B5</string>
-		<string>A7B97D14-AE83-11D9-8B45-000D93B6E43C</string>
-	</array>
 	<key>description</key>
 	<string>Support for the &lt;a href="http://www.latex-project.org/"&gt;LaTeX&lt;/a&gt; typesetting system, the de facto standard for scientific papers.</string>
 	<key>mainMenu</key>
