@@ -1352,7 +1352,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>((\\)verb[\*]?)\s*((\\)scantokens)(\{)</string>
+			<string>((\\)(?:verb|lstinline)[\*]?)\s*((\\)scantokens)(\{)</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -1433,7 +1433,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>((\\)verb[\*]?)\s*((?&lt;=\s)\S|[^a-zA-Z])(.*?)(\3|$)</string>
+			<string>((\\)(?:verb|lstinline)[\*]?)\s*((?&lt;=\s)\S|[^a-zA-Z])(.*?)(\3|$)</string>
 			<key>name</key>
 			<string>meta.function.verb.latex</string>
 		</dict>
