@@ -145,8 +145,8 @@ module Outline
         [filename.read, '']
       end
     rescue => e
-      TextMate.exit_show_tool_tip(
-        "#{ref_filename}:#{ref_linenumber} “#{ref_line}”\n\t#{e.message}")
+      TextMate.exit_show_tool_tip("#{ref_filename}:#{ref_linenumber} " \
+                                  "“#{ref_line}”\n\t#{e.message}")
     end
 
     # Try to get a outline point — containing url, line number, section and

@@ -547,8 +547,8 @@ module LaTeX
       bibtype, citekey, rest = bibentry_type_key_rest(bib_entry)
       return nil if bibtype.nil?
       cite = Citation.new('bibtype' => bibtype, 'citekey' => citekey)
-      rest[0..-2].split(/("|\}|\d)\s*,/).each_slice(2).map(&:join).map(
-        &:strip).each do |key_value|
+      rest[0..-2].split(/("|\}|\d)\s*,/).each_slice(2).map(&:join).
+        map(&:strip).each do |key_value|
         key, value = bibitem_key_value(key_value, bib_variables)
         cite[key] = value unless key.nil?
       end
@@ -695,10 +695,10 @@ module LaTeX
     # rubocop:disable Style/ClassVars
     def find_file_kpsewhich(filename, extension, relative)
       @@paths ||= {}
-      @@paths[extension] ||= (
-        `#{LaTeX.tex_path}kpsewhich -show-path=#{extension}`.chomp.split(
-          /:!!|:/).map { |dir| dir.sub(%r{/*$}, '/') }).unshift(
-            relative).unshift('')
+      @@paths[extension] ||=
+        `#{LaTeX.tex_path}kpsewhich -show-path=#{extension}`.chomp.
+        split(/:!!|:/).map { |dir| dir.sub(%r{/*$}, '/') }.unshift(relative).
+        unshift('')
       @@paths[extension].each do |path|
         fp = File.expand_path(File.join(path, filename))
         [fp, "#{fp}.#{extension}"].each { |file| return file if file?(file) }
@@ -760,8 +760,8 @@ module LaTeX
       # argument of a macro
       @includes[/^[^%]*(?:\\include|\\input)\s*\{([^}\\#]*)\}/] = proc do |m|
         m[0].split(',').map do |it|
-          LaTeX.find_file(it.strip, 'tex', File.dirname(@root)) || raise(
-            "Could not locate any file named '#{it}'")
+          LaTeX.find_file(it.strip, 'tex', File.dirname(@root)) ||
+            raise("Could not locate any file named '#{it}'")
         end
       end
       @extractors = {}
@@ -910,7 +910,7 @@ module LaTeX
         end
         scanner.extractors.update(Hash[regexes.map { |reg| [reg, extractor] }])
       end
-  end
+    end
 
     private
 

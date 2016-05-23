@@ -32,7 +32,8 @@ module Configuration
 
     def load_user_file
       user_file = File.expand_path(
-        '~/Library/Preferences/com.macromates.textmate.latex_config.plist')
+        '~/Library/Preferences/com.macromates.textmate.latex_config.plist'
+      )
       load_file(user_file)
     end
 

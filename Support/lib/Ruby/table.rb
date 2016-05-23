@@ -180,16 +180,16 @@ class Table
       raise if number < 1 || number > 100
       number
     rescue
-      TextMate.exit_show_tool_tip(
-        "“#{value}” is not a valid value for the number of #{name}.\n" \
-        'Please use a number between 1 and 100.')
+      TextMate.exit_show_tool_tip("“#{value}” is not a valid value for the " \
+                                  "number of #{name}.\n" \
+                                  'Please use a number between 1 and 100.')
     end
 
     def parse_parameters_text(result)
       one_upto_hundred = '([1-9]\d?|100)'
       rows_default = 2
-      m = /^(?:#{one_upto_hundred}\D+)?#{one_upto_hundred}\s*(t)?$/.match(
-        result.to_s)
+      m = /^(?:#{one_upto_hundred}\D+)?#{one_upto_hundred}\s*(t)?$/.
+          match(result.to_s)
       TextMate.exit_show_tool_tip(usage_text(rows_default, 100, 100)) if m.nil?
       [m[1] ? m[1].to_i : rows_default, m[2].to_i, m[3].nil?]
     end
