@@ -35,6 +35,7 @@
 			<string>B6CFC0AB-E9F1-4A8A-A1F2-AB129ACEDBF0</string>
 			<string>C51902AD-667E-4AFB-9BF6-A7A993473892</string>
 			<string>02459F02-DB4A-4439-B9FE-BAF4040ED287</string>
+			<string>CCAFCD15-8009-45BC-9BF6-7CFDC9141C0C</string>
 			<string>------------------------------------</string>
 			<string>DF9F9DF7-5F85-11D9-97D0-000D9332809C</string>
 			<string>------------------------------------</string>
@@ -81,8 +82,6 @@
 				<array>
 					<string>37C520F9-A379-4BBC-AF62-22F7C0B63955</string>
 					<string>06BAABEC-B819-4778-94FF-C744CF5DD7CD</string>
-					<string>------------------------------------</string>
-					<string>CCAFCD15-8009-45BC-9BF6-7CFDC9141C0C</string>
 				</array>
 				<key>name</key>
 				<string>Environments</string>
