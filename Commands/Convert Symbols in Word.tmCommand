@@ -21,7 +21,7 @@ print(STDIN.read.convert)</string>
 	<key>keyEquivalent</key>
 	<string>@&amp;</string>
 	<key>name</key>
-	<string>Convert Word / Selection to Symbol</string>
+	<string>Convert Symbols in Word / Selection</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>
