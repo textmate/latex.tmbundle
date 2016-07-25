@@ -70,7 +70,7 @@ def reformat(table_content)
   widths = []
   max_number_columns.times do |column|
     widths << cells.reduce(0) do |maximum, line|
-      (column >= line.length) ? maximum : [maximum, line[column].length].max
+      column >= line.length ? maximum : [maximum, line[column].length].max
     end
   end
   pattern = widths.map { |width| "%#{width}s" }.join(' & ')

@@ -187,7 +187,7 @@ module Outline
       items = points.map do |filepath, line, part, title|
         levels = last_part.levels_to(part)
         last_part = Section.new(part)
-        "#{(levels > 0) ? '<ol>' * levels : '</ol>' * levels.abs}<li>
+        "#{levels > 0 ? '<ol>' * levels : '</ol>' * levels.abs}<li>
           <a href=\"txmt://open?#{filepath}line=#{line}\">#{title}</a></li>"
       end
       "<ol>#{items.join("\n")}</ol>" +

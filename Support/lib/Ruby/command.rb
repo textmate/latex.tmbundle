@@ -128,7 +128,7 @@ def reference_snippet(reference, scope)
   if ENV['TM_LATEX_CITE_SNIPPET'] && scope == 'citation'
     ENV['TM_LATEX_CITE_SNIPPET'].gsub('CITEKEY', reference)
   else
-    "\\\\${1:#{(scope == 'citation') ? 'cite' : 'ref'}}\{#{reference}\}"
+    "\\\\${1:#{scope == 'citation' ? 'cite' : 'ref'}}\{#{reference}\}"
   end
 end
 

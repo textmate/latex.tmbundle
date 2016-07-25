@@ -677,7 +677,7 @@ module LaTeX
         scanned = scanner.scan(/(?:[^{}]|\\[{}])+/)
         value += scanned.to_s
         bracket = scanner.getch
-        missing_right_brackets += (bracket == '{') ? 1 : -1
+        missing_right_brackets += bracket == '{' ? 1 : -1
         value += bracket.to_s unless missing_right_brackets <= 0
       end
       value
