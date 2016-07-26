@@ -4,7 +4,7 @@
 
 from os import sys, path
 sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
-                "/lib/Python")  # noqa
+                "/lib/Python")
 
 from subprocess import Popen, PIPE, STDOUT
 
