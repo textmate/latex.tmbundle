@@ -40,8 +40,8 @@
 #
 # doctest: Reformat a table containing manual spacing
 #
-#   >> output = reformat('1 & 2\\\\[1cm]\hline Three & Four')
-#   >> output.eql? ['     1 &    2\\\\[1cm]',
+#   >> output = reformat('1 & [2]\\\\[1cm]\hline Three & Four')
+#   >> output.eql? ['     1 &  [2]\\\\[1cm]',
 #                   '\\hline',
 #                   ' Three & Four\\\\'].join("\n")
 #   => true
@@ -63,7 +63,9 @@ def reformat(table_content)
   lines = table_content.split('\\\\')
 
   # Check for manual horizontal spacing of the form `[space]` e.g.: `[1cm]`
-  space_markers = lines.map { |line| line.slice!(/\s*\[\.?\d+.*\]/) }
+  space_markers = lines.map do |line|
+    line.slice!(/\s*\[\s*(\d*\.\d|\d+\.?)\s*(?:pt|mm|cm|in|em|ex|mu)\s*\]/)
+  end
 
   cells = lines.map { |line| line.split(/[^\\]&|^&/).map(&:strip) }
   max_number_columns = cells.map(&:length).max
