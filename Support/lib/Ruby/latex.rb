@@ -1,5 +1,7 @@
 require 'strscan'
 require 'pathname'
+require 'shellwords'
+
 # The LaTeX module contains a lot of methods useful when dealing with LaTeX
 # files.
 #
@@ -310,18 +312,26 @@ module LaTeX
     #
     #  >> LaTeX.find_file('la', 'tex', '')
     #  => nil
+    #
+    #  doctest: Get the location of a file located deep within the TeX tree
+    #
+    #  >> filepath = LaTeX.find_file('wordcount.tex', 'tex', '')
+    #  >> filepath.end_with?('latex/wordcount/wordcount.tex')
+    #  => true
     def find_file(filename, extension, relative)
       filename.delete!('"')
       filename.gsub!(/\.#{extension}$/, '')
       # First try the filename as is, without the extension. Then try with the
       # added extension
-      [filename, "#{filename}.#{extension}"].each do |filepath|
+      paths = [filename, "#{filename}.#{extension}"]
+      paths.concat(paths.map { |name| File.join(relative, name) })
+      paths.each do |filepath|
         return filepath if file?(filepath)
       end
       # If it is an absolute path, and the above two tests didn't find it,
       # return nil
       return nil if filename =~ %r{^/}
-      find_file_kpsewhich(filename, extension, relative)
+      find_file_kpsewhich(filename)
     end
 
     # Processes a bib file and return an array of citation objects.
@@ -692,18 +702,9 @@ module LaTeX
       !filepath.nil? && File.exist?(filepath) && !File.directory?(filepath)
     end
 
-    # rubocop:disable Style/ClassVars
-    def find_file_kpsewhich(filename, extension, relative)
-      @@paths ||= {}
-      @@paths[extension] ||=
-        `#{LaTeX.tex_path}kpsewhich -show-path=#{extension}`.chomp.
-        split(/:!!|:/).map { |dir| dir.sub(%r{/*$}, '/') }.unshift(relative).
-        unshift('')
-      @@paths[extension].each do |path|
-        fp = File.expand_path(File.join(path, filename))
-        [fp, "#{fp}.#{extension}"].each { |file| return file if file?(file) }
-      end
-      nil
+    def find_file_kpsewhich(filename)
+      path = `#{LaTeX.tex_path}kpsewhich #{filename.shellescape}`.rstrip
+      file?(path) ? path : nil
     end
   end
 
