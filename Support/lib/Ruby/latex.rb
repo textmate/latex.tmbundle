@@ -270,17 +270,21 @@ module LaTeX
       raise 'The tex binaries cannot be located!'
     end
 
-    # Get the path for a certain file.
+    # Get the path of a certain file.
     #
     # = Arguments
     #
-    # [filename] The name of the file we want to find
+    # [filepath] This argument specifies the path of the file this function
+    #            should locate. If this path is not absolute, then it is
+    #            relative to the path specified via the argument +directory+.
     #
-    # [extension] The extension of the file we want to find.
+    # [extension] This variable contains the (optional) extension of the file
+    #             this function locates.
     #
-    # [relative] An explicit path that should be included in the
-    #            paths to look at when searching for the file. This will
-    #            typically be the path to the root document.
+    # [directory] The variable +directory+ should be included in the paths to
+    #             look at, when searching for the file specified via the
+    #             argument +filepath+. Typically this variable will contain the
+    #             directory of the master file.
     #
     # = Output
     #
@@ -289,20 +293,20 @@ module LaTeX
     #
     # = Examples
     #
-    #  doctest: Get the location of the file 'packages_input1.tex'
+    #  doctest: Get the location of the file “packages_input1.tex”
     #
     #  >> filepath = LaTeX.find_file('input/packages_input1', 'tex',
     #                                'Tests/TeX/')
     #  >> filepath.end_with?('Tests/TeX/input/packages_input1.tex')
     #  => true
     #
-    #  doctest: Get the location of the file 'xelatex.tex'
+    #  doctest: Get the location of the file “xelatex.tex”
     #
-    #  >> filepath = LaTeX.find_file('xelatex.tex', 'tex', 'Tests/TeX/')
+    #  >> filepath = LaTeX.find_file('"xelatex.tex"', 'tex', 'Tests/TeX/')
     #  >> filepath.end_with?('Tests/TeX/xelatex.tex')
     #  => true
     #
-    #  doctest: Get the location of a file located in 'TEXINPUTS'
+    #  doctest: Get the location of a file located in the TeX tree
     #
     #  >> filepath = LaTeX.find_file('config/pdftexconfig', 'tex', '')
     #  >> filepath.end_with?('config/pdftexconfig.tex')
@@ -318,20 +322,24 @@ module LaTeX
     #  >> filepath = LaTeX.find_file('wordcount.tex', 'tex', '')
     #  >> filepath.end_with?('latex/wordcount/wordcount.tex')
     #  => true
-    def find_file(filename, extension, relative)
-      filename.delete!('"')
-      filename.gsub!(/\.#{extension}$/, '')
-      # First try the filename as is, without the extension. Then try with the
-      # added extension
-      paths = [filename, "#{filename}.#{extension}"]
-      paths.concat(paths.map { |name| File.join(relative, name) })
-      paths.each do |filepath|
-        return filepath if file?(filepath)
-      end
-      # If it is an absolute path, and the above two tests didn't find it,
-      # return nil
-      return nil if filename =~ %r{^/}
-      find_file_kpsewhich(filename)
+    #
+    #  doctest: Get the location of a file specified via an absolute path
+    #
+    #  >> absolute_path =
+    #     '/Library/TeX/Root/texmf-dist/tex/latex/wordcount/wordcount.tex'
+    #  >> LaTeX.find_file(absolute_path, 'tex', '')
+    #  => absolute_path
+    def find_file(filepath, extension, directory)
+      filepath.delete!('"')
+      filepath_no_ext = filepath.sub(/\.#{extension}$/, '')
+      # Try the filepath with and without extension
+      paths = [filepath_no_ext, "#{filepath_no_ext}.#{extension}"]
+      paths.concat(paths.map { |name| File.join(directory, name) })
+      paths.each { |path| return path if file?(path) }
+      # If filepath specifies an absolute path and we did not find it in the
+      # code above, then file does not exist. If the path is not absolute we
+      # try to locate the file via +kpsewhich+.
+      filepath =~ %r{^/} ? nil : find_file_kpsewhich(filepath)
     end
 
     # Processes a bib file and return an array of citation objects.
