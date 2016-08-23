@@ -6,8 +6,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from glob import glob
-from os import getenv, remove
+from os import getenv
 from os.path import join
 from pipes import quote
 from subprocess import check_output
@@ -66,32 +65,3 @@ def remove_auxiliary_files(directory='.',
     return check_output('{} {}'.format(quote(clean_command),
                                        quote(directory)),
                         universal_newlines=True, shell=True).split('\n')[:-1]
-
-
-def remove_cache_files():
-    """This function removes cache files produced by the LaTeX bundle.
-
-    Examples:
-
-        >>> from os import chdir, getcwd, rmdir, mkdir
-        >>> directory = getcwd()
-        >>> test_directory = "/tmp/LaTeX Bundle Test"
-        >>> mkdir(test_directory)
-        >>> chdir(test_directory)
-
-        >>> # Create cache files
-        >>> _ = open(".test.lb", 'w')
-        >>> _ = open(".cache.lb", 'w')
-
-        >>> # Remove cache files
-        >>> remove_cache_files()
-
-        >>> rmdir(test_directory)
-        >>> chdir(directory)
-
-    """
-    for cache_filepath in glob('.*.lb'):
-        try:
-            remove(cache_filepath)
-        except:
-            continue

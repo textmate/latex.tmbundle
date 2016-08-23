@@ -94,44 +94,108 @@ class ArgumentParser
   end
 end
 
+# We extend the String class to allow substitution of simple variable patterns.
+class String
+  # This function replaces variable patterns in a string and returns the result.
+  #
+  # The variable patterns have one of the following two forms:
+  #
+  # 1. +${NAME}+
+  # 2. +${NAME/pattern/replacement/}+
+  #
+  # . In the first case the function just replaces patterns of the form
+  # +${NAME}+ by the string specified in the argument +name+.
+  #
+  # In the second case the function replaces all substring of the form +pattern+
+  # with +replacement+ inside the string stored in the variable +name+. After
+  # that the function substitutes the patterns of the form
+  # `${NAME/pattern/replacement}` with the value of the string calculated in the
+  # last step.
+  #
+  # = Arguments
+  #
+  # [name] This variable contains the value of the variable pattern +${NAME}+.
+  #
+  # [regex_escape_name] This variable specifies if the function should
+  #                     regex-escape the replacement value.
+  #
+  # = Output
+  #
+  # The function returns a pattern substituted version of this string.
+  #
+  # = Examples
+  #
+  # doctest: Replace an occurrence of the variable `${NAME}`
+  #
+  #   >> '{before} ${NAME} {after} $NAME'.replace_name('By The Throat', false)
+  #   => '{before} By The Throat {after} $NAME'
+  #
+  # doctest: Replace an occurrence of `${NAME/:)/😀/}`
+  #
+  #   >> '> ${NAME/:)/😀/} <'.replace_name(':) ^_^ :)', false)
+  #   => '> 😀 ^_^ 😀 <'
+  #
+  # doctest: Replace an occurrence of `${NAME/-/o/}` and escape the replacement
+  #
+  #   >> '${NAME/-/o/}'.replace_name('- - -')
+  #   => 'o\\ o\\ o'
+  def replace_name(name, regex_escape_name = true)
+    gsub(%r{\${NAME(?:\/([^\/]+)\/([^\/]+)\/)?}}).each do |_match|
+      pattern = Regexp.last_match(1)
+      replacement = Regexp.last_match(2)
+      name = name.gsub(pattern, replacement) if pattern && replacement
+      regex_escape_name ? Regexp.escape(name) : name
+    end
+  end
+end
+
 # This class saves information about auxiliary TeX files.
 class Auxiliary
   CONFIG_FILE = "#{ENV['TM_BUNDLE_SUPPORT']}/config/auxiliary.yaml".freeze
   CONFIGURATION = YAML.load_file CONFIG_FILE
 
-  # This method returns a list of directory prefixes.
-  #
-  # = Output
-  #
-  # This function returns a list of strings. Each string specifies a prefix of
-  # a directory that contains auxiliary TeX files.
-  #
-  # = Examples
-  #
-  # doctest: Read the list of auxiliary directory prefixes
-  #
-  #   >> Auxiliary.directory_prefixes
-  #   => ['pythontex-files-', '_minted-']
-  def self.directory_prefixes
-    CONFIGURATION['directories']
+  def initialize(name)
+    @name = name
   end
 
-  # This method returns a list of auxiliary TeX file extensions.
+  # This method returns a list of regexes matching auxiliary directories.
   #
   # = Output
   #
-  # The function returns a list of strings. Each string specifies the extension
-  # of an auxiliary TeX file.
+  # This function returns a list of strings. Each string specifies a regular
+  # expression that matches auxiliary TeX directories.
   #
   # = Examples
   #
-  # doctest: Read the list of auxiliary file extensions
+  # doctest: Read the list of auxiliary directory regexes
   #
-  #   >> extensions = Auxiliary.file_extensions
-  #   >> %w(aux ilg synctex.gz).each { |ext| extensions.member? ext }.all?
+  #   >> Auxiliary.new('Bleed Under My Pen').directory_patterns
+  #   => ['pythontex-files-Bleed\\-Under\\-My\\-Pen',
+  #       '_minted-Bleed_Under_My_Pen']
+  def directory_patterns
+    CONFIGURATION['directories'].map do |pattern|
+      pattern.to_s.replace_name(@name)
+    end
+  end
+
+  # This method returns a list of regexes matching auxiliary files.
+  #
+  # = Output
+  #
+  # The function returns a list of strings. Each string specifies a regular
+  # expression that matches auxiliary TeX files.
+  #
+  # = Examples
+  #
+  # doctest: Read the list of auxiliary file regexes
+  #
+  #   >> patterns = Auxiliary.new('Running With The Wolves').file_patterns
+  #   >> patterns[0]
+  #   => '\\.Running\\ With\\ The\\ Wolves\\.lb$'
+  #   >> %w(aux ilg synctex\.gz).map { |ext| patterns[1].include? ext }.all?
   #   => true
-  def self.file_extensions
-    CONFIGURATION['files']
+  def file_patterns
+    CONFIGURATION['files'].map { |pattern| pattern.to_s.replace_name(@name) }
   end
 end
 
@@ -181,18 +245,21 @@ class Dir
 
   private
 
-  def aux_files
+  def aux(pattern_method, check_file)
+    patterns = Auxiliary.new('FILENAME').send(pattern_method)
+    patterns.map { |pattern| pattern.gsub!('FILENAME', '.+') }
     entries.map(&:to_nfc).select do |filename|
-      filename[/.+\.(?:#{Auxiliary.file_extensions.join '|'})$/] &&
-        File.file?(File.join(self, filename))
+      patterns.any? { |pattern| filename =~ /#{pattern}/x } &&
+        check_file.call(File.join(self, filename))
     end
   end
 
+  def aux_files
+    aux(:file_patterns, proc { |filename| File.file?(filename) })
+  end
+
   def aux_directories
-    entries.map(&:to_nfc).select do |filename|
-      filename[/^(?:#{Auxiliary.directory_prefixes.join '|'}).+/] &&
-        File.directory?(File.join(self, filename))
-    end
+    aux(:directory_patterns, proc { |filename| File.directory?(filename) })
   end
 end
 
@@ -201,6 +268,7 @@ end
 class TeXFile
   def initialize(path)
     @path = Pathname.new path.to_nfc
+    @basename = File.basename(@path, File.extname(@path))
   end
 
   # This function removes auxiliary files for a certain TeX file.
@@ -254,21 +322,20 @@ class TeXFile
 
   private
 
-  def aux_files
-    aux_pattern = "#{Regexp.escape(File.basename(@path).sub(/\.tex$/, ''))}" \
-                  "\.(?:#{Auxiliary.file_extensions.join '|'})$"
+  def aux(pattern_method, check_file)
+    patterns = Auxiliary.new(@basename).send(pattern_method)
     @path.parent.children.map { |path| path.to_s.to_nfc }.select do |filepath|
-      filepath[/#{aux_pattern}/] && File.file?(filepath)
+      patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
+        check_file.call(filepath)
     end
   end
 
+  def aux_files
+    aux(:file_patterns, proc { |filename| File.file?(filename) })
+  end
+
   def aux_directories
-    name_escaped = Regexp.escape(File.basename(@path).sub(/\.tex$/, ''))
-    aux_pattern = "(?:#{Auxiliary.directory_prefixes.join '|'})" \
-                  "#{name_escaped.gsub('\\ ', '[_-]')}$"
-    @path.parent.children.map { |path| path.to_s.to_nfc }.select do |filepath|
-      filepath[/#{aux_pattern}/] && File.directory?(filepath)
-    end
+    aux(:directory_patterns, proc { |filename| File.directory?(filename) })
   end
 end
 

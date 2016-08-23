@@ -44,8 +44,8 @@ from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
 from io import open
 from os import chdir, getcwd, getenv, putenv, remove, EX_OSFILE  # noqa
-from os.path import (dirname, exists, getmtime, isfile, normpath, realpath,
-                     splitext)
+from os.path import (basename, dirname, exists, getmtime, isfile, normpath,
+                     realpath, splitext)
 from pickle import load, dump
 from pipes import quote as shellquote
 from re import match, search
@@ -57,7 +57,7 @@ try:
 except ImportError:
     from urllib import quote  # Python 2
 
-from auxiliary import remove_auxiliary_files, remove_cache_files
+from auxiliary import remove_auxiliary_files
 from gutter import update_marks
 from parsing import (BibTexParser, BiberParser, ChkTexParser, LaTexParser,
                      MakeGlossariesParser, MakeIndexParser, LaTexMkParser)
@@ -1032,8 +1032,10 @@ if __name__ == '__main__':
         tex_status, fatal_error, number_errors, number_warnings = status
 
     elif command == 'clean':
-        remove_cache_files()
         removed_files = remove_auxiliary_files()
+        # Filter out bundle cache file (`.filename.lb`)
+        removed_files = [filepath for filepath in removed_files
+                         if not basename(filepath).startswith('.')]
         if removed_files:
             for removed_file in removed_files:
                 print('<p class"info">Removed {}</p>'.format(removed_file))

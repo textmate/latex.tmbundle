@@ -286,8 +286,6 @@ sub main_loop {
 sub clean_up {
     debug_msg("Cleaning up");
     fail_unless_system( "clean.rb", "$filepath" );
-    # Remove LaTeX bundle cache file
-    unlink("$absolute_wd/\.$name.lb");
     $cleanup_viewer->() if defined $cleanup_viewer;
     if ( defined($progressbar_pid) ) {
         debug_msg("Closing progress bar window as part of cleanup");
