@@ -1,5 +1,10 @@
 #!/usr/bin/ruby
 
+# Fix environment variable for command “Run DocTest”
+ENV['TM_BUNDLE_SUPPORT'] = File.expand_path(
+  File.dirname(File.dirname(__FILE__))
+)
+
 # -- Imports -------------------------------------------------------------------
 
 require 'fileutils'
