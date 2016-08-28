@@ -41,8 +41,8 @@ class ArgumentParser
   #
   # The function returns a string containing the path of an existing file if
   #
-  #   - +arguments+ is empty or
-  #   - +arguments+ contains only a single element that represents a valid path.
+  # - +arguments+ is empty or
+  # - +arguments+ contains only a single element that represents a valid path.
   #
   # If +arguments+ contains a path that does not exist, then the function
   # aborts program execution. The function also stops program execution if the
