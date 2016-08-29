@@ -8,6 +8,7 @@ ENV['TM_BUNDLE_SUPPORT'] = File.expand_path(
 # -- Imports -------------------------------------------------------------------
 
 require 'fileutils'
+require 'find'
 require 'optparse'
 require 'pathname'
 require 'yaml'
@@ -242,10 +243,8 @@ class Dir
   #      (aux_files + aux_directories).sort
   #   => true
   def delete_aux
-    files_to_remove = aux_files.map { |filename| File.join(self, filename) }
-    dirs_to_remove = aux_directories.map { |dir| File.join(self, dir) }
-    (FileUtils.rm(files_to_remove, :force => true) +
-     FileUtils.rm_rf(dirs_to_remove)).sort
+    (FileUtils.rm(aux_files, :force => true) +
+     FileUtils.rm_rf(aux_directories)).sort
   end
 
   private
@@ -253,9 +252,9 @@ class Dir
   def aux(pattern_method, check_file)
     patterns = Auxiliary.new('FILENAME').send(pattern_method)
     patterns.map { |pattern| pattern.gsub!('FILENAME', '.+') }
-    entries.map(&:to_nfc).select do |filename|
-      patterns.any? { |pattern| filename =~ /#{pattern}/x } &&
-        check_file.call(File.join(self, filename))
+    Find.find(path).map(&:to_nfc).select do |filepath|
+      patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
+        check_file.call(filepath)
     end
   end
 
@@ -329,7 +328,7 @@ class TeXFile
 
   def aux(pattern_method, check_file)
     patterns = Auxiliary.new(@basename).send(pattern_method)
-    @path.parent.children.map { |path| path.to_s.to_nfc }.select do |filepath|
+    Find.find(@path.parent).map { |path| path.to_s.to_nfc }.select do |filepath|
       patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
         check_file.call(filepath)
     end
