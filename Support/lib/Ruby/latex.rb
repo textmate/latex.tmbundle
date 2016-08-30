@@ -444,7 +444,7 @@ module LaTeX
     #
     #  >> entries = ['@string { show = "Gravity Falls" }',
     #                '@string { characters =
-    #                          "Dipper, Mabel, Stan, Soos, Wendy, Waddles" }',
+    #                           "Dipper, Mabel, Stan, Soos, Wendy, Waddles" }',
     #                '@misc { key, author = {Author}}']
     #  >> variables = LaTeX.bib_variables(entries)
     #  >> variables['show']
