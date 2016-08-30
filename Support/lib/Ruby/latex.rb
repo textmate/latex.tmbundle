@@ -38,7 +38,7 @@ module LaTeX
     opts = {}
     File.foreach(filepath).first(20).each do |line|
       opts[Regexp.last_match[1]] = Regexp.last_match[2] if
-        line =~ /^\s*%\s*!T[e|E]X\s*(\S+)\s*=\s*(.+)\s*$/
+        line =~ /^\s*%\s*!T[eE]X\s*(\S+)\s*=\s*(.+)\s*$/
     end
     opts
   end
