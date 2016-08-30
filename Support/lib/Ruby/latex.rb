@@ -329,17 +329,17 @@ module LaTeX
     #     '/Library/TeX/Root/texmf-dist/tex/latex/wordcount/wordcount.tex'
     #  >> LaTeX.find_file(absolute_path, 'tex', '')
     #  => absolute_path
+    #
+    #  doctest: Locate bibliography file located in TeX tree
+    #
+    #  >> LaTeX.find_file('sample', 'bib', '').end_with?('gloss/sample.bib')
+    #  => true
     def find_file(filepath, extension, directory)
-      filepath.delete!('"')
-      filepath_no_ext = filepath.sub(/\.#{extension}$/, '')
-      # Try the filepath with and without extension
-      paths = [filepath_no_ext, "#{filepath_no_ext}.#{extension}"]
-      paths.concat(paths.map { |name| File.join(directory, name) })
+      filepath = filepath.delete('"').sub(/\.#{extension}$/, '') + \
+                 ".#{extension}"
+      paths = [filepath, File.join(directory, filepath)]
       paths.each { |path| return path if file?(path) }
-      # If filepath specifies an absolute path and we did not find it in the
-      # code above, then file does not exist. If the path is not absolute we
-      # try to locate the file via +kpsewhich+.
-      filepath =~ %r{^/} ? nil : find_file_kpsewhich(filepath)
+      find_file_kpsewhich(filepath)
     end
 
     # Processes a bib file and return an array of citation objects.
