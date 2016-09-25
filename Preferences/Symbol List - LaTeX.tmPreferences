@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>name</key>
-	<string>Symbol List</string>
+	<string>Symbol List: LaTeX</string>
 	<key>scope</key>
 	<string>text.tex.latex meta.function.section.*.latex</string>
 	<key>settings</key>

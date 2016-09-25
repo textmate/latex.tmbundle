@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>name</key>
-	<string>Miscellaneous</string>
+	<string>Indentation</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>settings</key>
