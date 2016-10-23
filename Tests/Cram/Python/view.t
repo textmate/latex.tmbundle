@@ -4,12 +4,11 @@
   $ source ../../lib/setup_cram.sh
   $ cd ../../TeX/
 
-  $ TM_FILEPATH="external_bibliography.tex"
+  $ export TM_FILEPATH="external_bibliography.tex"
 
 Generate the PDF
 
-  $ makeindex "$TM_FILEPATH" >/dev/null 2>&1
-  $ pdflatex "$TM_FILEPATH" >/dev/null 2>&1
+  $ pdflatex "$TM_FILEPATH" > /dev/null 2>&1
 
 -- Tests ----------------------------------------------------------------------
 
@@ -32,5 +31,3 @@ Restore the file changes made by previous commands.
 Remove the generated files
 
   $ rm -f *.ilg *.ind *.pdf
-
-
