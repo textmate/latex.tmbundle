@@ -30,9 +30,7 @@ class Preferences(object):
             True
 
         """
-        tm_identifier = (
-            getenv('TM_APP_IDENTIFIER') if getenv('TM_APP_IDENTIFIER') else
-            'com.macromates.textmate')
+        tm_identifier = getenv('TM_APP_IDENTIFIER', 'com.macromates.textmate')
         CFPreferencesAppSynchronize(tm_identifier)
 
         self.default_values = {
