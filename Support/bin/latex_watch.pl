@@ -108,19 +108,9 @@ main_loop();
             );
         }
 
-        if ($TM_APP_IDENTIFIER) {
-            $prefs_file = "$HOME/Library/Preferences/$TM_APP_IDENTIFIER.plist";
-        }
-        else {
-            # Guess the location of the current preference file outside of
-            # TextMate. The following path is the usual location for the
-            # preview version of TextMate (2.0-beta).
-            $prefs_file =
-                "$HOME/Library/Preferences/"
-              . "com.macromates.textmate.preview.plist";
-        }
-
-        $prefs = NSDictionary->dictionaryWithContentsOfFile_($prefs_file);
+        $TM_APP_IDENTIFIER ||= "com.macromates.textmate";
+        $prefs_file = "$HOME/Library/Preferences/$TM_APP_IDENTIFIER.plist";
+        $prefs      = NSDictionary->dictionaryWithContentsOfFile_($prefs_file);
     }
 
     sub getPreference {
