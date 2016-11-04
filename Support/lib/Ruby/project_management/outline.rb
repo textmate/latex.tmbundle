@@ -152,8 +152,9 @@ module Outline
     # Try to get a outline point — containing url, line number, section and
     # the text of the section — from a single line of text.
     def outline_point_from_line(line, url, linenumber)
-      [url, linenumber, Regexp.last_match[1], Regexp.last_match[2] ||
-        Regexp.last_match[3]] if line.match(PART_REGEX)
+      return unless line.match(PART_REGEX)
+      [url, linenumber, Regexp.last_match[1],
+       Regexp.last_match[2] || Regexp.last_match[3]]
     end
 
     # Try to get outline points from a file referenced in a line of text.
