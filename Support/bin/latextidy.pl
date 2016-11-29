@@ -196,7 +196,26 @@ foreach $piece (@pieces) {
 
 }
 
-	print $string;
+# At this point each \label appears on a line of its own.
+# This hack is designed to restore \labels next to \begin, \end and suchlike
+# so that code folding leaves the \label visible.
+my $option = '(\[[^\]]*\][ \t]*)';
+my $arg = '({[^}]*}[ \t]*)';
+$string =~ s/(?<argument>${arg})
+		(?<newline_then_indent>\n[ \t]*)
+		(?<options_then_labels>${option}*(\\label[ \t]*${option}?${arg})+)
+		\n?[ \t]*
+	/$+{argument}$+{options_then_labels}$+{newline_then_indent}/mgx;
+$string =~ s/(?<labels>(\\label[ \t]*${option}?${arg})+)
+		(?<newline_then_indent>\n[ \t]*)
+		(?<end_argument>\\end{[^}]*})
+	/$+{newline_then_indent}$+{labels}$+{end_argument}/mgx;
+$string =~ s/(?<labelled_section>\\section.*(\\label[ \t]*${option}?${arg})+)
+		(?<paragraph>\S)
+	/$+{labelled_section}\n$+{paragraph}/mgx;
+# End of hack
+
+print $string;
 
 #(0.1) First version works. It indents LaTeX more or less correctly.
 #(0.2) Added a big list of LaTeX words to check. Squashed bug losing double lines. Handles comments. Handles sections, more or less. (5/3/02)
