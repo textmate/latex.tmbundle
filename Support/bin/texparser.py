@@ -102,6 +102,7 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
                                        universal_newlines=True)
     return int(notification_output)
 
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':

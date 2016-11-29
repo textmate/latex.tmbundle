@@ -210,6 +210,7 @@ def create_viewdoc_link(file_path, description,
             r"""'\'{}/bin/viewDoc.sh\' {}', null);">{}</a>""".format(
                 tm_bundle_support, file_path, description))
 
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':

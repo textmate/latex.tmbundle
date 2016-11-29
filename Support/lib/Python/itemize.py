@@ -137,6 +137,7 @@ def itemize(text, use_spaces_to_indent=True, number_of_spaces_for_indent=4,
         environment_indent, 'description' if description_environment
         else 'itemize', '\n\n'.join(items))
 
+
 # -- Main ---------------------------------------------------------------------
 
 if __name__ == '__main__':
