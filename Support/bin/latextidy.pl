@@ -213,6 +213,9 @@ $string =~ s/(?<labels>(\\label[ \t]*${option}?${arg})+)
 $string =~ s/(?<labelled_section>\\section.*(\\label[ \t]*${option}?${arg})+)
 		(?<paragraph>\S)
 	/$+{labelled_section}\n$+{paragraph}/mgx;
+# Add blank lines before \sections and \subsections
+$string =~ s/(?<=\S)[ \t]*(?:\n[ \t]*){0,2}(\\section)/\n\n\n$1/mg;
+$string =~ s/(?<=\S)[ \t]*(?:\n[ \t]*){0,1}(\\subsection)/\n\n$1/mg;
 # End of hack
 
 print $string;
