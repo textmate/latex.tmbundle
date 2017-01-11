@@ -8,7 +8,7 @@ require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/indent'
 # -- Class ---------------------------------------------------------------------
 
 # This class represents a LaTeX table.
-# rubocop:disable Metrics/ClassLength
+# rubocop: disable Metrics/ClassLength
 class Table
   # This function initializes a new LaTeX table.
   #
@@ -133,7 +133,7 @@ class Table
     create_array(rows, indentation, insertion_point)
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop: disable Metrics/AbcSize
   def create_array(rows, indentation, insertion_point)
     Array.new(rows) do |row|
       row += @full_table ? 2 : 1

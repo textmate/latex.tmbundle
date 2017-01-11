@@ -56,7 +56,7 @@ end
 # A section acts the same way as a strings. The class implements additional
 # methods that allows us to take the order of a section into account.
 class Section < String
-  # rubocop:disable Style/ClassVars
+  # rubocop: disable Style/ClassVars
   @@parts = %w(part chapter section subsection subsubsection paragraph
                subparagraph)
 

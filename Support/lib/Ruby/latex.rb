@@ -7,7 +7,7 @@ require 'shellwords'
 #
 # Authors:: Charilaos Skiadas, René Schwaiger
 #
-# rubocop:disable Metrics/ModuleLength
+# rubocop: disable Metrics/ModuleLength
 module LaTeX
   # Parse any %!TEX options in the first 20 lines of the file.
   #
@@ -734,7 +734,7 @@ module LaTeX
   #              - the regex match and
   #              - the content of the file.
   #
-  # rubocop:disable Metrics/ClassLength
+  # rubocop: disable Metrics/ClassLength
   class FileScanner
     attr_accessor :root, :includes, :extractors
 
@@ -903,7 +903,7 @@ module LaTeX
         end
       end
 
-      # rubocop:disable Metrics/AbcSize
+      # rubocop: disable Metrics/AbcSize
       def add_bibliography_scan(scanner)
         # We ignore bibliography files located on Windows drives by not
         # +matching+ any path which starts with a single letter followed by a
