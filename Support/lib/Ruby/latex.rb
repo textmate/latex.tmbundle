@@ -214,9 +214,21 @@ module LaTeX
     #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
     #  >> LaTeX.citations.length
     #  => 5
+    #
+    #  doctest: Retrieve the citations of the file 'missing_cite_key.tex'.
+    #
+    #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/missing_cite_key.tex'
+    #  >> LaTeX.citations.length
+    #  => 1
     def citations
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-      FileScanner.cite_scan(master_file).sort_by(&:citekey)
+      # We filter citations without cite key. While BibDesk will not allow you
+      # to save such broken citations, JabRef allows you to save entries without
+      # a key.
+      valid_citations = FileScanner.cite_scan(master_file).reject do |citation|
+        citation.citekey.nil?
+      end
+      valid_citations.sort_by(&:citekey)
     end
 
     # Returns an array of the citekeys for the current master file.
