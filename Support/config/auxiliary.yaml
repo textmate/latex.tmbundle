@@ -58,7 +58,8 @@ files:
                  run\.xml|
                  snm|
                  synctex\.gz|
-                 toc)$'
+                 toc|
+                 vrb)$'
 
 directories:
   - pythontex-files-${NAME/ /-/}
