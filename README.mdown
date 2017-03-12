@@ -12,13 +12,13 @@ If there are some changes that you want to test immediately, then please follow 
 2. Open Terminal
 3. Go to the bundle folder:
 
-    ```bash
+    ```sh
     cd ~/Library/Application\ Support/TextMate/Managed/Bundles
     ```
 
 4. Clone the repository:
 
-    ```bash
+    ```sh
     git clone https://github.com/textmate/latex.tmbundle.git
     ```
 
