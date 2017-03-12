@@ -22,7 +22,7 @@ If there are some changes that you want to test immediately, then please follow 
     git clone https://github.com/textmate/latex.tmbundle.git
     ```
 
-5. Restart TextMate (<kbd>^⌘Q</kbd>) to make sure it registered the changes
+5. Restart TextMate (<kbd>^</kbd> + <kbd>⌘</kbd> + <kbd>Q</kbd>) to make sure it registered the changes
 
 # Feedback
 
