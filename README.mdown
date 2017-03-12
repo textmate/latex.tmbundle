@@ -26,7 +26,7 @@ If there are some changes that you want to test immediately, then please follow 
 
 # Feedback
 
-Before you report an issue please read [this](http://kb.textmate.org/writing_bug_reports). You can report bugs or feature request via the [issue tracker](https://github.com/textmate/latex.tmbundle/issues). If you have a more general problem, then please use the [mailing list](http://lists.macromates.com/listinfo/textmate).
+Before you report an issue please read the [ FAQ](http://github.com/textmate/latex.tmbundle/wiki/FAQ). You can report bugs or feature request via the [issue tracker](https://github.com/textmate/latex.tmbundle/issues). If you have a more general problem, then please use the [mailing list](http://lists.macromates.com/listinfo/textmate).
 
 # Contribute
 
