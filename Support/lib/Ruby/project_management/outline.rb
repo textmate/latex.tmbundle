@@ -57,8 +57,8 @@ end
 # methods that allows us to take the order of a section into account.
 class Section < String
   # rubocop: disable Style/ClassVars
-  @@parts = %w(part chapter section subsection subsubsection paragraph
-               subparagraph)
+  @@parts = %w[part chapter section subsection subsubsection paragraph
+               subparagraph]
 
   # Get the number of levels from the current to the given section.
   #
