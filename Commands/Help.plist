@@ -14,7 +14,7 @@
 
 html_header "LaTeX Bundle Help" "LaTeX"
 echo "&lt;meta http-equiv='refresh' content='0; 
-      file:///${TM_BUNDLE_SUPPORT}/Help/Help.pdf'&gt;"
+      file:///${TM_BUNDLE_SUPPORT}/help/Help.pdf'&gt;"
 html_footer
 </string>
 	<key>input</key>
