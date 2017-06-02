@@ -354,7 +354,7 @@ end
 
 # -- Main ----------------------------------------------------------------------
 
-if __FILE__ == $PROGRAM_NAME
+if $PROGRAM_NAME == __FILE__
   location = ArgumentParser.parse(ARGV)
   tex_location = if File.directory?(location) then Dir.new(location)
                  else TeXFile.new(location)
