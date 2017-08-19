@@ -1,0 +1,83 @@
+language: generic
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode8.3
+    - os: osx
+      osx_image: xcode7.3
+    - os: osx
+      osx_image: xcode6.4
+
+before_install:
+
+  # ==========
+  # = Python =
+  # ==========
+
+  - pyenv install --list
+  - pyenv install 3.4.3; pyenv global 3.4.3; eval "$(pyenv init -)"
+  - pip install cram flake8 nose tox
+  # We manually add the Python binary path, since `flake8` on macOS 10.10 is
+  # not installed in `~/.pyenv/shims`
+  - export PATH=$PATH:"$HOME/.pyenv/versions/3.4.3/bin"
+
+  # ========
+  # = Ruby =
+  # ========
+
+  - rvm list
+  - rvm install 2.4.1; rvm use 2.4.1
+  - gem install rubydoctest rubocop
+
+  # ========
+  # = Perl =
+  # ========
+
+  - curl -L http://cpanmin.us | perl - App::cpanminus
+  - export PATH=$PATH:"$HOME/perl5/bin"
+  - export PERL5LIB="$HOME/perl5/lib/perl5"
+  - cpanm Perl::Critic
+
+  # =======
+  # = TeX =
+  # =======
+
+  - curl -L http://tug.org/cgi-bin/mactex-download/BasicTeX.pkg -O
+  - sudo installer -pkg BasicTeX.pkg -target /
+  - export PATH=$PATH:/Library/TeX/texbin:/usr/texbin
+  - sudo tlmgr update --self
+  - sudo tlmgr install latexmk
+
+  # ================
+  # = Applications =
+  # ================
+
+  - brew cask install skim
+
+  # ============
+  # = TextMate =
+  # ============
+
+  - brew cask install textmate
+  - open /Applications/TextMate.app
+
+  - mkdir -p "$HOME/bin"
+  - cd "$HOME/bin"
+  - curl -L http://updates.textmate.org/gtm.bz2 -O
+  - bzip2 -d gtm.bz2
+  - chmod u+x gtm
+
+  - cd "$HOME/Library/Application Support"
+  - mkdir -p TextMate; cd TextMate
+  - mkdir -p Managed; cd Managed
+  - mkdir -p Bundles; cd Bundles
+  - git clone https://github.com/textmate/java.tmbundle.git
+  - git clone https://github.com/textmate/javadoc.tmbundle.git
+  - git clone https://github.com/textmate/r.tmbundle.git
+
+before_script:
+  - cd "$TRAVIS_BUILD_DIR"
+
+script:
+  - make checkstyle cramtests perltests
