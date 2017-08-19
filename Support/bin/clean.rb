@@ -337,9 +337,11 @@ class TeXFile
 
   def aux(pattern_method, check_file)
     patterns = Auxiliary.new(@basename).send(pattern_method)
-    Find.find(@path.parent).map { |path| path.to_s.to_nfc }.select do |filepath|
-      patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
-        check_file.call(filepath)
+    Dir.chdir(@path.parent) do
+      Dir['**/*'].map { |path| path.to_s.to_nfc }.select do |filepath|
+        patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
+          check_file.call(filepath)
+      end
     end
   end
 
