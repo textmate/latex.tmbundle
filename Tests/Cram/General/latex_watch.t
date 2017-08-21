@@ -21,9 +21,9 @@ Run `latex_watch` and check if the log output of the command looks correct.
   > else
   >   latex_watch.pl -d --textmate-pid=${TM_PID} "${TEXFILE}" > "${LOGFILE}" &
   > fi
-  $ sleep 9
-  $ pkill -n perl
-  $ sleep 1 # Wait for `latex_watch` to close
+  $ sleep 10 # Wait until `latex_watch` translated the document
+  $ pkill -n perl # Close `latex_watch`
+  $ sleep 1 # Wait until `latex_watch` terminates
   $ grep 'Output written' "${LOGFILE}" > /dev/null
   $ grep -E 'Executing\s+check_open' "${LOGFILE}" > /dev/null
 
