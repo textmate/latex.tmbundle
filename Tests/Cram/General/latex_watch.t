@@ -15,7 +15,12 @@
 
 Run `latex_watch` and check if the log output of the command looks correct.
 
-  $ latex_watch.pl -d --textmate-pid=${TM_PID} "${TEXFILE}" > "${LOGFILE}" &
+  $ if [[ $(uname -r | cut -d "." -f 1) == 15 ]]; then # macOS 10.11
+  >   latex_watch.pl -d --textmate-pid=${TM_PID} "${TEXFILE}" > "${LOGFILE}" \
+  >     2> /dev/null  &
+  > else
+  >   latex_watch.pl -d --textmate-pid=${TM_PID} "${TEXFILE}" > "${LOGFILE}" &
+  > fi
   $ sleep 9
   $ pkill -n perl
   $ sleep 1 # Wait for `latex_watch` to close
