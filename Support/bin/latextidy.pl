@@ -88,7 +88,7 @@ foreach (@pieces){
 #Put @keywords on their own line.
 
 	foreach $keyword (@keywords) {
-		s/(\\$keyword)/\n$1/g;
+		s/\\$keyword\b/\n$&/g;
 	}
 
 #Newlines before each \begin and \end. After each \end{}
