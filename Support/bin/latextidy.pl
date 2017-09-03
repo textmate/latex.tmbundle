@@ -149,6 +149,11 @@ foreach (@pieces){
 
 	s/(\\item)(.*?)(\\item)/$1$2\n$3/g;
 	s/(\\item)/\n$1/g;
+	
+#Newlines before each \bibitem.
+
+	s/(\\bibitem)(.*?)(\\bibitem)/$1$2\n$3/g;
+	s/(\\bibitem)/\n$1/g;
 
 #\n before each \[  and after each \]
 #Add newlines after all "\\" and "\\[...]"
