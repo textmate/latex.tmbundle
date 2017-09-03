@@ -156,12 +156,12 @@ foreach (@pieces){
 	s/(\\bibitem)/\n$1/g;
 
 #\n before each \[  and after each \]
-#Add newlines after all "\\" and "\\[...]"
+#Add newlines after all "\\", "\cr", and "\\[...]"
 
 	s/[^\\](\\\[)/\n$1/g;
 	s/(\\\])/$1\n/g;
 
-	s/(\\\\)\s/$1\n/g;
+	s/(\\\\|\\cr)\s/$1\n/g;
 	s/(\\\\\[)(.*?)(\])\s/$1$2$3\n/g;
 
 
