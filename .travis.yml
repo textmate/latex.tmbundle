@@ -81,4 +81,4 @@ before_script:
   - cd "$TRAVIS_BUILD_DIR"
 
 script:
-  - make checkstyle cramtests perltests
+  - make checkstyle cramtests perltests rubydoctests
