@@ -3,12 +3,14 @@
 # LaTeXTidy (c) 2004 by Eric Hsu <textmate@betterfilecabinet.com>.
 
 # Little Perl script to neaten up the format of LaTeX files.
-# This will be simple and naive. This takes STDIN .tex files and prints to STDOUT.
+# This will be simple and naive. This takes STDIN .tex files and prints to
+# STDOUT.
 # Check your file! Backup! No guarantees!
 
 # License
 # -------
-# This is released as Niceware, which is like the Perl Artistic License, except you have to be nice to me when you criticize the code.
+# This is released as Niceware, which is like the Perl Artistic License, except
+# you have to be nice to me when you criticize the code.
 
 # General Idea
 # ------------
@@ -118,25 +120,25 @@ my $keyword;
 
 foreach (@pieces) {
 
-    # Every comment is left as is. 	But ignore % that are immediately preceded by \
+    # Every comment is left as is. Ignore % that are immediately preceded by \
     if (/^\s*(?<!\\)\%/) {
         $string .= $_ . "\n";
         next;
     }
 
-    #Eat all single newlines.
+    # Eat all single newlines.
 
     s/\s+/ /g;
 
-    #Put @keywords on their own line.
+    # Put @keywords on their own line.
 
     foreach $keyword (@keywords) {
         s/\\$keyword\b/\n$&/g;
     }
 
-    #Newlines before each \begin and \end. After each \end{}
-    #We want to ignore begin and end document, since those shouldn't
-    #induce additional indenting
+    # Newlines before each \begin and \end. After each \end{}
+    # We want to ignore begin and end document, since those shouldn't
+    # induce additional indenting
 
     s/([^\\]\%)/\n$1/g;
 
@@ -144,18 +146,18 @@ foreach (@pieces) {
     s/(\\end\{)((?!document).*?)(\})/\n$1$2$3\n/g;
     s/(\\begin\{array\})\n(\{)(.*?)(\})/\n$1$2$3$4\n/g;
 
-    #Newlines before each \item.
+    # Newlines before each \item.
 
     s/(\\item)(.*?)(\\item)/$1$2\n$3/g;
     s/(\\item)/\n$1/g;
 
-    #Newlines before each \bibitem.
+    # Newlines before each \bibitem.
 
     s/(\\bibitem)(.*?)(\\bibitem)/$1$2\n$3/g;
     s/(\\bibitem)/\n$1/g;
 
-    #\n before each \[  and after each \]
-    #Add newlines after all "\\", "\cr", and "\\[...]"
+    # \n before each \[  and after each \]
+    # Add newlines after all "\\", "\cr", and "\\[...]"
 
     s/[^\\](\\\[)/\n$1/g;
     s/(\\\])/$1\n/g;
@@ -163,11 +165,11 @@ foreach (@pieces) {
     s/(\\\\|\\cr)\s/$1\n/g;
     s/(\\\\\[)(.*?)(\])\s/$1$2$3\n/g;
 
-    # nuke accidentally added double newlines.
+    # Nuke accidentally added double newlines.
 
     s/\n\s*\n/\n/g;
 
-    # collect the cleaned string.
+    # Collect the cleaned string.
 
     s/^\n//;
     chomp;
@@ -180,8 +182,8 @@ foreach (@pieces) {
 $string =~ s/\n\s+\n/\n\n/g;
 
 # We will soon mark the \end and \begin keywords, but we want to ignore ones
-# found as comments. Hence we'll (awful kludge) wedge in a \{\n\n\n\} to commented
-# \begin and \end to avoid their processing.
+# found as comments. Hence we'll (awful kludge) wedge in a \{\n\n\n\} to
+# commented \begin and \end to avoid their processing.
 # We'll fix them right after the pieces are split.
 
 $string =~ s/(\%[^\n]*)(\\)(end)/$1$2\{\n\n\n\}$3/g;
@@ -211,7 +213,7 @@ $string = "";
 
 foreach $piece (@pieces) {
 
-    #first, is this a begin block, or after an end block?
+    # First, is this a begin block, or after an end block?
 
     $piece =~ s/\{\n\n\n\}//g;    #get rid of awful kludge.
     $piece =~ /^\\(.*?)\{/;
@@ -222,13 +224,13 @@ foreach $piece (@pieces) {
         $indent--;
     }
 
-    # each piece is split on \n. these pieces must begin with $indent tabs.
+    # Each piece is split on \n. these pieces must begin with $indent tabs.
     # We need to avoid combining comment lines with others.
 
     @lines = split( /\n/, $piece );
 
     foreach (@lines) {
-        s/^\s+//;    #no leading whitespace
+        s/^\s+//;    # No leading whitespace
         if (/^\\begin/i) {
             for ( $i = 1 ; $i <= $indent - 1 ; $i++ ) {
                 $string .= "\t";
@@ -270,15 +272,17 @@ $string =~ s/(?<=\S)[ \t]*(?:\n[ \t]*){0,1}(\\subsection)/\n\n$1/mg;
 
 print $string;
 
-#(0.1) First version works. It indents LaTeX more or less correctly.
-#(0.2) Added a big list of LaTeX words to check. Squashed bug losing double lines. Handles comments. Handles sections, more or less. (5/3/02)
-#(0.21) Pushed keywords out to its own array. Added some more keywords. (5/4/02)
-#(0.22) Trying to ignore comments.
-#(0.23) Trying to port it to BBEdit.
-#(0.3) Now for TextMate.
-#(0.31) Neating the code so strict mode doesn't complain as much.
+# (0.1)  First version works. It indents LaTeX more or less correctly.
+# (0.2)  Added a big list of LaTeX words to check. Squashed bug losing double
+#        lines. Handles comments. Handles sections, more or less. (5/3/02)
+# (0.21) Pushed keywords out to its own array. Added some more keywords.
+#        (5/4/02)
+# (0.22) Trying to ignore comments.
+# (0.23) Trying to port it to BBEdit.
+# (0.3)  Now for TextMate.
+# (0.31) Neating the code so strict mode doesn't complain as much.
 
 # To Do.
 # Not catching \usecommand!
 #  Take all such \sections
-# 	and give the header a line of its own?
+#  and give the header a line of its own?
