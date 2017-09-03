@@ -26,40 +26,83 @@ while (<STDIN>) {
 }
 
 my @keywords = qw(
+	# LaTeX, AMX LaTeX, AMS TeX, Plain TeX
+	
+	(front|main|back)matter
+	(h|v)size
+	(new)?theoremstyle
+	(re)?new(theorem|environment|counter|font|line|page|command|symbol)
+	(small|med|big|par)skip
+	(special|sub|subsub|subsubsub)?section
+	address
 	appendix
 	author
-	bibliography
-	bigskip
+	bibliography(style)?
+	caption
+	centerline
 	chapter
+	contrib
+	curraddr
 	date
+	DeclareMathOperator
+	dedicatory
 	def
 	document
+	document(class|style)
+	email
+	end
 	evensidemargin
 	font
 	headheight
 	headsep
-	include
+	include(only)?
+	includegraphics
+	indent
 	index
-	make
-	new
+	input
+	keywords
+	loadmsam
+	loadmsbm
+	magnification
+	make(title|index)
 	noindent
+	numberwithin
 	oddsidemargin
-	page
+	page(style|break|numbering)
 	paragraph
 	part
-	ragged
-	renew
-	section
-	subsection
-	subsubsection
-	subsubsubsection
+	printbibliography
+	printindex
+	ragged(bottom|left|right)
+	set(counter|length|beamertemplate|beamercolor)
+	setto(width|height|depth)
+	subjclass
+	swapnumbers
 	table
-	textheight
-	textwidth
+	text(height|width)
+	thanks
 	title
 	topmargin
-	use
-	vfil
+	translator
+	urladdr
+	use(package|box|counter|command)
+	UseAMSsymbols
+	vfill?
+	
+	# TikZ
+	
+	clip
+	coordinate
+	draw
+	fill
+	filldraw
+	foreach
+	node
+	path
+	shade
+	tikz(aliascoordinatesystem|declarecoordinatesystem|set|setnextfilename|style)
+	use(asboundingbox|tikzlibrary)
+	
 );
 
 # Let's ignore all comments in the following way. We first find all \%(.*?)\n.
