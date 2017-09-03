@@ -33,6 +33,9 @@
 # bundle. This will lead to errors since `latex_watch` expects that
 # `TM_BUNDLE_SUPPORT` is set “correctly”.
 export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
+# We need to export `TM_SUPPORT_PATH` if we test the code outside of TextMate
+BUNDLE_DIR = $(HOME)/Library/Application Support/TextMate/Managed/Bundles
+export TM_SUPPORT_PATH = $(BUNDLE_DIR)/Bundle Support.tmbundle/Support/shared
 
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib
