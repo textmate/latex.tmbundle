@@ -264,8 +264,8 @@ module LaTeX
     #
     # doctest: Get the path of the tex binaries.
     #
-    #  >> LaTeX.tex_path
-    #  => "/Library/TeX/texbin/"
+    #  >> ['/Library/TeX/texbin/', ''].include? LaTeX.tex_path
+    #  => true
     def tex_path
       # First try directly
       return '' if ENV['PATH'].split(':').find do |dir|
