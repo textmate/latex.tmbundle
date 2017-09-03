@@ -27,7 +27,6 @@
 #   must each take the match object as well as the current line as a parameter.
 #
 #   Original Author: Brad Miller
-#   Modified by:     René Schwaiger (sanssecours@f-m.fm)
 # -----------------------------------------------------------------------------
 
 # -- Imports ------------------------------------------------------------------

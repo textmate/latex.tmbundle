@@ -1,6 +1,4 @@
 # ------------------------------------------------------------------------------
-# Author: René Schwaiger (sanssecours@f-m.fm)
-#
 # The following code is used by `latexmk` when typesetting a file.
 # This code will be invoked by
 #   - “Watch Document” and

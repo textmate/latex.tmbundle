@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# Authors: Brad Miller
-#          René Schwaiger (sanssecours@f-m.fm)
+# Author: Brad Miller
 # -----------------------------------------------------------------------------
 
 """This module contains various functions for handling tex data."""

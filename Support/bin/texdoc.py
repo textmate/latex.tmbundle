@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# Authors: Brad Miller
-#          René Schwaiger (sanssecours@f-m.fm)
+# Author: Brad Miller
 # -----------------------------------------------------------------------------
 
 """Display documentation for tex packages.

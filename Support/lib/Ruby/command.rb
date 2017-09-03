@@ -1,7 +1,6 @@
 # Various code used by the commands of the LaTeX bundle
 #
-# Authors:: Charilaos Skiadas, Michael Sheets,
-#           René Schwaiger (sanssecours@f-m.fm)
+# Authors:: Charilaos Skiadas, Michael Sheets
 
 # -- Imports -------------------------------------------------------------------
 

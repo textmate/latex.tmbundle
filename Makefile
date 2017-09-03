@@ -1,6 +1,4 @@
 # ------------------------------------------------------------------------------
-# Author: René Schwaiger (sanssecours@f-m.fm)
-#
 #                   Run various tests for this bundle
 #
 # To execute the tests:
