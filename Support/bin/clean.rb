@@ -11,9 +11,17 @@ require 'fileutils'
 require 'find'
 require 'optparse'
 require 'pathname'
+require 'rubygems'
 require 'yaml'
 
-require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/lib/unf'
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new(2.2)
+  require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/lib/unf'
+else
+  # Ruby 2.2 already supports Unicode normalization
+  class String
+    alias to_nfc unicode_normalize
+  end
+end
 
 # -- Classes -------------------------------------------------------------------
 
