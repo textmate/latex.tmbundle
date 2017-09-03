@@ -107,6 +107,9 @@ my @keywords = qw(
 
 );
 
+my $indentation =
+  $ENV{'TM_SOFT_TABS'} eq 'YES' ? ' ' x $ENV{'TM_TAB_SIZE'} : "\t";
+
 # Let's ignore all comments in the following way. We first find all \%(.*?)\n.
 # Then we put a second \n at the end, and two leading \n
 # to ensure that they all land in
@@ -233,12 +236,12 @@ foreach $piece (@pieces) {
         s/^\s+//;    # No leading whitespace
         if (/^\\begin/i) {
             for ( $i = 1 ; $i <= $indent - 1 ; $i++ ) {
-                $string .= "\t";
+                $string .= $indentation;
             }
         }
         else {
             for ( $i = 1 ; $i <= $indent ; $i++ ) {
-                $string .= "\t";
+                $string .= $indentation;
             }
         }
         $string .= $_ . "\n";
