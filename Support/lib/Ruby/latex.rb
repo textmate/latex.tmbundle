@@ -331,20 +331,20 @@ module LaTeX
     #
     #  doctest: Get the location of a file located deep within the TeX tree
     #
-    #  >> filepath = LaTeX.find_file('wordcount.tex', 'tex', '')
-    #  >> filepath.end_with?('latex/wordcount/wordcount.tex')
+    #  >> filepath = LaTeX.find_file('utf8-test.tex', 'tex', '')
+    #  >> filepath.end_with?('latex/base/utf8-test.tex')
     #  => true
     #
     #  doctest: Get the location of a file specified via an absolute path
     #
     #  >> absolute_path =
-    #     '/Library/TeX/Root/texmf-dist/tex/latex/wordcount/wordcount.tex'
+    #     '/Library/TeX/Root/texmf-dist/tex/latex/base/utf8-test.tex'
     #  >> LaTeX.find_file(absolute_path, 'tex', '')
     #  => absolute_path
     #
     #  doctest: Locate bibliography file located in TeX tree
     #
-    #  >> LaTeX.find_file('sample', 'bib', '').end_with?('gloss/sample.bib')
+    #  >> LaTeX.find_file('xampl', 'bib', '').end_with?('bib/base/xampl.bib')
     #  => true
     def find_file(filepath, extension, directory)
       filepath = filepath.delete('"').sub(/\.#{extension}$/, '') + \
