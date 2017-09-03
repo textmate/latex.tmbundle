@@ -19,90 +19,90 @@
 # Newlines before each \item.
 # \n before each \[  and after each \]
 
-my $in="";
+my $in = "";
 
 while (<STDIN>) {
-	$in .= $_;
+    $in .= $_;
 }
 
 my @keywords = qw(
-	# LaTeX, AMX LaTeX, AMS TeX, Plain TeX
-	
-	(front|main|back)matter
-	(h|v)size
-	(new)?theoremstyle
-	(re)?new(theorem|environment|counter|font|line|page|command|symbol)
-	(small|med|big|par)skip
-	(special|sub|subsub|subsubsub)?section
-	address
-	appendix
-	author
-	bibliography(style)?
-	caption
-	centerline
-	chapter
-	contrib
-	curraddr
-	date
-	DeclareMathOperator
-	dedicatory
-	def
-	document
-	document(class|style)
-	email
-	end
-	evensidemargin
-	font
-	headheight
-	headsep
-	include(only)?
-	includegraphics
-	indent
-	index
-	input
-	keywords
-	loadmsam
-	loadmsbm
-	magnification
-	make(title|index)
-	noindent
-	numberwithin
-	oddsidemargin
-	page(style|break|numbering)
-	paragraph
-	part
-	printbibliography
-	printindex
-	ragged(bottom|left|right)
-	set(counter|length|beamertemplate|beamercolor)
-	setto(width|height|depth)
-	subjclass
-	swapnumbers
-	table
-	text(height|width)
-	thanks
-	title
-	topmargin
-	translator
-	urladdr
-	use(package|box|counter|command)
-	UseAMSsymbols
-	vfill?
-	
-	# TikZ
-	
-	clip
-	coordinate
-	draw
-	fill
-	filldraw
-	foreach
-	node
-	path
-	shade
-	tikz(aliascoordinatesystem|declarecoordinatesystem|set|setnextfilename|style)
-	use(asboundingbox|tikzlibrary)
-	
+  # LaTeX, AMX LaTeX, AMS TeX, Plain TeX
+
+  (front|main|back)matter
+  (h|v)size
+  (new)?theoremstyle
+  (re)?new(theorem|environment|counter|font|line|page|command|symbol)
+  (small|med|big|par)skip
+  (special|sub|subsub|subsubsub)?section
+  address
+  appendix
+  author
+  bibliography(style)?
+  caption
+  centerline
+  chapter
+  contrib
+  curraddr
+  date
+  DeclareMathOperator
+  dedicatory
+  def
+  document
+  document(class|style)
+  email
+  end
+  evensidemargin
+  font
+  headheight
+  headsep
+  include(only)?
+  includegraphics
+  indent
+  index
+  input
+  keywords
+  loadmsam
+  loadmsbm
+  magnification
+  make(title|index)
+  noindent
+  numberwithin
+  oddsidemargin
+  page(style|break|numbering)
+  paragraph
+  part
+  printbibliography
+  printindex
+  ragged(bottom|left|right)
+  set(counter|length|beamertemplate|beamercolor)
+  setto(width|height|depth)
+  subjclass
+  swapnumbers
+  table
+  text(height|width)
+  thanks
+  title
+  topmargin
+  translator
+  urladdr
+  use(package|box|counter|command)
+  UseAMSsymbols
+  vfill?
+
+  # TikZ
+
+  clip
+  coordinate
+  draw
+  fill
+  filldraw
+  foreach
+  node
+  path
+  shade
+  tikz(aliascoordinatesystem|declarecoordinatesystem|set|setnextfilename|style)
+  use(asboundingbox|tikzlibrary)
+
 );
 
 # Let's ignore all comments in the following way. We first find all \%(.*?)\n.
@@ -112,71 +112,68 @@ my @keywords = qw(
 
 $in =~ s/(?<!\\)\%(.*?)\n/\n\n\%$1\n\n/g;
 
-my @pieces = split(/\n\s*\n/, $in);
-my $string="";
+my @pieces = split( /\n\s*\n/, $in );
+my $string = "";
 my $keyword;
 
-foreach (@pieces){
+foreach (@pieces) {
 
-# Every comment is left as is. 	But ignore % that are immediately preceded by \
-	if (/^\s*(?<!\\)\%/) {
-		$string .= $_ . "\n" ;
-		next;
-	}
+    # Every comment is left as is. 	But ignore % that are immediately preceded by \
+    if (/^\s*(?<!\\)\%/) {
+        $string .= $_ . "\n";
+        next;
+    }
 
-#Eat all single newlines.
+    #Eat all single newlines.
 
-	s/\s+/ /g;
+    s/\s+/ /g;
 
-#Put @keywords on their own line.
+    #Put @keywords on their own line.
 
-	foreach $keyword (@keywords) {
-		s/\\$keyword\b/\n$&/g;
-	}
+    foreach $keyword (@keywords) {
+        s/\\$keyword\b/\n$&/g;
+    }
 
-#Newlines before each \begin and \end. After each \end{}
-#We want to ignore begin and end document, since those shouldn't
-#induce additional indenting
+    #Newlines before each \begin and \end. After each \end{}
+    #We want to ignore begin and end document, since those shouldn't
+    #induce additional indenting
 
-	s/([^\\]\%)/\n$1/g;
+    s/([^\\]\%)/\n$1/g;
 
+    s/(\\begin\{)((?!document).*?)(\})/\n$1$2$3\n/g;
+    s/(\\end\{)((?!document).*?)(\})/\n$1$2$3\n/g;
+    s/(\\begin\{array\})\n(\{)(.*?)(\})/\n$1$2$3$4\n/g;
 
-	s/(\\begin\{)((?!document).*?)(\})/\n$1$2$3\n/g;
-	s/(\\end\{)((?!document).*?)(\})/\n$1$2$3\n/g;
-	s/(\\begin\{array\})\n(\{)(.*?)(\})/\n$1$2$3$4\n/g;
+    #Newlines before each \item.
 
-#Newlines before each \item.
+    s/(\\item)(.*?)(\\item)/$1$2\n$3/g;
+    s/(\\item)/\n$1/g;
 
-	s/(\\item)(.*?)(\\item)/$1$2\n$3/g;
-	s/(\\item)/\n$1/g;
-	
-#Newlines before each \bibitem.
+    #Newlines before each \bibitem.
 
-	s/(\\bibitem)(.*?)(\\bibitem)/$1$2\n$3/g;
-	s/(\\bibitem)/\n$1/g;
+    s/(\\bibitem)(.*?)(\\bibitem)/$1$2\n$3/g;
+    s/(\\bibitem)/\n$1/g;
 
-#\n before each \[  and after each \]
-#Add newlines after all "\\", "\cr", and "\\[...]"
+    #\n before each \[  and after each \]
+    #Add newlines after all "\\", "\cr", and "\\[...]"
 
-	s/[^\\](\\\[)/\n$1/g;
-	s/(\\\])/$1\n/g;
+    s/[^\\](\\\[)/\n$1/g;
+    s/(\\\])/$1\n/g;
 
-	s/(\\\\|\\cr)\s/$1\n/g;
-	s/(\\\\\[)(.*?)(\])\s/$1$2$3\n/g;
+    s/(\\\\|\\cr)\s/$1\n/g;
+    s/(\\\\\[)(.*?)(\])\s/$1$2$3\n/g;
 
+    # nuke accidentally added double newlines.
 
-# nuke accidentally added double newlines.
+    s/\n\s*\n/\n/g;
 
-	s/\n\s*\n/\n/g;
+    # collect the cleaned string.
 
-# collect the cleaned string.
-
-	s/^\n//;
-	chomp;
-	$string .= $_ . "\n\n";
+    s/^\n//;
+    chomp;
+    $string .= $_ . "\n\n";
 
 }
-
 
 # First let's collapse all multiple \n's into double \n.
 
@@ -190,7 +187,6 @@ $string =~ s/\n\s+\n/\n\n/g;
 $string =~ s/(\%[^\n]*)(\\)(end)/$1$2\{\n\n\n\}$3/g;
 $string =~ s/(\%[^\n]*)(\\)(begin)/$1$2\{\n\n\n\}$3/g;
 
-
 # Now let's put [triple \n] at the start of each \begin and the start of each
 # \end. Then we'll split on them, since they are unique.
 # Each of those pieces must be at the same indent level. Again, we need to
@@ -201,46 +197,50 @@ $string =~ s/(\%[^\n]*)(\\)(begin)/$1$2\{\n\n\n\}$3/g;
 #
 #@pieces = split(/\[\n\n\n$\]/, $string);
 
-$string =~s/(\\end(?!\{document\}))/\[\n\n\n\]$1/g;
-$string =~s/(\\begin(?!\{document\}))/\[\n\n\n\]$1/g;
+$string =~ s/(\\end(?!\{document\}))/\[\n\n\n\]$1/g;
+$string =~ s/(\\begin(?!\{document\}))/\[\n\n\n\]$1/g;
 
-@pieces = split(/\[\n\n\n\]/, $string);
+@pieces = split( /\[\n\n\n\]/, $string );
 
-my $indent =1;
+my $indent = 1;
 my @lines;
-my ($piece, $i);
+my ( $piece, $i );
 
 # $string is now free for reuse.
-$string="";
+$string = "";
 
 foreach $piece (@pieces) {
-	#first, is this a begin block, or after an end block?
 
-	$piece =~ s/\{\n\n\n\}//g; #get rid of awful kludge.
-	$piece =~ /^\\(.*?)\{/;
-	if (lc($1) eq "begin") {
-		$indent++;
-	} else {
-		$indent--;
-	}
-	# each piece is split on \n. these pieces must begin with $indent tabs.
-	# We need to avoid combining comment lines with others.
+    #first, is this a begin block, or after an end block?
 
-	@lines = split(/\n/, $piece);
+    $piece =~ s/\{\n\n\n\}//g;    #get rid of awful kludge.
+    $piece =~ /^\\(.*?)\{/;
+    if ( lc($1) eq "begin" ) {
+        $indent++;
+    }
+    else {
+        $indent--;
+    }
 
-	foreach (@lines) {
-		s/^\s+//; #no leading whitespace
-		if (/^\\begin/i) {
-			for($i=1;$i<=$indent-1;$i++){
-				$string .= "\t";
-			}
-		} else {
-			for($i=1;$i<=$indent;$i++){
-				$string .= "\t";
-			}
-		}
-		$string .= $_ . "\n";
-	}
+    # each piece is split on \n. these pieces must begin with $indent tabs.
+    # We need to avoid combining comment lines with others.
+
+    @lines = split( /\n/, $piece );
+
+    foreach (@lines) {
+        s/^\s+//;    #no leading whitespace
+        if (/^\\begin/i) {
+            for ( $i = 1 ; $i <= $indent - 1 ; $i++ ) {
+                $string .= "\t";
+            }
+        }
+        else {
+            for ( $i = 1 ; $i <= $indent ; $i++ ) {
+                $string .= "\t";
+            }
+        }
+        $string .= $_ . "\n";
+    }
 
 }
 
@@ -248,7 +248,7 @@ foreach $piece (@pieces) {
 # This hack is designed to restore \labels next to \begin, \end and suchlike
 # so that code folding leaves the \label visible.
 my $option = '(\[[^\]]*\][ \t]*)';
-my $arg = '({[^}]*}[ \t]*)';
+my $arg    = '({[^}]*}[ \t]*)';
 $string =~ s/(?<argument>${arg})
 		(?<newline_then_indent>\n[ \t]*)
 		(?<options_then_labels>${option}*(\\label[ \t]*${option}?${arg})+)
@@ -261,9 +261,11 @@ $string =~ s/(?<labels>(\\label[ \t]*${option}?${arg})+)
 $string =~ s/(?<labelled_section>\\section.*(\\label[ \t]*${option}?${arg})+)
 		(?<paragraph>\S)
 	/$+{labelled_section}\n$+{paragraph}/mgx;
+
 # Add blank lines before \sections and \subsections
 $string =~ s/(?<=\S)[ \t]*(?:\n[ \t]*){0,2}(\\section)/\n\n\n$1/mg;
 $string =~ s/(?<=\S)[ \t]*(?:\n[ \t]*){0,1}(\\subsection)/\n\n$1/mg;
+
 # End of hack
 
 print $string;
