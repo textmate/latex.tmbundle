@@ -26,40 +26,83 @@ while (<STDIN>) {
 }
 
 my @keywords = qw(
+	# LaTeX, AMX LaTeX, AMS TeX, Plain TeX
+	
+	(front|main|back)matter
+	(h|v)size
+	(new)?theoremstyle
+	(re)?new(theorem|environment|counter|font|line|page|command|symbol)
+	(small|med|big|par)skip
+	(special|sub|subsub|subsubsub)?section
+	address
 	appendix
 	author
-	bibliography
-	bigskip
+	bibliography(style)?
+	caption
+	centerline
 	chapter
+	contrib
+	curraddr
 	date
+	DeclareMathOperator
+	dedicatory
 	def
 	document
+	document(class|style)
+	email
+	end
 	evensidemargin
 	font
 	headheight
 	headsep
-	include
+	include(only)?
+	includegraphics
+	indent
 	index
-	make
-	new
+	input
+	keywords
+	loadmsam
+	loadmsbm
+	magnification
+	make(title|index)
 	noindent
+	numberwithin
 	oddsidemargin
-	page
+	page(style|break|numbering)
 	paragraph
 	part
-	ragged
-	renew
-	section
-	subsection
-	subsubsection
-	subsubsubsection
+	printbibliography
+	printindex
+	ragged(bottom|left|right)
+	set(counter|length|beamertemplate|beamercolor)
+	setto(width|height|depth)
+	subjclass
+	swapnumbers
 	table
-	textheight
-	textwidth
+	text(height|width)
+	thanks
 	title
 	topmargin
-	use
-	vfil
+	translator
+	urladdr
+	use(package|box|counter|command)
+	UseAMSsymbols
+	vfill?
+	
+	# TikZ
+	
+	clip
+	coordinate
+	draw
+	fill
+	filldraw
+	foreach
+	node
+	path
+	shade
+	tikz(aliascoordinatesystem|declarecoordinatesystem|set|setnextfilename|style)
+	use(asboundingbox|tikzlibrary)
+	
 );
 
 # Let's ignore all comments in the following way. We first find all \%(.*?)\n.
@@ -106,14 +149,19 @@ foreach (@pieces){
 
 	s/(\\item)(.*?)(\\item)/$1$2\n$3/g;
 	s/(\\item)/\n$1/g;
+	
+#Newlines before each \bibitem.
+
+	s/(\\bibitem)(.*?)(\\bibitem)/$1$2\n$3/g;
+	s/(\\bibitem)/\n$1/g;
 
 #\n before each \[  and after each \]
-#Add newlines after all "\\" and "\\[...]"
+#Add newlines after all "\\", "\cr", and "\\[...]"
 
 	s/[^\\](\\\[)/\n$1/g;
 	s/(\\\])/$1\n/g;
 
-	s/(\\\\)\s/$1\n/g;
+	s/(\\\\|\\cr)\s/$1\n/g;
 	s/(\\\\\[)(.*?)(\])\s/$1$2$3\n/g;
 
 
