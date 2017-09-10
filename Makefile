@@ -37,6 +37,14 @@ export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
 BUNDLE_DIR = $(HOME)/Library/Application Support/TextMate/Managed/Bundles
 export TM_SUPPORT_PATH = $(BUNDLE_DIR)/Bundle Support.tmbundle/Support/shared
 
+TEXTMATE_DIR = /Applications/TextMate.app/Contents
+DIALOG_DIR = $(TEXTMATE_DIR)/PlugIns/Dialog2.tmplugin/Contents
+TM_PID = $(shell pidof Textmate | sed -E 's/[[:space:]]+//')
+
+export TM_MATE = $(TEXTMATE_DIR)/Resources/mate
+export DIALOG = $(DIALOG_DIR)/Resources/tm_dialog2
+export DIALOG_PORT_NAME = com.macromates.dialog.$(TM_PID)
+
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib
 RUBY_FILES = $(BINARY_DIRECTORY)/clean.rb \

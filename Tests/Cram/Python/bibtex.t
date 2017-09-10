@@ -6,7 +6,7 @@
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="external_bibliography.tex"
+  $ export TM_FILEPATH="external_bibliography.tex"
 
 Check if building the bibliography works without producing any error
 

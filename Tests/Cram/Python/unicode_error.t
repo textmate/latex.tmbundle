@@ -9,7 +9,7 @@
 Try to translate a file that contains non ASCII characters, uses the utf-8
 inputencoding and contains an error.
 
-  $ TM_FILEPATH="unicode_error.tex"
+  $ export TM_FILEPATH="unicode_error.tex"
 
 Just try to translate the program using `latexmk`
 

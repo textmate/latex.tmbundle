@@ -6,7 +6,7 @@
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="external_bibliography.tex"
+  $ export TM_FILEPATH="external_bibliography.tex"
 
 We try to process the files using `latexmk`.
 

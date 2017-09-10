@@ -10,7 +10,7 @@ We test if the root directive (%!TEX root) works. This means that although we
 call typesetting on a certain file, we translate the file specified as
 `root`.
 
-  $ TM_FILEPATH="input/packages_input1.tex"
+  $ export TM_FILEPATH="input/packages_input1.tex"
 
 Just try to translate the program using `latex`. The root file is
 `packages.tex`

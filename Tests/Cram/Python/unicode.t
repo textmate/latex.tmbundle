@@ -8,7 +8,7 @@
 
 Try to translate a file that contains non ASCII characters.
 
-  $ TM_FILEPATH="ünicöde.tex"
+  $ export TM_FILEPATH="ünicöde.tex"
 
 Just try to translate the program using `latexmk`
 

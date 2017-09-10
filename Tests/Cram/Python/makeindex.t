@@ -6,7 +6,7 @@
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="makeindex.tex"
+  $ export TM_FILEPATH="makeindex.tex"
 
 Generate the index for the file
 

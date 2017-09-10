@@ -8,7 +8,7 @@
 
 Try to translate a file with spaces in the filename. The file contains one error
 
-  $ TM_FILEPATH="filename with spaces.tex"
+  $ export TM_FILEPATH="filename with spaces.tex"
 
 Just try to translate the program using `pdflatex`
 

@@ -6,7 +6,7 @@
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="external_bibliography.tex"
+  $ export TM_FILEPATH="external_bibliography.tex"
 
 Just try to translate the program using `latex`
 

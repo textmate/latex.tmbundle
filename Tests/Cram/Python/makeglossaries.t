@@ -6,7 +6,7 @@
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="makeglossaries.tex"
+  $ export TM_FILEPATH="makeglossaries.tex"
 
 Translate the file to create the files needed by `makeglossaries`
 
