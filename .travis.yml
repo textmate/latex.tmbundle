@@ -50,7 +50,10 @@ before_install:
   - sudo installer -pkg BasicTeX.pkg -target /
   - export PATH=$PATH:/Library/TeX/texbin:/usr/texbin
   - sudo tlmgr update --self --all
-  - sudo tlmgr install latexmk
+  - >-
+    sudo tlmgr install
+    biber biblatex csquotes ctablestack datatool framed glossaries latexmk
+    logreq luacode mfirstuc substr supertabular texdoc xfor xstring
 
   # ================
   # = Applications =
