@@ -81,8 +81,8 @@ def get_documentation_files(texmf_directory):
         ...     "kpsewhich --expand-path '$TEXMFMAIN'", shell=True,
         ...     universal_newlines=True).strip()
         >>> documentation_files = get_documentation_files(texmf_directory)
-        >>> print(documentation_files['lastpage']) # doctest:+ELLIPSIS
-        /.../lastpage.pdf
+        >>> print(documentation_files['scrguide']) # doctest:+ELLIPSIS
+        /.../scrguide.pdf
 
     """
     doc_files = check_output("find -E {} -regex '.*\.(pdf|dvi)' -type f".
