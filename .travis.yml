@@ -1,3 +1,6 @@
+notifications:
+  email: sanssecours@me.com
+
 language: generic
 
 matrix:
