@@ -60,7 +60,7 @@ before_install:
   # ================
 
   - brew cask install skim
-  - brew install pidof
+  - brew install ghostscript pidof
 
   # ============
   # = TextMate =
