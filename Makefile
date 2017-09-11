@@ -39,7 +39,7 @@ export TM_SUPPORT_PATH = $(BUNDLE_DIR)/Bundle Support.tmbundle/Support/shared
 
 TEXTMATE_DIR = /Applications/TextMate.app/Contents
 DIALOG_DIR = $(TEXTMATE_DIR)/PlugIns/Dialog2.tmplugin/Contents
-TM_PID = $(shell pidof Textmate | sed -E 's/[[:space:]]+//')
+TM_PID = $(shell pidof Textmate | cut -f 1 -d ' ' | sed -E 's/[[:space:]]+//')
 
 export TM_MATE = $(TEXTMATE_DIR)/Resources/mate
 export DIALOG = $(DIALOG_DIR)/Resources/tm_dialog2
