@@ -18,12 +18,8 @@ before_install:
   # = Python =
   # ==========
 
-  - pyenv install --list
-  - pyenv install 3.4.3; pyenv global 3.4.3; eval "$(pyenv init -)"
-  - pip install cram flake8 nose tox
-  # We manually add the Python binary path, since `flake8` on macOS 10.10 is
-  # not installed in `~/.pyenv/shims`
-  - export PATH=$PATH:"$HOME/.pyenv/versions/3.4.3/bin"
+  - brew install python3
+  - sudo pip3 install cram flake8 nose tox
 
   # ========
   # = Ruby =
