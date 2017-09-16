@@ -300,6 +300,8 @@ def find_tex_directives(texfile, ignore_root_loops=False):
         >>> chdir('../..')
 
     """
+    if not texfile:
+        return {}
     root_chain = [texfile]
     directive_regex = compile(r'%\s*!T[E|e]X\s+([\w-]+)\s*=\s*(.+)')
     directives = {}
