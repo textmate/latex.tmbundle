@@ -304,7 +304,7 @@ class TeXFile
   #   >> require 'tmpdir'
   #   >> test_directory = Dir.mktmpdir
   #
-  #   >> aux_files = ['[A → B] Life.toc', 'Fjørt.aux', 'Fjørt.toc',
+  #   >> aux_files = ['[A → B] Life.toc', 'Fjørt.aux', 'Fjørt.toc', '.Fjørt.lb',
   #                   'Wide Open Spaces.synctex.gz', '😘.glo']
   #   >> non_aux_files = ['Fjørt.tex', 'D.E.A.D. R.A.M.O.N.E.S.']
   #   >> all_files = aux_files + non_aux_files
@@ -328,9 +328,8 @@ class TeXFile
   #   => true
   #
   #   >> tex_file = TeXFile.new(File.join test_directory, 'Fjørt')
-  #   >> tex_file.delete_aux.map { |path| File.basename path } ==
-  #      aux_files.select { |file| file.start_with? 'Fjørt' }
-  #   => true
+  #   >> tex_file.delete_aux.map { |path| File.basename path }.length
+  #   => 3
   #
   #   >> tex_file = TeXFile.new(File.join test_directory, '[A → B] Life.tex')
   #   >> tex_file.delete_aux.map { |path| File.basename path } ==
@@ -346,7 +345,7 @@ class TeXFile
   def aux(pattern_method, check_file)
     patterns = Auxiliary.new(@basename).send(pattern_method)
     Dir.chdir(@path.parent) do
-      Dir['**/*'].map { |path| path.to_s.to_nfc }.select do |filepath|
+      Dir['{**/*,.[^.]*}'].map { |path| path.to_s.to_nfc }.select do |filepath|
         patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
           check_file.call(filepath)
       end
