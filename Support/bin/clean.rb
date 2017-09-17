@@ -238,8 +238,8 @@ class Dir
   #        Dir.mkdir(File.join test_directory, filename)
   #        end
   #
-  #   >> aux_files = ['Fjørt.aux', 'Fjørt.toc', 'Wide Open Spaces.synctex.gz',
-  #                   '😱.glo']
+  #   >> aux_files = ['Fjørt.aux', 'Fjørt.toc', '.Fjørt.lb',
+  #                   'Wide Open Spaces.synctex.gz', '😱.glo']
   #   >> non_aux_files = ['Fjørt.tex', 'Wide Open Spaces', '🙈🙉🙊.txt',
   #                       '.git/pack.idx']
   #   >> all_files = aux_files + non_aux_files
@@ -316,7 +316,7 @@ class TeXFile
   #   >> aux_directories = ["_minted-#{filename.gsub ' ', '_'}",
   #                         "pythontex-files-#{filename.gsub ' ', '-'}",
   #                         '_minted-👻']
-  #   >> non_aux_directories = ['Außer Dir']
+  #   >> non_aux_directories = ['Außer Dir', '.git']
   #   >> all_directories = aux_directories + non_aux_directories
   #   >> all_directories.each do |filename|
   #       Dir.mkdir(File.join test_directory, filename)
