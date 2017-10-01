@@ -279,7 +279,7 @@ class Dir
     Find.find(path).map do |path|
       # Ignore files in hidden directories
       Find.prune if File.directory?(path) && File.basename(path) =~ /^\.[^.]/
-      path
+      path.force_encoding('UTF-8')
     end
   end
 end
