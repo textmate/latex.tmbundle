@@ -5,6 +5,7 @@
 % -- Packages ------------------------------------------------------------------
 
 \usepackage{booktabs}
+\usepackage{dirtree}
 \usepackage{enumitem}
 \usepackage{fontspec}
 \usepackage[paperheight=450cm, paperwidth=15cm, top=0.5cm, bottom=0.5cm, left=.5cm, right=.5cm]{geometry}
@@ -14,6 +15,7 @@
 \usepackage{microtype}
 \usepackage{minted}
 \usepackage{subfig}
+\usepackage{tcolorbox}
 \usepackage{titlesec}
 \usepackage{unicode-math}
 \usepackage{hyperref}
@@ -46,9 +48,26 @@
 \setmonofont[Scale=MatchLowercase]{Menlo}
 \newfontfamily\Zapfino{Zapfino}
 
+\newtcolorbox{code}{
+  on line,
+  arc=2pt,
+  colback=gray!10!white,
+  boxsep=2pt,
+  left=1pt,
+  right=1pt,
+  top=1pt,
+  bottom=1pt,
+  boxrule=0pt,
+  bottomrule=0pt,
+  toprule=0pt
+}
+
+\captionsetup{format=hang}
 \setlength\parindent{0cm}
 \setcounter{totalnumber}{100}
-\usemintedstyle{friendly}
+\usemintedstyle{rainbow_dash}
+\BeforeBeginEnvironment{minted}{\vspace{5pt}\begin{code}}
+\AfterEndEnvironment{minted}{\end{code}}
 \pagestyle{empty}
 
 \makeatletter \renewcommand{\@dotsep}{10000} \makeatother
@@ -112,9 +131,7 @@ Since the process of running different typesetting programs multiple times in or
   Latexmk completely automates the process of generating a LaTeX document.
 \end{quote}
 
-\begin{sloppypar}
-In order to tell TextMate to use \texttt{latexmk} when compiling, you have to check \menu{Use Latexmk} inside the bundle's preference window. After that you only need to invoke \menu{Typeset \& View (PDF)} once and TextMate will automatically run all necessary commands to translate your document.
-\end{sloppypar}
+. In order to tell TextMate to use \texttt{latexmk} when compiling, you have to check \menu{Use Latexmk} inside the bundle's preference window. After that you only need to invoke \menu{Typeset \& View (PDF)} once and TextMate will automatically run all necessary commands to translate your document.
 
 \subsection{Using a Master File}
 
@@ -140,7 +157,7 @@ You can set the environment variable \texttt{TM\_LATEX\_MASTER} via a \texttt{.t
   TM_LATEX_MASTER = absolute_path_to_master_file
 \end{minted}
 
-You probably do not want to specify the absolute path to your master file directly, since this would mean that the location of your master file will be invalid if you move your project folder. For this purpose you can use the special variable \texttt{\$CWD}, which contains the location of the folder where the \texttt{.tm\_properties} file is located. For example, if your master file is called \texttt{Thesis.tex} and resides in the top level folder of your project, then you can use the following line to specify the location of your master file:
+. You probably do not want to specify the absolute path to your master file directly, since this would mean that the location of your master file will be invalid if you move your project folder. For this purpose you can use the special variable \texttt{\$CWD}, which contains the location of the folder where the \texttt{.tm\_properties} file is located. For example, if your master file is called \texttt{Thesis.tex} and resides in the top level folder of your project, then you can use the following line to specify the location of your master file:
 
 \begin{minted}{bash}
   TM_LATEX_MASTER = "$CWD/Thesis.tex"
@@ -149,15 +166,26 @@ You probably do not want to specify the absolute path to your master file direct
 \subsubsection{Using the \%!TEX root Directive}
 \label{sec:Using_TM_TEX_ROOT}
 
-The LaTeX bundle supports \texttt{\%!TEX\ root} directives. You can specify the location of your master file by adding the line \texttt{\%!TEX\ root\ =\ path\_to\_master\_file} at the beginning of an included file. \texttt{path\_to\_master\_file} can be either absolute or relative.\\
+The LaTeX bundle supports \texttt{\%!TEX\ root} directives. You can specify the location of your master file by adding the line \texttt{\%!TEX\ root\ =\ path\_to\_master\_file} at the beginning of an included file. The path \texttt{path\_to\_master\_file} can be either absolute or relative.\\
 
-For example, if your included file \texttt{Chapter\ 1.tex} is located in the folder \texttt{Chapter} inside your project folder, and your master file \texttt{Thesis.tex} is located in the top level folder of your project, then you can set the master file for \texttt{Chapter\ 1.tex} by including the following line at the top of the file \texttt{Chapter\ 1.tex}:
+For example, if your included file \texttt{Chapter 1.tex} is located in the folder \texttt{Chapters} inside your project folder, and your master file \texttt{Thesis.tex} is located in the top level folder of your project:
+
+\dirtree{%
+.1 Thesis.
+.2 Thesis.tex.
+.2 Chapters.
+.3 Chapter 1.tex.
+.3 Chapter 2.tex.
+.3 Chapter 3.tex.
+}
+
+, then you can set the master file for \texttt{Chapter\ 1.tex} by including the following line at the top of the file \texttt{Chapter\ 1.tex}:
 
 \begin{minted}{latex}
   %!TEX root = ../Thesis.tex
 \end{minted}
 
-You can also use the command \menu{Set Master File} to specify the master document for the current \texttt{.tex} file.
+. You can also use the command \menu{Set Master File} to specify the master document for the current \texttt{.tex} file.
 
 \subsection{Watching a Document}
 
@@ -195,7 +223,7 @@ The \menu{Typeset \& View (PDF)} command has a second component, the “View” 
 
 \subsection{Default Preview}
 
-In OS X, HTML windows can display PDF files. This is the standard behavior of the LaTeX bundle's \menu{Typeset \& View (PDF)} command. After TextMate finished the typesetting process, the window that was used to show you the building progress turns into a view of your PDF file, provided there were no errors.
+In macOS, HTML windows can display PDF files. This is the standard behavior of the LaTeX bundle's \menu{Typeset \& View (PDF)} command. After TextMate finished the typesetting process, the window that was used to show you the building progress turns into a view of your PDF file, provided there were no errors.
 
 \subsection{External Previewers}
 
@@ -225,7 +253,7 @@ Preview options are somewhat complicated depending on the viewer you choose. The
 
 \subsection{Refreshing the Viewer}
 
-The \menu{Typeset \& View (PDF)} command uses a short Applescript to tell Skim, or the TeXShop to reload the PDF file once the typesetting is complete. This is more efficient than enabling the auto-refresh feature in the viewers, because it often takes more than one run of LaTeX before the document is really ready to view. In that case most viewers would try to reload the PDF multiple times.
+The \menu{Typeset \& View (PDF)} command uses a short AppleScript to tell Skim, or the TeXShop to reload the PDF file once the typesetting is complete. This is more efficient than enabling the auto-refresh feature in the viewers, because it often takes more than one run of LaTeX before the document is really ready to view. In that case most viewers would try to reload the PDF multiple times.
 
 \section{SyncTeX}
 
@@ -235,11 +263,11 @@ You need to perform the following steps to enable synchronization:
 
 \begin{enumerate}
 
-  \item Set your viewer to \menu{Skim}. This enables you to use the\\\menu{Jump to Current Line in Viewer} command bound to \keys{\ctrl + \Alt + \cmd + O} by default.
+  \item Set your viewer to \menu{Skim}. After that you can use the\\\menu{Jump to Current Line in Viewer} command, bound to \keys{\ctrl + \Alt + \cmd + O} by default.
 
   \item In Skim go to \menu{Preferences…}. There, choose the Preset \menu{TextMate} under the option \menu{Sync}.
 
-  This assumes that you installed \texttt{mate} (see \menu{Preferences… > Terminal} in TextMate). After this is done, shift-command-clicking (\keys{\shift + \cmd} at a location in the PDF file (as shown in Skim) takes you to the corresponding location in TextMate.
+  This assumes that you installed \texttt{mate} (see \menu{Preferences… > Terminal} in TextMate). After this step, shift-command-clicking (\keys{\shift + \cmd} at a location in the PDF file (as shown in Skim) takes you to the corresponding location in TextMate.
 
 \end{enumerate}
 
@@ -251,7 +279,7 @@ This section describes the various LaTeX tasks, and how they can be accomplished
 
 \subsection{Automated Typing}
 
-Writing LaTeX often requires typing some amount of standard commands and environments. TextMate makes that a lot easier with a set of commands in the LaTeX bundle, that we'll discuss in this section.
+Writing LaTeX often requires typing some amount of standard commands and environments. TextMate makes that a lot easier with a set of commands in the LaTeX bundle, that we discuss in this section.
 
 \subsubsection{Inserting Commands and
 Environments}
@@ -266,7 +294,7 @@ The LaTeX bundle contains two commands that, if you type a lot of LaTeX, will be
 
 Similarly, typing \texttt{fig} followed by calling the \menu{Insert > Environment Based on Current Word} command creates a lot of the standard text required in a figure environment. You can further customize these commands.\\
 
-These two commands understand a series of shortcuts, and use the current word if they do not recognize it as a shortcut. You can customize what these shortcuts are by editing the \emph{LaTeX Configuration File}. This file is originally kept in the LaTeX bundle. When you first use the \menu{Edit Configuration File} command, this file is copied to \directory{\textasciitilde{}/Library/Preferences/com.macromates.textmate.latex\_config.plist}. You can then edit this file whenever you want by executing this command, or delete it to return to the default settings.\\
+These two commands understand a series of shortcuts, and use the current word if they do not recognize it as a shortcut. You can customize what these shortcuts are by editing the \emph{LaTeX Configuration File}. This file is originally kept in the LaTeX bundle. When you first use the \menu{Edit Configuration File} command, this file is copied to \directory{\textasciitilde{}/Library/Preferences/com.macromates.textmate.latex\_config.plist}. You can then edit this file whenever you want by executing \menu{Edit Configuration File} command, or delete it to return to the default settings.\\
 
 This file follows the Property List Format. It consists of a top-level dictionary
 with six entries:
@@ -290,7 +318,7 @@ The four \texttt{environment} dictionaries are a bit different. They contain key
 
 \end{description}
 
-Another useful command is \menu{Insert > Environment Closer}, which is by default bound to \keys{\Alt + \cmd + .}. This command locates the innermost \texttt{\textbackslash{}begin\{env\}} that hasn't been closed by a corresponding \texttt{\textbackslash{}end\{env\}} and inserts the closing part. Of course, if you usually use \menu{Insert > Environment Based on Current Word}, then you probably don't need this command that often.\\
+Another useful command is \menu{Insert > Environment Closer}, which is by default bound to \keys{\Alt + \cmd + .}. This command locates the innermost \texttt{\textbackslash{}begin\{env\}} that has not been closed by a corresponding \texttt{\textbackslash{}end\{env\}} and inserts the closing part. Of course, if you usually use \menu{Insert > Environment Based on Current Word}, then you probably do not need this command that often.\\
 
 Finally, there is a command to quickly insert commands for the various symbols, called \menu{Insert > Symbol Based on Current Word}. It is bound by default to \keys{\cmd + \textbackslash{}}. It works in two stages:
 
@@ -306,11 +334,11 @@ Finally, there is a command to quickly insert commands for the various symbols, 
 
     \item Three letter combinations are converted to arrows, where the three digits signify the kind of arrow, for instance \texttt{lar} would stand for left arrows.
 
-    \item There's a couple of exceptions to these rules. You can look at and alter the shortcuts in the LaTeX configuration file. They are located under the \texttt{symbols} key.
+    \item There are a couple of exceptions to these rules. You can look at and alter the shortcuts in the LaTeX configuration file. They are located under the \texttt{symbols} key.
 
   \end{itemize}
 
-  \item After you triggered the command once, pressing it again cycles through the various options. For instance, if you started with \texttt{e}, then the command cycles between \mintinline{tex}|\epsilon| and \mintinline{tex}|\varepsilon|. This is accomplished by this set of entries in the configuration file:
+  \item After you triggered the command once, pressing it again cycles through the various options. For instance, if you started with \texttt{e}, then the command cycles between \mintinline{tex}|\epsilon| and \mintinline{tex}|\varepsilon|. This is accomplished by the following set of entries in the configuration file:
 
   \begin{minted}{properties}
   "e" = "\\epsilon";
@@ -319,7 +347,7 @@ Finally, there is a command to quickly insert commands for the various symbols, 
   \end{minted}
 \end{itemize}
 
-When you create your own additions to this list, keep in mind these two simple principles: For the item that is the initial trigger, like the \texttt{"e"} above, the text must start with two backslashes. For the items used for cycling through options, it must not.
+. When you create your own additions to this list, keep in mind two simple principles: For the item that is the initial trigger, like the “\texttt{e}” above, the text must start with two backslashes. For the items used for cycling through options, it must not.
 
 \subsubsection{List Environments}
 
@@ -395,7 +423,7 @@ Often one wants to enclose the currently selected text in an environment, or a c
 
   \item[\menu{Wrap Selection in > Display Math}]~\hfill~\keys{\ctrl + \shift + M}\\
 
-  This command wraps the selection between the text \texttt{\textbackslash{}{[}} and \texttt{\textbackslash{}{]}}.
+  This command surrounds the selection with the text \texttt{\textbackslash{}{[}} and \texttt{\textbackslash{}{]}}.
 
   \item[\menu{Wrap Selection in > Math Mode}]~\hfill~\keys{\ctrl + \shift + M}\\
 
@@ -410,13 +438,17 @@ If we use modern engines like \XeLaTeX{} or \LuaLaTeX{}, we can use “special c
 The LaTeX bundle offers a command to automatically convert special characters and certain sequences of characters to LaTeX commands. This command, called \menu{Convert Symbols in Word / Selection}, works on the current word or selection.\\
 
 For example, if you want to convert the formula
+
 \begin{minted}{latex}
   a ≤ b => ¬(a > b)
 \end{minted}
+
 , just select the text above and invoke \menu{Convert Symbols in Selection} via the key combination \keys{\cmd + \&}. The command will then replace the selection with the text:
+
 \begin{minted}{latex}
   a \leq b \Rightarrow \lnot(a > b)
 \end{minted}
+
 that produces the output
 \[
   a \leq b \Rightarrow \lnot(a > b)
@@ -485,7 +517,7 @@ You can trigger them by pressing \keys{\Alt + \esc}.
   \label{fig:Figures_Label_Completion}
 \end{figure}
 
-Both the label and bibliography completion commands also work outside of a \texttt{\textbackslash{}ref\{\}} or \texttt{\textbackslash{}cite\{\}} block. They will insert the \mintinline{tex}|\ref| or \mintinline{tex}|\cite| for you, if you call them outside of the aforementioned blocks. Here are a two examples of the usual use cases for the commands:
+Both the label and bibliography completion commands also work outside of a \texttt{\textbackslash{}ref\{\}} or \texttt{\textbackslash{}cite\{\}} block. They will insert the \mintinline{tex}|\ref| or \mintinline{tex}|\cite| for you, if you call them outside of the aforementioned blocks. Below we describe two examples of the usual use cases for the commands.
 
 \begin{itemize}
 
@@ -510,7 +542,7 @@ One minor but interesting feature of the completion commands is, that they inter
 
 \subsubsection{LaTeX Beamer}
 
-The LaTeX bundle contains special supports for the \href{https://bitbucket.org/rivanvx/beamer/wiki/Home}{Beamer document class}:
+The LaTeX bundle contains special supports for the \href{https://bitbucket.org/rivanvx/beamer/wiki/Home}{Beamer document class}.
 
 \menu{Insert Environment} and \menu{Insert Command} understand more shortcuts, and also behave intelligently with respect to other shortcuts, adding overlay specifications where appropriate. The same goes for the \menu{Lists > New Item} command.\\
 
@@ -526,7 +558,7 @@ There are three key drag and drop commands in LaTeX:
 
   \item You can drag in another \texttt{.tex} file into your document. TextMate will then insert a \mintinline{tex}|\include| command that references the dropped file. To use a \mintinline{tex}|\input| command instead use the modifier key \keys{\Alt}.
 
-  \item If you drop a source code file into your document, then TextMate creates a new \mintinline{tex}|listing| command referencing the dropped file. Said command is part of the \href{http://ctan.org/pkg/minted}{minted} package. To successfully translate the resulting document include \mintinline{tex}|minted| and install the various package dependencies. Do not forget to specify the option \texttt{-shell-escape} (see section “\nameref{sec:preferences}”), otherwise the translation will fail.\\
+  \item If you drop a source code file into your document, then TextMate creates a new \mintinline{tex}|listing| command referencing the dropped file. The \mintinline{tex}|listing| command is part of the \href{http://ctan.org/pkg/minted}{minted} package. To successfully translate the resulting document include \mintinline{tex}|minted| and install the various package dependencies. Do not forget to specify the option \texttt{-shell-escape} (see section “\nameref{sec:preferences}”), otherwise the translation will fail.\\
 
   If you want to include dropped code via the command \mintinline{tex}|lstinputlisting|, use the modifier key \keys{\shift}. To translate the resulting document you need the \texttt{listings} package. Make sure that you include it via \mintinline{tex}|\usepackage{listings}|.
 
@@ -541,7 +573,7 @@ There are three key drag and drop commands in LaTeX:
   \label{fig:Figures_Template_Chooser}
 \end{figure}
 
-The LaTeX bundle offers a simple template system. We provides a few sample files. If you want to use your own templates, then create the directory \directory{\textasciitilde{}/Library/Application\ Support/LaTeX/Templates}. In there you can put any \texttt{.tex} files you like. We also support snippet syntax in template files. To tell TextMate that it should insert the code using snippet syntax add the following line at the top of the template:
+The LaTeX bundle offers a simple template system. We provides a few sample files. If you want to use your own templates, then create the directory \directory{\textasciitilde{}/Library/Application\ Support/LaTeX/Templates}. In there you can put any \texttt{.tex} file you like. We also support snippet syntax in template files. To tell TextMate that it should insert the code using snippet syntax add the following line at the top of the template:
 
 \begin{minted}{latex}
     %!TEX style = snippet
@@ -551,13 +583,15 @@ To insert a template use the command \menu{Insert > LaTeX Template}. The command
 
 A typical workflow for the template system looks like this:
 
-\begin{itemize}
+\begin{enumerate}
   \item Create new file — \keys{\cmd + N}
   \item Set Language to LaTeX — \keys{\shift + \ctrl + \cmd + L}
   \item Type \texttt{temp} and press \keys{\tab}
   \item Use arrows/keys/mouse to select the template file and press \keys{\return}
   \item Start working on your document
-\end{itemize}
+\end{enumerate}
+
+.
 
 \section{Preferences}
 \label{sec:preferences}
@@ -630,12 +664,12 @@ You can set these “local options” via the \texttt{\%!TEX} directives \texttt
 
 \subsection{Environment Variables}
 
-The LaTeX bundle supports environment variables that let you modify the behaviour of certain commands. You can set this variables either via a \href{http://blog.macromates.com/2011/git-style-configuration}{.tm\_properties} file or in the Preferences of TextMater under the tab \menu{Variables}.
+The LaTeX bundle supports environment variables that let you modify the behaviour of certain commands. You can set this variables either via a \href{http://blog.macromates.com/2011/git-style-configuration}{\texttt{.tm\_properties}} file or in the Preferences of TextMater under the tab \menu{Variables}.
 
 \begin{figure}[h]
   \centering
     \includegraphics[width=.8\textwidth]{Figures/TextMate Preferences - Variables.png}
-  \caption{Set environment variables under \menu{TextMate > Preferences… > Variables}}
+  \caption{To change environment variables select \menu{TextMate > Preferences… > Variables}}
   \label{fig:Figures_TextMate_Preferences_-_Variables}
 \end{figure}
 
@@ -643,20 +677,20 @@ The LaTeX bundle supports environment variables that let you modify the behaviou
 
   \item[\texttt{TM\_LATEX\_CITE\_SNIPPET}]~\\
 
-  \begin{sloppypar}
-  You can change the default substitution text used by \menu{Insert > Citation Based on Current Word} — \verb|\cite{CITEKEY}| — via this variable. Every occurrence of \texttt{CITKEY} specified via this variable will be replaced with the chosen citekey. This variable support snippet syntax.
-  \end{sloppypar}
+  You can change the default substitution text (\mintinline{tex}|\cite{CITEKEY}|) used by \menu{Insert > Citation Based on Current Word} via this variable. Every occurrence of \texttt{CITKEY} specified via this variable will be replaced with the chosen citekey. This variable support snippet syntax.
 
   \item[\texttt{TM\_LATEX\_FORMATTER}]~\\
 
-  This variable lets you specify the program used in the command \menu{Tidy}. Currently the only option besides the default formatter \href{http://bfc.sfsu.edu/cgi-bin/hsu.pl?LaTeX_Tidy}{LaTeX\_Tidy} is \href{https://github.com/cmhughes/latexindent.pl}{latexindent}.
+  This variable lets you specify the program used in the command \menu{Tidy}. Currently the only option besides the default formatter \href{http://bfc.sfsu.edu/cgi-bin/hsu.pl?LaTeX_Tidy}{\texttt{LaTeX\_Tidy}} is \href{https://github.com/cmhughes/latexindent.pl}{\texttt{latexindent}}.
 
   \item[\texttt{TM\_LATEX\_REFTEX\_FILTER}]~\\
 
   This is a regular expression that lets you filter the entries displayed by \menu{Insert > Citation (Ref-TeX Style)}. Figure~\ref{fig:TM_LATEX_REFTEX_FILTER} shows you the output of the command without this variable on the left, and with the variable set to
+
   \begin{minted}{bash}
       autocite|footcite|cite|textcite
   \end{minted}
+
   on the right.
 
   \begin{figure}[htbp]
