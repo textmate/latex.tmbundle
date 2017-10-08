@@ -139,7 +139,7 @@ If you work on a large project, you probably want to use TextMate's \href{http:/
 
 Most of the commands of the LaTeX bundle rely on the fact that they know the location of the master file. If you do not specify the master file explicitly, then the bundle assumes that the active document is the master file. This works perfectly fine, as long as you only use one \texttt{.tex} file.\\
 
-On the other hand, if you call a command from an included file and do not specify the master file, then the LaTeX bundle only knows about the content of the current file. This means that completion commands will only take the current file into account. E.g. \menu{Insert > Label Based on Current Word} will only list the labels in the current file. \menu{Insert > Citation Based on Current Word} might not work at all, since it only scans the current file for included bibliographies. To fix this behaviour you need to tell TextMate the location of the master file. Currently there a two possibilities to do that:
+On the other hand, if you call a command from an included file and do not specify the master file, then the LaTeX bundle only knows about the content of the current file. This means that completion commands will only take the current file into account. E.g. \menu{Insert > Label Based on Current Word} will only list the labels in the current file. \menu{Insert > Citation Based on Current Word} might not work at all, since it only scans the current file for included bibliographies. To fix this behavior you need to tell TextMate the location of the master file. Currently there a two possibilities to do that:
 
 \begin{enumerate}
   \item Use the environment variable \texttt{TM\_LATEX\_MASTER}
@@ -215,11 +215,11 @@ When you close the previewer, the associated watcher will automatically quit.
   \label{fig:LaTeX_Watch}
 \end{figure}
 
-One minor, but interesting difference between the behaviour of \menu{Stop Watching} and closing the previewer is, that in the latter case temporary files produced by LaTeX will be deleted. If you want to keep your directory clean, then you should just close the previewer after you are done. If you do not care about the auxiliary files — but instead want \menu{Watch Document} to reuse old temporary files and therefore start faster the next time, then just use \keys{\ctrl + \cmd + W} to stop monitoring the file for changes.
+One minor, but interesting difference between the behavior of \menu{Stop Watching} and closing the previewer is, that in the latter case temporary files produced by LaTeX will be deleted. If you want to keep your directory clean, then you should just close the previewer after you are done. If you do not care about the auxiliary files — but instead want \menu{Watch Document} to reuse old temporary files and therefore start faster the next time, then just use \keys{\ctrl + \cmd + W} to stop monitoring the file for changes.
 
 \section{Previewing a LaTeX File}
 
-The \menu{Typeset \& View (PDF)} command has a second component, the “View” one. After a successful build, TextMate proceeds to show you the produced PDF file. This behaviour can be changed by toggling the checkbox \menu{Show PDF automatically} inside the bundle's preferences. If the preference item is not checked, then you can still view the file on demand by clicking the \menu{View} button at the bottom of the \menu{Typeset \& View} window.
+The \menu{Typeset \& View (PDF)} command has a second component, the “View” one. After a successful build, TextMate proceeds to show you the produced PDF file. This behavior can be changed by toggling the checkbox \menu{Show PDF automatically} inside the bundle's preferences. If the preference item is not checked, then you can still view the file on demand by clicking the \menu{View} button at the bottom of the \menu{Typeset \& View} window.
 
 \subsection{Default Preview}
 
@@ -494,7 +494,7 @@ We already talked about how you can quickly create a command with \menu{Insert >
 
 \subsubsection{Citations and References}
 
-The LaTeX bundle overrides the standard completion behavior when the caret is inside a \texttt{\textbackslash{}cite\{\}} or \texttt{\textbackslash{}ref\{\}} block. It also overrides the completion behaviour for other equivalent commands like \texttt{eqref}, \texttt{vref}, \texttt{prettyref}, \texttt{citeauthor} etc.\\
+The LaTeX bundle overrides the standard completion behavior when the caret is inside a \texttt{\textbackslash{}cite\{\}} or \texttt{\textbackslash{}ref\{\}} block. It also overrides the completion behavior for other equivalent commands like \texttt{eqref}, \texttt{vref}, \texttt{prettyref}, \texttt{citeauthor} etc.\\
 
 If the LaTeX command expects a bibliography key, then pressing \keys{\esc} inside the braces offers completion with respect to all cite keys. This is accomplished by scanning all bib files included in the current master file. For instance, if the caret is right before the closing brace in \texttt{\textbackslash{}cite\{Ka\}}, then pressing \keys{\esc} will cycle trough all bibliography keys starting with \texttt{Ka}.\\
 
@@ -664,7 +664,7 @@ You can set these “local options” via the \texttt{\%!TEX} directives \texttt
 
 \subsection{Environment Variables}
 
-The LaTeX bundle supports environment variables that let you modify the behaviour of certain commands. You can set this variables either via a \href{http://blog.macromates.com/2011/git-style-configuration}{\texttt{.tm\_properties}} file or in the Preferences of TextMater under the tab \menu{Variables}.
+The LaTeX bundle supports environment variables that let you modify the behavior of certain commands. You can set this variables either via a \href{http://blog.macromates.com/2011/git-style-configuration}{\texttt{.tm\_properties}} file or in the Preferences of TextMater under the tab \menu{Variables}.
 
 \begin{figure}[h]
   \centering
