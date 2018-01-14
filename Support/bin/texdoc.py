@@ -130,8 +130,8 @@ def parse_texdoctk_data(documentation_files, texmf_directory):
         ...     universal_newlines=True).strip()
         >>> paths, descriptions, headings = parse_texdoctk_data(
         ...     get_documentation_files(texmf_directory), texmf_directory)
-        >>> print(paths['beamer']) # doctest:+ELLIPSIS
-        /usr/local/texlive/.../doc/latex/beamer/doc/beameruserguide.pdf
+        >>> print(paths['beamer']) # doctest: +ELLIPSIS
+        /usr/local/texlive/.../texmf-dist/doc/latex/.../beameruserguide.pdf
         >>> print(descriptions['beamer'])
         User's Guide to the beamer class
         >>> 'beamer' in headings['Slides']
