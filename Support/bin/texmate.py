@@ -294,6 +294,8 @@ def run_makeglossaries(filename, verbose=False):
     Examples:
 
         >>> chdir('Tests/TeX')
+        >>> call('pdflatex makeglossaries.tex > /dev/null', shell=True)
+        0
         >>> run_makeglossaries('makeglossaries.tex') # doctest:+ELLIPSIS
         <h2>Make Glossaries...
         ...

@@ -40,4 +40,4 @@ grammars=(
 alias strip="sed -e 's/^ *//' -e 's/ *$//'"
 alias countlines="wc -l | strip"
 alias exit_success_or_discard="echo $? | grep -E '^0|200$' > /dev/null"
-alias restore_aux_files_git='git checkout *.acn *.aux *.glo *.idx *.ist'
+alias restore_aux_files_git='git checkout *.aux *.idx'
