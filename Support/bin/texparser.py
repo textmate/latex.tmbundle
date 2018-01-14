@@ -143,7 +143,7 @@ if __name__ == '__main__':
                 typesetting_data = load(storage)
                 messages = typesetting_data['messages']
             notification_token = None
-        except:
+        except IOError:
             # Fail silently
             exit(0)
     else:
@@ -177,7 +177,7 @@ if __name__ == '__main__':
                 typesetting_data['messages'] = messages
                 storage.seek(0)
                 dump(typesetting_data, storage)
-        except:
+        except IOError:
             print('Could not access cache file {}!'.format(cachefile))
 
     if notification_token != '':

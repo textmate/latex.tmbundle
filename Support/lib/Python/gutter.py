@@ -74,7 +74,7 @@ def update_marks(cache_filename, marks_to_set=[]):
             for filename in files_with_guttermarks:
                 marks_to_remove.extend([(filename, 'error'),
                                         (filename, 'warning')])
-    except:
+    except (IOError, ValueError):
         typesetting_data = {}
         marks_to_remove = []
 
@@ -87,7 +87,7 @@ def update_marks(cache_filename, marks_to_set=[]):
             typesetting_data['files_with_guttermarks'] = newfiles
         with open(cache_filename, 'wb') as storage:
             dump(typesetting_data, storage)
-    except:
+    except Exception:
         print('<p class="warning"> Could not write cache file {}!</p>'.format(
               cache_filename))
 

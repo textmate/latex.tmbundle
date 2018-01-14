@@ -48,7 +48,8 @@ from os.path import (basename, dirname, exists, getmtime, isfile, normpath,
 from pickle import load, dump
 from pipes import quote as shellquote
 from re import match, search
-from subprocess import call, check_output, Popen, PIPE, STDOUT
+from subprocess import (call, CalledProcessError, check_output, Popen, PIPE,
+                        STDOUT)
 from sys import exit, version_info
 from textwrap import dedent
 try:
@@ -338,7 +339,7 @@ def get_app_path(application, tm_support_path=getenv("TM_SUPPORT_PATH")):
         return check_output("'{}/bin/find_app' '{}.app'".format(
                             tm_support_path, application),
                             shell=True, universal_newlines=True).strip()
-    except:
+    except CalledProcessError:
         return None
 
 
@@ -768,7 +769,7 @@ def get_typesetting_data(filepath, tm_engine,
             if 'engine' not in typesetting_data or cache_data_outdated:
                 raise Exception()
 
-        except:
+        except Exception:
             # Get data and save it in the cache
             packages = find_tex_packages(filename, ignore_warnings)
             engine = construct_engine_command(typesetting_directives,
@@ -784,7 +785,7 @@ def get_typesetting_data(filepath, tm_engine,
         try:
             with open(cache_filename, 'wb') as storage:
                 dump(typesetting_data, storage)
-        except:
+        except IOError:
             print('<p class="warning"> Could not write cache file!</p>')
 
         return typesetting_data

@@ -257,7 +257,7 @@ if __name__ == '__main__':
                 mkdir(docdbpath)
             with open(docdbfile, 'wb') as cache:
                 dump([paths, descriptions, headings], cache)
-        except:
+        except IOError:
             print("<p>Error: Could not cache documentation index</p>")
 
     # Print out the results in HTML/JavaScript
