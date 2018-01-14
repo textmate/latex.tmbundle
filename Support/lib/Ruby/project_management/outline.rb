@@ -59,6 +59,7 @@ class Section < String
   # rubocop: disable Style/ClassVars
   @@parts = %w[part chapter section subsection subsubsection paragraph
                subparagraph]
+  # rubocop: enable Style/ClassVars
 
   # Get the number of levels from the current to the given section.
   #

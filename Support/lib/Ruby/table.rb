@@ -8,6 +8,7 @@ require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/indent'
 # -- Class ---------------------------------------------------------------------
 
 # This class represents a LaTeX table.
+# rubocop: disable Lint/MissingCopEnableDirective
 # rubocop: disable Metrics/ClassLength
 class Table
   # This function initializes a new LaTeX table.

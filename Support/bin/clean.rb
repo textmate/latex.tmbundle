@@ -87,7 +87,7 @@ class ArgumentParser
     return Dir.pwd if location.empty?
     return location if File.exist? location
 
-    $stderr.puts "#{location}: No such file or directory"
+    warn "#{location}: No such file or directory"
     exit
   end
 

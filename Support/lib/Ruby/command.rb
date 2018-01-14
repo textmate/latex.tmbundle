@@ -12,7 +12,9 @@ require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
 require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/indent.rb'
 require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/latex.rb'
 
+# rubocop: disable Style/MixinUsage
 include TextMate
+# rubocop: enable Style/MixinUsage
 
 # -- Functions -----------------------------------------------------------------
 

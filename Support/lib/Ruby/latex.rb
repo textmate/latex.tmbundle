@@ -7,6 +7,7 @@ require 'shellwords'
 #
 # Authors:: Charilaos Skiadas, René Schwaiger
 #
+# rubocop: disable Lint/MissingCopEnableDirective
 # rubocop: disable Metrics/ModuleLength
 module LaTeX
   # Parse any %!TEX options in the first 20 lines of the file.

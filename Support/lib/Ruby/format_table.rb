@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+# rubocop: disable Lint/MissingCopEnableDirective
 # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
 
 ##
