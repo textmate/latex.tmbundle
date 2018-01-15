@@ -70,6 +70,11 @@ before_install:
 
   - brew cask install textmate
   - open /Applications/TextMate.app
+  - |-
+    while ! pidof TextMate | grep -Eq '^[0-9]+[[:space:]]*$'; do
+      echo 'Wait until TextMate is open'
+      sleep 10
+    done
 
   - mkdir -p "$HOME/bin"
   - cd "$HOME/bin"
