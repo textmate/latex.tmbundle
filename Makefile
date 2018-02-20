@@ -1,6 +1,4 @@
 # ------------------------------------------------------------------------------
-# Author: René Schwaiger (sanssecours@f-m.fm)
-#
 #                   Run various tests for this bundle
 #
 # To execute the tests:
@@ -35,6 +33,17 @@
 # bundle. This will lead to errors since `latex_watch` expects that
 # `TM_BUNDLE_SUPPORT` is set “correctly”.
 export TM_BUNDLE_SUPPORT = $(CURDIR)/Support
+# We need to export `TM_SUPPORT_PATH` if we test the code outside of TextMate
+BUNDLE_DIR = $(HOME)/Library/Application Support/TextMate/Managed/Bundles
+export TM_SUPPORT_PATH = $(BUNDLE_DIR)/Bundle Support.tmbundle/Support/shared
+
+TEXTMATE_DIR = /Applications/TextMate.app/Contents
+DIALOG_DIR = $(TEXTMATE_DIR)/PlugIns/Dialog2.tmplugin/Contents
+TM_PID = $(shell pidof Textmate | cut -f 1 -d ' ' | sed -E 's/[[:space:]]+//')
+
+export TM_MATE = $(TEXTMATE_DIR)/Resources/mate
+export DIALOG = $(DIALOG_DIR)/Resources/tm_dialog2
+export DIALOG_PORT_NAME = com.macromates.dialog.$(TM_PID)
 
 BINARY_DIRECTORY = Support/bin
 LIBRARY_DIRECTORY = Support/lib

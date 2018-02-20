@@ -1,12 +1,12 @@
 -- Setup ----------------------------------------------------------------------
 
-  $ cd "$TESTDIR";
+  $ cd "$TESTDIR"
   $ source ../../lib/setup_cram.sh
   $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="xelatex.tex"
+  $ export TM_FILEPATH="xelatex.tex"
 
 Just try to translate the program using `latex`
 

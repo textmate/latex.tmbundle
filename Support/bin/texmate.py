@@ -27,7 +27,6 @@
 #   must each take the match object as well as the current line as a parameter.
 #
 #   Original Author: Brad Miller
-#   Modified by:     René Schwaiger (sanssecours@f-m.fm)
 # -----------------------------------------------------------------------------
 
 # -- Imports ------------------------------------------------------------------
@@ -648,7 +647,7 @@ def construct_engine_command(ts_directives, tm_engine, packages):
         latex
 
     """
-    latex_indicators = {'pstricks', 'xyling', 'pst-asr', 'OTtablx'}
+    latex_indicators = {'xyling', 'pst-asr', 'OTtablx'}
     xelatex_indicators = {'xunicode'}
     lualatex_indicators = {'luacode'}
 

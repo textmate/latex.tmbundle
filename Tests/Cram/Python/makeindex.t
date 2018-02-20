@@ -1,12 +1,12 @@
 -- Setup ----------------------------------------------------------------------
 
-  $ cd "$TESTDIR";
+  $ cd "$TESTDIR"
   $ source ../../lib/setup_cram.sh
   $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="makeindex.tex"
+  $ export TM_FILEPATH="makeindex.tex"
 
 Generate the index for the file
 

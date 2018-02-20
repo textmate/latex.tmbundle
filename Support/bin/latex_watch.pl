@@ -23,8 +23,8 @@ use strict;
 use warnings;
 
 use Cwd qw(abs_path);
-use Env
-  qw(DIALOG DISPLAY HOME PATH TM_APP_IDENTIFIER TM_BUNDLE_SUPPORT TM_SUPPORT_PATH);
+use Env qw(DIALOG DISPLAY HOME PATH TM_APP_IDENTIFIER TM_BUNDLE_SUPPORT
+  TM_SUPPORT_PATH);
 use File::Basename;
 use File::Copy 'copy';
 use Getopt::Long qw(GetOptions :config no_auto_abbrev bundling);
@@ -108,19 +108,9 @@ main_loop();
             );
         }
 
-        if ($TM_APP_IDENTIFIER) {
-            $prefs_file = "$HOME/Library/Preferences/$TM_APP_IDENTIFIER.plist";
-        }
-        else {
-            # Guess the location of the current preference file outside of
-            # TextMate. The following path is the usual location for the
-            # preview version of TextMate (2.0-beta).
-            $prefs_file =
-                "$HOME/Library/Preferences/"
-              . "com.macromates.textmate.preview.plist";
-        }
-
-        $prefs = NSDictionary->dictionaryWithContentsOfFile_($prefs_file);
+        $TM_APP_IDENTIFIER ||= "com.macromates.textmate";
+        $prefs_file = "$HOME/Library/Preferences/$TM_APP_IDENTIFIER.plist";
+        $prefs      = NSDictionary->dictionaryWithContentsOfFile_($prefs_file);
     }
 
     sub getPreference {
@@ -362,11 +352,12 @@ sub parse_file_list {
     local $/ = "\n";
 
     my %updated_files;
+
     # Skip font files, .aux, .ini files and files produced by the minted package
     my $ignored_files_pattern =
       '/dev/null|\.(?:fd|tfm|aux|ini|aex|mintedcmd|mintedmd5|pyg|w18)$';
 
-      while (<$f>) {
+    while (<$f>) {
         if (/^(INPUT|OUTPUT) (.*)/) {
             my ( $t, $f ) = ( $1, $2 );
 

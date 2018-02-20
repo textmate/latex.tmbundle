@@ -1,12 +1,12 @@
 -- Setup ----------------------------------------------------------------------
 
-  $ cd "$TESTDIR";
+  $ cd "$TESTDIR"
   $ source ../../lib/setup_cram.sh
   $ cd ../../TeX/
 
 -- Tests ----------------------------------------------------------------------
 
-  $ TM_FILEPATH="external_bibliography.tex"
+  $ export TM_FILEPATH="external_bibliography.tex"
 
   $ texmate.py version -engine latex
   pdfTeX .* (re)

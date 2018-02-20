@@ -1,12 +1,6 @@
 #!/usr/bin/python
 # coding=utf8
 
-# -----------------------------------------------------------------------------
-# Author:    René Schwaiger (sanssecours@f-m.fm)
-# Date:      2015-01-21
-# Version:   2
-# -----------------------------------------------------------------------------
-
 # -- Imports ------------------------------------------------------------------
 
 from re import search
@@ -136,6 +130,7 @@ def itemize(text, use_spaces_to_indent=True, number_of_spaces_for_indent=4,
     return "{0}\\begin{{{1}}}\n\n{2}\n\n{0}\\end{{{1}}}\n{0}".format(
         environment_indent, 'description' if description_environment
         else 'itemize', '\n\n'.join(items))
+
 
 # -- Main ---------------------------------------------------------------------
 

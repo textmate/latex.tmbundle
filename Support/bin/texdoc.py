@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# Authors: Brad Miller
-#          René Schwaiger (sanssecours@f-m.fm)
+# Author: Brad Miller
 # -----------------------------------------------------------------------------
 
 """Display documentation for tex packages.
@@ -82,8 +81,8 @@ def get_documentation_files(texmf_directory):
         ...     "kpsewhich --expand-path '$TEXMFMAIN'", shell=True,
         ...     universal_newlines=True).strip()
         >>> documentation_files = get_documentation_files(texmf_directory)
-        >>> print(documentation_files['lastpage']) # doctest:+ELLIPSIS
-        /.../lastpage.pdf
+        >>> print(documentation_files['scrguide']) # doctest:+ELLIPSIS
+        /.../scrguide.pdf
 
     """
     doc_files = check_output("find -E {} -regex '.*\.(pdf|dvi)' -type f".
@@ -209,6 +208,7 @@ def create_viewdoc_link(file_path, description,
     return ("""<a href="javascript: TextMate.system(""" +
             r"""'\'{}/bin/viewDoc.sh\' {}', null);">{}</a>""".format(
                 tm_bundle_support, file_path, description))
+
 
 # -- Main ---------------------------------------------------------------------
 

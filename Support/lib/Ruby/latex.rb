@@ -7,7 +7,7 @@ require 'shellwords'
 #
 # Authors:: Charilaos Skiadas, René Schwaiger
 #
-# rubocop:disable Metrics/ModuleLength
+# rubocop: disable Metrics/ModuleLength
 module LaTeX
   # Parse any %!TEX options in the first 20 lines of the file.
   #
@@ -214,9 +214,21 @@ module LaTeX
     #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/references.tex'
     #  >> LaTeX.citations.length
     #  => 5
+    #
+    #  doctest: Retrieve the citations of the file 'missing_cite_key.tex'.
+    #
+    #  >> ENV['TM_FILEPATH'] = 'Tests/TeX/missing_cite_key.tex'
+    #  >> LaTeX.citations.length
+    #  => 1
     def citations
       master_file = LaTeX.master(ENV['TM_LATEX_MASTER'] || ENV['TM_FILEPATH'])
-      FileScanner.cite_scan(master_file).sort_by(&:citekey)
+      # We filter citations without cite key. While BibDesk will not allow you
+      # to save such broken citations, JabRef allows you to save entries without
+      # a key.
+      valid_citations = FileScanner.cite_scan(master_file).reject do |citation|
+        citation.citekey.nil?
+      end
+      valid_citations.sort_by(&:citekey)
     end
 
     # Returns an array of the citekeys for the current master file.
@@ -252,8 +264,8 @@ module LaTeX
     #
     # doctest: Get the path of the tex binaries.
     #
-    #  >> LaTeX.tex_path
-    #  => "/Library/TeX/texbin/"
+    #  >> ['/Library/TeX/texbin/', ''].include? LaTeX.tex_path
+    #  => true
     def tex_path
       # First try directly
       return '' if ENV['PATH'].split(':').find do |dir|
@@ -319,20 +331,20 @@ module LaTeX
     #
     #  doctest: Get the location of a file located deep within the TeX tree
     #
-    #  >> filepath = LaTeX.find_file('wordcount.tex', 'tex', '')
-    #  >> filepath.end_with?('latex/wordcount/wordcount.tex')
+    #  >> filepath = LaTeX.find_file('utf8-test.tex', 'tex', '')
+    #  >> filepath.end_with?('latex/base/utf8-test.tex')
     #  => true
     #
     #  doctest: Get the location of a file specified via an absolute path
     #
     #  >> absolute_path =
-    #     '/Library/TeX/Root/texmf-dist/tex/latex/wordcount/wordcount.tex'
+    #     '/Library/TeX/Root/texmf-dist/tex/latex/base/utf8-test.tex'
     #  >> LaTeX.find_file(absolute_path, 'tex', '')
     #  => absolute_path
     #
     #  doctest: Locate bibliography file located in TeX tree
     #
-    #  >> LaTeX.find_file('sample', 'bib', '').end_with?('gloss/sample.bib')
+    #  >> LaTeX.find_file('xampl', 'bib', '').end_with?('bib/base/xampl.bib')
     #  => true
     def find_file(filepath, extension, directory)
       filepath = filepath.delete('"').sub(/\.#{extension}$/, '') + \
@@ -734,7 +746,7 @@ module LaTeX
   #              - the regex match and
   #              - the content of the file.
   #
-  # rubocop:disable Metrics/ClassLength
+  # rubocop: disable Metrics/ClassLength
   class FileScanner
     attr_accessor :root, :includes, :extractors
 
@@ -903,7 +915,7 @@ module LaTeX
         end
       end
 
-      # rubocop:disable Metrics/AbcSize
+      # rubocop: disable Metrics/AbcSize
       def add_bibliography_scan(scanner)
         # We ignore bibliography files located on Windows drives by not
         # +matching+ any path which starts with a single letter followed by a

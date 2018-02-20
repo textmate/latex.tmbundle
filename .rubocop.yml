@@ -13,7 +13,7 @@
 # http://www.stok.ca/blog/2014/08/24/cleaning.
 
 # Ruby 1.8.7 needs the . on a chain of method calls at the end of a line.
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 # Ruby 1.8.7 doesn't have the -> lambda
 Style/Lambda:

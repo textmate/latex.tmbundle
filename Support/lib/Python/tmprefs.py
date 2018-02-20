@@ -34,14 +34,14 @@ class Preferences(object):
         CFPreferencesAppSynchronize(tm_identifier)
 
         self.default_values = {
-            'latexAutoView': 1,
+            'latexAutoView': True,
             'latexEngine': "pdflatex",
             'latexEngineOptions': "",
-            'latexVerbose': 0,
-            'latexUselatexmk': 1,
+            'latexVerbose': False,
+            'latexUselatexmk': True,
             'latexViewer': "TextMate",
-            'latexKeepLogWin': 1,
-            'latexDebug': 0,
+            'latexKeepLogWin': True,
+            'latexDebug': False,
         }
         self.prefs = self.default_values.copy()
 
@@ -91,11 +91,13 @@ class Preferences(object):
               latexViewer = TextMate; }
 
         """
+        plist = {preference: int(value) if isinstance(value, bool) else value
+                 for preference, value in self.default_values.items()}
         preference_items = [
             '{} = {};'.format(preference,
-                              self.default_values[preference] if
-                              str(self.default_values[preference]) else '""')
-            for preference in sorted(self.default_values)]
+                              plist[preference] if
+                              str(plist[preference]) else '""')
+            for preference in sorted(plist)]
         return '{{ {} }}'.format(' '.join(preference_items))
 
 

@@ -1,7 +1,6 @@
 # Various code used by the commands of the LaTeX bundle
 #
-# Authors:: Charilaos Skiadas, Michael Sheets,
-#           René Schwaiger (sanssecours@f-m.fm)
+# Authors:: Charilaos Skiadas, Michael Sheets
 
 # -- Imports -------------------------------------------------------------------
 
@@ -12,6 +11,8 @@ require ENV['TM_SUPPORT_PATH'] + '/lib/ui.rb'
 require ENV['TM_SUPPORT_PATH'] + '/lib/web_preview.rb'
 require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/indent.rb'
 require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/latex.rb'
+
+include TextMate
 
 # -- Functions -----------------------------------------------------------------
 
@@ -28,10 +29,10 @@ require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/latex.rb'
 #
 # [choices] A list of strings. Each string represents a menu item.
 def menu_choice_exit_if_empty(choices)
-  TextMate.exit_discard if choices.empty?
+  exit_discard if choices.empty?
   if choices.length > 1
-    choice = TextMate::UI.menu(choices)
-    TextMate.exit_discard if choice.nil?
+    choice = UI.menu(choices)
+    exit_discard if choice.nil?
     choices[choice]
   else
     choices[0]
@@ -97,7 +98,7 @@ def output_selection(selection, input, replace_input, scope = 'citation')
     end
   else
     snippet = reference_snippet(selection, scope)
-    TextMate.exit_insert_snippet("#{replace_input ? '' : input}#{snippet}")
+    exit_insert_snippet("#{replace_input ? '' : input}#{snippet}")
   end
 end
 
@@ -314,7 +315,7 @@ def insert_citation(input)
   selection = menu_choice_exit_if_empty(menu_items).slice(/^[^\s]+/)
   output_selection(selection, input, replace_input)
 rescue RuntimeError => e
-  TextMate.exit_show_tool_tip(e.message)
+  exit_show_tool_tip(e.message)
 end
 
 # ===================================
@@ -353,11 +354,11 @@ def insert_reftex_citation(input)
     cite_environment = choose_cite_environment
     citations, replace_input = citations(input)
     citation = menu_choice_exit_if_empty(citations).slice(/^[^\s]+/)
-    TextMate.exit_insert_snippet("#{replace_input ? '' : input}" \
+    exit_insert_snippet("#{replace_input ? '' : input}" \
       "\\#{cite_environment}${1:[$2]}\{#{citation}$3\}$0")
   end
 rescue RuntimeError => e
-  TextMate.exit_insert_text(e.message)
+  exit_insert_text(e.message)
 end
 
 # ======================================
@@ -375,7 +376,7 @@ def insert_label(input)
   selection = menu_choice_exit_if_empty(menu_items)
   output_selection(selection, input, replace_input, 'label')
 rescue RuntimeError => e
-  TextMate.exit_show_tool_tip(e.message)
+  exit_show_tool_tip(e.message)
 end
 
 # =========================
@@ -416,7 +417,7 @@ def template_text
             "#{e_sh({ 'entries' => template_entries }.to_plist)} " \
             "#{e_sh(ENV['TM_BUNDLE_SUPPORT'] + '/nibs/Templates')}"
   result = OSX::PropertyList.load(`#{command}`)['result']
-  TextMate.exit_discard if result.nil?
+  exit_discard if result.nil?
   result['returnArgument'][0].scan(/\n|.+\n?/)
 end
 
@@ -425,7 +426,7 @@ def insert_template
   text = template_text
   # The user can force the template to be interpreted as a snippet, by
   # adding the line: %!TEX style=snippet at the beginning of the template
-  TextMate.exit_insert_snippet(text[1..-1]) if
+  exit_insert_snippet(text[1..-1]) if
     text[0] =~ /^%\s*!TEX\s+style\s*=\s*snippet\s*/
   print(text.join(''))
 end
@@ -476,8 +477,9 @@ def open_file(location)
     possible_files = Dir["#{location}*"]
     filepath = possible_files.pop unless possible_files.empty?
   end
-  TextMate.exit_show_tool_tip('Could not locate file for path ' \
-                              "`#{location}'") if filepath.empty?
+  if filepath.empty?
+    exit_show_tool_tip("Could not locate file for path “#{location}”")
+  end
   `open #{e_sh filepath}`
 end
 
@@ -490,8 +492,10 @@ def open_included_item
   input = selection_or_line
   Dir.chdir(File.dirname(master)) unless master.nil?
   location = locate_included_item(input)
-  TextMate.exit_show_tool_tip('Did not find any appropriate item to open in ' \
-                              "#{input}") if location.empty?
+  if location.empty?
+    exit_show_tool_tip('Did not find any appropriate item to open in ' \
+                       "“#{input}”")
+  end
   open_file(location)
 end
 
@@ -508,7 +512,7 @@ def open_master_file
     `open -a TextMate #{e_sh master}`
   end
 rescue RuntimeError => e
-  TextMate.exit_show_tool_tip(e.message)
+  exit_show_tool_tip(e.message)
 end
 
 # ==========================
@@ -538,12 +542,13 @@ end
 #
 # [input] A string that is checked for references
 def show_label_as_tooltip(input)
-  TextMate.exit_show_tool_tip('Empty input! Please select a (partial) label' \
-                              ' reference.') if input.empty?
+  if input.empty?
+    exit_show_tool_tip('Empty input! Please select a (partial) label' \
+                       ' reference.')
+  end
   labels = LaTeX.labels.find_all { |label| label.label.match(/#{input}/) }
-  TextMate.exit_show_tool_tip('No label found matching ' \
-                              "“#{input}”") if labels.empty?
+  exit_show_tool_tip("No label found matching “#{input}”") if labels.empty?
   print(label_context(labels[0]))
 rescue RuntimeError => e
-  TextMate.exit_insert_text(e.message)
+  exit_insert_text(e.message)
 end

@@ -11,9 +11,17 @@ require 'fileutils'
 require 'find'
 require 'optparse'
 require 'pathname'
+require 'rubygems'
 require 'yaml'
 
-require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/lib/unf'
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new(2.2)
+  require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/lib/unf'
+else
+  # Ruby 2.2 already supports Unicode normalization
+  class String
+    alias to_nfc unicode_normalize
+  end
+end
 
 # -- Classes -------------------------------------------------------------------
 
@@ -221,21 +229,22 @@ class Dir
   #   >> require 'tmpdir'
   #   >> test_directory = Dir.mktmpdir
   #
-  #   >> aux_files = ['Fjørt.aux', 'Fjørt.toc', 'Wide Open Spaces.synctex.gz',
-  #                   '😱.glo']
-  #   >> non_aux_files = ['Fjørt.tex', 'Wide Open Spaces', '🙈🙉🙊.txt']
-  #   >> all_files = aux_files + non_aux_files
-  #   >> all_files.each do |filename|
-  #        File.new(File.join(test_directory, filename), 'w').close
-  #        end
-  #
   #   >> filename = 'Hau Ab Die Schildkröte'
   #   >> aux_directories = ["_minted-#{filename.gsub ' ', '_'}",
   #                         "pythontex-files-#{filename.gsub ' ', '-'}"]
-  #   >> non_aux_directories = ['Do Not Delete Me']
+  #   >> non_aux_directories = ['Do Not Delete Me', '.git']
   #   >> all_directories = aux_directories + non_aux_directories
   #   >> all_directories.each do |filename|
   #        Dir.mkdir(File.join test_directory, filename)
+  #        end
+  #
+  #   >> aux_files = ['Fjørt.aux', 'Fjørt.toc', '.Fjørt.lb',
+  #                   'Wide Open Spaces.synctex.gz', '😱.glo']
+  #   >> non_aux_files = ['Fjørt.tex', 'Wide Open Spaces', '🙈🙉🙊.txt',
+  #                       '.git/pack.idx']
+  #   >> all_files = aux_files + non_aux_files
+  #   >> all_files.each do |filename|
+  #        File.new(File.join(test_directory, filename), 'w').close
   #        end
   #
   #   >> deleted = Dir.new(test_directory).delete_aux
@@ -252,7 +261,7 @@ class Dir
   def aux(pattern_method, check_file)
     patterns = Auxiliary.new('FILENAME').send(pattern_method)
     patterns.map { |pattern| pattern.gsub!('FILENAME', '.+') }
-    Find.find(path).map(&:to_nfc).select do |filepath|
+    files.map(&:to_nfc).select do |filepath|
       patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
         check_file.call(filepath)
     end
@@ -264,6 +273,14 @@ class Dir
 
   def aux_directories
     aux(:directory_patterns, proc { |filename| File.directory?(filename) })
+  end
+
+  def files
+    Find.find(path).map do |path|
+      # Ignore files in hidden directories
+      Find.prune if File.directory?(path) && File.basename(path) =~ /^\.[^.]/
+      path.force_encoding('UTF-8')
+    end
   end
 end
 
@@ -287,7 +304,7 @@ class TeXFile
   #   >> require 'tmpdir'
   #   >> test_directory = Dir.mktmpdir
   #
-  #   >> aux_files = ['[A → B] Life.toc', 'Fjørt.aux', 'Fjørt.toc',
+  #   >> aux_files = ['[A → B] Life.toc', 'Fjørt.aux', 'Fjørt.toc', '.Fjørt.lb',
   #                   'Wide Open Spaces.synctex.gz', '😘.glo']
   #   >> non_aux_files = ['Fjørt.tex', 'D.E.A.D. R.A.M.O.N.E.S.']
   #   >> all_files = aux_files + non_aux_files
@@ -299,7 +316,7 @@ class TeXFile
   #   >> aux_directories = ["_minted-#{filename.gsub ' ', '_'}",
   #                         "pythontex-files-#{filename.gsub ' ', '-'}",
   #                         '_minted-👻']
-  #   >> non_aux_directories = ['Außer Dir']
+  #   >> non_aux_directories = ['Außer Dir', '.git']
   #   >> all_directories = aux_directories + non_aux_directories
   #   >> all_directories.each do |filename|
   #       Dir.mkdir(File.join test_directory, filename)
@@ -311,9 +328,8 @@ class TeXFile
   #   => true
   #
   #   >> tex_file = TeXFile.new(File.join test_directory, 'Fjørt')
-  #   >> tex_file.delete_aux.map { |path| File.basename path } ==
-  #      aux_files.select { |file| file.start_with? 'Fjørt' }
-  #   => true
+  #   >> tex_file.delete_aux.map { |path| File.basename path }.length
+  #   => 3
   #
   #   >> tex_file = TeXFile.new(File.join test_directory, '[A → B] Life.tex')
   #   >> tex_file.delete_aux.map { |path| File.basename path } ==
@@ -328,9 +344,11 @@ class TeXFile
 
   def aux(pattern_method, check_file)
     patterns = Auxiliary.new(@basename).send(pattern_method)
-    Find.find(@path.parent).map { |path| path.to_s.to_nfc }.select do |filepath|
-      patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
-        check_file.call(filepath)
+    Dir.chdir(@path.parent) do
+      Dir['{**/*,.[^.]*}'].map { |path| path.to_s.to_nfc }.select do |filepath|
+        patterns.any? { |pattern| filepath =~ /#{pattern}/x } &&
+          check_file.call(filepath)
+      end
     end
   end
 
@@ -345,7 +363,7 @@ end
 
 # -- Main ----------------------------------------------------------------------
 
-if __FILE__ == $PROGRAM_NAME
+if $PROGRAM_NAME == __FILE__
   location = ArgumentParser.parse(ARGV)
   tex_location = if File.directory?(location) then Dir.new(location)
                  else TeXFile.new(location)

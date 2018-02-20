@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# Authors: Brad Miller
-#          René Schwaiger (sanssecours@f-m.fm)
+# Author: Brad Miller
 # -----------------------------------------------------------------------------
 
 """This module contains various functions for handling tex data."""
@@ -71,7 +70,7 @@ def expand_name(filename, program='pdflatex'):
 
 def determine_typesetting_directory(ts_directives,
                                     master_document=getenv('TM_LATEX_MASTER'),
-                                    tex_file=getenv('TM_FILEPATH')):
+                                    tex_file=getenv('TM_FILEPATH', '')):
     """Determine the proper directory for typesetting the current document.
 
     The typesetting directory is set according to the first applicable setting
@@ -301,6 +300,8 @@ def find_tex_directives(texfile, ignore_root_loops=False):
         >>> chdir('../..')
 
     """
+    if not texfile:
+        return {}
     root_chain = [texfile]
     directive_regex = compile(r'%\s*!T[E|e]X\s+([\w-]+)\s*=\s*(.+)')
     directives = {}
@@ -344,7 +345,7 @@ def find_tex_directives(texfile, ignore_root_loops=False):
 
 def find_file_to_typeset(tyesetting_directives,
                          master_document=getenv('TM_LATEX_MASTER'),
-                         tex_file=getenv('TM_FILEPATH')):
+                         tex_file=getenv('TM_FILEPATH', '')):
     """Determine which tex file to typeset.
 
     This is determined according to the following options:

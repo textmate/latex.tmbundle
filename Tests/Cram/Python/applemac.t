@@ -1,6 +1,6 @@
 -- Setup ----------------------------------------------------------------------
 
-  $ cd "$TESTDIR";
+  $ cd "$TESTDIR"
   $ source ../../lib/setup_cram.sh
   $ cd ../../TeX/
 
@@ -8,7 +8,7 @@
 
 Try to translate a file with the encoding “Mac OS Roman”
 
-  $ TM_FILEPATH="applemac.tex"
+  $ export TM_FILEPATH="applemac.tex"
 
 Just try to translate the program using `pdflatex`
 

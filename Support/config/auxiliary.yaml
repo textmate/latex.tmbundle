@@ -49,6 +49,7 @@ files:
                  maf|
                  mtc|
                  mtc1|
+                 mw|
                  nav|
                  nlo|
                  nls|
@@ -58,7 +59,9 @@ files:
                  run\.xml|
                  snm|
                  synctex\.gz|
-                 toc)$'
+                 toc|
+                 vrb)$'
+  - '.+/.+\.aux$'
 
 directories:
   - pythontex-files-${NAME/ /-/}

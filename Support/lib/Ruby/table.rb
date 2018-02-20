@@ -8,7 +8,7 @@ require ENV['TM_BUNDLE_SUPPORT'] + '/lib/Ruby/indent'
 # -- Class ---------------------------------------------------------------------
 
 # This class represents a LaTeX table.
-# rubocop:disable Metrics/ClassLength
+# rubocop: disable Metrics/ClassLength
 class Table
   # This function initializes a new LaTeX table.
   #
@@ -133,7 +133,7 @@ class Table
     create_array(rows, indentation, insertion_point)
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop: disable Metrics/AbcSize
   def create_array(rows, indentation, insertion_point)
     Array.new(rows) do |row|
       row += @full_table ? 2 : 1
@@ -177,9 +177,9 @@ class Table
       value = parameter.values[0]
       name = parameter.keys[0]
       number = value.to_i
-      raise if number < 1 || number > 100
+      raise RangeError if number < 1 || number > 100
       number
-    rescue
+    rescue RangeError
       TextMate.exit_show_tool_tip("“#{value}” is not a valid value for the " \
                                   "number of #{name}.\n" \
                                   'Please use a number between 1 and 100.')

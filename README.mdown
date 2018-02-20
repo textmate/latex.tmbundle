@@ -12,21 +12,21 @@ If there are some changes that you want to test immediately, then please follow 
 2. Open Terminal
 3. Go to the bundle folder:
 
-    ```bash
+    ```sh
     cd ~/Library/Application\ Support/TextMate/Managed/Bundles
     ```
 
 4. Clone the repository:
 
-    ```bash
+    ```sh
     git clone https://github.com/textmate/latex.tmbundle.git
     ```
 
-5. Restart TextMate (<kbd>^⌘Q</kbd>) to make sure it registered the changes
+5. Restart TextMate (<kbd>^</kbd> + <kbd>⌘</kbd> + <kbd>Q</kbd>) to make sure it registered the changes
 
 # Feedback
 
-Before you report an issue please read [this](http://kb.textmate.org/writing_bug_reports). You can report bugs or feature request via the [issue tracker](https://github.com/textmate/latex.tmbundle/issues). If you have a more general problem, then please use the [mailing list](http://lists.macromates.com/listinfo/textmate).
+Before you report an issue please read the [ FAQ](http://github.com/textmate/latex.tmbundle/wiki/FAQ). You can report bugs or feature request via the [issue tracker](https://github.com/textmate/latex.tmbundle/issues). If you have a more general problem, then please use the [mailing list](http://lists.macromates.com/listinfo/textmate).
 
 # Contribute
 
@@ -38,10 +38,6 @@ There are many ways in which you can contribute to the bundle:
 * Improve the bundle by committing your own code
 
 Before you contribute any code, please read both the [bundle styleguide](http://kb.textmate.org/bundle_styleguide) and the [commit styleguide](http://kb.textmate.org/commit_styleguide). Please also make sure, that your changes do not break any of the [bundle tests](Makefile).
-
-## Donate
-
-If you want to make a donation to the [current maintainer](https://github.com/textmate/latex.tmbundle/commits/master?author=sanssecours) of the bundle, then you can do so [here](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=sanssecours%40f%2dm%2efm&lc=GB&item_name=Donate%20to%20the%20maintainer%20of%20the%20LaTeX%20bundle&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted).
 
 # License
 

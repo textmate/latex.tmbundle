@@ -56,9 +56,9 @@ end
 # A section acts the same way as a strings. The class implements additional
 # methods that allows us to take the order of a section into account.
 class Section < String
-  # rubocop:disable Style/ClassVars
-  @@parts = %w(part chapter section subsection subsubsection paragraph
-               subparagraph)
+  # rubocop: disable Style/ClassVars
+  @@parts = %w[part chapter section subsection subsubsection paragraph
+               subparagraph]
 
   # Get the number of levels from the current to the given section.
   #
@@ -144,16 +144,17 @@ module Outline
       else
         [filename.read, '']
       end
-    rescue => e
+    rescue StandardError => error
       TextMate.exit_show_tool_tip("#{ref_filename}:#{ref_linenumber} " \
-                                  "“#{ref_line}”\n\t#{e.message}")
+                                  "“#{ref_line}”\n\t#{error.message}")
     end
 
     # Try to get a outline point — containing url, line number, section and
     # the text of the section — from a single line of text.
     def outline_point_from_line(line, url, linenumber)
-      [url, linenumber, Regexp.last_match[1], Regexp.last_match[2] ||
-        Regexp.last_match[3]] if line.match(PART_REGEX)
+      return unless line.match(PART_REGEX)
+      [url, linenumber, Regexp.last_match[1],
+       Regexp.last_match[2] || Regexp.last_match[3]]
     end
 
     # Try to get outline points from a file referenced in a line of text.
