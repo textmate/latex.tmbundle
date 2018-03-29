@@ -1055,6 +1055,8 @@ if __name__ == '__main__':
         if engine == 'latex':
             call("dvips {0}.dvi -o '{0}.ps'".format(file_without_suffix),
                  shell=True)
+            # Add default location of `ps2pdf` to `PATH`
+            putenv('PATH', getenv('PATH') + ':/usr/local/bin')
             call("ps2pdf '{}.ps'".format(file_without_suffix), shell=True)
         if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
