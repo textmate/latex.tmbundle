@@ -332,15 +332,15 @@ module LaTeX
     #
     #  doctest: Get the location of a file located deep within the TeX tree
     #
-    #  >> filepath = LaTeX.find_file('utf8-test.tex', 'tex', '')
-    #  >> filepath.end_with?('latex/base/utf8-test.tex')
+    #  >> filepath = LaTeX.find_file('article.cls', 'cls', '')
+    #  >> filepath.end_with?('latex/base/article.cls')
     #  => true
     #
     #  doctest: Get the location of a file specified via an absolute path
     #
     #  >> absolute_path =
-    #     '/Library/TeX/Root/texmf-dist/tex/latex/base/utf8-test.tex'
-    #  >> LaTeX.find_file(absolute_path, 'tex', '')
+    #     '/Library/TeX/Root/texmf-dist/tex/latex/base/article.cls'
+    #  >> LaTeX.find_file(absolute_path, 'cls', '')
     #  => absolute_path
     #
     #  doctest: Locate bibliography file located in TeX tree
