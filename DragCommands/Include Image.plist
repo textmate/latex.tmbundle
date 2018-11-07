@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>#!/usr/bin/ruby
+	<string>#!/usr/bin/env ruby18
 
 # -- Imports -------------------------------------------------------------------
 
