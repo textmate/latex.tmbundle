@@ -179,6 +179,7 @@ end
 # = Output
 #
 # The function returns a string containing a language identification.
+# rubocop:disable AlignHash
 def extension_to_language(extension)
   mapping = { 'ada'  => 'Ada',  'ant'  => 'Ant',  'c'    => 'C',
               'cpp'  => 'C++',  'htm'  => 'HTML', 'html' => 'HTML',
@@ -188,6 +189,7 @@ def extension_to_language(extension)
               'xml'  => 'XML',  'vhdl' => 'VHDL' }
   mapping.key?(extension) ? mapping[extension] : 'Assembler'
 end
+# rubocop:enable AlignHash
 
 # This function returns a minted listing environment referencing a given file.
 #
