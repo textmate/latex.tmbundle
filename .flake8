@@ -1,0 +1,4 @@
+# TODO: Fix the warnings reported below and remove this file
+
+[flake8]
+ignore = E402,W503,W504,W605
