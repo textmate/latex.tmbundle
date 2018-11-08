@@ -68,7 +68,10 @@ before_install:
   # = TextMate =
   # ============
 
-  - brew cask install textmate
+  - |
+    cd /Applications
+    curl -L 'https://api.textmate.org/downloads/release?os=10.9' -o TextMate.tbz
+    tar -xvf TextMate.tbz
   - open /Applications/TextMate.app
   - |-
     while ! pidof TextMate | grep -Eq '^[0-9]+[[:space:]]*$'; do
