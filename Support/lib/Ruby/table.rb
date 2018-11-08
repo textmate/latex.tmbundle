@@ -179,6 +179,7 @@ class Table
       name = parameter.keys[0]
       number = value.to_i
       raise RangeError if number < 1 || number > 100
+
       number
     rescue RangeError
       TextMate.exit_show_tool_tip("“#{value}” is not a valid value for the " \

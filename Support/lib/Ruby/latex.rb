@@ -70,9 +70,11 @@ module LaTeX
   #  => 'Tests/TeX/xelatex.tex'
   def self.master(filepath)
     return nil if filepath.nil?
+
     master = Pathname.new(filepath).cleanpath
     master = master_from_tex_directives(master)
     raise 'There is a loop in your %!TEX root directives.' unless master
+
     master
   end
 
@@ -107,10 +109,13 @@ module LaTeX
   def self.master_from_tex_directives(master)
     10.times do
       raise "Master file #{master} does not exist!" unless master.exist?
+
       root = options(master)['root']
       return master.to_s unless root
+
       new_master = (master.parent + Pathname.new(root)).cleanpath
       return master.to_s if new_master == master
+
       master = new_master
     end
   end
@@ -272,6 +277,7 @@ module LaTeX
       return '' if ENV['PATH'].split(':').find do |dir|
         File.exist? File.join(dir, 'kpsewhich')
       end
+
       # Then try some specific paths
       ['/Library/TeX/texbin/', '/usr/texbin/', '/opt/local/bin/'].each do |dir|
         return dir if File.exist?("#{dir}kpsewhich")
@@ -280,6 +286,7 @@ module LaTeX
       # never make it here.
       loc = `. /etc/profile; which kpsewhich`.rstrip
       return loc.gsub(/kpsewhich$/, '') unless loc =~ /^no kpsewhich/
+
       raise 'The tex binaries cannot be located!'
     end
 
@@ -424,6 +431,7 @@ module LaTeX
     #  => "@article{A, author = {A}}"
     def bib_entries(filepath)
       raise "Could not locate file: #{filepath}" unless file?(filepath)
+
       entries = File.read(filepath).scan(/^\s*@[^\{]*\{.*?(?=\n[ \t]*@|\z)/m)
       entries.map { |entry| entry.strip.gsub(/(?:^\s*%.*|\n)+$/m, '') }
     end
@@ -577,6 +585,7 @@ module LaTeX
     def bib_citation(bib_entry, bib_variables)
       bibtype, citekey, rest = bibentry_type_key_rest(bib_entry)
       return nil if bibtype.nil?
+
       cite = Citation.new('bibtype' => bibtype, 'citekey' => citekey)
       rest[0..-2].split(/("|\}|\d)\s*,/).each_slice(2).map(&:join).
         map(&:strip).each do |key_value|
@@ -671,6 +680,7 @@ module LaTeX
     def bibitem_key_value(bib_item, bib_variables)
       key, value = bib_item.split(/\s*=\s*(?=\{|"|\w)/)
       return nil if value.nil?
+
       [key.downcase, bib_item_value(value, bib_variables)]
     end
 
@@ -793,6 +803,7 @@ module LaTeX
     def recursive_scan
       raise 'No root specified!' if @root.nil?
       raise "Could not find file #{@root}" unless File.exist?(@root)
+
       text = File.read(@root)
       text.lines.each_with_index do |line, line_number|
         includes.each_pair do |regex, block|
@@ -927,6 +938,7 @@ module LaTeX
           (groups[0].split(',') << ENV['TM_LATEX_BIB']).compact.each do |bib|
             file = LaTeX.find_file(bib.strip, 'bib', File.dirname(scanner.root))
             raise "Could not locate any file named '#{bib}'" if file.nil?
+
             scanner.cites += LaTeX.parse_bibfile(file)
           end
         end

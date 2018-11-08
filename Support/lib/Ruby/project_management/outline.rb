@@ -133,9 +133,9 @@ module Outline
     OPTIONS = '(?>\[(.*?)\])'.freeze
     ARGUMENT = '\{([^{}]*(?:\{[^}]*\}[^}]*?)*)\}'.freeze
 
-    PART_REGEX = /\\#{PART}#{COMMENT}(?:#{OPTIONS}|#{ARGUMENT})/
-    INCLUDE_REGEX = /\\(?:input|include)#{COMMENT}(?>\{([^}#]*)\})/
-    NON_COMMENT_REGEX = /^([^%]+$|(?:[^%]|\\%)+)(?=%|$)/
+    PART_REGEX = /\\#{PART}#{COMMENT}(?:#{OPTIONS}|#{ARGUMENT})/.freeze
+    INCLUDE_REGEX = /\\(?:input|include)#{COMMENT}(?>\{([^}#]*)\})/.freeze
+    NON_COMMENT_REGEX = /^([^%]+$|(?:[^%]|\\%)+)(?=%|$)/.freeze
 
     # Get the text stored in and a URL referencing +filename+.
     def content_url(filename, ref_filename = nil, ref_line = nil,
@@ -154,6 +154,7 @@ module Outline
     # the text of the section — from a single line of text.
     def outline_point_from_line(line, url, linenumber)
       return unless line.match(PART_REGEX)
+
       [url, linenumber, Regexp.last_match[1],
        Regexp.last_match[2] || Regexp.last_match[3]]
     end
@@ -175,6 +176,7 @@ module Outline
       points = []
       data.split("\n").each_with_index do |line, linenumber|
         next unless line.match(NON_COMMENT_REGEX)
+
         points << outline_point_from_line(Regexp.last_match[1], url,
                                           linenumber + 1)
         points += outline_points_from_line(line, linenumber + 1, filename)

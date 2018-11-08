@@ -24,6 +24,7 @@ module Configuration
 
     def load_file(filename)
       return nil unless FileTest.exist?(filename)
+
       File.open(filename) do |f|
         plist = OSX::PropertyList.load(f)
         return plist
@@ -47,7 +48,9 @@ module Configuration
     # precedence in case of ties.
     def merge_plists(default_list, user_list)
       return user_list unless default_list
+
       return default_list unless user_list
+
       merge_defined_plists(default_list, user_list)
     end
 
