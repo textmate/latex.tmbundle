@@ -91,6 +91,9 @@ before_install:
   - git clone https://github.com/textmate/java.tmbundle.git
   - git clone https://github.com/textmate/javadoc.tmbundle.git
   - git clone https://github.com/textmate/r.tmbundle.git
+  - > # Install Bundle Support, if it does not exist yet
+    git clone https://github.com/textmate/bundle-support.tmbundle.git
+    'Bundle Support.tmbundle' || true
 
 before_script:
   - cd "$TRAVIS_BUILD_DIR"
