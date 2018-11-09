@@ -53,7 +53,7 @@ before_install:
   - >-
     sudo tlmgr install
     biber biblatex csquotes ctablestack datatool framed glossaries latexmk
-    logreq luacode mfirstuc substr supertabular texdoc xfor xstring
+    logreq luacode mfirstuc substr supertabular texdoc texdoctk xfor xstring
 
   # ================
   # = Applications =
