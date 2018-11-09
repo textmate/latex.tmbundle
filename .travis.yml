@@ -60,6 +60,7 @@ before_install:
   # ================
 
   - brew cask install skim
+  - xattr -dr com.apple.quarantine /Applications/Skim.app
   - brew install ghostscript pidof
 
   # ============
