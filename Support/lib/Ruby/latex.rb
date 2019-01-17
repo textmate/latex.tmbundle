@@ -907,7 +907,7 @@ module LaTeX
     def self.cite_scan(root)
       scanner = FileScanner.new(root)
       class << scanner
-          attr_accessor :cites
+        attr_accessor :cites
       end
       scanner.cites = []
       add_bibitem_scan(scanner)
