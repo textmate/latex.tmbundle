@@ -29,8 +29,10 @@ before_install:
   # = Ruby =
   # ========
 
-  - rvm list
-  - rvm install 2.4.1; rvm use 2.4.1
+  - rvm use system
+  - brew install ruby
+  - export PATH="/usr/local/opt/ruby/bin:$PATH"
+  - export PATH="$(gem environment gemdir)/bin:$PATH"
   - gem install rubydoctest rubocop
 
   # ========
