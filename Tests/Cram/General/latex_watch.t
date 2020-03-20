@@ -31,4 +31,4 @@ Run `latex_watch` and check if the log output of the command looks correct.
 
   $ rm "${LOGFILE}"
   $ rm "${TEX_DIR}/${FILENAME}.pdf"
-  $ git checkout "${TEX_DIR}/${FILENAME}.idx"
+  $ git checkout -q "${TEX_DIR}/${FILENAME}.idx"
