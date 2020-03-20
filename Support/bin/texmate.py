@@ -393,7 +393,7 @@ def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
         ...     'Preview', 'test.pdf', 'test.tex', 1)
         >>> print('({}, {})'.format(app_path,
         ...                         sync_command)) # doctest:+ELLIPSIS
-        (/Applications/Preview.app, None)
+        (...Applications/Preview.app, None)
 
     """
     sync_command = None
