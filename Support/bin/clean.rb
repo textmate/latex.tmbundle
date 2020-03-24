@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+# frozen_string_literal: true
+
 # Fix environment variable for command “Run DocTest”
 ENV['TM_BUNDLE_SUPPORT'] = File.expand_path(
   File.dirname(File.dirname(__FILE__))
@@ -44,7 +46,7 @@ class ArgumentParser
 
     If LOCATION is not specified, then clean removes auxiliary files in
     the current directory.
-  ).freeze
+  )
 
   # This method parses all command line arguments.
   #
@@ -165,7 +167,7 @@ end
 
 # This class saves information about auxiliary TeX files.
 class Auxiliary
-  CONFIG_FILE = "#{ENV['TM_BUNDLE_SUPPORT']}/config/auxiliary.yaml".freeze
+  CONFIG_FILE = "#{ENV['TM_BUNDLE_SUPPORT']}/config/auxiliary.yaml"
   CONFIGURATION = YAML.load_file CONFIG_FILE
 
   def initialize(name)
