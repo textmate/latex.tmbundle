@@ -22,7 +22,9 @@ before_install:
   # = Python =
   # ==========
 
+  - brew unlink python
   - brew install python || brew upgrade python
+  - brew link --overwrite python
   - sudo pip3 install cram flake8 nose tox
 
   # ========
