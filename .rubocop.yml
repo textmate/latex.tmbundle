@@ -33,5 +33,5 @@ Style/HashSyntax:
 # -- Common Rules --------------------------------------------------------------
 
 # Allow special characters such as `é` in comments
-AsciiComments:
+Style/AsciiComments:
   Enabled: false
