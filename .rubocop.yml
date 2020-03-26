@@ -29,6 +29,9 @@ Style/Lambda:
 # Ruby 1.8.7 doesn't have 1.9 style hash syntax
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
+# Ruby 1.8.7 does not support the `positive?` method
+Style/NumericPredicate:
+  Enabled: false
 
 # -- Common Rules --------------------------------------------------------------
 
