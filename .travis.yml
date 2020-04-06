@@ -52,7 +52,7 @@ before_install:
 
   - curl -L http://tug.org/cgi-bin/mactex-download/BasicTeX.pkg -O
   - sudo installer -pkg BasicTeX.pkg -target /
-  - export PATH=$PATH:/Library/TeX/texbin:/usr/texbin
+  - export PATH=$PATH:/Library/TeX/texbin
   - sudo tlmgr update --self --all
   - >-
     sudo tlmgr install
