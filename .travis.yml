@@ -6,8 +6,6 @@ language: generic
 matrix:
   include:
     - os: osx
-      osx_image: xcode11.3
-    - os: osx
       osx_image: xcode10.1
 
 before_install:
