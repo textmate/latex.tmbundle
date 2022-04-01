@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/usr/bin/env -S "${TM_BUNDLE_SUPPORT}/bin/python"
 # encoding: utf-8
 
 # -----------------------------------------------------------------------------

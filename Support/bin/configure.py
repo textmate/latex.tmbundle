@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env -S "${TM_BUNDLE_SUPPORT}/bin/python"
 
 # -- Imports ------------------------------------------------------------------
 

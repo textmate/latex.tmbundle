@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ -e /usr/bin/python ]; then
+	exec /usr/bin/python "$@"
+else
+	exec /usr/bin/python3 "$@"
+fi
