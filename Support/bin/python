@@ -1,7 +1,20 @@
 #!/bin/sh
 
-if [ -e /usr/bin/python ]; then
-	exec /usr/bin/python "$@"
+if [ -e "/usr/bin/python" ]; then
+  python="/usr/bin/python"
 else
-	exec /usr/bin/python3 "$@"
+  python="/usr/bin/python3"
+  "$python" -c 'from Foundation import CFPreferencesAppSynchronize'
+  if [ "$?" -ne 0 ]; then
+    "$DIALOG" alert \
+    --alertStyle error \
+    --title 'This command requires PyObjC' \
+    --body \
+'Please run the following Terminal command and retry:
+
+/usr/bin/pip3 install pyobjc
+'   --button1 OK
+  fi
 fi
+
+exec "$python" "$@"
