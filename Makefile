@@ -41,7 +41,7 @@ TEXTMATE_DIR = /Applications/TextMate.app/Contents
 DIALOG_DIR = $(TEXTMATE_DIR)/PlugIns/Dialog2.tmplugin/Contents
 TM_PID = $(shell pidof Textmate | cut -f 1 -d ' ' | sed -E 's/[[:space:]]+//')
 
-export TM_MATE = $(TEXTMATE_DIR)/Resources/mate
+export TM_MATE = $(TEXTMATE_DIR)/MacOS/mate
 export DIALOG = $(DIALOG_DIR)/Resources/tm_dialog2
 export DIALOG_PORT_NAME = com.macromates.dialog.$(TM_PID)
 
