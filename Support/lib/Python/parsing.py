@@ -125,19 +125,19 @@ class TexParser(object):
             ...
 
         """
-        def to_utf8(string):
-            if PYTHON2:
-                for encoding in encodings:
-                    try:
-                        return string.decode(encoding)
-                    except UnicodeDecodeError:
-                        continue
-            else:
-                return string
+
+        def to_utf8(bytes):
+            for encoding in encodings:
+                try:
+                    return bytes.decode(encoding)
+                except UnicodeDecodeError:
+                    continue
 
         statement = ""
         while True:
-            line = to_utf8(self.input_stream.readline())
+            stream = (self.input_stream
+                      if PYTHON2 else self.input_stream.buffer)
+            line = to_utf8(stream.readline())
             if not line:
                 return statement
             statement += line.rstrip('\n')
