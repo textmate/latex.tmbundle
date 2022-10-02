@@ -44,7 +44,7 @@ sys.path.insert(
 from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
 from io import open
-from os import chdir, getcwd, getenv, putenv, remove
+from os import chdir, getenv, putenv, remove
 from os.path import (basename, dirname, exists, getmtime, isfile, normpath,
                      realpath, splitext)
 from pickle import load, dump
@@ -774,6 +774,7 @@ def get_typesetting_data(filepath,
 
     Examples:
 
+        >>> from os import getcwd
         >>> current_directory = getcwd()
         >>> data = get_typesetting_data('Tests/TeX/lualatex.tex', 'pdflatex')
         >>> print(data['engine'])
