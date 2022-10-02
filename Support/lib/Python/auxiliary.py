@@ -11,8 +11,8 @@ from os.path import join
 from pipes import quote
 from subprocess import check_output
 
-
 # -- Functions ----------------------------------------------------------------
+
 
 def remove_auxiliary_files(directory='.',
                            tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
@@ -62,6 +62,6 @@ def remove_auxiliary_files(directory='.',
 
     """
     clean_command = join(tm_bundle_support, 'bin/clean.rb')
-    return check_output('{} {}'.format(quote(clean_command),
-                                       quote(directory)),
-                        universal_newlines=True, shell=True).split('\n')[:-1]
+    return check_output('{} {}'.format(quote(clean_command), quote(directory)),
+                        universal_newlines=True,
+                        shell=True).split('\n')[:-1]

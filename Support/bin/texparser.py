@@ -7,8 +7,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import sys, path
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
-                "/lib/Python")
+
+sys.path.insert(
+    1,
+    path.dirname(path.dirname(path.abspath(__file__))) + "/lib/Python")
 
 from argparse import ArgumentParser
 from io import open
@@ -32,8 +34,8 @@ if PYTHON2:
     reload(sys)  # noqa
     sys.setdefaultencoding("utf-8")
 
-
 # -- Functions ----------------------------------------------------------------
+
 
 def notify(title='LaTeX Watch', summary='', messages=[], token=None):
     """Display a list of messages via a notification window.
@@ -85,20 +87,24 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
     # Update notification window
     if token:
         command_update = "{} --update {} --model {}".format(
-                         command, token, content)
-        notification_output = check_output(command_update, stderr=STDOUT,
-                                           shell=True, universal_newlines=True)
+            command, token, content)
+        notification_output = check_output(command_update,
+                                           stderr=STDOUT,
+                                           shell=True,
+                                           universal_newlines=True)
         # If the window still exists and we could therefore update it here we
         # return the token of the old window. If we could not update the
         # window we get an error message. In this case we try to open a new
         # notification window.
         if notification_output.strip() == '':
-            return(int(token))
+            return (int(token))
 
     # Create new notification window
-    command_load = "{} --load {} --model {}".format(
-                   command, shellquote(nib_location), content)
-    notification_output = check_output(command_load, shell=True,
+    command_load = "{} --load {} --model {}".format(command,
+                                                    shellquote(nib_location),
+                                                    content)
+    notification_output = check_output(command_load,
+                                       shell=True,
                                        universal_newlines=True)
     return int(notification_output)
 
@@ -107,10 +113,11 @@ def notify(title='LaTeX Watch', summary='', messages=[], token=None):
 
 if __name__ == '__main__':
 
-    parser = ArgumentParser(
-        description='Parse output from latexmk.')
+    parser = ArgumentParser(description='Parse output from latexmk.')
     parser.add_argument(
-        '-notify', default='', nargs='?',
+        '-notify',
+        default='',
+        nargs='?',
         help="""Open a notification window to show warning and error messages.
                 To reuse a notification window already opened, just provide
                 its notification token.
@@ -152,7 +159,8 @@ if __name__ == '__main__':
         for encoding in encodings:
             try:
                 texparser = LaTexMkParser(open(logfile, encoding=encoding),
-                                          verbose=False, filename=texfile)
+                                          verbose=False,
+                                          filename=texfile)
                 texparser.parse_stream()
                 break
             except UnicodeDecodeError:
@@ -160,15 +168,18 @@ if __name__ == '__main__':
         # Sort marks by line number
         marks = sorted(texparser.marks, key=lambda marks: marks[1])
         update_marks(cachefile, marks)
-        messages = ["{:<7} {}:{} — {}".format(severity.upper(),
-                    basename(filename), line, message)
-                    for (filename, line, severity, message) in marks]
+        messages = [
+            "{:<7} {}:{} — {}".format(severity.upper(), basename(filename),
+                                      line, message)
+            for (filename, line, severity, message) in marks
+        ]
         if not messages:
             messages = [
                 "Could not find any messages containing line information.",
                 "Please take a look at the log file {}.latexmk.log ".format(
                     basename(arguments.file)) +
-                "to find the source of the problem."]
+                "to find the source of the problem."
+            ]
 
         try:
             # Try to update data in cache file
@@ -181,7 +192,8 @@ if __name__ == '__main__':
             print('Could not access cache file {}!'.format(cachefile))
 
     if notification_token != '':
-        new_token = notify(
-            summary='Errors While Typesetting {}'.format(basename(texfile)),
-            messages=messages, token=notification_token)
+        new_token = notify(summary='Errors While Typesetting {}'.format(
+            basename(texfile)),
+                           messages=messages,
+                           token=notification_token)
         print("Notification Token: |{}|".format(new_token))

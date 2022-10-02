@@ -36,8 +36,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import sys, path
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
-                "/lib/Python")
+
+sys.path.insert(
+    1,
+    path.dirname(path.dirname(path.abspath(__file__))) + "/lib/Python")
 
 from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
@@ -64,7 +66,6 @@ from parsing import (BibTexParser, BiberParser, ChkTexParser, LaTexParser,
 from tex import (find_file_to_typeset, find_tex_directives, find_tex_packages)
 from tmprefs import Preferences
 
-
 # -- Module Import ------------------------------------------------------------
 
 try:
@@ -83,8 +84,8 @@ EXIT_TEX_ENGINE_NOT_FOUND = 1
 EXIT_DISCARD = 200
 EXIT_SHOW_TOOL_TIP = 206
 
-
 # -- Functions ----------------------------------------------------------------
+
 
 def run_bibtex(filename, verbose=False):
     """Run bibtex for a certain file.
@@ -129,15 +130,21 @@ def run_bibtex(filename, verbose=False):
     """
     directory = dirname(filename) if dirname(filename) else '.'
     regex_auxfiles = (r'.*/({}|bu\d+)\.aux$'.format(filename))
-    auxfiles = [f for f in glob("{}/*.aux".format(directory))
-                if match(regex_auxfiles, f)]
+    auxfiles = [
+        f for f in glob("{}/*.aux".format(directory))
+        if match(regex_auxfiles, f)
+    ]
 
     stat, fatal, errors, warnings = 0, False, 0, 0
     for bib in auxfiles:
         print('<h4>Processing: {} </h4>'.format(bib))
-        run_object = Popen("bibtex {}".format(shellquote(bib)), shell=True,
-                           stdout=PIPE, stdin=PIPE, stderr=STDOUT,
-                           close_fds=True, universal_newlines=True)
+        run_object = Popen("bibtex {}".format(shellquote(bib)),
+                           shell=True,
+                           stdout=PIPE,
+                           stdin=PIPE,
+                           stderr=STDOUT,
+                           close_fds=True,
+                           universal_newlines=True)
         bp = BibTexParser(run_object.stdout, verbose)
         f, e, w = bp.parse_stream()
         fatal |= f
@@ -168,8 +175,12 @@ def run_biber(filename, verbose=False):
         >>> chdir('../..')
 
     """
-    run_object = Popen("biber {}".format(shellquote(filename)), shell=True,
-                       stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True,
+    run_object = Popen("biber {}".format(shellquote(filename)),
+                       shell=True,
+                       stdout=PIPE,
+                       stdin=PIPE,
+                       stderr=STDOUT,
+                       close_fds=True,
                        universal_newlines=True)
     bp = BiberParser(run_object.stdout, verbose)
     fatal, errors, warnings = bp.parse_stream()
@@ -222,8 +233,12 @@ def run_latex(ltxcmd, texfile, cache_filename, verbose=False):
 
     """
     run_object = Popen("{} {}".format(ltxcmd, shellquote(texfile)),
-                       shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
-                       close_fds=True, universal_newlines=True)
+                       shell=True,
+                       stdout=PIPE,
+                       stdin=PIPE,
+                       stderr=STDOUT,
+                       close_fds=True,
+                       universal_newlines=True)
     lp = LaTexParser(run_object.stdout, verbose, texfile)
     fatal, errors, warnings = lp.parse_stream()
     stat = run_object.wait()
@@ -262,10 +277,14 @@ def run_makeindex(filename, verbose=False):
         >>> chdir('../..')
 
     """
-    run_object = Popen("makeindex {}".format(shellquote("{}.idx".format(
-        splitext(filename)[0]))), shell=True,
-        stdout=PIPE, stdin=PIPE, stderr=STDOUT, close_fds=True,
-        universal_newlines=True)
+    run_object = Popen("makeindex {}".format(
+        shellquote("{}.idx".format(splitext(filename)[0]))),
+                       shell=True,
+                       stdout=PIPE,
+                       stdin=PIPE,
+                       stderr=STDOUT,
+                       close_fds=True,
+                       universal_newlines=True)
     ip = MakeIndexParser(run_object.stdout, verbose)
     fatal, errors, warnings = ip.parse_stream()
     stat = run_object.wait()
@@ -304,9 +323,13 @@ def run_makeglossaries(filename, verbose=False):
 
     """
     run_object = Popen("makeglossaries {}".format(
-                       shellquote(splitext(filename)[0])),
-                       shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT,
-                       close_fds=True, universal_newlines=True)
+        shellquote(splitext(filename)[0])),
+                       shell=True,
+                       stdout=PIPE,
+                       stdin=PIPE,
+                       stderr=STDOUT,
+                       close_fds=True,
+                       universal_newlines=True)
     bp = MakeGlossariesParser(run_object.stdout, verbose)
     fatal, errors, warnings = bp.parse_stream()
     stat = run_object.wait()
@@ -339,8 +362,9 @@ def get_app_path(application, tm_support_path=getenv("TM_SUPPORT_PATH")):
     """
     try:
         return check_output("'{}/bin/find_app' '{}.app'".format(
-                            tm_support_path, application),
-                            shell=True, universal_newlines=True).strip()
+            tm_support_path, application),
+                            shell=True,
+                            universal_newlines=True).strip()
     except CalledProcessError:
         return None
 
@@ -399,13 +423,15 @@ def get_app_path_and_sync_command(viewer, path_pdf, path_tex_file,
     sync_command = None
     path_to_viewer = get_app_path(viewer)
     if path_to_viewer and viewer == 'Skim':
-        sync_command = ("'{}/Contents/SharedSupport/displayline' ".format(
-                        path_to_viewer) + "{} {} {}".format(line_number,
-                        shellquote(path_pdf), shellquote(path_tex_file)))
+        sync_command = (
+            "'{}/Contents/SharedSupport/displayline' ".format(path_to_viewer) +
+            "{} {} {}".format(line_number, shellquote(path_pdf),
+                              shellquote(path_tex_file)))
     return path_to_viewer, sync_command
 
 
-def refresh_viewer(viewer, pdf_path,
+def refresh_viewer(viewer,
+                   pdf_path,
                    tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
     """Tell the specified PDF viewer to refresh the PDF output.
 
@@ -444,19 +470,22 @@ def refresh_viewer(viewer, pdf_path,
         0
 
     """
-    print('<p class="info">Tell {} to refresh \'{}\'</p>'.format(viewer,
-                                                                 pdf_path))
+    print('<p class="info">Tell {} to refresh \'{}\'</p>'.format(
+        viewer, pdf_path))
 
     if viewer in ['Skim', 'TeXShop']:
         return call("osascript '{}/bin/refresh_viewer.scpt' {} {} ".format(
-                    tm_bundle_support, viewer, shellquote(pdf_path)),
+            tm_bundle_support, viewer, shellquote(pdf_path)),
                     shell=True)
     return 1
 
 
-def run_viewer(viewer, texfile_path, pdffile_path,
+def run_viewer(viewer,
+               texfile_path,
+               pdffile_path,
                suppress_pdf_output_textmate,
-               use_pdfsync, line_number,
+               use_pdfsync,
+               line_number,
                tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
     """Open the PDF viewer containing the PDF generated from ``file_name``.
 
@@ -512,8 +541,8 @@ def run_viewer(viewer, texfile_path, pdffile_path,
             if isfile(pdffile_path):
                 print('''<script type="text/javascript">
                          window.location="file://{}"
-                         </script>'''.format(
-                      quote(pdffile_path.encode('utf8'))))
+                         </script>'''.format(quote(
+                    pdffile_path.encode('utf8'))))
             else:
                 print("File does not exist: {}".format(pdffile_path))
     else:
@@ -525,15 +554,16 @@ def run_viewer(viewer, texfile_path, pdffile_path,
                 # If this is not done, the next line will thrown an encoding
                 # exception when the PDF file contains non-ASCII characters.
                 viewer = viewer.encode('utf-8')
-            pdf_already_open = not(bool(
+            pdf_already_open = not (bool(
                 call("'{}/bin/check_open' '{}' {} > /dev/null".format(
-                     tm_bundle_support, viewer, shellquote(pdffile_path)),
+                    tm_bundle_support, viewer, shellquote(pdffile_path)),
                      shell=True)))
             if pdf_already_open:
                 refresh_viewer(viewer, pdffile_path)
             else:
-                status = call("open -a '{}.app' {}".format(viewer,
-                              shellquote(pdffile_path)), shell=True)
+                status = call("open -a '{}.app' {}".format(
+                    viewer, shellquote(pdffile_path)),
+                              shell=True)
             # PDF viewer supports pdfsync
             if sync_command and use_pdfsync:
                 call(sync_command, shell=True)
@@ -705,13 +735,15 @@ def write_latexmkrc(engine, options, location='/tmp/latexmkrc'):
 
     """
     with open("/tmp/latexmkrc", 'w', encoding='utf-8') as latexmkrc:
-        latexmkrc.write(dedent("""\
+        latexmkrc.write(
+            dedent("""\
         $latex = 'latex -interaction=nonstopmode -file-line-error-style {0}';
         $pdflatex = '{1} -interaction=nonstopmode -file-line-error-style {0}';
         """.format(options, engine)))
 
 
-def get_typesetting_data(filepath, tm_engine,
+def get_typesetting_data(filepath,
+                         tm_engine,
                          tm_bundle_support=getenv('TM_BUNDLE_SUPPORT'),
                          ignore_warnings=False):
     """Return a dictionary containing up-to-date typesetting data.
@@ -751,6 +783,7 @@ def get_typesetting_data(filepath, tm_engine,
         >>> chdir(current_directory)
 
     """
+
     def get_cached_data():
         """Get current data and update cache."""
         cache_read = False
@@ -776,11 +809,14 @@ def get_typesetting_data(filepath, tm_engine,
             packages = find_tex_packages(filename, ignore_warnings)
             engine = construct_engine_command(typesetting_directives,
                                               tm_engine, packages)
-            synctex = not(bool(call("{} --help | grep -q synctex".format(
-                                    engine), shell=True)))
-            typesetting_data.update({'engine': engine,
-                                     'packages': packages,
-                                     'synctex': synctex})
+            synctex = not (bool(
+                call("{} --help | grep -q synctex".format(engine),
+                     shell=True)))
+            typesetting_data.update({
+                'engine': engine,
+                'packages': packages,
+                'synctex': synctex
+            })
             if not cache_read:
                 typesetting_data['files_with_guttermarks'] = {filename}
 
@@ -810,11 +846,13 @@ def get_typesetting_data(filepath, tm_engine,
         tm_bundle_support)
     putenv('TEXINPUTS', texinputs)
 
-    typesetting_data.update({'cache_filename': cache_filename,
-                             'filename': filename,
-                             'file_path': file_path,
-                             'file_without_suffix': file_without_suffix,
-                             'typesetting_directives': typesetting_directives})
+    typesetting_data.update({
+        'cache_filename': cache_filename,
+        'filename': filename,
+        'file_path': file_path,
+        'file_without_suffix': file_without_suffix,
+        'typesetting_directives': typesetting_directives
+    })
 
     return typesetting_data
 
@@ -850,65 +888,82 @@ def get_command_line_arguments():
 
     parser_file = ArgumentParser(add_help=False)
     parser_file.add_argument(
-        'filepath', type=file_exists, nargs='?', default=getenv('TM_FILEPATH'),
+        'filepath',
+        type=file_exists,
+        nargs='?',
+        default=getenv('TM_FILEPATH'),
         help='Specify the file which should be processed.')
     parser_latex = ArgumentParser(add_help=False)
     parser_latex.add_argument(
-        '-latexmk', default=None,
+        '-latexmk',
+        default=None,
         choices={'yes', 'no'},
         help='''Specify if latexmk should be used to translate the document.
                 If you do not set this option, then value set inside
                 TextMate will be used.''')
     parser_latex.add_argument(
-        '-engine', default=None,
+        '-engine',
+        default=None,
         choices={'latex', 'lualatex', 'pdflatex', 'xelatex', 'texexec'},
         help='''Set the default engine for tex documents. If you do not set
                 this option explicitly, then the value currently set inside the
                 TextMate preferences will be used.''')
     parser_latex.add_argument(
-        '-options', default=None, dest='engine_options',
+        '-options',
+        default=None,
+        dest='engine_options',
         help='''Set the default engine options for tex documents. If you do
                 not set this option explicitly, then the engine options set
                 inside the TextMate preferences will be used.''')
 
-    parser = ArgumentParser(
-        description='Execute common TeX commands.')
+    parser = ArgumentParser(description='Execute common TeX commands.')
     parser.add_argument(
-        '-addoutput', action='store_true', default=False,
+        '-addoutput',
+        action='store_true',
+        default=False,
         help=('Tell %(prog)s to generate HTML output for an existing HTML ' +
               'output window'))
     parser.add_argument(
-        '-suppressview', action='store_true', default=False,
+        '-suppressview',
+        action='store_true',
+        default=False,
         help=('''Tell %(prog)s to not open the PDF viewer application.'''))
 
     subparsers = parser.add_subparsers(title="Commands", dest='command')
-    subparsers.add_parser('bibtex', parents=[parser_file],
+    subparsers.add_parser('bibtex',
+                          parents=[parser_file],
                           help='Run bibtex/biber for the specified file.')
-    subparsers.add_parser('clean', parents=[parser_file],
+    subparsers.add_parser('clean',
+                          parents=[parser_file],
                           help='Remove auxiliary files')
-    subparsers.add_parser('chktex', parents=[parser_file],
+    subparsers.add_parser('chktex',
+                          parents=[parser_file],
                           help='Check the specified file with chktex.')
     subparsers.add_parser(
-        'index', parents=[parser_file],
+        'index',
+        parents=[parser_file],
         help='''Create a index for the specified file using either
                 makeglossaries or makeindex.''')
+    subparsers.add_parser('latex',
+                          parents=[parser_file, parser_latex],
+                          help='Typeset the specified file using latex.')
     subparsers.add_parser(
-        'latex', parents=[parser_file, parser_latex],
-        help='Typeset the specified file using latex.')
-    subparsers.add_parser(
-        'sync', parents=[parser_file],
+        'sync',
+        parents=[parser_file],
         help='''Open the specified PDF file at the position corresponding to
                 the currently selected tex code. Instead of providing the
                 path to the PDF it is also possible to just use the path of
                 the tex file. This command assumes that path to the PDF and
                 the tex file only differ in their extension!''')
     subparsers.add_parser(
-        'view', parents=[parser_file],
+        'view',
+        parents=[parser_file],
         help='''View the PDF corresponding to the specified tex file using
                 either the currently selected viewer or the viewer specified
                 as argument.''')
     subparsers.add_parser(
-        'version', parents=[parser_file, parser_latex],
+        'version',
+        parents=[parser_file, parser_latex],
         help='Return a version string for the currently selected engine.')
 
     return parser.parse_args()
@@ -942,8 +997,8 @@ if __name__ == '__main__':
     viewer = tm_preferences['latexViewer']
 
     if command == 'latex' or command == 'version':
-        if(arguments.latexmk == 'yes' or (not arguments.latexmk and
-                                          tm_preferences['latexUselatexmk'])):
+        if (arguments.latexmk == 'yes' or
+            (not arguments.latexmk and tm_preferences['latexUselatexmk'])):
             use_latexmk = True
             if command == 'latex':
                 command = 'latexmk'
@@ -971,7 +1026,9 @@ if __name__ == '__main__':
     putenv('PATH', getenv('PATH') + ':/usr/local/bin')
 
     if command == "version":
-        process = Popen("{} --version".format(engine), stdout=PIPE, shell=True,
+        process = Popen("{} --version".format(engine),
+                        stdout=PIPE,
+                        shell=True,
                         universal_newlines=True)
         print(process.stdout.readline().rstrip('\n'))
         exit()
@@ -1008,8 +1065,13 @@ if __name__ == '__main__':
         command = "latexmk -pdf{} -f -r /tmp/latexmkrc -r {} {}".format(
             'ps' if engine == 'latex' else '', shellquote(latexmkrc_path),
             shellquote(filename))
-        process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
-                        stderr=STDOUT, close_fds=True, universal_newlines=True)
+        process = Popen(command,
+                        shell=True,
+                        stdout=PIPE,
+                        stdin=PIPE,
+                        stderr=STDOUT,
+                        close_fds=True,
+                        universal_newlines=True)
         command_parser = LaTexMkParser(process.stdout, verbose, filename)
         status = command_parser.parse_stream()
         update_marks(cache_filename, command_parser.marks)
@@ -1018,29 +1080,30 @@ if __name__ == '__main__':
         remove("/tmp/latexmkrc")
         if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
-                viewer, filepath, pdffile_path,
-                number_errors > 1 or number_warnings > 0 and
-                tm_preferences['latexKeepLogWin'],
+                viewer, filepath, pdffile_path, number_errors > 1
+                or number_warnings > 0 and tm_preferences['latexKeepLogWin'],
                 'pdfsync' in packages or synctex, line_number)
         number_runs = command_parser.number_runs
 
     elif command == 'bibtex':
         use_biber = exists('{}.bcf'.format(file_without_suffix))
-        status = (run_biber(file_without_suffix) if use_biber else
-                  run_bibtex(file_without_suffix))
+        status = (run_biber(file_without_suffix)
+                  if use_biber else run_bibtex(file_without_suffix))
         tex_status, fatal_error, number_errors, number_warnings = status
 
     elif command == 'index':
         use_makeglossaries = exists('{}.glo'.format(file_without_suffix))
-        status = (run_makeglossaries(filename, verbose) if use_makeglossaries
-                  else run_makeindex(filename, verbose))
+        status = (run_makeglossaries(filename, verbose)
+                  if use_makeglossaries else run_makeindex(filename, verbose))
         tex_status, fatal_error, number_errors, number_warnings = status
 
     elif command == 'clean':
         removed_files = remove_auxiliary_files()
         # Filter out bundle cache file (`.filename.lb`)
-        removed_files = [filepath for filepath in removed_files
-                         if not basename(filepath).startswith('.')]
+        removed_files = [
+            filepath for filepath in removed_files
+            if not basename(filepath).startswith('.')
+        ]
         if removed_files:
             for removed_file in removed_files:
                 print('<p class"info">Removed {}</p>'.format(removed_file))
@@ -1061,16 +1124,14 @@ if __name__ == '__main__':
             call("ps2pdf '{}.ps'".format(file_without_suffix), shell=True)
         if tm_autoview and number_errors < 1 and not suppress_viewer:
             viewer_status = run_viewer(
-                viewer, filepath, pdffile_path,
-                number_errors > 1 or number_warnings > 0 and
-                tm_preferences['latexKeepLogWin'],
+                viewer, filepath, pdffile_path, number_errors > 1
+                or number_warnings > 0 and tm_preferences['latexKeepLogWin'],
                 'pdfsync' in packages or synctex, line_number)
 
     elif command == 'view' and not suppress_viewer:
         viewer_status = run_viewer(
-            viewer, filepath, pdffile_path,
-            number_errors > 1 or number_warnings > 0 and
-            tm_preferences['latexKeepLogWin'],
+            viewer, filepath, pdffile_path, number_errors > 1
+            or number_warnings > 0 and tm_preferences['latexKeepLogWin'],
             'pdfsync' in packages or synctex, line_number)
 
     elif command == 'sync':
@@ -1090,8 +1151,13 @@ if __name__ == '__main__':
 
     elif command == 'chktex':
         command = "{} '{}'".format(command, filename)
-        process = Popen(command, shell=True, stdout=PIPE, stdin=PIPE,
-                        stderr=STDOUT, close_fds=True, universal_newlines=True)
+        process = Popen(command,
+                        shell=True,
+                        stdout=PIPE,
+                        stdin=PIPE,
+                        stderr=STDOUT,
+                        close_fds=True,
+                        universal_newlines=True)
         parser = ChkTexParser(process.stdout, verbose, filename)
         fatal_error, number_errors, number_warnings = parser.parse_stream()
         tex_status = process.wait()
@@ -1116,16 +1182,17 @@ if __name__ == '__main__':
                          number_runs, '' if number_runs == 1 else 's'))
 
     # Decide what to do with the Latex & View log window
-    exit_code = (EXIT_DISCARD if not tm_preferences['latexKeepLogWin'] and
-                 number_errors == 0 and viewer != 'TextMate' else EXIT_SUCCESS)
+    exit_code = (EXIT_DISCARD if not tm_preferences['latexKeepLogWin']
+                 and number_errors == 0 and viewer != 'TextMate' else
+                 EXIT_SUCCESS)
 
     # Output buttons at the bottom of the window
     if first_run:
         print('</div></div>')  # Close divs `preText` and `commandOutput`
         pdf_file = '{}.pdf'.format(file_without_suffix)
         # only need to include the javascript library once
-        texlib_location = quote('{}/lib/JavaScript/texlib.js'.format(
-                                tm_bundle_support))
+        texlib_location = quote(
+            '{}/lib/JavaScript/texlib.js'.format(tm_bundle_support))
 
         print('''<script src="file://{}" type="text/javascript"
                   charset="utf-8"></script>
@@ -1144,7 +1211,7 @@ if __name__ == '__main__':
         if viewer == 'TextMate':
             print('''<input type="button" value="View in TextMate"
                       onclick="window.location='file://{}'"/>'''.format(
-                  quote('{}/{}'.format(file_path, pdf_file).encode('utf8'))))
+                quote('{}/{}'.format(file_path, pdf_file).encode('utf8'))))
         else:
             print('''<input type="button" value="View in {}"
                      onclick="runView(); return false">'''.format(viewer))

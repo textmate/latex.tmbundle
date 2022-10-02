@@ -3,8 +3,10 @@
 # -- Imports ------------------------------------------------------------------
 
 from os import sys, path
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
-                "/lib/Python")
+
+sys.path.insert(
+    1,
+    path.dirname(path.dirname(path.abspath(__file__))) + "/lib/Python")
 
 from subprocess import Popen, PIPE, STDOUT
 

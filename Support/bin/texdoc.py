@@ -4,7 +4,6 @@
 # -----------------------------------------------------------------------------
 # Author: Brad Miller
 # -----------------------------------------------------------------------------
-
 """Display documentation for tex packages.
 
 This script is a hacked together set of heuristics to try and bring some
@@ -32,7 +31,6 @@ and opens it in Preview.
 
 """
 
-
 # -- Imports ------------------------------------------------------------------
 
 from __future__ import absolute_import
@@ -40,8 +38,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import sys, path
-sys.path.insert(1, path.dirname(path.dirname(path.abspath(__file__))) +
-                "/lib/Python")
+
+sys.path.insert(
+    1,
+    path.dirname(path.dirname(path.abspath(__file__))) + "/lib/Python")
 
 from io import open
 from os import chdir, getenv, mkdir
@@ -56,8 +56,8 @@ except ImportError:
 
 from tex import (find_tex_packages, find_tex_directives, find_file_to_typeset)
 
-
 # -- Functions ----------------------------------------------------------------
+
 
 def get_documentation_files(texmf_directory):
     """Get a dictionary containing tex documentation files.
@@ -85,9 +85,11 @@ def get_documentation_files(texmf_directory):
         /.../scrguide.pdf
 
     """
-    doc_files = check_output("find -E {} -regex '.*\.(pdf|dvi)' -type f".
-                             format(shellquote(texmf_directory)),
-                             shell=True, universal_newlines=True).splitlines()
+    doc_files = check_output(
+        "find -E {} -regex '.*\.(pdf|dvi)' -type f".format(
+            shellquote(texmf_directory)),
+        shell=True,
+        universal_newlines=True).splitlines()
     return {basename(splitext(line)[0]): line.strip() for line in doc_files}
 
 
@@ -140,7 +142,9 @@ def parse_texdoctk_data(documentation_files, texmf_directory):
     """
     texdoc_path = check_output(
         "kpsewhich --progname=texdoctk --format='other text files' " +
-        "texdoctk.dat", shell=True, universal_newlines=True).strip()
+        "texdoctk.dat",
+        shell=True,
+        universal_newlines=True).strip()
 
     paths = {}
     descriptions = {}
@@ -154,8 +158,9 @@ def parse_texdoctk_data(documentation_files, texmf_directory):
                 heading = line[1:].strip()
                 headings[heading] = []
             else:
-                key, description, path, _ = [item.strip()
-                                             for item in line.split(';')]
+                key, description, path, _ = [
+                    item.strip() for item in line.split(';')
+                ]
                 headings[heading].append(key)
 
                 if path.endswith('.sty'):
@@ -178,7 +183,8 @@ def parse_texdoctk_data(documentation_files, texmf_directory):
     return paths, descriptions, headings
 
 
-def create_viewdoc_link(file_path, description,
+def create_viewdoc_link(file_path,
+                        description,
                         tm_bundle_support=getenv('TM_BUNDLE_SUPPORT')):
     """Create a link that opens a given documentation file.
 
@@ -231,7 +237,8 @@ if __name__ == '__main__':
     packages = find_tex_packages(master_file)
 
     texmf_directory = check_output("kpsewhich --expand-path '$TEXMFMAIN'",
-                                   shell=True, universal_newlines=True).strip()
+                                   shell=True,
+                                   universal_newlines=True).strip()
     docdbpath = "{}/Library/Caches/TextMate".format(expanduser('~'))
     docdbfile = "{}/latexdocindex".format(docdbpath)
 
@@ -242,8 +249,8 @@ if __name__ == '__main__':
     else:
         # Parse the texdoctk database
         docfiles = get_documentation_files(texmf_directory)
-        paths, descriptions, headings = parse_texdoctk_data(docfiles,
-                                                            texmf_directory)
+        paths, descriptions, headings = parse_texdoctk_data(
+            docfiles, texmf_directory)
 
         # Supplement with searched for files
         for package in docfiles:
@@ -264,8 +271,8 @@ if __name__ == '__main__':
     # The JavaScript gives us the nifty expand collapse outline look
     tm_bundle_support = getenv('TM_BUNDLE_SUPPORT')
     css_location = quote('{}/css/texdoc.css'.format(tm_bundle_support))
-    js_location = quote('{}/lib/JavaScript/texdoc.js'.format(
-                        tm_bundle_support))
+    js_location = quote(
+        '{}/lib/JavaScript/texdoc.js'.format(tm_bundle_support))
     print("""<link rel="stylesheet" href="file://{}">
              <script type="text/javascript" src="file://{}"
                  charset="utf-8"></script>
@@ -273,9 +280,9 @@ if __name__ == '__main__':
              <ul>""".format(css_location, js_location))
     for package in packages:
         print("""<div id="mypkg"><li>{}</li></div>""".format(
-              create_viewdoc_link(paths[package], descriptions[package],
-                                  tm_bundle_support) if package in paths
-              else package))
+            create_viewdoc_link(paths[package], descriptions[package],
+                                tm_bundle_support) if package in
+            paths else package))
     print("""</ul><hr /><h1>Packages Browser</h1><ul>""")
     for heading in headings:
         print("""<li><a href="javascript:dsp(this)" class="dsphead"
@@ -284,9 +291,8 @@ if __name__ == '__main__':
               """.format(heading))
         for package in headings[heading]:
             print("""<li>{}</li>""".format(
-                  create_viewdoc_link(paths[package], descriptions[package],
-                                      tm_bundle_support)
-                  if exists(paths[package])
-                  else package))
+                create_viewdoc_link(paths[package], descriptions[package],
+                                    tm_bundle_support
+                                    ) if exists(paths[package]) else package))
         print("""</ul></div>""")
     print("</ul>")

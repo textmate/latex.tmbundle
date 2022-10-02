@@ -3,7 +3,6 @@
 # -----------------------------------------------------------------------------
 # Author: Brad Miller
 # -----------------------------------------------------------------------------
-
 """This module contains various functions for handling tex data."""
 
 # -- Imports ------------------------------------------------------------------
@@ -19,20 +18,18 @@ from re import compile
 from subprocess import Popen, PIPE
 from sys import exit, stdout
 
-
 # -- Global Variables ---------------------------------------------------------
 
 # The list of encodings we try to open files with.
 encodings = ['utf_8', 'mac_roman', 'latin_1', 'gb2312', 'cp1251', 'cp1252']
-
 
 # -- Exit Codes ---------------------------------------------------------------
 
 EXIT_LOOP_IN_TEX_ROOT = -1
 EXIT_FILE_ERROR = EX_OSFILE
 
-
 # -- Functions ----------------------------------------------------------------
+
 
 def expand_name(filename, program='pdflatex'):
     """Get the expanded file name for a certain tex file.
@@ -62,8 +59,10 @@ def expand_name(filename, program='pdflatex'):
         return filename
     stdout.flush()
     run_object = Popen("kpsewhich -progname='{}' {}".format(
-        program, shellquote(filename)), shell=True, stdout=PIPE,
-        universal_newlines=True)
+        program, shellquote(filename)),
+                       shell=True,
+                       stdout=PIPE,
+                       universal_newlines=True)
     expanded_filepath = run_object.stdout.read().strip()
     return expanded_filepath if expanded_filepath else filename
 
@@ -184,7 +183,7 @@ def find_tex_packages(filepath, ignore_nonexistent_files=False):
     argument_regex = r'\{([^}#]+)\}'
     input_regex = compile(r'[^%]*?\\input{}'.format(argument_regex))
     package_regex = compile(r'[^%]*?\\usepackage(?:{})?{}'.format(
-                            option_regex, argument_regex))
+        option_regex, argument_regex))
     begin_regex = compile(r'[^%]*?\\begin\{document\}')
 
     # Search for packages and included files in the tex document
@@ -212,9 +211,11 @@ def find_tex_packages(filepath, ignore_nonexistent_files=False):
 
     # Search for packages in all files till we find the beginning of the
     # document and therefore the end of the preamble
-    included_files = [included_file if included_file.endswith('.tex')
-                      else '{}.tex'.format(included_file)
-                      for included_file in included_files]
+    included_files = [
+        included_file
+        if included_file.endswith('.tex') else '{}.tex'.format(included_file)
+        for included_file in included_files
+    ]
     match_begin = False
     while included_files and not match_begin:
         filepath = expand_name(included_files.pop())
@@ -246,8 +247,7 @@ def find_tex_packages(filepath, ignore_nonexistent_files=False):
     # 'package1', 'package2'
     package_set = set()
     for package in packages:
-        package_set.update(package.strip()
-                           for package in package.split(','))
+        package_set.update(package.strip() for package in package.split(','))
     return package_set
 
 
@@ -308,22 +308,26 @@ def find_tex_directives(texfile, ignore_root_loops=False):
     while True:
         for encoding in encodings:
             try:
-                lines = [line for (line_number, line)
-                         in enumerate(open(texfile, encoding=encoding))
-                         if line_number < 20]
+                lines = [
+                    line
+                    for (line_number,
+                         line) in enumerate(open(texfile, encoding=encoding))
+                    if line_number < 20
+                ]
                 break
             except UnicodeDecodeError:
                 continue
 
-        new_directives = {directive.group(1): directive.group(2).rstrip()
-                          for directive
-                          in [directive_regex.match(line) for line in lines]
-                          if directive}
+        new_directives = {
+            directive.group(1): directive.group(2).rstrip()
+            for directive in [directive_regex.match(line) for line in lines]
+            if directive
+        }
         directives.update(new_directives)
         if 'root' in new_directives:
             root = directives['root']
-            new_tex_file = (root if root.startswith('/') else
-                            realpath(join(dirname(texfile), root)))
+            new_tex_file = (root if root.startswith('/') else realpath(
+                join(dirname(texfile), root)))
             directives['root'] = new_tex_file
         else:
             break

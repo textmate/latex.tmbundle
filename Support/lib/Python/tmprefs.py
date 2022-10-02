@@ -6,8 +6,8 @@ from __future__ import unicode_literals
 from Foundation import CFPreferencesAppSynchronize, CFPreferencesCopyAppValue
 from os import getenv
 
-
 # -- Class --------------------------------------------------------------------
+
 
 class Preferences(object):
     """Process the current preferences of the LaTeX bundle.
@@ -91,13 +91,16 @@ class Preferences(object):
               latexViewer = TextMate; }
 
         """
-        plist = {preference: int(value) if isinstance(value, bool) else value
-                 for preference, value in self.default_values.items()}
+        plist = {
+            preference: int(value) if isinstance(value, bool) else value
+            for preference, value in self.default_values.items()
+        }
         preference_items = [
-            '{} = {};'.format(preference,
-                              plist[preference] if
-                              str(plist[preference]) else '""')
-            for preference in sorted(plist)]
+            '{} = {};'.format(
+                preference,
+                plist[preference] if str(plist[preference]) else '""')
+            for preference in sorted(plist)
+        ]
         return '{{ {} }}'.format(' '.join(preference_items))
 
 

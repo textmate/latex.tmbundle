@@ -3,7 +3,6 @@
 # -----------------------------------------------------------------------------
 # Author: Brad Miller
 # -----------------------------------------------------------------------------
-
 """This module contains code to parse tex (log) files."""
 
 # -- Imports ------------------------------------------------------------------
@@ -13,6 +12,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import sys, path
+
 sys.path.insert(1, path.dirname(path.abspath(__file__)))
 
 from re import compile, match, search, UNICODE
@@ -30,8 +30,8 @@ from tex import encodings
 
 PYTHON2 = version_info <= (3, 0)
 
-
 # -- Functions ----------------------------------------------------------------
+
 
 def make_link(file, line=1):
     """Create a TextMate link for ``file`` pointing to ``line``.
@@ -58,10 +58,11 @@ def make_link(file, line=1):
 
     """
     return "txmt://open/?url=file://{}&line={}".format(
-           quote(file.encode('utf-8')), line)
+        quote(file.encode('utf-8')), line)
 
 
 # -- Classes ------------------------------------------------------------------
+
 
 class TexParser(object):
     """Parse TeX typesetting streams.
@@ -333,7 +334,7 @@ class BiberParser(TexParser):
     def finish_run(self, matching, line):
         log = matching.group(1)
         print('<p>Complete transcript is in <a href="{}">{}</a></p>'.format(
-              make_link(join(getcwd(), log)), log))
+            make_link(join(getcwd(), log)), log))
         self.done = True
 
 
@@ -395,15 +396,15 @@ class MakeIndexParser(TexParser):
         description = matching.group(1)
         filename = matching.group(2)
         status = matching.group(3)
-        print('<p class="info">{} {}: <strong>{}</strong>'.format(description,
-              filename, status))
+        print('<p class="info">{} {}: <strong>{}</strong>'.format(
+            description, filename, status))
 
     def written(self, matching, line):
         description = matching.group(1)
         filename = matching.group(2)
         filepath = make_link(join(getcwd(), filename))
         print('<p class="info">{} <a href="{}">{}</a></p>'.format(
-              description, filepath, filename))
+            description, filepath, filename))
 
     def transcript_written(self, matching, line):
         self.written(matching, line)
@@ -420,10 +421,10 @@ class MakeGlossariesParser(MakeIndexParser):
             (compile('^.*makeglossaries version (.*)$'), self.begin_run),
             (compile('^.*added glossary type \'(.*)\' \((.*)\).*$'),
              self.add_type),
-            (compile(r'(\w+ \w+ file) (?:\./)?' +
-                     r'(.*\.(?:(?:acr)|(?:ist)|(?:glo)|(?:gls))).*\((.*)\)',
-                     UNICODE),
-             self.work_with_file),
+            (compile(
+                r'(\w+ \w+ file) (?:\./)?' +
+                r'(.*\.(?:(?:acr)|(?:ist)|(?:glo)|(?:gls))).*\((.*)\)',
+                UNICODE), self.work_with_file),
             (compile(r'(\w+ written in) (.*)\.$'), self.written),
             (compile('^.*Markup written into file "(.*)".$'),
              self.finish_markup),
@@ -467,16 +468,17 @@ class MakeGlossariesParser(MakeIndexParser):
     def begin_run(self, matching, line):
         version = matching.group(1)
         print('<h2>Make Glossaries</h2>' +
-              '<p class="info" >Version: <i>{}</i></p>'''.format(version))
+              '<p class="info" >Version: <i>{}</i></p>'
+              ''.format(version))
 
     def add_type(self, matching, line):
         glossary_type = matching.group(1)
         files = matching.group(2)
         for file in files.split(','):
             self.types[file] = glossary_type
-        print('<p class="info">Add Glossary Type <strong>' +
-              '{}</strong><i> (Files: {})</i></p>'.format(glossary_type,
-                                                          files))
+        print(
+            '<p class="info">Add Glossary Type <strong>' +
+            '{}</strong><i> (Files: {})</i></p>'.format(glossary_type, files))
 
     def run_xindy(self, matching, line):
         language = matching.group(1)
@@ -519,10 +521,10 @@ class LaTexParser(TexParser):
             (compile('LaTeX Font Warning:.*'), self.warning),
             (compile('Overfull.*wide'), self.warning_format),
             (compile('Underfull.*badness'), self.warning_format),
-            (compile('^([\.\/\w\-\ \u0300-\u036F]+' +
-                     '(?:\.sty|\.tex|\.{}))'.format(self.suffix) +
-                     ':(\d+):\s+(.*)', UNICODE),
-             self.handle_error),
+            (compile(
+                '^([\.\/\w\-\ \u0300-\u036F]+' +
+                '(?:\.sty|\.tex|\.{}))'.format(self.suffix) + ':(\d+):\s+(.*)',
+                UNICODE), self.handle_error),
             (compile('([^:]*):(\d+): LaTeX Error:(.*)'), self.handle_error),
             (compile('([^:]*):(\d+): (Emergency stop)'), self.handle_error),
             (compile('Runaway argument'), self.pdf_latex_error),
@@ -622,7 +624,7 @@ class LaTexParser(TexParser):
         filepath = join(getcwd(), self.current_file)
         linenumber = int(matching.group(1))
         print('<p class="warning"><a href="{}">{}</a></p>'.format(
-              make_link(filepath, linenumber), line))
+            make_link(filepath, linenumber), line))
         self.marks.add((filepath, linenumber, 'warning', line))
         self.number_warnings += 1
 
@@ -678,7 +680,7 @@ class LaTexParser(TexParser):
         filename = matching.group(2).strip('"')
         filepath = make_link(join(getcwd(), filename))
         print('<p>Complete transcript is in <a href="{}">{}</a></p>'.format(
-              filepath, filename))
+            filepath, filename))
         self.done = True
 
     def bad_run(self):
@@ -700,8 +702,7 @@ class LaTexMkParser(TexParser):
         self.marks = set()
         self.patterns.extend([
             (compile('This is (pdfTeX|latex2e|latex|LuaTeX|XeTeX)'),
-             self.start_latex),
-            (compile('This is BibTeX'), self.start_bibtex),
+             self.start_latex), (compile('This is BibTeX'), self.start_bibtex),
             (compile('.*This is Biber'), self.start_biber),
             (compile('^Latexmk: All targets \(.*?\) are up-to-date'),
              self.finish_run),
@@ -865,13 +866,14 @@ class ChkTexParser(TexParser):
         linenumber = matching.group(2)
         description = matching.group(3)
         print('<p class="{}">{}: <a href="{}">{}:{}</a></p>'.format(
-              error_class, 'Error' if error_class == 'error' else 'Warning',
-              make_link(join(getcwd(), filename), linenumber), filename,
-              description))
+            error_class, 'Error' if error_class == 'error' else 'Warning',
+            make_link(join(getcwd(), filename), linenumber), filename,
+            description))
         details = self.input_stream.readline()
         if len(details) > 2:
-            print('<pre>{}\n{}</pre>'.format(details[:-1],
-                  self.input_stream.readline()[:-1])),
+            print('<pre>{}\n{}</pre>'.format(
+                details[:-1],
+                self.input_stream.readline()[:-1])),
         if error_class == 'error':
             self.number_errors += 1
         else:

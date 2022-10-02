@@ -5,11 +5,14 @@
 
 from re import search
 
-
 # -- Functions ----------------------------------------------------------------
 
-def itemize(text, use_spaces_to_indent=True, number_of_spaces_for_indent=4,
-            description_sign=":", characters_till_description_sign=20):
+
+def itemize(text,
+            use_spaces_to_indent=True,
+            number_of_spaces_for_indent=4,
+            description_sign=":",
+            characters_till_description_sign=20):
     r"""Create an itemize or description environment.
 
     This function creates an itemize or description environment from a given
@@ -99,8 +102,8 @@ def itemize(text, use_spaces_to_indent=True, number_of_spaces_for_indent=4,
 
     # Remove empty lines and convert to list
     lines = text.splitlines()
-    lines = [(search('(\s*)', line).group(0), line.strip())
-             for line in lines if line]
+    lines = [(search('(\s*)', line).group(0), line.strip()) for line in lines
+             if line]
 
     # Check if we should create a description environment
     descriptions = []
@@ -108,28 +111,32 @@ def itemize(text, use_spaces_to_indent=True, number_of_spaces_for_indent=4,
     for whitespace, line in lines:
         line_split = line.split(':')
         if (len(line_split) != 2 or
-            (len(line_split) == 2 and
-             len(line_split[0]) > characters_till_description_sign)):
+            (len(line_split) == 2
+             and len(line_split[0]) > characters_till_description_sign)):
             description_environment = False
             break
         descriptions.append((whitespace, line_split[0], line_split[1].strip()))
 
     # Create the environment
-    indent = (' ' * number_of_spaces_for_indent if use_spaces_to_indent
-              else '\t')
+    indent = (' ' *
+              number_of_spaces_for_indent if use_spaces_to_indent else '\t')
     if description_environment:
         lines = descriptions
-        items = ['{}{}\item[{}] {}'.format(whitespace, indent, item,
-                                           description) if item else whitespace
-                 for whitespace, item, description in lines]
+        items = [
+            '{}{}\item[{}] {}'.format(whitespace, indent, item, description)
+            if item else whitespace for whitespace, item, description in lines
+        ]
     else:
-        items = ['{}{}\item {}'.format(whitespace, indent, item) if item
-                 else whitespace for whitespace, item in lines]
+        items = [
+            '{}{}\item {}'.format(whitespace, indent, item)
+            if item else whitespace for whitespace, item in lines
+        ]
     environment_indent = lines[0][0]
 
     return "{0}\\begin{{{1}}}\n\n{2}\n\n{0}\\end{{{1}}}\n{0}".format(
-        environment_indent, 'description' if description_environment
-        else 'itemize', '\n\n'.join(items))
+        environment_indent,
+        'description' if description_environment else 'itemize',
+        '\n\n'.join(items))
 
 
 # -- Main ---------------------------------------------------------------------
