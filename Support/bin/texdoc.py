@@ -86,7 +86,7 @@ def get_documentation_files(texmf_directory):
 
     """
     doc_files = check_output(
-        "find -E {} -regex '.*\.(pdf|dvi)' -type f".format(
+        r"find -E {} -regex '.*\.(pdf|dvi)' -type f".format(
             shellquote(texmf_directory)),
         shell=True,
         universal_newlines=True).splitlines()
