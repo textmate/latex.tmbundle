@@ -44,7 +44,7 @@ sys.path.insert(
 from argparse import ArgumentParser, ArgumentTypeError
 from glob import glob
 from io import open
-from os import chdir, getcwd, getenv, putenv, remove, EX_OSFILE  # noqa
+from os import chdir, getcwd, getenv, putenv, remove
 from os.path import (basename, dirname, exists, getmtime, isfile, normpath,
                      realpath, splitext)
 from pickle import load, dump
