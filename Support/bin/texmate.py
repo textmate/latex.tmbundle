@@ -998,8 +998,8 @@ if __name__ == '__main__':
     viewer = tm_preferences['latexViewer']
 
     if command == 'latex' or command == 'version':
-        if (arguments.latexmk == 'yes' or
-            (not arguments.latexmk and tm_preferences['latexUselatexmk'])):
+        if (arguments.latexmk == 'yes' or not arguments.latexmk
+                and tm_preferences['latexUselatexmk']):
             use_latexmk = True
             if command == 'latex':
                 command = 'latexmk'
