@@ -83,6 +83,8 @@ checkstyle_ruby:
 
 cramtests:
 	cd Tests/Cram/General && cram *.t
+	cd Tests/Cram/Python && cram *.t
+	cd Tests/Cram/Ruby/clean && cram.t
 
 perltests: checkstyle_perl
 	perl Tests/Perl/*.t
