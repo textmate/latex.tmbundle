@@ -40,3 +40,6 @@ jobs:
 
       - name: Install Cram
         run: pip install cram
+
+      - name: Run Cram Tests
+        run: make cramtests
