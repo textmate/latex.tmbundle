@@ -3,9 +3,12 @@ on: push
 
 jobs:
   build:
-    name: Install Dependencies
+    name: Test LaTeX Bundle
     runs-on: macos-latest
 
     steps:
-      - name: TeX Setup
+      - name: Install BasicTeX
         run: brew install basictex
+
+      - name: Install Cram
+        run: pip install cram
