@@ -13,8 +13,8 @@ Create some auxiliary files
 
   $ latexmk -lualatex references.tex 2>&- | tail -n 1
   Latexmk: All targets (references.pdf) are up-to-date
-  $ latexmk -xelatex ünicöde.tex 2>&- | tail -n 1
-  Latexmk: All targets (\xfcnic\xf6de.pdf) are up-to-date (esc)
+  $ latexmk -xelatex ünicöde.tex 2>&- | tail -n 1 | remove_non_printable
+  Latexmk: All targets (.+) are up-to-date (re)
 
 Delete all auxiliary file created for references.tex
 
@@ -31,18 +31,19 @@ Delete all auxiliary file created for references.tex
 The directory still contains the auxiliary files for ünicöde.tex
 
   $ find . -name '*nic*de.*'
-  ./ünicöde.aux
-  ./ünicöde.fdb_latexmk
-  ./ünicöde.fls
-  ./ünicöde.log
-  ./ünicöde.pdf
-  ./ünicöde.tex
+  ./\xc3\xbcnic\xc3\xb6de.log (esc)
+  ./\xc3\xbcnic\xc3\xb6de.aux (esc)
+  ./\xc3\xbcnic\xc3\xb6de.fls (esc)
+  ./\xc3\xbcnic\xc3\xb6de.fdb_latexmk (esc)
+  ./\xc3\xbcnic\xc3\xb6de.tex (esc)
+  ./\xc3\xbcnic\xc3\xb6de.xdv (esc)
+  ./\xc3\xbcnic\xc3\xb6de.pdf (esc)
 
 Remove the remaining the auxiliary files
 
   $ clean.rb > /dev/null
 
-The folder now only contains the PDF and the TeX file
+The folder now only contains the DVID, PDF and TeX file
 
   $ ls
   input
@@ -50,5 +51,6 @@ The folder now only contains the PDF and the TeX file
   references.bib
   references.pdf
   references.tex
-  ünicöde.pdf
-  ünicöde.tex
+  \xc3\xbcnic\xc3\xb6de.pdf (esc)
+  \xc3\xbcnic\xc3\xb6de.tex (esc)
+  \xc3\xbcnic\xc3\xb6de.xdv (esc)
