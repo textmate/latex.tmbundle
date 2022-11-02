@@ -55,5 +55,16 @@ jobs:
           ./configure && ninja gtm
           mv "$HOME/build/textmate/release/Applications/gtm/gtm" /usr/local/bin
 
+      - name: Install TextMate
+        run: |
+          brew install TextMate
+          open /Applications/TextMate.app
+          while ! pgrep -q TextMate
+          do
+            echo 'Wait until TextMate is open'
+            sleep 1
+          done
+          sleep 30 # Wait for TextMate to write preferences file
+
       - name: Run Cram Tests
         run: make cramtests
