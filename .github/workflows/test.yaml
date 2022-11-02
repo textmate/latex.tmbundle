@@ -46,5 +46,14 @@ jobs:
       - name: Install Cram
         run: pip install cram
 
+      - name: Install Test Tools
+        run: |
+          brew install pidof
+          brew install boost capnp google-sparsehash multimarkdown ninja ragel
+          git clone --recursive https://github.com/textmate/textmate.git
+          cd textmate
+          ./configure && ninja gtm
+          mv "$HOME/build/textmate/release/Applications/gtm/gtm" /usr/local/bin
+
       - name: Run Cram Tests
         run: make cramtests
