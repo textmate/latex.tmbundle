@@ -55,6 +55,9 @@ jobs:
           ./configure && ninja gtm
           mv "$HOME/build/textmate/release/Applications/gtm/gtm" /usr/local/bin
 
+      - name: Install Skim
+        run: brew install --cask skim
+
       - name: Install TextMate
         run: |
           brew install TextMate
