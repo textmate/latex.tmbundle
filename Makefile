@@ -8,7 +8,7 @@
 #
 # The tests require the following test frameworks:
 # - [tox](https://tox.readthedocs.org)
-# - [cram](https://bitheap.org/cram/)
+# - [prysk](https://www.prysk.net)
 # - [nose](http://nose.readthedocs.org)
 # - [rubydoctest](https://github.com/tablatom/rubydoctest)
 #
@@ -23,7 +23,7 @@
 # 	 location accessible via `PATH`.
 # ------------------------------------------------------------------------------
 
-.PHONY: checkstyle cramtests perltests rubydoctests toxtests
+.PHONY: checkstyle prysktests perltests rubydoctests toxtests
 
 # -- Variables -----------------------------------------------------------------
 
@@ -55,7 +55,7 @@ RUBY_FILES = $(BINARY_DIRECTORY)/clean.rb \
 
 run: all
 
-all: toxtests cramtests perltests rubydoctests
+all: toxtests prysktests perltests rubydoctests
 
 clean:
 	cd Tests/TeX && rm -vf *.acr *.alg *.bbl *.blg *.dvi *.fdb_latexmk *.fls \
@@ -81,10 +81,10 @@ checkstyle_ruby:
 # = Tests =
 # =========
 
-cramtests:
-	cd Tests/Cram/General && cram *.t
-	cd Tests/Cram/Python && cram *.t
-	cd Tests/Cram/Ruby/clean && cram.t
+prysktests:
+	cd Tests/Prysk/General && prysk *.t
+	cd Tests/Prysk/Python && prysk *.t
+	cd Tests/Prysk/Ruby/clean && prysk *.t
 
 perltests: checkstyle_perl
 	perl Tests/Perl/*.t

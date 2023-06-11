@@ -43,8 +43,8 @@ jobs:
         with:
            python-version: '3.10'
 
-      - name: Install Cram
-        run: pip install cram
+      - name: Install Prysk
+        run: pip install prysk
 
       - name: Install Test Tools
         run: |
@@ -69,5 +69,5 @@ jobs:
           done
           sleep 30 # Wait for TextMate to write preferences file
 
-      - name: Run Cram Tests
-        run: make cramtests
+      - name: Run Prysk Tests
+        run: make prysktests
