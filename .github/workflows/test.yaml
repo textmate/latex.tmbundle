@@ -16,7 +16,17 @@ jobs:
       - name: Install and open TextMate
         run: |
           brew install TextMate
+          mkdir -p "$HOME/Library/Application Support/TextMate"
+          mkdir -p "$HOME/Library/Application Support/TextMate/Managed"
+          mkdir -p "$HOME/Library/Application Support/TextMate/Managed/Bundles"
+          pushd "$HOME/Library/Application Support/TextMate/Managed/Bundles"
+          for bundle in css html java javascript javadoc python r sql; do
+            gh repo clone "textmate/$bundle.tmbundle"
+          done
           open /Applications/TextMate.app
+          popd
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Install BasicTeX
         run: |
