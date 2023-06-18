@@ -10,6 +10,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install Skim
+        run: brew install --cask skim
+
+      - name: Install and open TextMate
+        run: |
+          brew install TextMate
+          open /Applications/TextMate.app
+
       - name: Install BasicTeX
         run: |
           brew install basictex
@@ -54,20 +62,6 @@ jobs:
           cd textmate
           ./configure && ninja gtm
           mv "$HOME/build/textmate/release/Applications/gtm/gtm" /usr/local/bin
-
-      - name: Install Skim
-        run: brew install --cask skim
-
-      - name: Install TextMate
-        run: |
-          brew install TextMate
-          open /Applications/TextMate.app
-          while ! pgrep -q TextMate
-          do
-            echo 'Wait until TextMate is open'
-            sleep 1
-          done
-          sleep 30 # Wait for TextMate to write preferences file
 
       - name: Run Prysk Tests
         run: make prysktests
