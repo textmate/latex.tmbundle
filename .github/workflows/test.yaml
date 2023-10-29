@@ -68,10 +68,33 @@ jobs:
         run: |
           brew install pidof
           brew install boost capnp google-sparsehash multimarkdown ninja ragel
+
+      - name: Install `gtm` binary
+        run: |
           git clone --recursive https://github.com/textmate/textmate.git
           cd textmate
-          ./configure && ninja gtm
-          mv "$HOME/build/textmate/release/Applications/gtm/gtm" /usr/local/bin
+
+          echo > local.rave "add FLAGS \"-I$(brew --prefix)/include\""
+          echo >> local.rave "add LN_FLAGS \"-L$(brew --prefix)/lib\""
+
+          export builddir="${PWD}/build"
+          gtm="${PWD}/build/release/Applications/gtm/gtm"
+          entitlements="${PWD}/entitlements.plist"
+
+          mkdir -p "$builddir"
+          ./configure
+          ninja gtm
+
+          # Work around error about different Team IDs for mapping process/file
+          codesign --remove-signature "${gtm}"
+          defaults write "${entitlements}" \
+          	 com.apple.security.cs.disable-library-validation -bool true
+          plutil -convert xml1 "${entitlements}"
+          codesign --sign - --force --options runtime --timestamp \
+          	 --entitlements "${entitlements}" "${gtm}"
+
+          mv "${gtm}" /usr/local/bin
+
 
       - name: Run Prysk Tests
         run: make prysktests
