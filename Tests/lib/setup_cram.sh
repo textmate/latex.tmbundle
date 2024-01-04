@@ -15,6 +15,7 @@ export TM_SUPPORT_PATH="$TM_BUNDLE_DIR/Bundle Support.tmbundle/Support/shared"
 export TM_BUNDLE_SUPPORT="$BUNDLE_DIR/Support"
 export PATH=/Library/TeX/texbin:"$BUNDLE_DIR/Support/bin":$PATH
 export TM_SELECTION='1:1'
+export TM_MATE="/Applications/TextMate.app/Contents/MacOS/mate"
 
 auxiliary_files_regex='./(aux|acr|alg|bbl|bcf|blg|fdb_latexmk|fls|fmt|glg|gls|'
 auxiliary_files_regex+='ini|log|out|maf|mtc|mtc1|pdfsync|run.xml|synctex.gz|'
