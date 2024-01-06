@@ -56,10 +56,8 @@ jobs:
             xfor \
             xstring
 
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-           python-version: '3.10'
+      - name: Install required Python packages
+        run: /usr/bin/pip3 install pyobjc
 
       - name: Install Prysk
         run: pip install prysk
