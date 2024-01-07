@@ -56,19 +56,17 @@ jobs:
             xfor \
             xstring
 
-      - name: Install required Python packages
+      - name: Install required Python packages for LaTeX bundle
         run: /usr/bin/pip3 install pyobjc
 
-      - name: Install Prysk
+      - name: Install required Python packages for testing
         run: pip install prysk
 
-      - name: Install Test Tools
+      - name: Install tools required for tests
         run: |
           brew install pidof
           brew install boost capnp google-sparsehash multimarkdown ninja ragel
 
-      - name: Install `gtm` binary
-        run: |
           git clone --recursive https://github.com/textmate/textmate.git
           cd textmate
 
@@ -92,7 +90,6 @@ jobs:
           	 --entitlements "${entitlements}" "${gtm}"
 
           mv "${gtm}" /usr/local/bin
-
 
       - name: Run Prysk Tests
         run: make prysktests
