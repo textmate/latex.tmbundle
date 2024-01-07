@@ -8,6 +8,6 @@ export TEX_DIRECTORY="${BUNDLE_DIRECTORY}/Tests/TeX"
 
 # -- Functions -----------------------------------------------------------------
 
-remove_non_printable() {
-    LC_ALL=C tr -cd '[:print:]\n\t'
+trim() {
+	sed '/^$/d'
 }

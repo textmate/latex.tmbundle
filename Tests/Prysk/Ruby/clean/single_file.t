@@ -7,8 +7,9 @@
 
 Create some auxiliary files
 
-  $ latexmk -pdf makeglossaries.tex 2>&- | tail -n 1
-  Latexmk: All targets (makeglossaries.pdf) are up-to-date
+  $ latexmk -pdf makeglossaries.tex 2>&- | trim | 
+  > tail -n 1
+  Latexmk: All targets (.+) are up-to-date (re)
 
 Delete all auxiliary files in the current directory
 
