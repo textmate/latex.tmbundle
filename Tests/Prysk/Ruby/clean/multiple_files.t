@@ -43,7 +43,7 @@ Remove the remaining the auxiliary files
 
   $ clean.rb > /dev/null
 
-The folder now only contains the DVID, PDF and TeX file
+The folder now only contains the DVI, PDF and TeX file
 
   $ ls
   input
