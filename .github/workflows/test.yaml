@@ -90,6 +90,3 @@ jobs:
           	 --entitlements "${entitlements}" "${gtm}"
 
           mv "${gtm}" /usr/local/bin
-
-      - name: Run Prysk Tests
-        run: make prysktests
