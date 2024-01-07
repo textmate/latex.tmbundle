@@ -90,3 +90,6 @@ jobs:
           	 --entitlements "${entitlements}" "${gtm}"
 
           mv "${gtm}" /usr/local/bin
+
+      - name: Run Prysk tests for clean utility
+        run: cd Tests/Prysk/Ruby/clean && prysk *.t
